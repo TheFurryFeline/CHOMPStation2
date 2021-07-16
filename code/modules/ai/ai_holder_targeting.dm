@@ -60,7 +60,7 @@
 		return
 
 	var/chosen_target
-	if(preferred_target && preferred_target in targets)
+	if(preferred_target && (preferred_target in targets))
 		chosen_target = preferred_target
 	else
 		chosen_target = pick(targets)
@@ -69,6 +69,10 @@
 // Step 4, give us our selected target.
 /datum/ai_holder/proc/give_target(new_target, urgent = FALSE)
 	ai_log("give_target() : Given '[new_target]', urgent=[urgent].", AI_LOG_TRACE)
+	
+	if(target)
+		remove_target()
+	
 	target = new_target
 
 	if(target != null)
@@ -183,6 +187,7 @@
 	give_up_movement()
 	lose_target_position()
 	set_stance(STANCE_IDLE)
+	return TRUE
 
 // Check if target is visible to us.
 /datum/ai_holder/proc/can_see_target(atom/movable/the_target, view_range = vision_range)
@@ -217,17 +222,17 @@
 		lose_target_position()
 
 	if(last_turf_display && target_last_seen_turf)
-		target_last_seen_turf.overlays -= last_turf_overlay
+		target_last_seen_turf.cut_overlay(last_turf_overlay)
 
 	target_last_seen_turf = get_turf(target)
 
 	if(last_turf_display)
-		target_last_seen_turf.overlays += last_turf_overlay
+		target_last_seen_turf.add_overlay(last_turf_overlay)
 
 // Resets the last known position to null.
 /datum/ai_holder/proc/lose_target_position()
 	if(last_turf_display && target_last_seen_turf)
-		target_last_seen_turf.overlays -= last_turf_overlay
+		target_last_seen_turf.cut_overlay(last_turf_overlay)
 	ai_log("lose_target_position() : Last position is being reset.", AI_LOG_INFO)
 	target_last_seen_turf = null
 
