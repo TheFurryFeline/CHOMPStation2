@@ -6,7 +6,7 @@
 *
 */
 
-/obj/item/weapon/material/twohanded/sledgehammer  // a SLEGDGEHAMMER
+/obj/item/material/twohanded/sledgehammer  // a SLEGDGEHAMMER
 	icon_state = "sledgehammer0"
 	base_icon = "sledgehammer"
 	name = "sledgehammer"
@@ -31,7 +31,7 @@
 		slot_r_hand_str = 'icons/mob/items/righthand_material_ch.dmi',
 		)
 
-/obj/item/weapon/material/twohanded/sledgehammer/update_held_icon()
+/obj/item/material/twohanded/sledgehammer/update_held_icon()
 	var/mob/living/M = loc
 	if(istype(M) && !issmall(M) && M.item_is_in_hands(src) && !M.hands_are_full())
 		wielded = 1
@@ -47,7 +47,7 @@
 	update_icon()
 	..()
 
-/obj/item/weapon/material/twohanded/sledgehammer/afterattack(atom/A as mob|obj|turf|area, mob/user as mob, proximity)
+/obj/item/material/twohanded/sledgehammer/afterattack(atom/A as mob|obj|turf|area, mob/user as mob, proximity)
 	if(!proximity) return
 	..()
 	if(A && wielded)
@@ -61,11 +61,11 @@
 			P.die_off()
 
 // This cannot go into afterattack since some mobs delete themselves upon dying.
-/obj/item/weapon/material/twohanded/sledgehammer/pre_attack(var/mob/living/target, var/mob/living/user)
+/obj/item/material/twohanded/sledgehammer/pre_attack(mob/living/target, mob/living/user)
 	if(istype(target))
 		cleave(user, target)
 
-/obj/item/weapon/material/twohanded/sledgehammer/mjollnir
+/obj/item/material/twohanded/sledgehammer/mjollnir
 	icon_state = "mjollnir0"
 	base_icon = "mjollnir"
 	name = "Mjollnir"
@@ -77,24 +77,24 @@
 	force_wielded = 75
 	slowdown = 0
 
-/obj/item/weapon/material/twohanded/sledgehammer/mjollnir/afterattack(mob/living/G, mob/user)
+/obj/item/material/twohanded/sledgehammer/mjollnir/afterattack(atom/A as mob|obj|turf|area, mob/user as mob, proximity)
 	..()
 
-	if(wielded)
+	if(proximity && wielded && isliving(A))
+		var/mob/living/target = A
 		if(prob(10))
-			G.electrocute_act(500, src, def_zone = BP_TORSO)
+			target.electrocute_act(500, src, def_zone = BP_TORSO)
 			return
 		if(prob(10))
-			G.dust()
+			target.dust()
 			return
 		else
-			G.stun_effect_act(10 , 50,def_zone = BP_TORSO, src)
-			G.take_organ_damage(10)
-			G.Paralyse(20)
+			target.stun_effect_act(10 , 50, BP_TORSO, src)
+			target.take_organ_damage(10)
+			target.Paralyse(20)
 			playsound(src.loc, "sparks", 50, 1)
 			return
 
-/obj/item/weapon/material/twohanded/sledgehammer/mjollnir/update_icon()  //Currently only here to fuck with the on-mob icons.
+/obj/item/material/twohanded/sledgehammer/mjollnir/update_icon()  //Currently only here to fuck with the on-mob icons.
 	icon_state = "mjollnir[wielded]"
 	return
-

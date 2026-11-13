@@ -20,13 +20,106 @@
 /datum/gear/mask/sterile
 	display_name = "sterile mask"
 	path = /obj/item/clothing/mask/surgical
-	cost = 2
 
-/datum/gear/mask/veil
-	display_name = "black veil"
-	path = /obj/item/clothing/mask/veil
+/datum/gear/mask/sterile/white
+	display_name = "white sterile mask"
+	path = /obj/item/clothing/mask/surgical/white
+
+/datum/gear/mask/sterile/white/dust
+	display_name = "dust mask"
+	path = /obj/item/clothing/mask/surgical/dust
+
+/datum/gear/mask/sterile/white/cloth
+	display_name = "cloth face mask"
+	path = /obj/item/clothing/mask/surgical/cloth
+
+/datum/gear/mask/gas
+	display_name = "gas mask"
+	path = /obj/item/clothing/mask/gas
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
+
+/datum/gear/mask/gas/clear
+	display_name = "transparent gas mask"
+	path = /obj/item/clothing/mask/gas/clear
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
+
+/datum/gear/mask/plaguedoctor
+	display_name = "plague doctor's mask"
+	path = /obj/item/clothing/mask/gas/plaguedoctor
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
 
 /datum/gear/mask/plaguedoctor2
 	display_name = "golden plague doctor's mask"
 	path = /obj/item/clothing/mask/gas/plaguedoctor/gold
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
+
+/datum/gear/mask/mouthwheat
+	display_name = "mouth wheat"
+	path = /obj/item/clothing/mask/mouthwheat
+
+/datum/gear/mask/papermask
+	display_name = "paper mask"
+	path = /obj/item/clothing/mask/paper
+
+/datum/gear/mask/emotionalmask
+	display_name = "emotional mask"
+	path = /obj/item/clothing/mask/emotions
+
+/datum/gear/mask/gaiter
+	display_name = "neck gaiter selection"
+	path = /obj/item/clothing/accessory/gaiter
+
+/datum/gear/mask/gaiter/New()
+	..()
+	var/list/gaiters = list()
+	for(var/gaiter in typesof(/obj/item/clothing/accessory/gaiter))
+		var/obj/item/clothing/accessory/gaiter_type = gaiter
+		gaiters[initial(gaiter_type.name)] = gaiter_type
+	gear_tweaks += new/datum/gear_tweak/path(sortTim(gaiters, GLOBAL_PROC_REF(cmp_text_asc)))
+
+//CHOMPAdd - Put this mask in loadout
+/datum/gear/mask/death
+	display_name = "cyborg visor" //This was named 'white mask' before when it's...Not. It's literally a cyborg visor gas mask.
+	path = /obj/item/clothing/mask/gas/cyborg
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
+
+/datum/gear/mask/lace
+	display_name = "lace veil"
+	path = /obj/item/clothing/mask/lacemask
+
+/datum/gear/mask/lace/New()
+	gear_tweaks += GLOB.gear_tweak_free_color_choice
+
+/datum/gear/mask/half
+	display_name = "black half-mask"
+	path = /obj/item/clothing/accessory/gaiter/half
+
+/datum/gear/mask/wrestling
+	display_name = "wrestling mask"
+	path = /obj/item/clothing/mask/luchador/colorable
+
+/datum/gear/mask/wrestling/New()
+	gear_tweaks += GLOB.gear_tweak_free_color_choice
+
+/datum/gear/mask/masquerade
+	display_name = "masquerade mask selection"
+	path = /obj/item/clothing/mask/masquerade
+
+/datum/gear/mask/masquerade/New()
+	..()
+	var/list/masks = list()
+	for(var/mask in typesof(/obj/item/clothing/mask/masquerade))
+		var/obj/item/clothing/mask/mask_type = mask
+		masks[initial(mask_type.name)] = mask_type
+	gear_tweaks += new/datum/gear_tweak/path(sortTim(masks, GLOBAL_PROC_REF(cmp_text_asc)))
+
+/datum/gear/mask/gas/half
+	display_name = "black gas half-mask"
+	path = /obj/item/clothing/mask/gas/half
+	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.
+
+/datum/gear/mask/gas/half/sec
+	display_name = "security black gas half-mask"
+	path = /obj/item/clothing/mask/gas/sechailer
+	allowed_roles = list(JOB_SECURITY_OFFICER,JOB_HEAD_OF_SECURITY,JOB_WARDEN, JOB_DETECTIVE)
 	cost = 3 ///Because it functions as a gas mask, and therefore has a mechanical advantage.

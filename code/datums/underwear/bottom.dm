@@ -7,8 +7,12 @@
 	icon_state = "briefs"
 	has_color = TRUE
 
-/datum/category_item/underwear/bottom/briefs/is_default(var/gender)
+/datum/category_item/underwear/bottom/briefs/is_default(gender)
 	return gender != FEMALE
+
+/datum/category_item/underwear/bottom/briefs_hyper
+	name = "HYPER Briefs"
+	icon_state = "hyper_briefs"
 
 /datum/category_item/underwear/bottom/boxers_loveheart
 	name = "Boxers, Loveheart"
@@ -19,6 +23,10 @@
 	icon_state = "boxers"
 	has_color = TRUE
 
+/datum/category_item/underwear/bottom/boxers_hyper
+	name = "HYPER Boxers"
+	icon_state = "hyper_boxers"
+
 /datum/category_item/underwear/bottom/boxers_green_and_blue
 	name = "Boxers, green & blue striped"
 	icon_state = "boxers_green_and_blue"
@@ -28,7 +36,7 @@
 	icon_state = "panties"
 	has_color = TRUE
 
-/datum/category_item/underwear/bottom/panties/is_default(var/gender)
+/datum/category_item/underwear/bottom/panties/is_default(gender)
 	return gender == FEMALE
 
 /datum/category_item/underwear/bottom/lacy_thong
@@ -67,4 +75,34 @@
 /datum/category_item/underwear/bottom/longjon
 	name = "Long John Bottoms"
 	icon_state = "ljonb"
+	has_color = TRUE
+
+/datum/category_item/underwear/bottom/thinpanties
+	name = "Panties, Thin"
+	icon_state = "thinpanties"
+	has_color = TRUE
+
+/datum/category_item/underwear/bottom/neko
+	name = "Panties, Neko"
+	icon_state = "panties_neko"
+	has_color = TRUE
+
+/datum/category_item/underwear/bottom/swimbottom
+	name = "Swimming Bottoms"
+	icon_state = "swimbottom"
+	has_color = TRUE
+
+/datum/category_item/underwear/bottom/onepiece
+	name = "Swimming One Piece"
+	icon_state = "onepiece"
+	has_color = TRUE
+
+/datum/category_item/underwear/top/onepiece_alt
+	name = "Swimming One Piece, Alt"
+	icon_state = "swim_onepiece"
+	has_color = TRUE
+
+/datum/category_item/underwear/top/onepiece_strapless
+	name = "Swimming One Piece, Strapless"
+	icon_state = "swim_strapless_onepiece"
 	has_color = TRUE

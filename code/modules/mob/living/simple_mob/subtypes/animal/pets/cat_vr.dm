@@ -1,7 +1,5 @@
-/mob/living/simple_mob/animal/passive/cat/runtime/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/animal/passive/cat/runtime/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "Stomach"
 	B.desc = "The slimy wet insides of Runtime! Not quite as clean as the cat on the outside."
@@ -33,13 +31,6 @@
 		"Your form begins to slowly soften and break apart, rounding out Runtime's swollen belly. The carnivorous cat rumbles and purrs happily at the feeling of such a filling meal.")
 
 // Ascian's Tactical Kitten
-/obj/item/weapon/holder/cat/fluff/tabiranth
-	name = "Spirit"
-	desc = "A small, inquisitive feline, who constantly seems to investigate his surroundings."
-	gender = MALE
-	icon_state = "kitten"
-	w_class = ITEMSIZE_SMALL
-
 /mob/living/simple_mob/animal/passive/cat/tabiranth
 	name = "Spirit"
 	desc = "A small, inquisitive feline, who constantly seems to investigate his surroundings."
@@ -47,7 +38,7 @@
 	icon_state = "kitten"
 	item_state = "kitten"
 	gender = MALE
-	holder_type = /obj/item/weapon/holder/cat/fluff/tabiranth
+	holder_type = /obj/item/holder/cat/fluff/tabiranth
 	friend_name = "Ascian"
 	digestable = 0
 	meat_amount = 0
@@ -59,7 +50,7 @@
 	if (has_AI() && friend)
 		var/friend_dist = get_dist(src,friend)
 		if (friend_dist <= 1)
-			if (friend.stat >= DEAD || friend.health <= config.health_threshold_softcrit)
+			if (friend.stat >= DEAD || friend.health <= CONFIG_GET(number/health_threshold_softcrit))
 				if (prob((friend.stat < DEAD)? 50 : 15))
 					var/verb = pick("meows", "mews", "mrowls")
 					audible_emote(pick("[verb] in distress.", "[verb] anxiously."))
@@ -76,11 +67,10 @@
 
 //Emergency teleport - Until a spriter makes something better
 /mob/living/simple_mob/animal/passive/cat/tabiranth/death(gibbed, deathmessage = "teleports away!")
-	overlays = list()
+	cut_overlays()
 	icon_state = ""
 	flick("kphaseout",src)
 	spawn(1 SECOND)
 		qdel(src) //Back from whence you came!
 
 	. = ..(FALSE, deathmessage)
-

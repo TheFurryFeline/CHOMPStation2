@@ -6,8 +6,9 @@
 	full_name = "NSS Ade-testing"
 	path = "virgo_minitest"
 
-	lobby_icon = 'icons/misc/title_vr.dmi'
-	lobby_screens = list("tether2_night")
+	lobby_screens = list('html/lobby/logo2.png')
+
+	id_hud_icons = 'icons/mob/hud_jobs_vr.dmi'
 
 	accessible_z_levels = list("1" = 100)
 	base_turf_by_z = list("1" = /turf/space)
@@ -73,3 +74,10 @@
 	new /datum/random_map/noise/ore(null, 1, 1, Z_LEVEL_MAIN_VIRGO_TESTING, 64, 64)
 */
 	return 1
+
+// The map doesn't use shuttles
+/datum/shuttle/autodock/ferry/emergency/escape
+	defer_initialisation = TRUE
+
+/datum/shuttle/autodock/ferry/supply/cargo
+	defer_initialisation = TRUE

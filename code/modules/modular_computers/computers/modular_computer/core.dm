@@ -41,7 +41,7 @@
 /obj/item/modular_computer/proc/install_default_programs()
 	return 1
 
-/obj/item/modular_computer/Initialize()
+/obj/item/modular_computer/Initialize(mapload)
 	if(!overlay_icon)
 		overlay_icon = icon
 	START_PROCESSING(SSobj, src)
@@ -55,12 +55,13 @@
 /obj/item/modular_computer/Destroy()
 	kill_program(1)
 	STOP_PROCESSING(SSobj, src)
-	for(var/obj/item/weapon/computer_hardware/CH in src.get_all_components())
+	for(var/obj/item/computer_hardware/CH in src.get_all_components())
 		uninstall_component(null, CH)
 		qdel(CH)
+	LAZYCLEARLIST(paired_uavs)
 	return ..()
 
-/obj/item/modular_computer/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/modular_computer/emag_act(remaining_charges, mob/user)
 	if(computer_emagged)
 		to_chat(user, "\The [src] was already emagged.")
 		return //NO_EMAG_ACT
@@ -72,24 +73,36 @@
 /obj/item/modular_computer/update_icon()
 	icon_state = icon_state_unpowered
 
-	overlays.Cut()
+	cut_overlays()
+
+	. = list()
+
 	if(bsod)
-		overlays += image(icon = overlay_icon, icon_state = "bsod")
-		return
+		. += mutable_appearance(overlay_icon, "bsod")
+		. += emissive_appearance(overlay_icon, "bsod")
+		return add_overlay(.)
 	if(!enabled)
 		if(icon_state_screensaver)
-			overlays += image(icon = overlay_icon, icon_state = icon_state_screensaver)
+			. += mutable_appearance(overlay_icon, icon_state_screensaver)
+			. += emissive_appearance(overlay_icon, icon_state_screensaver)
 		set_light(0)
-		return
-	set_light(light_strength)
-	if(active_program)
-		overlays += image(icon = overlay_icon, icon_state = active_program.program_icon_state ? active_program.program_icon_state : icon_state_menu)
-		if(active_program.program_key_state)
-			overlays += image(icon = overlay_icon, icon_state = active_program.program_key_state)
-	else
-		overlays += image(icon = overlay_icon, icon_state = icon_state_menu)
+		return add_overlay(.)
 
-/obj/item/modular_computer/proc/turn_on(var/mob/user)
+	set_light(light_strength)
+
+	if(active_program)
+		var/program_state = active_program.program_icon_state ? active_program.program_icon_state : icon_state_menu
+		. += mutable_appearance(overlay_icon, program_state)
+		. += emissive_appearance(overlay_icon, program_state)
+		if(active_program.program_key_state)
+			. += mutable_appearance(overlay_icon, active_program.program_key_state)
+	else
+		. += mutable_appearance(overlay_icon, icon_state_menu)
+		. += emissive_appearance(overlay_icon, icon_state_menu)
+
+	return add_overlay(.)
+
+/obj/item/modular_computer/proc/turn_on(mob/user)
 	if(bsod)
 		return
 	if(tesla_link)
@@ -107,6 +120,7 @@
 		else
 			to_chat(user, "You press the power button and start up \the [src]")
 		enable_computer(user)
+		playsound(src, 'sound/machines/console_power_on.ogg', 60, 1, volume_channel = VOLUME_CHANNEL_MACHINERY)
 
 	else // Unpowered
 		if(issynth)
@@ -115,28 +129,36 @@
 			to_chat(user, "You press the power button but \the [src] does not respond")
 
 // Relays kill program request to currently active program. Use this to quit current program.
-/obj/item/modular_computer/proc/kill_program(var/forced = 0)
+/obj/item/modular_computer/proc/kill_program(forced = 0)
 	if(active_program)
 		active_program.kill_program(forced)
 		active_program = null
 	var/mob/user = usr
-	if(user && istype(user))
-		tgui_interact(user) // Re-open the UI on this computer. It should show the main screen now.
+	addtimer(CALLBACK(src, PROC_REF(delayed_reopen_ui), user), 1, TIMER_DELETE_ME)
 	update_icon()
 
+/obj/item/modular_computer/proc/delayed_reopen_ui(mob/user)
+	// Re-open the UI on this computer. It should show the main screen now.
+	// Expected from kill_program()
+	PRIVATE_PROC(TRUE)
+	SHOULD_NOT_OVERRIDE(TRUE)
+	if(!user || !istype(user))
+		return
+	tgui_interact(user)
+
 // Returns 0 for No Signal, 1 for Low Signal and 2 for Good Signal. 3 is for wired connection (always-on)
-/obj/item/modular_computer/proc/get_ntnet_status(var/specific_action = 0)
+/obj/item/modular_computer/proc/get_ntnet_status(specific_action = 0)
 	if(network_card)
 		return network_card.get_signal(specific_action)
 	else
 		return 0
 
-/obj/item/modular_computer/proc/add_log(var/text)
+/obj/item/modular_computer/proc/add_log(text)
 	if(!get_ntnet_status())
 		return 0
-	return ntnet_global.add_log(text, network_card)
+	return GLOB.ntnet_global.add_log(text, network_card)
 
-/obj/item/modular_computer/proc/shutdown_computer(var/loud = 1)
+/obj/item/modular_computer/proc/shutdown_computer(loud = 1)
 	kill_program(1)
 	for(var/datum/computer_file/program/P in idle_threads)
 		P.kill_program(1)
@@ -146,7 +168,7 @@
 	enabled = 0
 	update_icon()
 
-/obj/item/modular_computer/proc/enable_computer(var/mob/user = null)
+/obj/item/modular_computer/proc/enable_computer(mob/user = null)
 	enabled = 1
 	update_icon()
 
@@ -178,7 +200,7 @@
 		P = hard_drive.find_file_by_name(prog)
 
 	if(!P || !istype(P)) // Program not found or it's not executable program.
-		to_chat(user, "<span class='danger'>\The [src]'s screen shows \"I/O ERROR - Unable to run [prog]\" warning.</span>")
+		to_chat(user, span_danger("\The [src]'s screen shows \"I/O ERROR - Unable to run [prog]\" warning."))
 		return
 
 	P.computer = src
@@ -193,11 +215,11 @@
 		return
 
 	if(idle_threads.len >= processor_unit.max_idle_programs+1)
-		to_chat(user, "<span class='notice'>\The [src] displays a \"Maximal CPU load reached. Unable to run another program.\" error</span>")
+		to_chat(user, span_notice("\The [src] displays a \"Maximal CPU load reached. Unable to run another program.\" error"))
 		return
 
 	if(P.requires_ntnet && !get_ntnet_status(P.requires_ntnet_feature)) // The program requires NTNet connection, but we are not connected to NTNet.
-		to_chat(user, "<span class='danger'>\The [src]'s screen shows \"NETWORK ERROR - Unable to connect to NTNet. Please retry. If problem persists contact your system administrator.\" warning.</span>")
+		to_chat(user, span_danger("\The [src]'s screen shows \"NETWORK ERROR - Unable to connect to NTNet. Please retry. If problem persists contact your system administrator.\" warning."))
 		return
 
 	if(active_program)
@@ -250,24 +272,6 @@
 		update_uis()
 
 // Used by camera monitor program
-/obj/item/modular_computer/check_eye(var/mob/user)
-	if(active_program)
-		return active_program.check_eye(user)
-	else
-		return ..()
-
-/obj/item/modular_computer/apply_visual(var/mob/user)
-	if(active_program)
-		return active_program.apply_visual(user)
-
-/obj/item/modular_computer/remove_visual(var/mob/user)
-	if(active_program)
-		return active_program.remove_visual(user)
-
-/obj/item/modular_computer/relaymove(var/mob/user, direction)
-	if(active_program)
-		return active_program.relaymove(user, direction)
-
 /obj/item/modular_computer/proc/set_autorun(program)
 	if(!hard_drive)
 		return
@@ -280,3 +284,9 @@
 		autorun.stored_data = null
 	else
 		autorun.stored_data = program
+
+/obj/item/modular_computer/proc/find_file_by_uid(uid)
+	if(hard_drive)
+		. = hard_drive.find_file_by_uid(uid)
+	if(portable_drive && !.)
+		. = portable_drive.find_file_by_uid(uid)

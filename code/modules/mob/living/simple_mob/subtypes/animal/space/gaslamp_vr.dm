@@ -11,8 +11,10 @@ TODO: Make them light up and heat the air when exposed to oxygen.
 */
 
 /datum/category_item/catalogue/fauna/gaslamp		//TODO: VIRGO_LORE_WRITING_WIP
+	//  CHOMPEdit Start
 	name = "Frosted Gaslamp"
 	desc = "A light floating medusola life form, not an endemic specimen to Sif but throughout illegal handling and DNA modification for the production of nitrogen, it is now found as an invasive specimen on sections around planet Sif."
+	// CHOMPEdit End
 	value = CATALOGUER_REWARD_TRIVIAL
 
 /mob/living/simple_mob/animal/passive/gaslamp
@@ -27,10 +29,10 @@ TODO: Make them light up and heat the air when exposed to oxygen.
 	icon = 'icons/mob/vore32x64.dmi'
 	vis_height = 64
 
-	faction = "virgo3b"
+	faction = FACTION_VIRGO3B
 	maxHealth = 100
 	health = 100
-	movement_cooldown = 12
+	movement_cooldown = 4
 
 	say_list_type = /datum/say_list/gaslamp
 	ai_holder_type = /datum/ai_holder/simple_mob/gaslamp
@@ -81,20 +83,19 @@ TODO: Make them light up and heat the air when exposed to oxygen.
 	vore_ignores_undigestable = 0 // they absorb rather than digest, you're going in either way
 	vore_default_mode = DM_HOLD
 	vore_digest_chance = 0			// Chance to switch to digest mode if resisted
-	vore_absorb_chance = 20			// BECOME A PART OF ME.
+	vore_absorb_chance = 100		// Will always start to absorb if the prey fails its generous escape chance
 	vore_pounce_chance = 5 // Small chance to punish people who abuse their nomming behaviour to try and kite them forever with repeated melee attacks.
 	vore_stomach_name = "internal chamber"
 	vore_stomach_flavor	= "You are squeezed into the tight embrace of the alien creature's warm and cozy insides."
 	vore_icons = SA_ICON_LIVING
 
-/mob/living/simple_mob/animal/passive/gaslamp/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/animal/passive/gaslamp/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "internal chamber"
 	B.desc = "Having been too slow to disentangle yourself from the gaslamp's tentacles, the alien creature eventually winds enough of them around your body to lift you up off of the ground. Struggle as you might now, it is too late to deny the jellyfish-esque scavenger its lucky catch; inch by inch, the gaslamp tugs you upwards into its equivalent of a stomach, the transition between the cool-to-frigid atmosphere on the outside to its surprising internal heat something you can feel through any outer wear you possess. Minutes pass, soon resulting in the gentle creature's body sporting a rounded, bulging swell, an indistinct shadow shifting and twitching inside it as you squirm about. Be it to escape or simply to get settled, you might want to take care, however. The gaslamp's internal chamber is slick and squishy instead of overly oppressive, yet, each wave of warmth that pulses over you leaves you feeling weaker than the last..."
-
+	B.escapechance = 40 //easy to squirm out of...
+	B.escapechance_absorbed = 5 //...but EXTREMELY clingy if you fail
 	B.emote_lists[DM_HOLD] = list(
 		"The gaslamp gently bobs up and down as it lazily drifts elsewhere, the movement hardly enough to disturb the shadowy, indistinct figure curled up within it: you.",
 		"The fungal creature’s inner walls tenderly ripple and squeeze about your form for a few moments, squelching softly... until another wave of warmth pulses through the chamber.",
@@ -110,3 +111,41 @@ TODO: Make them light up and heat the air when exposed to oxygen.
 		"Light occasionally filters down through the gaslamp’s various membranes, but it is becoming hard to notice, your eyelids feeling leaden, weighed down as the looming creature comes ever closer to claiming you!",
 		"The gaslamp’s rhythmically undulating innards abruptly squish and massage down into your curled-up body, each squeeze bringing another brief increase to the heat already sinking deep into you... making it harder to tell where you end, and it begins!",
 		"Every moment longer spent trapped within the gaslamp drains evermore energy out of you, squelching away your will to resist its possessive advances… and as its innards force submission into you, the swell you make visibly softens away!")
+
+/mob/living/simple_mob/animal/passive/gaslamp/snow //Frostlamnp
+	name = "Frostlit Lamp"
+	desc = "Some sort of floaty alien with a surprisingly warm glow. This creature is looks like an evolutionary offshute of the Gaslamp family."
+	tt_desc = "Semaeostomeae virginus"
+	icon = 'icons/mob/vore32x64.dmi'
+	icon_state = "gaslamp_snow"
+	icon_living = "gaslamp_snow"
+	icon_dead = "gaslamp_snow-dead"
+
+	faction = "virgo3b"
+	maxHealth = 100
+	health = 100
+	movement_cooldown = 12
+
+	say_list_type = /datum/say_list/gaslamp
+	ai_holder_type = /datum/ai_holder/simple_mob/gaslamp
+
+	melee_damage_lower = 5
+	melee_damage_upper = 10
+	attacktext = list("thrashed")
+	friendly = "caressed"
+
+	response_help   = "brushes"	// If clicked on help intent
+	response_disarm = "pushes" // If clicked on disarm intent
+	response_harm   = "swats"	// If clicked on harm intent
+
+	minbodytemp = 0
+	maxbodytemp = 350
+
+	min_oxy = 1	//Needs Oxy to survive on cryogaia
+	max_oxy = 0 // Hopefully no Max oxy
+	min_tox = 0
+	max_tox = 0
+	min_co2 = 0
+	max_co2 = 0
+	min_n2 = 0
+	max_n2 = 0

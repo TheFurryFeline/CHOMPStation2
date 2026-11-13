@@ -29,6 +29,8 @@
 	response_disarm = "rolls over"
 	response_harm   = "stomps on"
 
+	organ_names = /datum/decl/mob_organ_names/pillbug
+
 	armor = list(
 		"melee" = 30,
 		"bullet" = 10,
@@ -39,13 +41,5 @@
 		"rad" = 100
 		)
 
-	// The frostfly's body is incredibly cold at all times, natural resistance to things trying to burn it.
-	armor_soak = list(
-		"melee" = 10,
-		"bullet" = 0,
-		"laser" = 10,
-		"energy" = 10,
-		"bomb" = 0,
-		"bio" = 0,
-		"rad" = 0
-		)
+/datum/decl/mob_organ_names/pillbug
+	hit_zones = list("cephalon", "pereon", "pleon", "left forelegs", "right forelegs", "left hind legs", "right hind legs")

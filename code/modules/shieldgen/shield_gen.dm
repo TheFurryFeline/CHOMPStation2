@@ -7,7 +7,7 @@
 	var/field_radius = 3
 	var/max_field_radius = 150
 	var/list/field = list()
-	density = 1
+	density = TRUE
 	var/locked = 0
 	var/average_field_strength = 0
 	var/strengthen_rate = 0.2
@@ -25,13 +25,14 @@
 	use_power = USE_POWER_OFF	//doesn't use APC power
 	interact_offline = TRUE // don't check stat & NOPOWER|BROKEN for our UI. We check BROKEN ourselves.
 	var/id //for button usage
+	var/datum/looping_sound/shield_generator/shield_hum
 
 /obj/machinery/shield_gen/advanced
 	name = "advanced bubble shield generator"
 	desc = "A machine that generates a field of energy optimized for blocking meteorites when activated.  This version comes with a more efficent shield matrix."
 	energy_conversion_rate = 0.0012
 
-/obj/machinery/shield_gen/Initialize()
+/obj/machinery/shield_gen/Initialize(mapload)
 	if(anchored)
 		for(var/obj/machinery/shield_capacitor/cap in range(1, src))
 			if(!cap.anchored)
@@ -41,35 +42,36 @@
 			if(get_dir(cap, src) == cap.dir)
 				capacitors |= cap
 				cap.owned_gen = src
-	return ..()
+	shield_hum = new(list(src), FALSE)
+	. = ..()
+	AddElement(/datum/element/climbable)
 
 /obj/machinery/shield_gen/Destroy()
 	QDEL_LIST_NULL(field)
+	QDEL_NULL(shield_hum)
 	return ..()
 
-/obj/machinery/shield_gen/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/shield_gen/emag_act(remaining_charges, mob/user)
 	if(prob(75))
 		src.locked = !src.locked
 		to_chat(user, "Controls are now [src.locked ? "locked." : "unlocked."]")
 		. = 1
-		updateDialog()
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(5, 1, src)
 	s.start()
 
 /obj/machinery/shield_gen/attackby(obj/item/W, mob/user)
-	if(istype(W, /obj/item/weapon/card/id))
-		var/obj/item/weapon/card/id/C = W
-		if(access_captain in C.access || access_security in C.access || access_engine in C.access)
+	if(istype(W, /obj/item/card/id))
+		var/obj/item/card/id/C = W
+		if((ACCESS_CAPTAIN in C.GetAccess()) || (ACCESS_SECURITY in C.GetAccess()) || (ACCESS_ENGINE in C.GetAccess()))
 			src.locked = !src.locked
 			to_chat(user, "Controls are now [src.locked ? "locked." : "unlocked."]")
-			updateDialog()
 		else
-			to_chat(user, "<font color='red'>Access denied.</font>")
-	else if(W.is_wrench())
+			to_chat(user, span_red("Access denied."))
+	else if(W.has_tool_quality(TOOL_WRENCH))
 		src.anchored = !src.anchored
 		playsound(src, W.usesound, 75, 1)
-		src.visible_message("<font color='blue'>[bicon(src)] [src] has been [anchored?"bolted to the floor":"unbolted from the floor"] by [user].</font>")
+		src.visible_message(span_blue("[icon2html(src,viewers(src))] [src] has been [anchored?"bolted to the floor":"unbolted from the floor"] by [user]."))
 
 		if(active)
 			toggle()
@@ -82,7 +84,6 @@
 					//	owned_capacitor = cap
 						capacitors |= cap
 						cap.owned_gen = src
-						updateDialog()
 					//	break
 		else
 			for(var/obj/machinery/shield_capacitor/capacitor in capacitors)
@@ -110,36 +111,35 @@
 	return ..()
 
 /obj/machinery/shield_gen/tgui_data(mob/user)
-	var/list/data = list()
+	var/list/lockedData = list()
 
-	data["locked"] = locked
-	data["lockedData"] = list()
 	if(!locked)
-		data["lockedData"]["capacitors"] = list()
+		var/list/caps = list()
 		for(var/obj/machinery/shield_capacitor/C in capacitors)
-			data["lockedData"]["capacitors"].Add(list(list(
+			caps.Add(list(list(
 				"active" = C.active,
 				"stored_charge" = C.stored_charge,
 				"max_charge" = C.max_charge,
 				"failing" = (C.time_since_fail <= 2),
 			)))
+		lockedData["capacitors"] = caps
 
-		data["lockedData"]["active"] = active
-		data["lockedData"]["failing"] = (time_since_fail <= 2)
-		data["lockedData"]["radius"] = field_radius
-		data["lockedData"]["max_radius"] = max_field_radius
-		data["lockedData"]["z_range"] = z_range
-		data["lockedData"]["max_z_range"] = 10
-		data["lockedData"]["average_field_strength"] = average_field_strength
-		data["lockedData"]["target_field_strength"] = target_field_strength
-		data["lockedData"]["max_field_strength"] = max_field_strength
-		data["lockedData"]["shields"] = LAZYLEN(field)
-		data["lockedData"]["upkeep"] = round(field.len * max(average_field_strength * dissipation_rate, min_dissipation) / energy_conversion_rate)
-		data["lockedData"]["strengthen_rate"] = strengthen_rate
-		data["lockedData"]["max_strengthen_rate"] = max_strengthen_rate
-		data["lockedData"]["gen_power"] = round(field.len * min(strengthen_rate, target_field_strength - average_field_strength) / energy_conversion_rate)
+		lockedData["active"] = active
+		lockedData["failing"] = (time_since_fail <= 2)
+		lockedData["radius"] = field_radius
+		lockedData["max_radius"] = max_field_radius
+		lockedData["z_range"] = z_range
+		lockedData["max_z_range"] = 10
+		lockedData["average_field_strength"] = average_field_strength
+		lockedData["target_field_strength"] = target_field_strength
+		lockedData["max_field_strength"] = max_field_strength
+		lockedData["shields"] = LAZYLEN(field)
+		lockedData["upkeep"] = round(field.len * max(average_field_strength * dissipation_rate, min_dissipation) / energy_conversion_rate)
+		lockedData["strengthen_rate"] = strengthen_rate
+		lockedData["max_strengthen_rate"] = max_strengthen_rate
+		lockedData["gen_power"] = round(field.len * min(strengthen_rate, target_field_strength - average_field_strength) / energy_conversion_rate)
 
-	return data
+	return list("locked" = locked, "lockedData" = lockedData)
 
 /obj/machinery/shield_gen/process()
 	if (!anchored && active)
@@ -198,14 +198,14 @@
 	else
 		average_field_strength = 0
 
-/obj/machinery/shield_gen/tgui_act(action, params)
+/obj/machinery/shield_gen/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
 	switch(action)
 		if("toggle")
 			if (!active && !anchored)
-				to_chat(usr, "<font color='red'>The [src] needs to be firmly secured to the floor first.</font>")
+				to_chat(ui.user, span_red("The [src] needs to be firmly secured to the floor first."))
 				return
 			toggle()
 			. = TRUE
@@ -223,7 +223,7 @@
 			. = TRUE
 
 
-/obj/machinery/shield_gen/ex_act(var/severity)
+/obj/machinery/shield_gen/ex_act(severity)
 	if(active)
 		toggle()
 	return ..()
@@ -243,9 +243,10 @@
 		covered_turfs = null
 
 		for(var/mob/M in view(5,src))
-			to_chat(M, "[bicon(src)] You hear heavy droning start up.")
+			to_chat(M, "[icon2html(src, M.client)] You hear heavy droning start up.")
 		for(var/obj/effect/energy_field/E in field) // Update the icons here to ensure all the shields have been made already.
 			E.update_icon()
+		shield_hum.start()
 	else
 		for(var/obj/effect/energy_field/D in field)
 			field.Remove(D)
@@ -253,12 +254,25 @@
 			qdel(D)
 
 		for(var/mob/M in view(5,src))
-			to_chat(M, "[bicon(src)] You hear heavy droning fade out.")
+			to_chat(M, "[icon2html(src, M.client)] You hear heavy droning fade out.")
+		shield_hum.stop()
+
+/obj/machinery/shield_gen/proc/fill_diffused()
+	if(active)
+		var/list/covered_turfs = get_shielded_turfs()
+		var/turf/T = get_turf(src)
+		if(T in covered_turfs)
+			covered_turfs.Remove(T)
+		for(var/turf/O in covered_turfs)
+			if(locate(/obj/effect/energy_field, O) || locate(/obj/machinery/pointdefense, orange(2, O)))
+				continue
+			new /obj/effect/energy_field(O, src)
 
 /obj/machinery/shield_gen/update_icon()
 	if(stat & BROKEN)
 		icon_state = "broke"
 		set_light(0)
+		shield_hum.stop()
 	else
 		if (src.active)
 			icon_state = "generator1"
@@ -296,7 +310,7 @@
 
 	return out
 
-/obj/machinery/shield_gen/proc/get_shielded_turfs_on_z_level(var/turf/gen_turf)
+/obj/machinery/shield_gen/proc/get_shielded_turfs_on_z_level(turf/gen_turf)
 	var/list/out = list()
 
 	if (!gen_turf)

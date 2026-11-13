@@ -6,9 +6,8 @@
 /datum/chunk/camera
 	var/list/cameras = list()
 
-/datum/chunk/camera/acquireVisibleTurfs(var/list/visible)
-	for(var/camera in cameras)
-		var/obj/machinery/camera/c = camera
+/datum/chunk/camera/acquireVisibleTurfs(list/visible)
+	for(var/obj/machinery/camera/c as anything in cameras)
 
 		if(!istype(c))
 			cameras -= c
@@ -24,7 +23,7 @@
 		for(var/turf/t in c.can_see())
 			visible[t] = t
 
-	for(var/mob/living/silicon/ai/AI in living_mob_list)
+	for(var/mob/living/silicon/ai/AI in GLOB.living_mob_list)
 		for(var/turf/t in AI.seen_camera_turfs())
 			visible[t] = t
 

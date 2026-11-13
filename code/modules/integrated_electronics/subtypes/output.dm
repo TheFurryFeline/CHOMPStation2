@@ -43,7 +43,7 @@
 	var/list/nearby_things = range(0, get_turf(src))
 	for(var/mob/M in nearby_things)
 		var/obj/O = assembly ? assembly : src
-		to_chat(M, "<span class='notice'>[bicon(O)] [stuff_to_display]</span>")
+		to_chat(M, span_notice("[icon2html(O,M.client)] [stuff_to_display]"))
 
 /obj/item/integrated_circuit/output/screen/large
 	name = "large screen"
@@ -56,7 +56,7 @@
 /obj/item/integrated_circuit/output/screen/large/do_work()
 	..()
 	var/obj/O = assembly ? loc : assembly
-	O.visible_message("<span class='notice'>[bicon(O)] [stuff_to_display]</span>")
+	O.visible_message(span_notice("[icon2html(O,viewers(O))] [stuff_to_display]"))
 
 /obj/item/integrated_circuit/output/light
 	name = "light"
@@ -80,7 +80,7 @@
 	//CHOMPEdit Begin
 	if(assembly)
 		var/atom/light_source = assembly
-		if(istype(assembly,/obj/item/device/electronic_assembly/clothing))
+		if(istype(assembly,/obj/item/electronic_assembly/clothing))
 			light_source = assembly.loc
 		if(light_toggled)
 			light_source.set_light(l_range = light_brightness, l_power = light_brightness, l_color = light_rgb)
@@ -105,7 +105,6 @@
 	)
 	outputs = list()
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
-	origin_tech = list(TECH_ENGINEERING = 3, TECH_DATA = 3)
 
 /obj/item/integrated_circuit/output/light/advanced/update_lighting()
 	var/new_color = get_pin_data(IC_INPUT, 1)
@@ -126,7 +125,7 @@
 	desc = "A miniature speaker is attached to this component. It is able to transpose any valid text to speech."
 	extended_desc = "This will emit an audible message to anyone who can hear the assembly."
 	icon_state = "speaker"
-	complexity = 12
+	complexity = 5
 	cooldown_per_use = 4 SECONDS
 	inputs = list("text" = IC_PINTYPE_STRING)
 	outputs = list()
@@ -138,7 +137,7 @@
 	text = get_pin_data(IC_INPUT, 1)
 	if(!isnull(text))
 		var/obj/O = assembly ? loc : assembly
-		audible_message("[bicon(O)] \The [O.name] states, \"[text]\"")
+		audible_message("[icon2html(O,hearers(src))] \The [O.name] states, \"[text]\"", runemessage = text)
 
 /obj/item/integrated_circuit/output/text_to_speech/advanced
 	name = "advanced text-to-speech circuit"
@@ -149,14 +148,13 @@
 	power_draw_per_use = 100
 
 	spawn_flags = IC_SPAWN_RESEARCH
-	origin_tech = list(TECH_ENGINEERING = 3, TECH_DATA = 4, TECH_ILLEGAL = 1)
 
 	var/mob/living/voice/my_voice
 
-/obj/item/integrated_circuit/output/text_to_speech/advanced/Initialize()
+/obj/item/integrated_circuit/output/text_to_speech/advanced/Initialize(mapload)
 	. = ..()
 	my_voice = new (src)
-	mob_list -= my_voice // no life() ticks
+	GLOB.mob_list -= my_voice // no life() ticks
 	my_voice.name = "TTS Circuit"
 
 /obj/item/integrated_circuit/output/text_to_speech/advanced/do_work()
@@ -172,7 +170,7 @@
 	name = "speaker circuit"
 	desc = "A miniature speaker is attached to this component."
 	icon_state = "speaker"
-	complexity = 8
+	complexity = 5
 	cooldown_per_use = 4 SECONDS
 	inputs = list(
 		"sound ID" = IC_PINTYPE_STRING,
@@ -184,8 +182,8 @@
 	power_draw_per_use = 20
 	var/list/sounds = list()
 
-/obj/item/integrated_circuit/output/sound/New()
-	..()
+/obj/item/integrated_circuit/output/sound/Initialize(mapload)
+	. = ..()
 	extended_desc = list()
 	extended_desc += "The first input pin determines which sound is used. The choices are; "
 	extended_desc += jointext(sounds, ", ")
@@ -235,7 +233,6 @@
 		"secure day"	= 'sound/voice/bsecureday.ogg',
 		)
 	spawn_flags = IC_SPAWN_RESEARCH
-	origin_tech = list(TECH_ENGINEERING = 2, TECH_DATA = 2, TECH_ILLEGAL = 1)
 
 /obj/item/integrated_circuit/output/sound/medbot
 	name = "medbot sound circuit"
@@ -258,55 +255,86 @@
 		"no"			= 'sound/voice/medbot/mno.ogg',
 		)
 	spawn_flags = IC_SPAWN_RESEARCH
-	origin_tech = list(TECH_ENGINEERING = 2, TECH_DATA = 2, TECH_BIO = 1)
 
-/obj/item/integrated_circuit/output/video_camera
-	name = "video camera circuit"
-	desc = "This small camera allows a remote viewer to see what it sees."
-	extended_desc = "The camera is linked to the Research camera network."
-	icon_state = "video_camera"
-	w_class = ITEMSIZE_SMALL
-	complexity = 10
-	inputs = list(
-		"camera name" = IC_PINTYPE_STRING,
-		"camera active" = IC_PINTYPE_BOOLEAN
-		)
-	inputs_default = list("1" = "video camera circuit")
-	outputs = list()
-	activators = list()
-	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
-	power_draw_idle = 5 // Raises to 80 when on.
-	var/obj/machinery/camera/network/circuits/camera
 
-/obj/item/integrated_circuit/output/video_camera/New()
-	..()
-	camera = new(src)
-	on_data_written()
+// Temporarily removing video camera circuit due to excessive server load it can cause.
+// And being badly implemented at present. (We have handheld camera's anyway)
 
-/obj/item/integrated_circuit/output/video_camera/Destroy()
-	QDEL_NULL(camera)
-	return ..()
+// /obj/item/integrated_circuit/output/video_camera
+// 	name = "video camera circuit"
+// 	desc = "This small camera allows a remote viewer to see what it sees."
+// 	var/list/networks = list(
+// 		"research"			= NETWORK_CIRCUITS,
+// 		"engine"			= NETWORK_ENGINE,
+// 		"engineering"		= NETWORK_ENGINEERING,
+// 		"mining"			= NETWORK_MINE,
+// 		"medical"			= NETWORK_MEDICAL,
+// 		"entertainment"		= NETWORK_THUNDER,
+// 		"security"			= NETWORK_SECURITY,
+// 		"command"			= NETWORK_COMMAND
+// 		)
+// 	icon_state = "video_camera"
+// 	w_class = ITEMSIZE_SMALL
+// 	complexity = 10
+// 	inputs = list(
+// 		"camera name" = IC_PINTYPE_STRING,
+// 		"camera network" = IC_PINTYPE_STRING,
+// 		"camera active" = IC_PINTYPE_BOOLEAN
+// 		)
+// 	inputs_default = list(
+// 		"1" = "video camera circuit",
+// 		"2" = "research"
+// 		)
+// 	outputs = list()
+// 	activators = list()
+// 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
+// 	power_draw_idle = 5 // Raises to 80 when on.
+// 	var/obj/machinery/camera/network/circuits/camera
 
-/obj/item/integrated_circuit/output/video_camera/proc/set_camera_status(var/status)
-	if(camera)
-		camera.set_status(status)
-		power_draw_idle = camera.status ? 80 : 5
-		if(camera.status) // Ensure that there's actually power.
-			if(!draw_idle_power())
-				power_fail()
+// /obj/item/integrated_circuit/output/video_camera/Initialize(mapload)
+// 	. = ..()
+// 	extended_desc = list()
+// 	extended_desc += "Network choices are; "
+// 	extended_desc += jointext(networks, ", ")
+// 	extended_desc += "."
+// 	extended_desc = jointext(extended_desc, null)
+// 	camera = new(src)
+// 	on_data_written()
 
-/obj/item/integrated_circuit/output/video_camera/on_data_written()
-	if(camera)
-		var/cam_name = get_pin_data(IC_INPUT, 1)
-		var/cam_active = get_pin_data(IC_INPUT, 2)
-		if(!isnull(cam_name))
-			camera.c_tag = cam_name
-		set_camera_status(cam_active)
+// /obj/item/integrated_circuit/output/video_camera/Destroy()
+// 	QDEL_NULL(camera)
+// 	return ..()
 
-/obj/item/integrated_circuit/output/video_camera/power_fail()
-	if(camera)
-		set_camera_status(0)
-		set_pin_data(IC_INPUT, 2, FALSE)
+// /obj/item/integrated_circuit/output/video_camera/proc/set_camera_status(var/status)
+// 	if(camera)
+// 		camera.set_status(status)
+// 		power_draw_idle = camera.status ? 80 : 5
+// 		if(camera.status) // Ensure that there's actually power.
+// 			if(!draw_idle_power())
+// 				power_fail()
+
+// /obj/item/integrated_circuit/output/video_camera/on_data_written()
+// 	if(camera)
+// 		var/cam_name = get_pin_data(IC_INPUT, 1)
+// 		var/cam_network = get_pin_data(IC_INPUT, 2)
+// 		var/cam_active = get_pin_data(IC_INPUT, 3)
+// 		if(!isnull(cam_name))
+// 			camera.c_tag = cam_name
+// 		camera.replace_networks(list(cam_network))
+// 		set_camera_status(cam_active)
+// 		if(isnull(cam_network))
+// 			camera.clear_all_networks()
+// 			return
+// 		var/selected_network = networks[cam_network]
+// 		if(!selected_network)
+// 			camera.clear_all_networks()
+// 			return
+// 		camera.replace_networks(list(selected_network))
+
+// /obj/item/integrated_circuit/output/video_camera/power_fail()
+// 	if(camera)
+// 		set_camera_status(0)
+// 		set_pin_data(IC_INPUT, 2, FALSE)
 
 /obj/item/integrated_circuit/output/led
 	name = "light-emitting diode"
@@ -418,13 +446,14 @@
 //	var/datum/beam/holo_beam = null // A visual effect, to make it easy to know where a hologram is coming from.
 	// It is commented out due to picking up the assembly killing the beam.
 
-/obj/item/integrated_circuit/output/holographic_projector/Initialize()
+/obj/item/integrated_circuit/output/holographic_projector/Initialize(mapload)
 	. = ..()
-	GLOB.moved_event.register(src, src, .proc/on_moved)
+	AddComponent(/datum/component/recursive_move)
+	RegisterSignal(src, COMSIG_MOVABLE_ATTEMPTED_MOVE, PROC_REF(on_moved))
 
 /obj/item/integrated_circuit/output/holographic_projector/Destroy()
 	destroy_hologram()
-	GLOB.moved_event.unregister(src, src, .proc/on_moved)
+	UnregisterSignal(src, COMSIG_MOVABLE_ATTEMPTED_MOVE)
 	return ..()
 
 /obj/item/integrated_circuit/output/holographic_projector/do_work()
@@ -516,6 +545,7 @@
 		update_hologram()
 
 /obj/item/integrated_circuit/output/holographic_projector/proc/on_moved()
+	SIGNAL_HANDLER
 	if(hologram)
 		update_hologram_position()
 

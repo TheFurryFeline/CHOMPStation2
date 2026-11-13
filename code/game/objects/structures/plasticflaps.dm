@@ -3,8 +3,8 @@
 	desc = "Completely impassable - or are they?"
 	icon = 'icons/obj/stationobjs.dmi' //Change this.
 	icon_state = "plasticflaps"
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	layer = MOB_LAYER
 	plane = MOB_PLANE
 	explosion_resistance = 5
@@ -17,18 +17,30 @@
 		)
 
 /obj/structure/plasticflaps/attackby(obj/item/P, mob/user)
-	if(P.is_wirecutter())
+	if(P.has_tool_quality(TOOL_WIRECUTTER))
 		playsound(src, P.usesound, 50, 1)
-		to_chat(user, "<span class='notice'>You start to cut the plastic flaps.</span>")
-		if(do_after(user, 10 * P.toolspeed))
-			to_chat(user, "<span class='notice'>You cut the plastic flaps.</span>")
-			var/obj/item/stack/material/plastic/A = new /obj/item/stack/material/plastic( src.loc )
-			A.amount = 4
+		to_chat(user, span_notice("You start to cut the plastic flaps."))
+		if(do_after(user, 1 SECOND * P.toolspeed, target = src))
+			to_chat(user, span_notice("You cut the plastic flaps."))
+			new /obj/item/stack/material/plastic(src.loc, 4)
 			qdel(src)
 		return
 	else
 		return
-
+//CHOMPEdit Begin
+/obj/structure/plasticflaps/can_pathfinding_enter(atom/movable/actor, dir, datum/pathfinding/search)
+	if(isliving(actor))
+		var/mob/living/L = actor
+		if(isbot(L))
+			return TRUE
+		if(L.can_ventcrawl())
+			return TRUE
+		if(L.mob_size <= MOB_TINY)
+			return TRUE
+		return FALSE
+	return TRUE
+	//return isnull(actor.pulling)? TRUE : can_pathfinding_enter(actor.pulling, dir, search)
+//CHOMPEdit End
 /obj/structure/plasticflaps/CanPass(atom/A, turf/T)
 	if(istype(A) && A.checkpass(PASSGLASS))
 		return prob(60)

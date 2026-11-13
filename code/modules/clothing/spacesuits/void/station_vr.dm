@@ -1,49 +1,129 @@
-/obj/item/clothing/head/helmet/space/void/medical/alt
-	sprite_sheets = list(
-		SPECIES_HUMAN			= 'icons/mob/head.dmi',
-		SPECIES_TAJ 			= 'icons/mob/species/tajaran/helmet.dmi',
-		SPECIES_SKRELL 			= 'icons/mob/species/skrell/helmet.dmi',
-		SPECIES_UNATHI 			= 'icons/mob/species/unathi/helmet.dmi',
-		SPECIES_XENOHYBRID 		= 'icons/mob/species/unathi/helmet.dmi',
-		SPECIES_AKULA			= 'icons/mob/species/unathi/helmet.dmi',
-		SPECIES_SERGAL			= 'icons/mob/species/unathi/helmet.dmi',
-		SPECIES_VULPKANIN		= 'icons/mob/species/vulpkanin/helmet.dmi',
-		SPECIES_ZORREN_HIGH		= 'icons/mob/species/vulpkanin/helmet.dmi',
-		SPECIES_FENNEC			= 'icons/mob/species/vulpkanin/helmet.dmi'
-		)
-	sprite_sheets_obj = list(
-		SPECIES_TAJ 			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_SKRELL			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_UNATHI			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_XENOHYBRID		= 'icons/obj/clothing/hats.dmi',
-		SPECIES_AKULA			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_SERGAL			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_VULPKANIN		= 'icons/obj/clothing/hats.dmi',
-		SPECIES_ZORREN_HIGH		= 'icons/obj/clothing/hats.dmi',
-		SPECIES_FENNEC			= 'icons/obj/clothing/hats.dmi'
-		)
+// Alt mining voidsuit
+// CHOMPStation Edit Start: Commonwealth -> Solgov.
+/obj/item/clothing/suit/space/void/mining/alt2
+	desc = "A surplus Solgov mining voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
 
-/obj/item/clothing/suit/space/void/medical/alt
-	sprite_sheets = list(
-		SPECIES_HUMAN			= 'icons/mob/spacesuit.dmi',
-		SPECIES_TAJ 			= 'icons/mob/species/tajaran/suit.dmi',
-		SPECIES_SKRELL 			= 'icons/mob/species/skrell/suit.dmi',
-		SPECIES_UNATHI 			= 'icons/mob/species/unathi/suit.dmi',
-		SPECIES_XENOHYBRID 		= 'icons/mob/species/unathi/suit.dmi',
-		SPECIES_AKULA			= 'icons/mob/species/akula/suit_vr.dmi',
-		SPECIES_SERGAL			= 'icons/mob/species/sergal/suit_vr.dmi',
-		SPECIES_VULPKANIN		= 'icons/mob/species/vulpkanin/suit.dmi',
-		SPECIES_ZORREN_HIGH		= 'icons/mob/species/vulpkanin/suit.dmi',
-		SPECIES_FENNEC			= 'icons/mob/species/vulpkanin/suit.dmi'
-		)
-	sprite_sheets_obj = list(
-		SPECIES_TAJ			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_SKRELL			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_UNATHI			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_XENOHYBRID		= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_AKULA			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_SERGAL			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_VULPKANIN		= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_ZORREN_HIGH		= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_FENNEC			= 'icons/obj/clothing/spacesuits.dmi'
-		)
+	icon_state = "void_mining_bay"
+	item_state = null
+	slowdown = 0
+
+/obj/item/clothing/head/helmet/space/void/mining/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_mining_bay"
+	item_state = null
+
+// Alt anomaly/excavation suit
+/obj/item/clothing/suit/space/anomaly/alt
+	desc = "A surplus Solgov anomaly suit! Slightly more comfortable and easier to move in than your average anomaly suit."
+
+	icon_state = "void_excavation_bay"
+	item_state = null
+	slowdown = 0.5
+
+/obj/item/clothing/head/helmet/space/anomaly/alt
+	desc = "A surplus Solgov helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_excavation_bay"
+	item_state = null
+	camera_networks = list(NETWORK_RESEARCH)
+
+// Alt riot suit
+/obj/item/clothing/suit/space/void/security/riot/alt
+	desc = "A surplus Solgov riot control voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_secalt_bay"
+	item_state = null
+	slowdown = 0.5
+
+/obj/item/clothing/head/helmet/space/void/security/riot/alt
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_secalt_bay"
+	item_state = null
+
+// Alt pilot suit
+/obj/item/clothing/suit/space/void/pilot/alt2
+	desc = "A surplus Solgov pilot voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_pilot_bay"
+	item_state = null
+	slowdown = 0
+
+/obj/item/clothing/head/helmet/space/void/pilot/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_pilot_bay"
+	item_state = null
+
+// Alt medical/emt suit
+/obj/item/clothing/suit/space/void/medical/alt2
+	desc = "A surplus Solgov medical voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_medicalalt_bay"
+	item_state = null
+	slowdown = 0
+
+/obj/item/clothing/head/helmet/space/void/medical/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_medicalalt_bay"
+	item_state = null
+
+// Alt explorer suit
+/obj/item/clothing/suit/space/void/exploration/alt2
+	desc = "A surplus Solgov exploration voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_explorer_bay"
+	item_state = null
+	slowdown = 0
+
+/obj/item/clothing/head/helmet/space/void/exploration/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_explorer_bay"
+	item_state = null
+
+// Alt engineering voidsuit
+/obj/item/clothing/suit/space/void/engineering/alt2
+	desc = "A surplus Solgov engineering voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_engineeringalt_bay"
+	item_state = null
+	slowdown = 0.5
+
+/obj/item/clothing/head/helmet/space/void/engineering/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_engineeringalt_bay"
+	item_state = null
+
+// Alt atmos voidsuit
+/obj/item/clothing/suit/space/void/atmos/alt2
+	desc = "A surplus Solgov atmospherics voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_atmosalt_bay"
+	item_state = null
+	slowdown = 0.5
+
+/obj/item/clothing/head/helmet/space/void/atmos/alt2
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_atmosalt_bay"
+	item_state = null
+
+// Alt command voidsuit
+/obj/item/clothing/suit/space/void/captain/alt
+	desc = "A surplus Solgov Navy captain voidsuit! Slightly more comfortable and easier to move in than your average voidsuit."
+
+	icon_state = "void_command_bay"
+	item_state = null
+	slowdown = 1.0
+
+/obj/item/clothing/head/helmet/space/void/captain/alt
+	desc = "A surplus Solgov voidsuit helmet. Seems more fancy than what's usually found on the frontier."
+
+	icon_state = "void_command_bay"
+	item_state = null
+	camera_networks = list(NETWORK_COMMAND)
+// CHOMPStation Edit End

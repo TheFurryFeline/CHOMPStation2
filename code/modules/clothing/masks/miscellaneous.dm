@@ -15,10 +15,10 @@
 	item_state_slots = list(slot_r_hand_str = null, slot_l_hand_str = null)
 	w_class = ITEMSIZE_TINY
 
-/obj/item/clothing/mask/muzzle/New()
-    ..()
-    say_messages = list("Mmfph!", "Mmmf mrrfff!", "Mmmf mnnf!")
-    say_verbs = list("mumbles", "says")
+/obj/item/clothing/mask/muzzle/Initialize(mapload)
+	. = ..()
+	say_messages = list("Mmfph!", "Mmmf mrrfff!", "Mmmf mnnf!")
+	say_verbs = list("mumbles", "says")
 
 // Clumsy folks can't take the mask off themselves.
 /obj/item/clothing/mask/muzzle/attack_hand(mob/living/user as mob)
@@ -39,21 +39,21 @@
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 60, rad = 0)
 	var/hanging = 0
 
-/obj/item/clothing/mask/surgical/proc/adjust_mask(mob_user)
-	if(usr.canmove && !usr.stat)
+/obj/item/clothing/mask/surgical/proc/adjust_mask(mob/user)
+	if(user.canmove && !user.stat)
 		src.hanging = !src.hanging
 		if (src.hanging)
 			gas_transfer_coefficient = 1
 			body_parts_covered = body_parts_covered & ~FACE
 			armor = list(melee = 0, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 0, rad = 0)
 			icon_state = "steriledown"
-			to_chat(usr, "You pull the mask below your chin.")
+			to_chat(user, "You pull the mask below your chin.")
 		else
 			gas_transfer_coefficient = initial(gas_transfer_coefficient)
 			body_parts_covered = initial(body_parts_covered)
 			icon_state = initial(icon_state)
 			armor = initial(armor)
-			to_chat(usr, "You pull the mask up to cover your face.")
+			to_chat(user, "You pull the mask up to cover your face.")
 		update_clothing_icon()
 
 /obj/item/clothing/mask/surgical/verb/toggle()
@@ -62,6 +62,24 @@
 	set src in usr
 
 	adjust_mask(usr)
+
+/obj/item/clothing/mask/surgical/white
+	icon_state = "sterilew"
+	item_state_slots = list(slot_r_hand_str = "sterilew", slot_l_hand_str = "sterilew")
+
+/obj/item/clothing/mask/surgical/dust
+	name = "dust mask"
+	desc = "A dust mask designed to protect the wearer against construction and/or custodial particulate."
+	icon_state = "dust"
+	item_state_slots = list(slot_r_hand_str = "dust", slot_l_hand_str = "dust")
+	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 30, rad = 0)
+
+/obj/item/clothing/mask/surgical/cloth
+	name = "cloth mask"
+	desc = "A cloth mask designed to protect the wearer against allergens, illnesses, and social interaction."
+	icon_state = "cloth"
+	item_state_slots = list(slot_r_hand_str = "cloth", slot_l_hand_str = "cloth")
+	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 20, rad = 0)
 
 /obj/item/clothing/mask/fakemoustache
 	name = "fake moustache"
@@ -79,6 +97,7 @@
 
 //scarves (fit in in mask slot)
 //None of these actually have on-mob sprites...
+/* //Lost to time.
 /obj/item/clothing/mask/bluescarf
 	name = "blue neck scarf"
 	desc = "A blue neck scarf."
@@ -105,11 +124,11 @@
 	item_flags = FLEXIBLEMATERIAL
 	w_class = ITEMSIZE_SMALL
 	gas_transfer_coefficient = 0.90
-
+*/
 /obj/item/clothing/mask/ninjascarf
 	name = "ninja scarf"
 	desc = "A stealthy, dark scarf."
-	icon_state = "ninja_scarf"
+	icon_state = "s-ninja"
 	body_parts_covered = FACE
 	item_flags = FLEXIBLEMATERIAL
 	w_class = ITEMSIZE_SMALL
@@ -169,7 +188,7 @@
 	body_parts_covered = HEAD|FACE|EYES
 	w_class = ITEMSIZE_SMALL
 	siemens_coefficient = 0.9
-
+/* //Lost to time.
 /obj/item/clothing/mask/nock_scarab
 	name = "nock mask (blue, scarab)"
 	desc = "To Nock followers, masks symbolize rebirth and a new persona. Damaging the wearer's mask is generally considered an attack on their person itself."
@@ -197,12 +216,12 @@
 	icon_state = "nock_ornate"
 	w_class = ITEMSIZE_SMALL
 	body_parts_covered = HEAD|FACE
-
-/obj/item/clothing/mask/horsehead/New()
-    ..()
-    // The horse mask doesn't cause voice changes by default, the wizard spell changes the flag as necessary
-    say_messages = list("NEEIIGGGHHHH!", "NEEEIIIIGHH!", "NEIIIGGHH!", "HAAWWWWW!", "HAAAWWW!")
-    say_verbs = list("whinnies", "neighs", "says")
+*/
+/obj/item/clothing/mask/horsehead/Initialize(mapload)
+	. = ..()
+	// The horse mask doesn't cause voice changes by default, the wizard spell changes the flag as necessary
+	say_messages = list("NEEIIGGGHHHH!", "NEEEIIIIGHH!", "NEIIIGGHH!", "HAAWWWWW!", "HAAAWWW!")
+	say_verbs = list("whinnies", "neighs", "says")
 
 /obj/item/clothing/mask/ai
 	name = "camera MIU"
@@ -213,10 +232,11 @@
 	body_parts_covered = 0
 	var/mob/observer/eye/aiEye/eye
 
-/obj/item/clothing/mask/ai/New()
+/obj/item/clothing/mask/ai/Initialize(mapload)
+	. = ..()
 	eye = new(src)
 
-/obj/item/clothing/mask/ai/equipped(var/mob/user, var/slot)
+/obj/item/clothing/mask/ai/equipped(mob/user, slot)
 	..(user, slot)
 	if(slot == slot_wear_mask)
 		eye.owner = user
@@ -226,7 +246,7 @@
 			c.remove(eye)
 		eye.setLoc(user)
 
-/obj/item/clothing/mask/ai/dropped(var/mob/user)
+/obj/item/clothing/mask/ai/dropped(mob/user, equipping, slot)
 	..()
 	if(eye.owner == user)
 		for(var/datum/chunk/c in eye.visibleChunks)
@@ -245,7 +265,7 @@
 	icon_state = "bandblack"
 	item_state_slots = list(slot_r_hand_str = "bandblack", slot_l_hand_str = "bandblack")
 
-/obj/item/clothing/mask/bandana/equipped(var/mob/user, var/slot)
+/obj/item/clothing/mask/bandana/equipped(mob/user, slot)
 	switch(slot)
 		if(slot_wear_mask) //Mask is the default for all the settings
 			flags_inv = initial(flags_inv)
@@ -295,3 +315,112 @@
 	w_class = ITEMSIZE_TINY
 	body_parts_covered = FACE
 	icon_state = "veil"
+
+/obj/item/clothing/mask/paper
+	name = "paper mask"
+	desc = "A neat, circular mask made out of paper. Perhaps you could try drawing on it with a pen!"
+	w_class = ITEMSIZE_SMALL
+	body_parts_covered = FACE
+	icon_state = "papermask"
+	actions_types = list(/datum/action/item_action/hands_free/redraw_design)
+	var/list/papermask_designs = list()
+	special_handling = TRUE
+
+/obj/item/clothing/mask/paper/Initialize(mapload)
+	. = ..()
+	papermask_designs = list(
+		"Blank" = image(icon = src.icon, icon_state = "papermask"),
+		"Neutral" = image(icon = src.icon, icon_state = "neutralmask"),
+		"Eyes" = image(icon = src.icon, icon_state = "eyemask"),
+		"Sleeping" = image(icon = src.icon, icon_state = "sleepingmask"),
+		"Heart" = image(icon = src.icon, icon_state = "heartmask"),
+		"Core" = image(icon = src.icon, icon_state = "coremask"),
+		"Plus" = image(icon = src.icon, icon_state = "plusmask"),
+		"Square" = image(icon = src.icon, icon_state = "squaremask"),
+		"Bullseye" = image(icon = src.icon, icon_state = "bullseyemask"),
+		"Vertical" = image(icon = src.icon, icon_state = "verticalmask"),
+		"Horizontal" = image(icon = src.icon, icon_state = "horizontalmask"),
+		"X" = image(icon = src.icon, icon_state = "xmask"),
+		"Bugeyes" = image(icon = src.icon, icon_state = "bugmask"),
+		"Double" = image(icon = src.icon, icon_state = "doublemask"),
+		"Mark" = image(icon = src.icon, icon_state = "markmask"),
+		"Line" = image(icon = src.icon, icon_state = "linemask"),
+		"Minus" = image(icon = src.icon, icon_state = "minusmask"),
+		"Four" = image(icon = src.icon, icon_state = "fourmask"),
+		"Diamond" = image(icon = src.icon, icon_state = "diamondmask"),
+		"Cat" = image(icon = src.icon, icon_state = "catmask"),
+		"Big Eyes" = image(icon = src.icon, icon_state = "bigeyemask"),
+		"Good" = image(icon = src.icon, icon_state = "goodmask"),
+		"Bad" = image(icon = src.icon, icon_state = "badmask"),
+		"Happy" = image(icon = src.icon, icon_state = "happymask"),
+		"Sad" = image(icon = src.icon, icon_state = "sadmask")
+		)
+
+/obj/item/clothing/mask/paper/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(!istype(user) || user.incapacitated())
+		return
+
+	var/static/list/options = list("Blank" = "papermask", "Neutral" = "neutralmask", "Eyes" = "eyemask",
+							"Sleeping" ="sleepingmask", "Heart" = "heartmask", "Core" = "coremask",
+							"Plus" = "plusmask", "Square" ="squaremask", "Bullseye" = "bullseyemask",
+							"Vertical" = "verticalmask", "Horizontal" = "horizontalmask", "X" ="xmask",
+							"Bugeyes" = "bugmask", "Double" = "doublemask", "Mark" = "markmask",
+							"Line" = "linemask", "Minus" = "minusmask", "Four" = "fourmask",
+							"Diamond" = "diamondmask", "Cat" = "catmask", "Big Eyes" = "bigeyemask",
+							"Good" = "goodmask", "Bad" = "badmask", "Happy" = "happymask", "Sad" = "sadmask"
+							)
+
+	var/choice = show_radial_menu(user, src, papermask_designs, custom_check = FALSE, radius = 36, require_near = TRUE)
+
+	if(src && choice && !user.incapacitated() && in_range(user,src))
+		icon_state = options[choice]
+		user.update_inv_wear_mask()
+		user.update_mob_action_buttons()
+		to_chat(user, span_notice("Your paper mask now is now [choice]."))
+
+/obj/item/clothing/mask/emotions
+	name = "emotional mask"
+	desc = "Express your happiness or hide your sorrows with this modular cutout. Draw your current emotions onto it with a pen!"
+	w_class = ITEMSIZE_SMALL
+	body_parts_covered = FACE
+	icon_state = "joy"
+	actions_types = list(/datum/action/item_action/hands_free/redraw_design)
+	var/static/list/joymask_designs = list()
+	special_handling = TRUE
+
+
+/obj/item/clothing/mask/emotions/Initialize(mapload)
+	. = ..()
+	joymask_designs = list(
+		"Joy" = image(icon = src.icon, icon_state = "joy"),
+		"Flushed" = image(icon = src.icon, icon_state = "flushed"),
+		"Pensive" = image(icon = src.icon, icon_state = "pensive"),
+		"Angry" = image(icon = src.icon, icon_state = "angry"),
+		)
+
+/obj/item/clothing/mask/emotions/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(!istype(user) || user.incapacitated())
+		return
+
+	var/static/list/options = list("Joy" = "joy", "Flushed" = "flushed", "Pensive" = "pensive","Angry" ="angry")
+
+	var/choice = show_radial_menu(user, src, joymask_designs, custom_check = FALSE, radius = 36, require_near = TRUE)
+
+	if(src && choice && !user.incapacitated() && in_range(user,src))
+		icon_state = options[choice]
+		user.update_inv_wear_mask()
+		user.update_mob_action_buttons()
+		to_chat(user, span_notice("Your [src] now displays a [choice] emotion."))
+
+/obj/item/clothing/mask/mouthwheat
+	name = "mouth wheat"
+	desc = "100% synthetic \"Country Girls LLC.\" brand mouth wheat. Warning: not for actual consumption."
+	icon_state = "mouthwheat"
+	w_class = ITEMSIZE_SMALL
+	body_parts_covered = 0

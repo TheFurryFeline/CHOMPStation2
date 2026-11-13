@@ -8,6 +8,10 @@
 	min_n2 = 0 //breathe N2
 	max_n2 = 0
 
+	species_sounds = "Vox"
+	pain_emote_1p = list("shriek")
+	pain_emote_3p = list("shrieks")
+
 /mob/living/simple_mob/vox/armalis
 	name = "serpentine alien"
 	real_name = "serpentine alien"
@@ -23,7 +27,6 @@
 	melee_damage_upper = 40
 	attacktext = "slammed its enormous claws into"
 	movement_cooldown = 2
-//	environment_smash_flags = SMASH_LIGHT_STRUCTURES | SMASH_CONTAINERS | SMASH_WALLS // WALLS Temporary commenting, YW - Hv3
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	status_flags = 0
 	max_oxy = 0
@@ -32,15 +35,15 @@
 	var/amp = null
 	var/quills = 3
 
-/mob/living/simple_mob/vox/armalis/death(var/gibbed = FALSE)
+/mob/living/simple_mob/vox/armalis/death(gibbed = FALSE)
 	..(TRUE)
 	var/turf/gloc = get_turf(loc)
-	visible_message("<span class='danger'><B>[src] shudders violently and explodes!</B>","<span class='warning'>You feel your body rupture!</span></span>")
+	visible_message(span_bolddanger("[src] shudders violently and explodes!"),span_warning("You feel your body rupture!"))
 	gib()
 	explosion(gloc, -1, -1, 3, 5)
 	qdel(src)
 
-/mob/living/simple_mob/vox/armalis/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vox/armalis/attackby(obj/item/O as obj, mob/user as mob)
 	base_attack_cooldown = 5
 	if(O.force)
 		if(O.force >= 25)
@@ -50,16 +53,16 @@
 			health -= damage
 			for(var/mob/M in viewers(src, null))
 				if ((M.client && !( M.blinded )))
-					M.show_message("<span class='danger'>[src] has been attacked with the [O] by [user]. </span>")
+					M.show_message(span_danger("[src] has been attacked with the [O] by [user]. "))
 		else
 			for(var/mob/M in viewers(src, null))
 				if ((M.client && !( M.blinded )))
-					M.show_message("<span class='danger'>The [O] bounces harmlessly off of [src]. </span>")
+					M.show_message(span_danger("The [O] bounces harmlessly off of [src]. "))
 	else
-		to_chat(usr, "<span class='warning'>This weapon is ineffective, it does no damage.</span>")
+		to_chat(usr, span_warning("This weapon is ineffective, it does no damage."))
 		for(var/mob/M in viewers(src, null))
 			if ((M.client && !( M.blinded )))
-				M.show_message("<span class='warning'>[user] gently taps [src] with the [O]. </span>")
+				M.show_message(span_warning("[user] gently taps [src] with the [O]. "))
 
 /mob/living/simple_mob/vox/armalis/verb/fire_quill(mob/target as mob in oview())
 
@@ -71,18 +74,18 @@
 	if(quills<=0)
 		return
 
-	to_chat(src, "<span class='warning'>You launch a razor-sharp quill at [target]!</span>")
+	to_chat(src, span_warning("You launch a razor-sharp quill at [target]!"))
 	for(var/mob/O in oviewers())
 		if ((O.client && !( O.blinded )))
-			to_chat(O, "<span class='warning'>[src] launches a razor-sharp quill at [target]!</span>")
+			to_chat(O, span_warning("[src] launches a razor-sharp quill at [target]!"))
 
-	var/obj/item/weapon/arrow/quill/Q = new(loc)
-	Q.fingerprintslast = src.ckey
+	var/obj/item/arrow/quill/Q = new(loc)
+	Q.add_fingerprint(ckey)
 	Q.throw_at(target,10,30)
 	quills--
 
 	spawn(100)
-		to_chat(src, "<span class='warning'>You feel a fresh quill slide into place.</span>")
+		to_chat(src, span_warning("You feel a fresh quill slide into place."))
 		quills++
 
 /mob/living/simple_mob/vox/armalis/verb/message_mob()
@@ -95,8 +98,8 @@
 	var/text = null
 
 	targets += getmobs() //Fill list, prompt user with list
-	target = input("Select a creature!", "Speak to creature", null, null) as null|anything in targets
-	text = input("What would you like to say?", "Speak to creature", null, null)
+	target = tgui_input_list(src, "Select a creature!", "Speak to creature", targets)
+	text = tgui_input_text(src, "What would you like to say?", "Speak to creature")
 
 	if (!target || !text)
 		return
@@ -107,12 +110,12 @@
 		to_chat(src, "Not even the armalis can speak to the dead.")
 		return
 
-	to_chat(M, "<span class='notice'>Like lead slabs crashing into the ocean, alien thoughts drop into your mind: [text]</span>")
+	to_chat(M, span_notice("Like lead slabs crashing into the ocean, alien thoughts drop into your mind: [text]"))
 	if(istype(M,/mob/living/carbon/human))
 		var/mob/living/carbon/human/H = M
 		if(H.species.name == "Vox")
 			return
-		to_chat(H, "<span class='warning'>Your nose begins to bleed...</span>")
+		to_chat(H, span_warning("Your nose begins to bleed..."))
 		H.drip(1)
 
 /mob/living/simple_mob/vox/armalis/verb/shriek()
@@ -120,20 +123,20 @@
 	set name = "Shriek"
 	set desc = "Give voice to a psychic shriek."
 
-/mob/living/simple_mob/vox/armalis/attackby(var/obj/item/O as obj, var/mob/user as mob)
+/mob/living/simple_mob/vox/armalis/attackby(obj/item/O as obj, mob/user as mob)
 	if(istype(O,/obj/item/vox/armalis_armour))
-		user.drop_item(O, src, force_drop = 1)
+		user.drop_item(O)
 		armour = O
 		movement_cooldown = 4
 		maxHealth += 200
 		health += 200
-		visible_message("<span class='notice'>[src] is quickly outfitted in [O] by [user].</span>","<span class='notice'>You quickly outfit [src] in [O].</span>")
+		visible_message(span_notice("[src] is quickly outfitted in [O] by [user]."),span_notice("You quickly outfit [src] in [O]."))
 		regenerate_icons()
 		return
 	if(istype(O,/obj/item/vox/armalis_amp))
-		user.drop_item(O, src, force_drop = 1)
+		user.drop_item(O)
 		amp = O
-		visible_message("<span class='notice'>[src] is quickly outfitted in [O] by [user].</span>","<span class='notice'>You quickly outfit [src] in [O].</span>")
+		visible_message(span_notice("[src] is quickly outfitted in [O] by [user]."),span_notice("You quickly outfit [src] in [O]."))
 		regenerate_icons()
 		return
 	return ..()
@@ -154,7 +157,7 @@
 
 	name = "strange armour"
 	desc = "Hulking reinforced armour for something huge."
-	icon = 'icons/obj/clothing/suits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "armalis_armour"
 	item_state = "armalis_armour"
 
@@ -162,6 +165,6 @@
 
 	name = "strange lenses"
 	desc = "A series of metallic lenses and chains."
-	icon = 'icons/obj/clothing/hats.dmi'
+	icon = 'icons/inventory/head/item.dmi'
 	icon_state = "amp"
 	item_state = "amp"

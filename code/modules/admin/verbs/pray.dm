@@ -1,44 +1,43 @@
-/mob/verb/pray(msg as text)
-	set category = "IC"
+/mob/verb/pray()
+	set category = "IC.Game"
 	set name = "Pray"
 
-	if(say_disabled)	//This is here to try to identify lag problems
-		to_chat(usr, "<font color='red'>Speech is currently admin-disabled.</font>")
-		return
+	var/raw_msg = tgui_input_text(src, "Prayers are sent to staff but do not open tickets or go to Discord. If you have a technical difficulty or an event/spice idea/hook - please ahelp instead. Thank you!", "Pray", null, MAX_MESSAGE_LEN)
+	if(!raw_msg)	return
 
-	msg = sanitize(msg)
-	if(!msg)	return
-
-	if(usr.client)
-		if(msg)
+	if(src.client)
+		if(raw_msg)
 			client.handle_spam_prevention(MUTE_PRAY)
-			if(usr.client.prefs.muted & MUTE_PRAY)
-				to_chat(usr, "<font color='red'> You cannot pray (muted).</font>")
+			if(src.client.prefs.muted & MUTE_PRAY)
+				to_chat(src, span_red("You cannot pray (muted)."))
 				return
 
-	var/image/cross = image('icons/obj/storage.dmi',"bible")
-	msg = "<font color='blue'>[bicon(cross)] <b><font color=purple>PRAY: </font>[key_name(src, 1)] (<A HREF='?_src_=holder;adminmoreinfo=\ref[src]'>?</A>) (<A HREF='?_src_=holder;adminplayeropts=\ref[src]'>PP</A>) (<A HREF='?_src_=vars;Vars=\ref[src]'>VV</A>) (<A HREF='?_src_=holder;subtlemessage=\ref[src]'>SM</A>) ([admin_jump_link(src, src)]) (<A HREF='?_src_=holder;secretsadmin=check_antagonist'>CA</A>) (<A HREF='?_src_=holder;adminspawncookie=\ref[src]'>SC</a>) (<A HREF='?_src_=holder;adminsmite=\ref[src]'>SMITE</a>):</b> [msg]</font>"
+	var/icon/cross = icon('icons/obj/storage.dmi',"bible")
+	var/msg = span_filter_pray(span_blue("[icon2html(cross, GLOB.admins)] <b>" + span_purple("PRAY: ") + "[key_name(src, 1)] [ADMIN_QUE(src)] [ADMIN_PP(src)] [ADMIN_VV(src)] [ADMIN_SM(src)] ([admin_jump_link(src, src)]) [ADMIN_CA(src)] [ADMIN_SC(src)] [ADMIN_SMITE(src)]:</b> [raw_msg]"))
 
 	for(var/client/C in GLOB.admins)
-		if(R_ADMIN|R_EVENT & C.holder.rights)
-			if(C.is_preference_enabled(/datum/client_preference/admin/show_chat_prayers))
-				to_chat(C,msg)
-				C << 'sound/effects/ding.ogg'
-	to_chat(usr, "Your prayers have been received by the gods.")
+		if(!check_rights_for(C, R_ADMIN|R_EVENT)) //CHOMPEdit
+			continue
+		if(C.prefs?.read_preference(/datum/preference/toggle/show_chat_prayers))
+			to_chat(C, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+			C << 'sound/effects/ding.ogg'
+	to_chat(src, "Your prayers have been received by the gods.", confidential = TRUE)
 
 	feedback_add_details("admin_verb","PR") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-	//log_admin("HELP: [key_name(src)]: [msg]")
+	log_prayer("[src.key]/([src.name]): [raw_msg]")
 
-/proc/CentCom_announce(var/msg, var/mob/Sender, var/iamessage)
-	msg = "<font color='blue'><b><font color=orange>[uppertext(using_map.boss_short)]M[iamessage ? " IA" : ""]:</font>[key_name(Sender, 1)] (<A HREF='?_src_=holder;adminplayeropts=\ref[Sender]'>PP</A>) (<A HREF='?_src_=vars;Vars=\ref[Sender]'>VV</A>) (<A HREF='?_src_=holder;subtlemessage=\ref[Sender]'>SM</A>) ([admin_jump_link(Sender, src)]) (<A HREF='?_src_=holder;secretsadmin=check_antagonist'>CA</A>) (<A HREF='?_src_=holder;BlueSpaceArtillery=\ref[Sender]'>BSA</A>) (<A HREF='?_src_=holder;CentComReply=\ref[Sender]'>RPLY</A>):</b> [msg]</font>"
-	for(var/client/C in GLOB.admins)
-		if(R_ADMIN|R_EVENT & C.holder.rights)
-			to_chat(C,msg)
-			C << 'sound/machines/signal.ogg'
+/proc/CentCom_announce(msg, mob/Sender, iamessage)
+	msg = span_blue(span_bold(span_orange("[uppertext(using_map.boss_short)]M[iamessage ? " IA" : ""]:") + "[key_name(Sender, 1)] [ADMIN_PP(Sender)] [ADMIN_VV(Sender)] [ADMIN_SM(Sender)] ([admin_jump_link(Sender)]) [ADMIN_CA(Sender)] [ADMIN_BSA(Sender)] [ADMIN_CENTCOM_REPLY(Sender)]:") + " [msg]")
+	for(var/client/C in GLOB.admins) //VOREStation Edit - GLOB admins
+		if(!check_rights_for(C, R_ADMIN|R_EVENT)) //CHOMPEdit
+			continue
+		to_chat(C,msg)
+		C << 'sound/machines/signal.ogg'
 
-/proc/Syndicate_announce(var/msg, var/mob/Sender)
-	msg = "<font color='blue'><b><font color=crimson>ILLEGAL:</font>[key_name(Sender, 1)] (<A HREF='?_src_=holder;adminplayeropts=\ref[Sender]'>PP</A>) (<A HREF='?_src_=vars;Vars=\ref[Sender]'>VV</A>) (<A HREF='?_src_=holder;subtlemessage=\ref[Sender]'>SM</A>) ([admin_jump_link(Sender, src)]) (<A HREF='?_src_=holder;secretsadmin=check_antagonist'>CA</A>) (<A HREF='?_src_=holder;BlueSpaceArtillery=\ref[Sender]'>BSA</A>) (<A HREF='?_src_=holder;SyndicateReply=\ref[Sender]'>RPLY</A>):</b> [msg]</font>"
-	for(var/client/C in GLOB.admins)
-		if(R_ADMIN|R_EVENT & C.holder.rights)
-			to_chat(C,msg)
-			C << 'sound/machines/signal.ogg'
+/proc/Syndicate_announce(msg, mob/Sender)
+	msg = span_blue(span_bold(span_crimson("ILLEGAL:") + "[key_name(Sender, 1)] [ADMIN_PP(Sender)] [ADMIN_VV(Sender)] [ADMIN_SM(Sender)] ([admin_jump_link(Sender)]) [ADMIN_CA(Sender)] [ADMIN_BSA(Sender)] [ADMIN_SYNDICATE_REPLY(Sender)]:") + " [msg]")
+	for(var/client/C in GLOB.admins) //VOREStation Edit - GLOB admins
+		if(!check_rights_for(C, R_ADMIN|R_EVENT)) //CHOMPEdit
+			continue
+		to_chat(C,msg)
+		C << 'sound/machines/signal.ogg'

@@ -18,43 +18,47 @@
 #define SOUND_MINIMUM_PRESSURE 10
 #define FALLOFF_SOUNDS 0.5
 
-//Sound environment defines. Reverb preset for sounds played in an area, see sound datum reference for more.
-#define GENERIC 0
-#define PADDED_CELL 1
-#define ROOM 2
-#define BATHROOM 3
-#define LIVINGROOM 4
-#define STONEROOM 5
-#define AUDITORIUM 6
-#define CONCERT_HALL 7
-#define CAVE 8
-#define ARENA 9
-#define HANGAR 10
-#define CARPETED_HALLWAY 11
-#define HALLWAY 12
-#define STONE_CORRIDOR 13
-#define ALLEY 14
-#define FOREST 15
-#define CITY 16
-#define MOUNTAINS 17
-#define QUARRY 18
-#define PLAIN 19
-#define PARKING_LOT 20
-#define SEWER_PIPE 21
-#define UNDERWATER 22
-#define DRUGGED 23
-#define DIZZY 24
-#define PSYCHOTIC 25
+#define MAX_INSTRUMENT_CHANNELS (128 * 6)
 
-#define STANDARD_STATION STONEROOM
-#define LARGE_ENCLOSED HANGAR
-#define SMALL_ENCLOSED BATHROOM
-#define TUNNEL_ENCLOSED CAVE
-#define LARGE_SOFTFLOOR CARPETED_HALLWAY
-#define MEDIUM_SOFTFLOOR LIVINGROOM
-#define SMALL_SOFTFLOOR ROOM
-#define ASTEROID CAVE
-#define SPACE UNDERWATER
+//default byond sound environments
+#define SOUND_ENVIRONMENT_NONE -1
+#define SOUND_ENVIRONMENT_GENERIC 0
+#define SOUND_ENVIRONMENT_PADDED_CELL 1
+#define SOUND_ENVIRONMENT_ROOM 2
+#define SOUND_ENVIRONMENT_BATHROOM 3
+#define SOUND_ENVIRONMENT_LIVINGROOM 4
+#define SOUND_ENVIRONMENT_STONEROOM 5
+#define SOUND_ENVIRONMENT_AUDITORIUM 6
+#define SOUND_ENVIRONMENT_CONCERT_HALL 7
+#define SOUND_ENVIRONMENT_CAVE 8
+#define SOUND_ENVIRONMENT_ARENA 9
+#define SOUND_ENVIRONMENT_HANGAR 10
+#define SOUND_ENVIRONMENT_CARPETED_HALLWAY 11
+#define SOUND_ENVIRONMENT_HALLWAY 12
+#define SOUND_ENVIRONMENT_STONE_CORRIDOR 13
+#define SOUND_ENVIRONMENT_ALLEY 14
+#define SOUND_ENVIRONMENT_FOREST 15
+#define SOUND_ENVIRONMENT_CITY 16
+#define SOUND_ENVIRONMENT_MOUNTAINS 17
+#define SOUND_ENVIRONMENT_QUARRY 18
+#define SOUND_ENVIRONMENT_PLAIN 19
+#define SOUND_ENVIRONMENT_PARKING_LOT 20
+#define SOUND_ENVIRONMENT_SEWER_PIPE 21
+#define SOUND_ENVIRONMENT_UNDERWATER 22
+#define SOUND_ENVIRONMENT_DRUGGED 23
+#define SOUND_ENVIRONMENT_DIZZY 24
+#define SOUND_ENVIRONMENT_PSYCHOTIC 25
+//If we ever make custom ones add them here
+
+#define STANDARD_STATION SOUND_ENVIRONMENT_STONEROOM
+#define LARGE_ENCLOSED SOUND_ENVIRONMENT_HANGAR
+#define SMALL_ENCLOSED SOUND_ENVIRONMENT_BATHROOM
+#define TUNNEL_ENCLOSED SOUND_ENVIRONMENT_CAVE
+#define LARGE_SOFTFLOOR SOUND_ENVIRONMENT_CARPETED_HALLWAY
+#define MEDIUM_SOFTFLOOR SOUND_ENVIRONMENT_LIVINGROOM
+#define SMALL_SOFTFLOOR SOUND_ENVIRONMENT_ROOM
+#define ASTEROID SOUND_ENVIRONMENT_CAVE
+#define SPACE SOUND_ENVIRONMENT_UNDERWATER
 
 // Ambience presets.
 // All you need to do to make an area play one of these is set their ambience var to one of these lists.
@@ -160,10 +164,11 @@
 	'sound/ambience/ai/ai3.ogg'\
 	)
 
-// Peaceful sounds when floating in the void.
+// Peaceful sounds when floating in the void. //CHOMPedit, added title2, my nostalgia okay?
 #define AMBIENCE_SPACE list(\
 	'sound/ambience/space/space_serithi.ogg',\
-	'sound/ambience/space/space1.ogg'\
+	'sound/ambience/space/space1.ogg',\
+	'sound/music/title2.ogg'\
 	)
 
 // Vaguely spooky sounds when around dead things.
@@ -178,9 +183,12 @@
 	'sound/ambience/foreboding/foreboding2.ogg'\
 	)
 
-// Ambience heard when aboveground on Sif and not in a Point of Interest.
+// Ambience heard when aboveground on Sif and not in a Point of Interest. // CHOMPEdit: Changed to Snowbirds Loops 1-4
 #define AMBIENCE_SIF list(\
-	'sound/ambience/sif/sif1.ogg'\
+	'sound/ambience/snow_and_ice/Snowbirds_loop1.ogg',\
+	'sound/ambience/snow_and_ice/Snowbirds_loop2.ogg',\
+	'sound/ambience/snow_and_ice/Snowbirds_loop3.ogg',\
+	'sound/ambience/snow_and_ice/Snowbirds_loop4.ogg'\
 	)
 
 // If we ever add geothermal PoIs or other places that are really hot, this will do.
@@ -199,13 +207,13 @@
 	)
 
 //CHOMPedit: Exploration outpost ambience. Current tracks taken from Rainworld and Natural Selection 2.
-#define AMBIENCE_EXPOUTPOST list(\
+#define AMBIENCE_OUTPOST list(\
 	'sound/ambience/expoutpost/expoutpost1.ogg',\
 	'sound/ambience/expoutpost/expoutpost2.ogg',\
 	'sound/ambience/expoutpost/expoutpost3.ogg',\
 	'sound/ambience/expoutpost/expoutpost4.ogg'\
 	)
-	
+
 //CHOMP Edit Sounds for Substation rooms. Just electrical sounds, really.
 #define AMBIENCE_SUBSTATION list(\
 	'sound/ambience/substation/substation1.ogg',\
@@ -217,7 +225,7 @@
 	'sound/ambience/substation/substation7.ogg',\
 	'sound/ambience/substation/substation8.ogg'\
 	)
-	
+
 #define AMBIENCE_HANGAR list(\
 	'sound/ambience/hangar/hangar1.ogg',\
 	'sound/ambience/hangar/hangar2.ogg',\
@@ -232,4 +240,19 @@
 	'sound/ambience/engineering/engineering2.ogg',\
 	'sound/ambience/engineering/engineering3.ogg',\
 	'sound/ambience/atmospherics/atmospherics1.ogg'\
+	)
+
+// CHOMPEdit: New Planet Ambience
+#define AMBIENCE_THOR list(\
+	'sound/ambience/thor/birds_stinger1.ogg',\
+	'sound/ambience/thor/birds_stinger2.ogg',\
+	'sound/ambience/thor/birds_stinger3.ogg'\
+)
+
+// Credits:
+// These are spliced audio extracts from "Casino - Las Vegas Slot Machines" by martialway47, on freesound.org.
+#define AMBIENCE_CASINO list(\
+	'sound/ambience/casino/casino_1.ogg',\
+	'sound/ambience/casino/casino_2.ogg',\
+	'sound/ambience/casino/casino_3.ogg'\
 	)

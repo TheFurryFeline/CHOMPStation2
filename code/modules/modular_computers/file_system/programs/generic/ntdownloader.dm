@@ -16,31 +16,38 @@
 
 	var/datum/computer_file/program/downloaded_file = null
 	var/hacked_download = 0
-	var/download_completion = 0 //GQ of downloaded data.
+	///GQ of downloaded data.
+	var/download_completion = 0
 	var/download_netspeed = 0
 	var/downloaderror = ""
-	var/obj/item/modular_computer/my_computer = null
 	var/list/downloads_queue[0]
+
+	var/file_info
+	var/server
+	usage_flags = PROGRAM_ALL
+	category = PROG_UTIL
+
+	var/obj/item/modular_computer/my_computer = null
 
 /datum/computer_file/program/ntnetdownload/kill_program()
 	..()
 	abort_file_download()
 
-/datum/computer_file/program/ntnetdownload/proc/begin_file_download(var/filename)
+/datum/computer_file/program/ntnetdownload/proc/begin_file_download(filename)
 	if(downloaded_file)
 		return 0
 
-	var/datum/computer_file/program/PRG = ntnet_global.find_ntnet_file_by_name(filename)
+	var/datum/computer_file/program/PRG = GLOB.ntnet_global.find_ntnet_file_by_name(filename)
 
 	if(!check_file_download(filename))
 		return 0
 
 	ui_header = "downloader_running.gif"
 
-	if(PRG in ntnet_global.available_station_software)
+	if(PRG in GLOB.ntnet_global.available_station_software)
 		generate_network_log("Began downloading file [PRG.filename].[PRG.filetype] from NTNet Software Repository.")
 		hacked_download = 0
-	else if(PRG in ntnet_global.available_antag_software)
+	else if(PRG in GLOB.ntnet_global.available_antag_software)
 		generate_network_log("Began downloading file **ENCRYPTED**.[PRG.filetype] from unspecified server.")
 		hacked_download = 1
 	else
@@ -49,9 +56,9 @@
 
 	downloaded_file = PRG.clone()
 
-/datum/computer_file/program/ntnetdownload/proc/check_file_download(var/filename)
+/datum/computer_file/program/ntnetdownload/proc/check_file_download(filename)
 	//returns 1 if file can be downloaded, returns 0 if download prohibited
-	var/datum/computer_file/program/PRG = ntnet_global.find_ntnet_file_by_name(filename)
+	var/datum/computer_file/program/PRG = GLOB.ntnet_global.find_ntnet_file_by_name(filename)
 
 	if(!PRG || !istype(PRG))
 		return 0
@@ -147,9 +154,10 @@
 	data["disk_size"] = my_computer.hard_drive.max_capacity
 	data["disk_used"] = my_computer.hard_drive.used_capacity
 	var/list/all_entries[0]
-	for(var/datum/computer_file/program/P in ntnet_global.available_station_software)
-		// Only those programs our user can run will show in the list
-		if(!P.can_run(user) && P.requires_access_to_download || my_computer.hard_drive.find_file_by_name(P.filename))
+	for(var/datum/computer_file/program/P in GLOB.ntnet_global.available_station_software)
+		// Only those programs our user can run will show in the list.
+		// Pass the card inserted in the laptop's slot so slotted IDs are respected.
+		if(!P.can_run(user, 0, null, my_computer.card_slot?.stored_card) && P.requires_access_to_download || my_computer.hard_drive.find_file_by_name(P.filename))
 			continue
 		all_entries.Add(list(list(
 			"filename" = P.filename,
@@ -162,7 +170,7 @@
 	data["hackedavailable"] = FALSE
 	if(computer_emagged) // If we are running on emagged computer we have access to some "bonus" software
 		var/list/hacked_programs[0]
-		for(var/datum/computer_file/program/P in ntnet_global.available_antag_software)
+		for(var/datum/computer_file/program/P in GLOB.ntnet_global.available_antag_software)
 			if(my_computer.hard_drive.find_file_by_name(P.filename))
 				continue
 			data["hackedavailable"] = TRUE

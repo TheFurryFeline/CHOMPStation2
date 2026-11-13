@@ -7,10 +7,10 @@
 	machine_understands = 0
 	flags = RESTRICTED | HIVEMIND
 
-/datum/language/ling/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
-
-	if(speaker.mind && speaker.mind.changeling)
-		..(speaker,message,speaker.mind.changeling.changelingID)
+/datum/language/ling/broadcast(mob/living/speaker,message,speaker_mask)
+	var/datum/component/antag/changeling/comp = speaker.GetComponent(/datum/component/antag/changeling)
+	if(speaker.mind && comp)
+		..(speaker,message,comp.changelingID)
 	else
 		..(speaker,message)
 
@@ -25,7 +25,7 @@
 	machine_understands = 0
 	flags = RESTRICTED | HIVEMIND
 
-/datum/language/corticalborer/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
+/datum/language/corticalborer/broadcast(mob/living/speaker,message,speaker_mask)
 
 	var/mob/living/simple_mob/animal/borer/B
 
@@ -74,39 +74,29 @@
 		"gal'h'rfikk", "harfrandid", "mud'gib", "il", "fuu", "ma'jin", "dedo", "ol'btoh", "n'ath", "reth", "sh'yro", "eth", \
 		"d'rekkathnor", "khari'd", "gual'te", "nikka", "nikt'o", "barada", "kla'atu", "barhah", "hra" ,"zar'garis", "spiri", "malum")
 
-/datum/language/cult
-	name = LANGUAGE_OCCULT
-	desc = "The initiated can share their thoughts by means defying all reason."
-	speech_verb = "intones"
-	ask_verb = "intones"
-	exclaim_verb = "chants"
-	colour = "cult"
-	key = "y"
-	machine_understands = 0
-	flags = RESTRICTED | HIVEMIND
-
 /datum/language/xenocommon
 	name = "Xenolingua" //CHOMPedit
 	colour = "alien"
-	desc = "The common tongue of both the xenomorphs and the Genaprawns." //CHOMPedit
+	desc = "The common tongue of both the xenomorphs and the Genaprawns."
 	speech_verb = "hisses"
 	ask_verb = "hisses"
 	exclaim_verb = "hisses"
 	key = "u"
-	flags = RESTRICTED
+// 	flags = RESTRICTED // CHOMPedit: Anyone can use it.
 	syllables = list("sss","sSs","SSS")
 
 /datum/language/xenos
-	name = "Hivemind"
-	desc = "Some aliens have the strange ability to commune over a psychic hivemind." //CHOMPedit
+	name = LANGUAGE_HIVEMIND
+	desc = "A psychic link permitting members of a xenomorph hive to communicate over enormous distances. Requires a specialized organ only found in xenomorph specimens." //CHOMPedit
+	machine_understands = 0 // CHOMPedit: Borgs and AI can't figure this one out.
 	speech_verb = "hisses"
 	ask_verb = "hisses"
 	exclaim_verb = "hisses"
 	colour = "alien"
 	key = "a"
-	flags = RESTRICTED | HIVEMIND
+	flags = /*RESTRICTED |*/ HIVEMIND // CHOMPedit: Restricted makes it inaccessible.
 
-/datum/language/xenos/check_special_condition(var/mob/other)
+/datum/language/xenos/check_special_condition(mob/other)
 
 	var/mob/living/carbon/M = other
 	if(!istype(M))
@@ -143,33 +133,7 @@
 	"danya","da","mied","zan","das","krem","myka","cyka","blyat","to","st","no","na","ni",
 	"ko","ne","en","po","ra","li","on","byl","cto","eni","ost","ol","ego","ver","stv","pro")
 
-//For your event purposes.
-/datum/language/occursus
-	name = LANGUAGE_EVENT1
-	desc = "The Powers That Be have seen it fit to grace you with a special language that sounds like... something. This description should be overridden by the time you see this."
-	speech_verb = "says"
-	ask_verb = "asks"
-	exclaim_verb = "shouts"
-	colour = "warning"
-	key = "]"
-	flags = RESTRICTED
-	syllables = list("chan","ange","thi","se")
-
-//Bloblang.
-/datum/language/blob
-	name = LANGUAGE_BLOB
-	desc = "The massive processing power of the Blob's core gives the overmind finely tuned abilities to transmit messages to nearby life-forms through chemical signals."
-	speech_verb = "resonates"
-	ask_verb = "reverberates"
-	exclaim_verb = "shudders"
-	colour = "blob"
-	key = "}"
-	machine_understands = TRUE
-	flags = RESTRICTED
-
-	syllables = list("^", "˅", "-", "°", "~")
-
-/datum/language/corticalborer/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
+/datum/language/corticalborer/broadcast(mob/living/speaker,message,speaker_mask)
 
 	var/mob/living/simple_mob/animal/borer/B
 

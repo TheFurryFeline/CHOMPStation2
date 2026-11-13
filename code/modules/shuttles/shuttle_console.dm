@@ -10,18 +10,25 @@
 
 	var/skip_act = FALSE
 	var/tgui_subtemplate = "ShuttleControlConsoleDefault"
+	var/ai_control = TRUE	//VOREStation Edit - AI/Borgs shouldn't really be flying off in ships without crew help //ChompStation Edit: Flying is better prevented by restricting the helm console if wanted. This is only an unnecessary nuisance that also breaks various other uses for the shuttle console.
 
 /obj/machinery/computer/shuttle_control/attack_hand(user as mob)
 	if(..(user))
 		return
+	//VOREStation Addition Start
+	if(!ai_control && issilicon(user))
+		to_chat(user, span_warning("Access Denied."))
+		return TRUE
+	//VOREStation Addition End
+
 	//src.add_fingerprint(user)	//shouldn't need fingerprints just for looking at it.
 	if(!allowed(user))
-		to_chat(user, "<span class='warning'>Access Denied.</span>")
+		to_chat(user, span_warning("Access Denied."))
 		return 1
 
 	tgui_interact(user)
 
-/obj/machinery/computer/shuttle_control/proc/shuttlerich_tgui_data(var/datum/shuttle/autodock/shuttle)
+/obj/machinery/computer/shuttle_control/proc/shuttlerich_tgui_data(datum/shuttle/autodock/shuttle)
 	var/shuttle_state
 	switch(shuttle.moving_status)
 		if(SHUTTLE_IDLE) shuttle_state = "idle"
@@ -61,41 +68,41 @@
 
 // This is a subset of the actual checks; contains those that give messages to the user.
 // This enables us to give nice error messages as well as not even bother proceeding if we can't.
-/obj/machinery/computer/shuttle_control/proc/can_move(var/datum/shuttle/autodock/shuttle, var/user)
+/obj/machinery/computer/shuttle_control/proc/can_move(datum/shuttle/autodock/shuttle, user)
 	var/cannot_depart = shuttle.current_location.cannot_depart(shuttle)
 	if(cannot_depart)
-		to_chat(user, "<span class='warning'>[cannot_depart]</span>")
+		to_chat(user, span_warning("[cannot_depart]"))
 		if(shuttle.debug_logging)
 			log_shuttle("Shuttle [shuttle] cannot depart [shuttle.current_location] because: [cannot_depart].")
 		return FALSE
 	if(!shuttle.next_location.is_valid(shuttle))
-		to_chat(user, "<span class='warning'>Destination zone is invalid or obstructed.</span>")
+		to_chat(user, span_warning("Destination zone is invalid or obstructed."))
 		if(shuttle.debug_logging)
 			log_shuttle("Shuttle [shuttle] destination [shuttle.next_location] is invalid.")
 		return FALSE
 	return TRUE
 
-/obj/machinery/computer/shuttle_control/tgui_act(action, list/params)
+/obj/machinery/computer/shuttle_control/tgui_act(action, list/params, datum/tgui/ui)
 	if(..())
 		return TRUE
 	if(skip_act)
 		return
 
-	add_fingerprint(usr)
+	add_fingerprint(ui.user)
 
 	var/datum/shuttle/autodock/shuttle = SSshuttles.shuttles[shuttle_tag]
 	if(!istype(shuttle))
-		to_chat(usr, "<span class='warning'>Unable to establish link with the shuttle.</span>")
+		to_chat(ui.user, span_warning("Unable to establish link with the shuttle."))
 		return TRUE
 
 	switch(action)
 		if("move")
-			if(can_move(shuttle, usr))
+			if(can_move(shuttle, ui.user))
 				shuttle.launch(src)
 			return TRUE
 
 		if("force")
-			if(can_move(shuttle, usr))
+			if(can_move(shuttle, ui.user))
 				shuttle.force_launch(src)
 			return TRUE
 
@@ -104,7 +111,7 @@
 			return TRUE
 
 		if("set_codes")
-			var/newcode = input("Input new docking codes", "Docking codes", shuttle.docking_codes) as text|null
+			var/newcode = tgui_input_text(ui.user, "Input new docking codes", "Docking codes", shuttle.docking_codes, MAX_NAME_LEN)
 			if(newcode && !..())
 				shuttle.set_docking_codes(uppertext(newcode))
 			return TRUE
@@ -119,19 +126,19 @@
 /obj/machinery/computer/shuttle_control/tgui_data(mob/user)
 	var/datum/shuttle/autodock/shuttle = SSshuttles.shuttles[shuttle_tag]
 	if(!istype(shuttle))
-		to_chat(user, "<span class='warning'>Unable to establish link with the shuttle.</span>")
+		to_chat(user, span_warning("Unable to establish link with the shuttle."))
 		return
 
 	return shuttlerich_tgui_data(shuttle)
 
 // Call to set the linked shuttle tag; override to add behaviour to shuttle tag changes
-/obj/machinery/computer/shuttle_control/proc/set_shuttle_tag(var/new_shuttle_tag)
+/obj/machinery/computer/shuttle_control/proc/set_shuttle_tag(new_shuttle_tag)
 	if(shuttle_tag == new_shuttle_tag)
 		return FALSE
 	shuttle_tag = new_shuttle_tag
 	return TRUE
 
-/obj/machinery/computer/shuttle_control/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/computer/shuttle_control/emag_act(remaining_charges, mob/user)
 	if (!hacked)
 		req_access = list()
 		req_one_access = list()
@@ -139,30 +146,23 @@
 		to_chat(user, "You short out the console's ID checking system. It's now available to everyone!")
 		return 1
 
-/obj/machinery/computer/shuttle_control/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/computer/shuttle_control/bullet_act(obj/item/projectile/Proj)
 	visible_message("\The [Proj] ricochets off \the [src]!")
 
 /obj/machinery/computer/shuttle_control/ex_act()
 	return
 
-/obj/machinery/computer/shuttle_control/emp_act()
-	return
-
-
-GLOBAL_LIST_BOILERPLATE(papers_dockingcode, /obj/item/weapon/paper/dockingcodes)
-/hook/roundstart/proc/populate_dockingcodes()
-	for(var/paper in GLOB.papers_dockingcode)
-		var/obj/item/weapon/paper/dockingcodes/dcp = paper
-		dcp.populate_info()
-	return TRUE
-
-/obj/item/weapon/paper/dockingcodes
+/obj/item/paper/dockingcodes
 	name = "Docking Codes"
 	var/codes_from_z = null //So you can put codes from the station other places to give to antags or whatever
 
-/obj/item/weapon/paper/dockingcodes/proc/populate_info()
+/obj/item/paper/dockingcodes/proc/populate_info()
 	var/dockingcodes = null
-	var/z_to_check = codes_from_z ? codes_from_z : z
+	var/turf/T = get_turf(src)
+	var/our_z
+	if(T)
+		our_z = T.z
+	var/z_to_check = codes_from_z ? codes_from_z : our_z
 	if(using_map.use_overmap)
 		var/obj/effect/overmap/visitable/location = get_overmap_sector(z_to_check)
 		if(location && location.docking_codes)

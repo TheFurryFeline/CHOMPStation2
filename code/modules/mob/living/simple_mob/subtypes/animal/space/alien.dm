@@ -8,7 +8,7 @@
 	icon_gib = "syndicate_gib"
 	icon_rest = "alienh_sleep"
 
-	faction = "xeno"
+	faction = FACTION_XENO
 
 	mob_class = MOB_CLASS_ABERRATION
 
@@ -30,7 +30,13 @@
 	attacktext = list("slashed")
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/xenomeat
+	meat_type = /obj/item/reagent_containers/food/snacks/xenomeat
+	meat_amount = 5
+
+	can_be_drop_prey = FALSE
+
+	export_research_value = TECHWEB_TIER_2_POINTS
+	export_research_diminished_max = 4
 
 /mob/living/simple_mob/animal/space/alien/drone
 	name = "alien drone"
@@ -68,7 +74,7 @@
 	old_x = -16
 	icon_expected_width = 64
 	icon_expected_height = 64
-	meat_amount = 5
+	meat_amount = 8
 
 /mob/living/simple_mob/animal/space/alien/queen
 	name = "alien queen"
@@ -84,7 +90,7 @@
 	projectilesound = 'sound/weapons/pierce.ogg'
 
 
-	movement_cooldown = 8
+	movement_cooldown = 3
 
 /mob/living/simple_mob/animal/space/alien/queen/empress
 	name = "alien empress"
@@ -95,7 +101,7 @@
 	icon_rest = "queen_sleep"
 	maxHealth = 400
 	health = 400
-	meat_amount = 5
+	meat_amount = 15
 
 	pixel_x = -16
 	old_x = -16
@@ -111,7 +117,7 @@
 	icon_rest = "empress_rest"
 	maxHealth = 600
 	health = 600
-	meat_amount = 10
+	meat_amount = 40
 	melee_damage_lower = 15
 	melee_damage_upper = 25
 

@@ -1,30 +1,20 @@
 //Red Color Fix
 /datum/material/cloth_red
-    name = "carpet" //This is the easiest fix but god do i hate it -shark
-    display_name = "red"
-    use_name = "red cloth"
-    icon_colour = "#DA020A"
-    flags = MATERIAL_PADDING
-    ignition_point = T0C+232
-    melting_point = T0C+300
-    protectiveness = 1 // 4%
-    conductive = 0
+	name = "carpet" //This is the easiest fix but god do i hate it -shark
+	display_name = "red"
+	use_name = "red cloth"
+	icon_colour = "#DA020A"
+	flags = MATERIAL_PADDING
+	ignition_point = T0C+232
+	melting_point = T0C+300
+	protectiveness = 1 // 4%
+	conductive = 0
+	supply_conversion_value = 0
 
 //CARPET materials
 
 /datum/material/carpet
-	name = MAT_CARPET
-	display_name = "comfy"
-	use_name = "upholstery"
-	icon_colour = "#DB2626"
-	flags = MATERIAL_PADDING
 	stack_type = /obj/item/stack/tile/carpet
-	ignition_point = T0C+232
-	melting_point = T0C+300
-	sheet_singular_name = "tile"
-	sheet_plural_name = "tiles"
-	protectiveness = 1 // 4%
-	conductive = 0
 
 /datum/material/carpet/teal
 	name = MAT_CARPET_TEAL

@@ -1,4 +1,4 @@
-/obj/item/weapon/gun/energy/laser
+/obj/item/gun/energy/laser
 	icon = 'icons/obj/64x32guns_ch.dmi'
 	icon_state = "lcarbine"
 	name = "NT LC-525 Laser Rifle"
@@ -8,25 +8,25 @@
 	var/is64x32_override = FALSE
 	var/is_picked_up = FALSE
 
-/obj/item/weapon/gun/energy/laser/equipped()
+/obj/item/gun/energy/laser/equipped(mob/living/user, slot)
 	. = ..()
 	is_picked_up = TRUE
 	update_transform()
 
-/obj/item/weapon/gun/energy/laser/pickup()
+/obj/item/gun/energy/laser/pickup()
 	. = ..()
 	is_picked_up = TRUE
 	update_transform()
 
-/obj/item/weapon/gun/energy/laser/dropped()
+/obj/item/gun/energy/laser/dropped(mob/user, equipping, slot)
 	. = ..()
 	if(!istype(loc,/mob/living))
 		is_picked_up = FALSE
 	update_transform()
 
-/obj/item/weapon/gun/energy/laser/Initialize()
+/obj/item/gun/energy/laser/Initialize(mapload)
 	. = ..()
-	if((!(type == /obj/item/weapon/gun/energy/laser)) && !is64x32_override)
+	if((!(type == /obj/item/gun/energy/laser)) && !is64x32_override)
 		is64x32 = FALSE
 		if(icon_expected_width == 64)
 			icon_expected_width = 32
@@ -35,23 +35,23 @@
 	if(is64x32)
 		update_transform()
 
-/obj/item/weapon/gun/energy/laser/update_transform()
+/obj/item/gun/energy/laser/update_transform()
 	. = ..()
 	if(is64x32)
 		if(is_picked_up)
 			transform = transform.Turn(-45)
 		transform = transform.Translate(-16,0)
 
-/obj/item/weapon/gun/energy/laser/empty
+/obj/item/gun/energy/laser/empty
 	is64x32_override = TRUE
 
-/obj/item/weapon/gun/energy/laser/mounted
+/obj/item/gun/energy/laser/mounted
 	is64x32_override = TRUE
 
-/obj/item/weapon/gun/energy/laser/practice
+/obj/item/gun/energy/laser/practice
 	is64x32_override = TRUE
 
-/obj/item/weapon/gun/energy/laser/vepr
+/obj/item/gun/energy/laser/vepr
 	name = "WKHM 'Vepr'"
 	desc = "The Vepr lasgun, in 40 Watt range. One of the most robust laser rifles out there, but not one that's commonly seen. This piece is WKHM's latest entry into the energy weapon market, competing with the Hephaestus Industries G40E. Uses its own proprietary energy cells. It has three settings, standard, suppressive, and burst. This one bears the 'WKHM Adamant' arkship's production stamp."
 	description_fluff = "WKHM, is a minor arms company that has been around for quite some time, established in 2408. Known for being one of the many suppliers of weapons to dangerous worlds on the rim, and a part of the FTU. They produce a large variety of firearms, strike craft, and armored vehicles to fufill various their various contracts, and are largely migrant, moving wherever the money is. Found almost entirely on mobile production ships and various escort craft. Identifiable by their logo, a red Omega symbol with a black or white W in the middle. The sheer quantity of their firearms produced ensures they can be found.. just about anywhere, and they are very sought after by pirates for their reliability."
@@ -60,25 +60,132 @@
 	firemodes = list(
 		list(mode_name="normal", fire_delay=8, projectile_type=/obj/item/projectile/beam/midlaser, charge_cost = 240),
 		list(mode_name="suppressive", fire_delay=5, projectile_type=/obj/item/projectile/beam/weaklaser, charge_cost = 60),
-		list(mode_name="burst", burst=3, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, charge_cost = 200),
+		list(mode_name="burst", burst=3, fire_delay=null, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, charge_cost = 200),
 		)
 	force = 8
 	w_class = ITEMSIZE_HUGE		//Probably gonna make it a rifle sooner or later //CHOMP Edit, and so I did.
 	slot_flags = SLOT_BELT|SLOT_BACK //CHOMP Edit. Let's make it so that if it doesn't fit in a backpack, it doesn't fit in a holster either.
 	is64x32_override = TRUE
-	accept_cell_type = /obj/item/weapon/cell/vepr
-	cell_type = /obj/item/weapon/cell/vepr
-	origin_tech = list(TECH_POWER = 4, TECH_COMBAT = 6, TECH_MAGNET = 4, TECH_ILLEGAL = 4)
+	accept_cell_type = /obj/item/cell/vepr
+	cell_type = /obj/item/cell/vepr
 
-/obj/item/weapon/cell/vepr
+/obj/item/cell/vepr
+	name = "VEPR cell"
 	icon = 'icons/obj/ammo_ch.dmi'
 	icon_state = "veprcell"
 	item_state = "egg6"
 	w_class = ITEMSIZE_SMALL
 	maxcharge = 7200
+	charge = 7200
 	charge_amount = 20
-	matter = list("metal" = 350, "glass" = 50)
+	matter = list(MAT_METAL = 350, MAT_GLASS = 50)
 	preserve_item = 1
-	overlay_half_state = "veprcell_o1"
-	overlay_full_state = "veprcell_o2"
-	origin_tech = list(TECH_POWER = 6)
+
+/obj/item/gun/energy/tommylaser
+	name = "M-2421 'Tommy-Laser'"
+	desc = "A automatic laser weapon resembling a Tommy-Gun. Designed by Cybersun Industries to be a man portable supressive fire laser weapon."
+	icon_state = "etommy"
+	item_state = "etommy"
+	w_class = ITEMSIZE_LARGE
+	slot_flags = SLOT_BACK
+	charge_cost = 60 // 40 shots, lay down the firepower
+	projectile_type = /obj/item/projectile/beam/weaklaser
+	cell_type = /obj/item/cell/device/weapon
+
+	firemodes = list(
+		list(mode_name="single shot", burst = 1, fire_delay=4, burst_accuracy = null, dispersion = null),
+		list(mode_name="three shot bursts", burst=3, fire_delay=10,    burst_accuracy=list(65,65,65), dispersion=list(1,1,1)),
+		list(mode_name="short bursts",	burst=5, fire_delay=10, burst_accuracy = list(65,65,65,65,65), dispersion = list(4,4,4,4,4)),
+		)
+
+/obj/item/gun/energy/vepr/plasma
+	name = "WKHM 'Vepr-Prisma'"
+	desc = "The Vepr-Prisma plasma rifle, in 40 Watt range. A very robust version of the Vepr lasrifle, made to fire energized bolts of plasma. The Vepr-Prisma is very uncommon, reserved mainly for W-K's internal security forces, and organizations with lots of money to spend. Lacks a burst mode, but it probably doesn't need it. This one bears the 'WKHM Adamant' arkship's production stamp."
+	description_fluff = "WKHM, is a minor arms company that has been around for quite some time, established in 2408. Known for being one of the many suppliers of weapons to dangerous worlds on the rim, and a part of the FTU. They produce a large variety of firearms, strike craft, and armored vehicles to fufill various their various contracts, and are largely migrant, moving wherever the money is. Found almost entirely on mobile production ships and various escort craft. Identifiable by their logo, a red Omega symbol with a black or white W in the middle. The sheer quantity of their firearms produced ensures they can be found.. just about anywhere, and they are very sought after by pirates for their reliability."
+	icon_expected_width = 64
+	icon = 'icons/obj/64x32guns_ch.dmi'
+	icon_state = "vepr"
+	fire_delay = 0.5
+	projectile_type = /obj/item/projectile/energy/plasma/vepr
+	force = 8
+	w_class = ITEMSIZE_HUGE		//Probably gonna make it a rifle sooner or later //CHOMP Edit, and so I did.
+	slot_flags = SLOT_BELT|SLOT_BACK //CHOMP Edit. Let's make it so that if it doesn't fit in a backpack, it doesn't fit in a holster either.
+	var/is64x32_override = TRUE
+	accept_cell_type = /obj/item/cell/vepr
+	cell_type = /obj/item/cell/vepr
+
+/obj/item/gun/energy/plasma/x16b
+	name = "X16b plasma carbine"
+	desc = "An advanced plasma caster, used by elite Black Hole fanatics. Light, powerful, and concealable. Uses it's own proprietary batteries."
+	icon_expected_width = 64
+	icon = 'modular_chomp/icons/blackhole/pre-gatteningx64.dmi'
+	icon_state = "x16b"
+	fire_delay = 0.5
+	projectile_type = /obj/item/projectile/energy/plasma/vepr/blackhole
+	force = 8
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/blackhole/mobs_lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/blackhole/mobs_righthand.dmi',
+		)
+	item_state = "x16b"
+	wielded_item_state = "x16b_w"
+	firemodes = list(
+		list(mode_name="single shot", burst = 1, fire_delay=1, burst_accuracy = null, dispersion = null),
+		list(mode_name="three shot bursts", burst=3, fire_delay=5,    burst_accuracy=list(65,65,65), dispersion=list(1,1,1)),
+		list(mode_name="short bursts",	burst=5, fire_delay=5, burst_accuracy = list(65,65,65,65,65), dispersion = list(4,4,4,4,4)),
+		)
+
+	w_class = ITEMSIZE_NORMAL
+	slot_flags = SLOT_BELT|SLOT_BACK
+	var/is64x32_override = TRUE
+	accept_cell_type = /obj/item/cell/x16b
+	cell_type = /obj/item/cell/x16b
+
+/obj/item/cell/x16b
+	name = "plasma canister"
+	desc = "An ominous silver plated cylinder. Quite weighty, and it makes an ominous sloshing sound when you shake it."
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "plasma"
+	item_state = "egg6"
+	w_class = ITEMSIZE_SMALL
+	maxcharge = 7200
+	charge = 7200
+	charge_amount = 20
+	matter = list(MAT_DURASTEEL = 350, MAT_GLASS = 50, MAT_PHORON = 1000)
+	preserve_item = 1
+
+/obj/item/gun/energy/laser/las91f
+	name = "Las91f retro laser rifle"
+	desc = "The Las91f is a rare example of modern illegal hellfire laser tech, approved only for use by government forces, and even then, only in rare cases. Uses it's own proprietary batteries."
+	icon_expected_width = 64
+	icon = 'modular_chomp/icons/blackhole/pre-gatteningx64.dmi'
+	icon_state = "las91f"
+	fire_delay = 1
+	projectile_type = /obj/item/projectile/beam/hellfire
+	force = 18
+	charge_cost = 80
+	item_icons = list(
+		slot_l_hand_str = 'modular_chomp/icons/blackhole/mobs_lefthand.dmi',
+		slot_r_hand_str = 'modular_chomp/icons/blackhole/mobs_righthand.dmi',
+		)
+	item_state = "las91f"
+	wielded_item_state = "las91f_w"
+	firemodes = null
+	w_class = ITEMSIZE_LARGE
+	slot_flags = SLOT_BELT|SLOT_BACK
+	is64x32_override = TRUE
+	accept_cell_type = /obj/item/cell/las91f
+	cell_type = /obj/item/cell/las91f
+
+/obj/item/cell/las91f
+	name = "retro laser canister"
+	desc = "An old school retro laser battery. Heavy and cumbersome, these are used by the illegal 'hellfire' lasers of days past. Or by select Government forces."
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "retrolas"
+	item_state = "egg6"
+	w_class = ITEMSIZE_NORMAL
+	maxcharge = 2000
+	charge = 2000
+	charge_amount = 20
+	matter = list(MAT_DURASTEEL = 350, MAT_GLASS = 50, MAT_URANIUM = 1000)
+	preserve_item = 1

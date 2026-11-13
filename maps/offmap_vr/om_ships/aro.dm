@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "aro.dmm"
 #endif
 
@@ -7,7 +7,7 @@
 /datum/map_template/om_ships/aro
 	name = "OM Ship - Aronai (New Z)"
 	desc = "It's Aronai! As a spaceship."
-	mappath = 'aro.dmm'
+	mappath = "maps/offmap_vr/om_ships/aro.dmm"
 
 // The shuttle's area(s)
 /area/ship/aro
@@ -45,7 +45,6 @@
 /obj/effect/overmap/visitable/ship/aro
 	name = "Aronai Sieyes"
 	desc = "It's Aronai. Did you know he's actually a spaceship? Yeah it's weird."
-	color = "#00aaff" //Bluey
 	vessel_mass = 8000
 	vessel_size = SHIP_SIZE_SMALL
 	initial_generic_waypoints = list("aronai_fore", "aronai_aft", "aronai_port", "aronai_starboard")
@@ -60,7 +59,7 @@
 /obj/machinery/computer/shuttle_control/explore/aroboat
 	name = "boat control console"
 	shuttle_tag = "Aro's Ship's Boat"
-	req_one_access = list(access_cent_general)
+	req_one_access = list(ACCESS_CENT_GENERAL)
 
 // A shuttle lateloader landmark
 /obj/effect/shuttle_landmark/shuttle_initializer/aroboat

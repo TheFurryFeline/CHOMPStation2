@@ -148,15 +148,15 @@
 	return
 
 /obj/effect/ebeam/deadly/Crossed(atom/A)
+	. = ..()
 	if(A.is_incorporeal())
 		return
-	..()
 	A.ex_act(1)
 
 // 'Reactive' beam parts do something when touched or stood in.
 /obj/effect/ebeam/reactive
 
-/obj/effect/ebeam/reactive/Initialize()
+/obj/effect/ebeam/reactive/Initialize(mapload)
 	START_PROCESSING(SSobj, src)
 	return ..()
 
@@ -194,7 +194,7 @@
 
 
 
-/atom/proc/Beam(atom/BeamTarget,icon_state="b_beam",icon='icons/effects/beam.dmi',time=50, maxdistance=10,beam_type=/obj/effect/ebeam,beam_sleep_time=3,beam_color = null)
+/atom/proc/Beam(atom/BeamTarget, icon_state="b_beam", icon='icons/effects/beam.dmi', time=50, maxdistance=10, beam_type=/obj/effect/ebeam, beam_sleep_time=3, beam_color = null)
 	var/datum/beam/newbeam = new(src,BeamTarget,icon,icon_state,time,maxdistance,beam_type,beam_sleep_time,beam_color)
 	spawn(0)
 		newbeam.Start()

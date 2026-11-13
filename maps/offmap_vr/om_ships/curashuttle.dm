@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "curashuttle.dmm"
 #endif
 
@@ -7,7 +7,7 @@
 /datum/map_template/om_ships/curabiturmedical
 	name = "OM Ship - Curabitur Rescue Shuttle (new Z)"
 	desc = "A small corporate rescue shuttle."
-	mappath = 'curashuttle.dmm'
+	mappath = "maps/offmap_vr/om_ships/curashuttle.dmm"
 	annihilate = TRUE
 
 // The shuttle's area(s)
@@ -56,12 +56,11 @@
 
 // The 'ship'
 /obj/effect/overmap/visitable/ship/landable/curashuttle
-	scanner_name = "CRV Doom Delay"
+	name = "CRV Doom Delay"
 	scanner_desc = @{"[i]Registration[/i]: Curabitur Scimed
 [i]Class[/i]: Small Shuttle
 [i]Transponder[/i]: Transmitting (CIV), non-hostile
 [b]Notice[/b]: Small private vessel"}
-	color = "#01A9DB"
 	vessel_mass = 2000
 	vessel_size = SHIP_SIZE_TINY
 	shuttle = "Cura"

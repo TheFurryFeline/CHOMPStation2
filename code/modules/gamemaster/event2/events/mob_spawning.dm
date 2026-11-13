@@ -16,7 +16,7 @@
 
 	// Check if any landmarks exist!
 	var/list/spawn_locations = list()
-	for(var/obj/effect/landmark/C in landmarks_list)
+	for(var/obj/effect/landmark/C in GLOB.landmarks_list)
 		if(C.name == landmark_name && (C.z in valid_z_levels))
 			spawn_locations.Add(C.loc)
 
@@ -66,10 +66,9 @@
 			// In the future, a new AI stance that handles long distance travel using getline() could work.
 			var/max_distance = 8
 			var/turf/spawn_turf = null
-			for(var/P in space_line)
-				var/turf/point = P
+			for(var/turf/point as anything in space_line)
 				if(get_dist(point, edge_of_station) <= max_distance)
-					spawn_turf = P
+					spawn_turf = point
 					break
 
 			if(spawn_turf)
@@ -81,19 +80,19 @@
 
 /datum/event2/event/mob_spawning/proc/spawn_one_mob(new_loc, mob_type)
 	var/mob/living/simple_mob/M = new mob_type(new_loc)
-	GLOB.destroyed_event.register(M, src, .proc/on_mob_destruction)
+	RegisterSignal(M, COMSIG_OBSERVER_DESTROYED, PROC_REF(on_mob_destruction))
 	spawned_mobs += M
 	return M
 
 // Counts living simple_mobs spawned by this event.
 /datum/event2/event/mob_spawning/proc/count_spawned_mobs()
 	. = 0
-	for(var/I in spawned_mobs)
-		var/mob/living/simple_mob/M = I
+	for(var/mob/living/simple_mob/M as anything in spawned_mobs)
 		if(!QDELETED(M) && M.stat != DEAD)
 			. += 1
 
 // If simple_mob is bomphed, remove it from the list.
 /datum/event2/event/mob_spawning/proc/on_mob_destruction(mob/M)
+	SIGNAL_HANDLER
 	spawned_mobs -= M
-	GLOB.destroyed_event.unregister(M, src, .proc/on_mob_destruction)
+	UnregisterSignal(M, COMSIG_OBSERVER_DESTROYED)

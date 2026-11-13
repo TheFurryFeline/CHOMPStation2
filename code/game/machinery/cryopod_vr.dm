@@ -8,6 +8,23 @@
 /obj/machinery/cryopod/robot
 	spawnpoint_type = /datum/spawnpoint/cyborg
 
+// Used at centcomm for the elevator
+/obj/machinery/cryopod/robot/door/dorms
+	spawnpoint_type = /datum/spawnpoint/tram
+
+///Door specifically for a site in tether. Or other places that uses a 2x1 glass door.
+/obj/machinery/cryopod/robot/door/dorms/tether_glass
+	name = "elevator"
+	desc = "A small elevator"
+	base_icon_state = "door_closed"
+	icon = 'icons/obj/doors/Door2x1glass.dmi'
+	icon_state = "door_closed"
+	on_enter_occupant_message = "The elevator doors close slowly. You can now head off for the residential, commercial, and other floors.";
+	on_store_message = "has departed for one of the various colony floors"
+	on_store_name = "Colony Oversight"
+	on_store_visible_message_2 = "to the colony districts."
+	time_till_despawn = 5
+
 /obj/machinery/cryopod/robot/door/gateway
 	name = "public teleporter"
 	desc = "The short-range teleporter you might've came in from. You could leave easily using this."
@@ -33,25 +50,25 @@
 	desc = "An interface between visitors and the residential oversight systems tasked with keeping track of all visitors in the residential district."
 */
 
-/obj/machinery/cryopod/proc/log_special_item(var/atom/movable/item,var/mob/to_despawn)
+/obj/machinery/cryopod/proc/log_special_item(atom/movable/item,mob/to_despawn)
 	ASSERT(item && to_despawn)
-	
+
 	var/loaded_from_key
 	var/char_name = to_despawn.name
 	var/item_name = item.name
-	
+
 	// Best effort key aquisition
 	if(ishuman(to_despawn))
 		var/mob/living/carbon/human/H = to_despawn
 		if(H.original_player)
 			loaded_from_key = H.original_player
-	
+
 	if(!loaded_from_key && to_despawn.mind && to_despawn.mind.loaded_from_ckey)
 		loaded_from_key = to_despawn.mind.loaded_from_ckey
-	
+
 	else
 		loaded_from_key = "INVALID"
-	
+
 	// Log to harrass them later
 	log_game("CRYO [loaded_from_key]/([to_despawn.name]) cryo'd with [item_name] ([item.type])")
 	qdel(item)

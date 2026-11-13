@@ -3,9 +3,9 @@
 	desc = "Some sort of wolf, a descendent or otherwise of regular Earth canidae. They look almost exactly like their \
 	Earth counterparts, except for the fact that their fur is a uniform grey. Some do show signs of unique coloration, and they \
 	love to nip and bite at things, as well as sniffing around. They seem to mark their territory by way of scent-marking/urinating on things."
-	value = CATALOGUER_REWARD_MEDIUM
+	value = CATALOGUER_REWARD_EASY
 
-/mob/living/simple_mob/animal/wolf
+/mob/living/simple_mob/vore/wolf
 	name = "grey wolf"
 	desc = "My, what big jaws it has!"
 	tt_desc = "Canis lupus"
@@ -19,30 +19,49 @@
 	response_disarm = "bops"
 	response_harm = "hits"
 
-	movement_cooldown = 5
+	movement_cooldown = 1.5
 
 	harm_intent_damage = 5
 	melee_damage_lower = 5
 	melee_damage_upper = 12
 
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
+	meat_amount = 5
+
 	minbodytemp = 200
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee/evasive
+	catalogue_data = list(/datum/category_item/catalogue/fauna/wolf)
 
-// Activate Noms!
-/mob/living/simple_mob/animal/wolf
-	vore_active = 1
+	allow_mind_transfer = TRUE
+	vore_active = TRUE
+	vore_capacity = 1
 	vore_icons = SA_ICON_LIVING
 
+	can_be_drop_prey = FALSE
+	species_sounds = "Canine"
+	pain_emote_1p = list("yelp", "whine", "bark", "growl")
+	pain_emote_3p = list("yelps", "whines", "barks", "growls")
+
+/mob/living/simple_mob/vore/wolf/load_default_bellies()
+	. = ..()
+
+	var/obj/belly/B = vore_selected
+	B.vore_sound = "Tauric Swallow"
+	B.release_sound = "Pred Escape"
+	B.fancy_vore = 1
+	B.belly_fullscreen_color = "#c47cb4"
+	B.belly_fullscreen = "VBOanim_belly1"
+
 // Space edition, stronger and bitier
-/mob/living/simple_mob/animal/wolf/space
+/mob/living/simple_mob/vore/wolf/space
 	name = "space wolf"
 	tt_desc = "Canis lupus aetherius"
 
 	health = 40
 	maxHealth = 40
 
-	movement_cooldown = 3
+	movement_cooldown = 0
 
 	harm_intent_damage = 5
 	melee_damage_lower = 10
@@ -59,10 +78,10 @@
 	minbodytemp = 0
 	maxbodytemp = 700
 
-/mob/living/simple_mob/animal/wolf/space/Process_Spacemove(var/check_drift = 0)
+/mob/living/simple_mob/vore/wolf/space/Process_Spacemove(check_drift = 0)
 	return TRUE
 
-/mob/living/simple_mob/animal/wolf/direwolf
+/mob/living/simple_mob/vore/wolf/direwolf
 	name = "dire wolf"
 	desc = "The biggest and baddest wolf around."
 	tt_desc = "Canis maxdirus"
@@ -92,18 +111,19 @@
 	buckle_lying = FALSE
 	vore_icons = SA_ICON_LIVING | SA_ICON_REST
 
-/mob/living/simple_mob/animal/wolf/direwolf/Login()
+/mob/living/simple_mob/vore/wolf/direwolf/Login()
 	. = ..()
 	if(!riding_datum)
 		riding_datum = new /datum/riding/simple_mob(src)
-	verbs |= /mob/living/simple_mob/proc/animal_mount
-	verbs |= /mob/living/proc/toggle_rider_reins
-	movement_cooldown = 2
+	add_verb(src, /mob/living/simple_mob/proc/animal_mount)
+	add_verb(src, /mob/living/proc/toggle_rider_reins)
+	add_verb(src,/mob/living/simple_mob/proc/pick_color)
+	movement_cooldown = -1
 
-/mob/living/simple_mob/animal/wolf/direwolf/MouseDrop_T(mob/living/M, mob/living/user)
+/mob/living/simple_mob/vore/wolf/direwolf/MouseDrop_T(mob/living/M, mob/living/user)
 	return
 
-/mob/living/simple_mob/animal/wolf/direwolf/dog
+/mob/living/simple_mob/vore/wolf/direwolf/dog
 	name = "large dog"
 	desc = "The biggest and goodest dog around."
 	tt_desc = "Canis maxdirus familiaris"
@@ -112,7 +132,7 @@
 	icon_state = "diredog"
 	icon_rest = "diredog_rest"
 
-/mob/living/simple_mob/animal/wolf/direwolf/dog/sec
+/mob/living/simple_mob/vore/wolf/direwolf/dog/sec
 	name = "large guard dog"
 	desc = "The biggest and goodest guard dog around."
 	icon_dead = "diredogs-dead"
@@ -120,7 +140,7 @@
 	icon_state = "diredogs"
 	icon_rest = "diredogs_rest"
 
-/mob/living/simple_mob/animal/wolf/direwolf/sec
+/mob/living/simple_mob/vore/wolf/direwolf/sec
 	name = "dire guard wolf"
 	desc = "The biggest and baddest guard wolf around."
 	icon_dead = "direwolfs-dead"
@@ -128,7 +148,8 @@
 	icon_state = "direwolfs"
 	icon_rest = "direwolfs_rest"
 
-/mob/living/simple_mob/animal/wolf/direwolf/rykka
+/* CHOMPRemove Start - disable unique user-related content
+/mob/living/simple_mob/vore/wolf/direwolf/rykka
 	name = "Rykka"
 	desc = "This big canine looks like a GSD. It has a collar tagged, 'Bitch'"
 	tt_desc = "Canidae"
@@ -137,7 +158,7 @@
 	icon_living = "rykka"
 	icon_state = "rykka"
 	icon_rest = "rykka_rest"
-	faction = "underdark"
+	faction = FACTION_UNDERDARK
 	has_eye_glow = TRUE
 
 	min_oxy = 0
@@ -161,8 +182,9 @@
 	vore_pounce_maxhealth = 100
 	vore_stomach_name = "Gut"
 	vore_stomach_flavor = "A black-and-purple veined gut, pulsing warmly around you. Loud gurgles sound around you as the gut squishes inwards and attempts to crush you - Rykka seems intent on digesting you, like the meat you are."
+*/// CHOMPRemove End
 
-/mob/living/simple_mob/animal/wolf/direwolf/andrews
+/mob/living/simple_mob/vore/wolf/direwolf/andrews
 	name = "andrewsarchus"
 	desc = "That's one massive mean-looking piece of long extinct megafauna."
 	tt_desc = "Andrewsarchus mongoliensis"

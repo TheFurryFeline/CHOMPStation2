@@ -6,61 +6,30 @@
 	var/obj/machinery/filler_object/filler2
 	open_sound_powered = 'sound/machines/door/WideOpen.ogg'
 	close_sound_powered = 'sound/machines/door/WideClose.ogg'
+	update_adjacent_tiles = FALSE
 
-/obj/machinery/door/airlock/multi_tile/New()
-	..()
-	SetBounds()
-	if(opacity)
-		create_fillers()
-
-/obj/machinery/door/airlock/multi_tile/Destroy()
-	QDEL_NULL(filler1)
-	QDEL_NULL(filler2)
-	return ..()
-
-/obj/machinery/door/airlock/multi_tile/Moved(atom/old_loc, direction, forced = FALSE)
+/obj/machinery/door/airlock/multi_tile/Initialize(mapload)
 	. = ..()
 	SetBounds()
+	apply_opacity_to_my_turfs(opacity)
 
-/obj/machinery/door/airlock/multi_tile/open()
+/obj/machinery/door/airlock/multi_tile/set_opacity()
 	. = ..()
+	apply_opacity_to_my_turfs(opacity)
 
-	if(filler1)
-		filler1.set_opacity(opacity)
-		if(filler2)
-			filler2.set_opacity(opacity)
-
-	return .
-
-/obj/machinery/door/airlock/multi_tile/close()
-	. = ..()
-
-	if(filler1)
-		filler1.set_opacity(opacity)
-		if(filler2)
-			filler2.set_opacity(opacity)
-
-	return .
+/obj/machinery/door/airlock/multi_tile/proc/apply_opacity_to_my_turfs(new_opacity)
+	for(var/turf/T in locs)
+		T.set_opacity(new_opacity)
+	update_nearby_tiles()
 
 /obj/machinery/door/airlock/multi_tile/proc/SetBounds()
+	SIGNAL_HANDLER
 	if(dir in list(EAST, WEST))
 		bound_width = width * world.icon_size
 		bound_height = world.icon_size
 	else
 		bound_width = world.icon_size
 		bound_height = width * world.icon_size
-
-/obj/machinery/door/airlock/multi_tile/proc/create_fillers()
-	if(src.dir > 3)
-		filler1 = new/obj/machinery/filler_object (src.loc)
-		filler2 = new/obj/machinery/filler_object (get_step(src,EAST))
-	else
-		filler1 = new/obj/machinery/filler_object (src.loc)
-		filler2 = new/obj/machinery/filler_object (get_step(src,NORTH))
-	filler1.density = 0
-	filler2.density = 0
-	filler1.set_opacity(opacity)
-	filler2.set_opacity(opacity)
 
 /obj/machinery/door/airlock/multi_tile/glass
 	name = "Glass Airlock"
@@ -74,12 +43,6 @@
 	icon = 'icons/obj/doors/Door2x1metal.dmi'
 	assembly_type = /obj/structure/door_assembly/multi_tile
 
-/obj/machinery/filler_object
-	name = ""
-	icon = 'icons/obj/doors/rapid_pdoor.dmi'
-	icon_state = ""
-	density = 0
-
 /obj/machinery/door/airlock/multi_tile/metal/mait
 	icon = 'icons/obj/doors/Door2x1_Maint.dmi'
-	//req_one_access = list(access_maint_tunnels) //VOREStaiton Edit - Maintenance is open access
+	//req_one_access = list(ACCESS_MAINT_TUNNELS) //VOREStaiton Edit - Maintenance is open access

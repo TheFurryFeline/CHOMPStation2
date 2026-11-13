@@ -1,18 +1,18 @@
 /obj/item/projectile/beam/phaser //The "medium" phaser beam.
-	damage = 10
-	SA_bonus_damage = 40
-	SA_vulnerability = list(SA_ANIMAL, MOB_CLASS_SYNTHETIC, MOB_CLASS_ABERRATION, MOB_CLASS_HUMANOID)
+	damage = 20
+	mob_bonus_damage = 20
 	icon = 'icons/obj/projectiles_ch.dmi'
 	icon_state = "phaser"
 	light_color = "#F18F12"
 	muzzle_type = /obj/effect/projectile/muzzle/phaser
 	tracer_type = /obj/effect/projectile/tracer/phaser
 	impact_type = /obj/effect/projectile/impact/phaser
-	
+	hud_state = "laser_heat"
+
 
 /obj/item/projectile/beam/phaser/light
-	damage = 5
-	SA_bonus_damage = 30
+	damage = 10
+	mob_bonus_damage = 10
 	icon_state = "phaser_light"
 	light_range = 1.5
 	light_power = 0.3
@@ -20,8 +20,10 @@
 	tracer_type = /obj/effect/projectile/tracer/phaser/light
 	impact_type = /obj/effect/projectile/impact/phaser/light
 
+
 /obj/item/projectile/beam/phaser/heavy
-	SA_bonus_damage = 55
+	damage = 30
+	mob_bonus_damage = 30
 	icon_state = "phaser_heavy"
 	light_range = 3
 	light_power = 1
@@ -29,9 +31,11 @@
 	tracer_type = /obj/effect/projectile/tracer/phaser/heavy
 	impact_type = /obj/effect/projectile/impact/phaser/heavy
 
+
 /obj/item/projectile/beam/phaser/heavy/cannon
-	damage = 15
-	SA_bonus_damage = 60
+	damage = 40
+	mob_bonus_damage = 40
+
 
 /obj/effect/projectile/tracer/phaser
 	icon = 'icons/obj/projectiles_ch.dmi'
@@ -84,3 +88,53 @@
 	light_range = 1.5
 	light_power = 0.3
 
+/obj/effect/projectile/muzzle/vepr
+	icon_state = "vepr_muzzle"
+	light_color = "#FF6A00"
+	light_range = 3
+	light_power = 1
+
+
+
+
+// ------------------------- GATTENING EARLY PORT STUFF, THIS IS (i pray to god) TEMPORARY ------------------------- //
+
+
+
+
+
+/obj/item/projectile/beam/hellfire
+	damage = 35
+	mob_bonus_damage = 20
+	agony = 10
+	stutter = 5
+	armor_penetration = 15
+	fire_sound = 'sound/weapons/serdy/retrolaser2.ogg'
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "hellfire"
+	light_color = "#FF6A00"
+	muzzle_type = /obj/effect/projectile/muzzle/hellfire
+	tracer_type = /obj/effect/projectile/tracer/hellfire
+	impact_type = /obj/effect/projectile/impact/hellfire
+	hud_state = "laser_heat"
+
+/obj/effect/projectile/muzzle/hellfire
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "muzzle_hellfire"
+	light_color = "#FF6A00"
+	light_range = 5
+	light_power = 2
+
+/obj/effect/projectile/tracer/hellfire
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "beam_hellfire"
+	light_color = "#FF6A00"
+	light_range = 3
+	light_power = 2
+
+/obj/effect/projectile/impact/hellfire
+	icon = 'modular_chomp/icons/blackhole/pre-gattening-misc.dmi'
+	icon_state = "impact_hellfire"
+	light_color = "#FF6A00"
+	light_range = 4
+	light_power = 2

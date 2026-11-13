@@ -15,7 +15,7 @@
 
 	// Choose an engine type
 	var/datum/map_template/engine/chosen_type = null
-	if (LAZYLEN(config.engine_map))
+	if (LAZYLEN(CONFIG_GET(str_list/engine_map))) // CHOMPEdit
 		var/chosen_name = pickedEngine //Instead of using the config, we'll take an argument.
 		chosen_type = map_templates[chosen_name]
 		if(!istype(chosen_type))
@@ -29,7 +29,7 @@
 		chosen_type = pick(engine_types)
 	global_announcer.autosay("Engineering has selected [chosen_type.name] as todays engine.", "Engine Constructor")
 	to_world_log("Chose Engine Map: [chosen_type.name]")
-	admin_notice("<span class='danger'>Chose Engine Map: [chosen_type.name]</span>", R_DEBUG)
+	admin_notice(span_danger("Chose Engine Map: [chosen_type.name]"), R_DEBUG)
 
 	// Annihilate movable atoms
 	engine_loader_pickable.annihilate_bounds()

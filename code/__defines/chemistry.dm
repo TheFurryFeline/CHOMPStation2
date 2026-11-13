@@ -5,7 +5,7 @@
 #define CHEM_TOUCH 1
 #define CHEM_INGEST 2
 #define CHEM_BLOOD 3
-#define CHEM_VORE 4 //CHOMP vore belly interactions
+#define CHEM_VORE 4 // vore belly interactions
 
 #define MINIMUM_CHEMICAL_VOLUME 0.01
 
@@ -27,6 +27,7 @@
 #define IS_TESHARI 7
 #define IS_SLIME   8
 #define IS_ZADDAT  9
+#define IS_ZORREN  10
 
 #define CE_STABLE "stable" // Inaprovaline
 #define CE_ANTIBIOTIC "antibiotic" // Antibiotics
@@ -36,23 +37,25 @@
 #define CE_ALCOHOL_TOXIC "alcotoxic" // Liver damage
 #define CE_SPEEDBOOST "gofast" // Hyperzine
 #define CE_SLOWDOWN "goslow" // Slowdown
+#define CE_NARCOTICS "narcotics" // Narcotics. Ignore pain slowdown entirely.
 #define CE_ANTACID "nopuke" // Don't puke.
+#define CE_ALLERGEN "allergyreaction" // Self explanatory
+#define CE_DARKSIGHT "darksight" // Gives perfect vision in dark
 
 #define REAGENTS_PER_SHEET 20
+#define REAGENTS_PER_ROD 10
+#define REAGENTS_PER_ORE 20
+#define REAGENTS_PER_LOG 40
+#define REAGENTS_PER_HULL 40
 
 // Attached to CE_ANTIBIOTIC
 #define ANTIBIO_NORM	1
 #define ANTIBIO_OD		2
 #define ANTIBIO_SUPER	3
 
-// Chemistry lists.
-var/list/tachycardics  = list("coffee", "inaprovaline", "hyperzine", "nitroglycerin", "thirteenloko", "nicotine") // Increase heart rate.
-var/list/bradycardics  = list("neurotoxin", "cryoxadone", "clonexadone", "space_drugs", "stoxin")                 // Decrease heart rate.
-var/list/heartstopper  = list("potassium_chlorophoride", "zombie_powder") // This stops the heart.
-var/list/cheartstopper = list("potassium_chloride")                       // This stops the heart when overdose is met. -- c = conditional
-
 #define MAX_PILL_SPRITE 24 //max icon state of the pill sprites
 #define MAX_BOTTLE_SPRITE 4 //max icon state of the pill sprites
+#define MAX_PATCH_SPRITE 4 //max icon state of the patch sprites, CHOMPedit
 #define MAX_MULTI_AMOUNT 20 // Max number of pills/patches that can be made at once
 #define MAX_UNITS_PER_PILL 60 // Max amount of units in a pill
 #define MAX_UNITS_PER_PATCH 60 // Max amount of units in a patch

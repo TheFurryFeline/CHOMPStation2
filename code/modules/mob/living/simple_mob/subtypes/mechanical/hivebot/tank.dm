@@ -5,10 +5,12 @@
 /mob/living/simple_mob/mechanical/hivebot/tank
 	attacktext = list("prodded")
 	projectiletype = null // To force the AI to melee.
-	movement_cooldown = 10
+	movement_cooldown = 3
 	melee_damage_lower = 3
 	melee_damage_upper = 3
-	attack_sound = 'sound/weapons/Egloves.ogg'
+	attack_sound = 'sound/weapons/egloves.ogg'
+	organ_names = /datum/decl/mob_organ_names/hivebottank
+
 
 // All tank hivebots apply a modifier to their target, and force them to attack them if they're AI controlled.
 /mob/living/simple_mob/mechanical/hivebot/tank/apply_melee_effects(atom/A)
@@ -21,8 +23,8 @@
 /datum/modifier/hivebot_weaken
 	name = "Shocked"
 	desc = "You feel less able to exert yourself after being prodded."
-	on_created_text = "<span class='warning'>You feel weak...</span>"
-	on_expired_text = "<span class='notice'>You feel better.</span>"
+	on_created_text = span_warning("You feel weak...")
+	on_expired_text = span_notice("You feel better.")
 	stacks = MODIFIER_STACK_EXTEND
 	mob_overlay_state = "electricity"
 
@@ -65,15 +67,6 @@
 				"bio"		= 100,
 				"rad"		= 100
 				)
-	armor_soak = list(
-				"melee"		= 15,
-				"bullet"	= 10,
-				"laser"		= 15,
-				"energy"	= 0,
-				"bomb"		= 0,
-				"bio"		= 0,
-				"rad"		= 0
-				)
 
 /mob/living/simple_mob/mechanical/hivebot/tank/armored/anti_melee
 	name = "riot hivebot"
@@ -87,15 +80,6 @@
 				"bomb"		= 0,
 				"bio"		= 100,
 				"rad"		= 100
-				)
-	armor_soak = list(
-				"melee"		= 20,
-				"bullet"	= 0,
-				"laser"		= 0,
-				"energy"	= 0,
-				"bomb"		= 0,
-				"bio"		= 0,
-				"rad"		= 0
 				)
 
 /mob/living/simple_mob/mechanical/hivebot/tank/armored/anti_bullet
@@ -111,15 +95,6 @@
 				"bio"		= 100,
 				"rad"		= 100
 				)
-	armor_soak = list(
-				"melee"		= 0,
-				"bullet"	= 20,
-				"laser"		= 0,
-				"energy"	= 0,
-				"bomb"		= 0,
-				"bio"		= 0,
-				"rad"		= 0
-				)
 
 /mob/living/simple_mob/mechanical/hivebot/tank/armored/anti_laser
 	name = "ablative hivebot"
@@ -134,15 +109,6 @@
 				"bio"		= 100,
 				"rad"		= 100
 				)
-	armor_soak = list(
-				"melee"		= 0,
-				"bullet"	= 0,
-				"laser"		= 20,
-				"energy"	= 0,
-				"bomb"		= 0,
-				"bio"		= 0,
-				"rad"		= 0
-				)
 	var/reflect_chance = 40 // Same as regular ablative.
 
 // Ablative Hivebots can reflect lasers just like humans.
@@ -150,8 +116,8 @@
 	if(istype(P, /obj/item/projectile/energy) || istype(P, /obj/item/projectile/beam))
 		var/reflect_prob = reflect_chance - round(P.damage/3)
 		if(prob(reflect_prob))
-			visible_message(span("danger", "The [P.name] gets reflected by [src]'s armor!"), \
-							span("userdanger", "The [P.name] gets reflected by [src]'s armor!"))
+			visible_message(span_danger("The [P.name] gets reflected by [src]'s armor!"), \
+							span_userdanger("The [P.name] gets reflected by [src]'s armor!"))
 
 			// Find a turf near or on the original location to bounce to
 			if(P.starting)
@@ -166,3 +132,6 @@
 			return -1 // complete projectile permutation
 
 	return (..(P))
+
+/datum/decl/mob_organ_names/hivebottank
+	hit_zones = list("central chassis", "armor plating", "component shielding", "positioning servo", "head", "sensor suite", "heavy manipulator arm", "shoulder weapon mount", "weapons array", "front right leg", "front left leg", "rear left leg", "rear right leg")

@@ -29,18 +29,18 @@ Slime specific procs go here.
 	if(prob(40))
 		var/hasMutToxin
 		for(var/R in traitdat.chems)
-			if(R == "mutationtoxin")
+			if(R == REAGENT_ID_MUTATIONTOXIN)
 				hasMutToxin = 1
 		var/chemamount
 		if(hasMutToxin)
-			var/list/chemchoices = (xenoChemList - traitdat.chems)
+			var/list/chemchoices = (GLOB.xenoChemList - traitdat.chems)
 
 			var/chemtype = pick(chemchoices)
 			chemamount = rand(1,5)
 			traitdat.chems[chemtype] = chemamount
 		else
 			chemamount = rand(1,5)
-			traitdat.chems["mutationtoxin"] = chemamount
+			traitdat.chems[REAGENT_ID_MUTATIONTOXIN] = chemamount
 
 /mob/living/simple_mob/xeno/slime/proc/GrowUp()
 	GenerateAdult()
@@ -61,7 +61,7 @@ Slime specific procs go here.
 		GenerateAdult()
 
 /mob/living/simple_mob/xeno/slime/proc/GenerateChild()
-	overlays.Cut()
+	cut_overlays()
 	name = "[nameVar] baby slime"
 	real_name = "[nameVar] baby slime"
 	desc = "A shifting blob of [nameVar] goo."
@@ -75,7 +75,7 @@ Slime specific procs go here.
 	return 1
 
 /mob/living/simple_mob/xeno/slime/proc/GenerateAdult()
-	overlays.Cut()
+	cut_overlays()
 	name = "[nameVar] slime"
 	real_name = "[nameVar] slime"
 	desc = "A shifting mass of [nameVar] goo."
@@ -85,12 +85,12 @@ Slime specific procs go here.
 	GenerateAdultIcon()
 
 /mob/living/simple_mob/xeno/slime/proc/GenerateAdultIcon()	//Hack and slash adventure game to make slimes have no color on light effects later
-	overlays.Cut()
+	cut_overlays()
 	var/image/Img = new(src.icon)
 	Img.icon_state = "slime adult"
 	Img.color = traitdat.traits[TRAIT_XENO_COLOR]
 	Img.layer = src.layer
-	overlays += Img
+	add_overlay(Img)
 
 	switch(overlay)
 		if(SHINYOVERLAY)
@@ -99,7 +99,7 @@ Slime specific procs go here.
 			I.icon_state = "slime shiny"
 			I.layer = src.layer + 0.1
 			I.color = "#FFFFFF"
-			overlays += I
+			add_overlay(I)
 		if(LIGHTOVERLAY)
 			var/image/I = new(src.icon)
 			I.icon = src.icon
@@ -107,7 +107,7 @@ Slime specific procs go here.
 			I.icon_state = "slime light"
 			I.layer = src.layer + 0.1
 			I.color = "#FFFFFF"
-			overlays += I
+			add_overlay(I)
 
 /mob/living/simple_mob/xeno/slime/handle_reagents()
 	if(!stasis)
@@ -115,7 +115,7 @@ Slime specific procs go here.
 			return
 		if(reagents.total_volume <= 0)
 			return
-		if(reagents.has_reagent("docilitytoxin"))	//Toxin that makes them docile? Good for quelling angry mobs.
+		if(reagents.has_reagent(REAGENT_ID_MUTATIONTOXIN))	//Toxin that makes them docile? Good for quelling angry mobs.
 			hostile = 0
 			traitdat.traits[TRAIT_XENO_HOSTILE] = 0
 		..()
@@ -126,3 +126,7 @@ Slime specific procs go here.
 		GenerateChild()
 	else
 		GenerateAdult()
+
+#undef SHINYOVERLAY
+#undef LIGHTOVERLAY
+#undef MAXOVERLAY

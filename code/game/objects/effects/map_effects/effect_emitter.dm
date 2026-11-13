@@ -4,10 +4,10 @@
 	var/effect_system_type = null // Which effect system to attach.
 
 	var/effect_amount = 10				// How many effect objects to create on each interval.  Note that there's a hard cap on certain effect_systems.
-	var/effect_cardinals_only = FALSE	// If true, effects only move in cardinal directions.
+	var/effect_cardinals_only = FALSE	// If true, effects only move in GLOB.cardinal directions.
 	var/effect_forced_dir = null		// If set, effects emitted will always move in this direction.
 
-/obj/effect/map_effect/interval/effect_emitter/Initialize()
+/obj/effect/map_effect/interval/effect_emitter/Initialize(mapload)
 	effect_system = new effect_system_type()
 	effect_system.attach(src)
 	configure_effects()
@@ -76,3 +76,7 @@
 	name = "steam emitter"
 	icon_state = "smoke_emitter"
 	effect_system_type = /datum/effect/effect/system/steam_spread
+
+/obj/effect/map_effect/interval/effect_emitter/steam/less_frequent
+	interval_lower_bound = 10 SECONDS
+	interval_upper_bound = 30 SECONDS

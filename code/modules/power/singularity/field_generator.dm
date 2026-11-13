@@ -1,16 +1,16 @@
 //This file was auto-corrected by findeclaration.exe on 25.5.2012 20:42:33
 
 
-/*
-field_generator power level display
-   The icon used for the field_generator need to have 'num_power_levels' number of icon states
-   named 'Field_Gen +p[num]' where 'num' ranges from 1 to 'num_power_levels'
-
-   The power level is displayed using overlays. The current displayed power level is stored in 'powerlevel'.
-   The overlay in use and the powerlevel variable must be kept in sync.  A powerlevel equal to 0 means that
-   no power level overlay is currently in the overlays list.
-   -Aygar
-*/
+/**
+ * field_generator power level display
+ * The icon used for the field_generator need to have 'num_power_levels' number of icon states
+ * named 'Field_Gen +p[num]' where 'num' ranges from 1 to 'num_power_levels'
+ *
+ * The power level is displayed using overlays. The current displayed power level is stored in 'powerlevel'.
+ * The overlay in use and the powerlevel variable must be kept in sync.  A powerlevel equal to 0 means that
+ * no power level overlay is currently in the overlays list.
+ * -Aygar
+ */
 
 #define field_generator_max_power 250000
 /obj/machinery/field_generator
@@ -18,8 +18,8 @@ field_generator power level display
 	desc = "A large thermal battery that projects a high amount of energy when powered."
 	icon = 'icons/obj/machines/field_generator.dmi'
 	icon_state = "Field_Gen"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	use_power = USE_POWER_OFF
 	var/const/num_power_levels = 6	// Total number of power level icon has
 	var/Varedit_start = 0
@@ -36,30 +36,44 @@ field_generator power level display
 	var/gen_power_draw = 5500	//power needed per generator
 	var/field_power_draw = 2000	//power needed per field object
 
+	var/light_range_on = 3
+	var/light_power_on = 1
+	light_color = "#5BA8FF"
+
+/obj/machinery/field_generator/examine()
+	. = ..()
+	switch(state)
+		if(0)
+			. += span_warning("It is not secured in place!")
+		if(1)
+			. += span_warning("It has been bolted down securely, but not welded into place.")
+		if(2)
+			. += span_notice("It has been bolted down securely and welded down into place.")
 
 /obj/machinery/field_generator/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	if(!active)
 		if(warming_up)
-			overlays += "+a[warming_up]"
+			add_overlay("+a[warming_up]")
 	if(fields.len)
-		overlays += "+on"
+		add_overlay("+on")
 	// Power level indicator
 	// Scale % power to % num_power_levels and truncate value
 	var/level = round(num_power_levels * power / field_generator_max_power)
 	// Clamp between 0 and num_power_levels for out of range power values
 	level = between(0, level, num_power_levels)
 	if(level)
-		overlays += "+p[level]"
+		add_overlay("+p[level]")
 
 	return
 
 
-/obj/machinery/field_generator/New()
-	..()
+/obj/machinery/field_generator/Initialize(mapload)
+	. = ..()
 	fields = list()
 	connected_gens = list()
-	return
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/empprotection, EMP_PROTECT_SELF)
 
 /obj/machinery/field_generator/process()
 	if(Varedit_start == 1)
@@ -67,7 +81,7 @@ field_generator power level display
 			active = 1
 			state = 2
 			power = field_generator_max_power
-			anchored = 1
+			anchored = TRUE
 			warming_up = 3
 			start_fields()
 			update_icon()
@@ -91,7 +105,7 @@ field_generator power level display
 					"You hear heavy droning")
 				turn_on()
 				log_game("FIELDGEN([x],[y],[z]) Activated by [key_name(user)]")
-				investigate_log("<font color='green'>activated</font> by [user.key].","singulo")
+				investigate_log(span_green("activated") + " by [user.key].","singulo")
 
 				src.add_fingerprint(user)
 	else
@@ -103,7 +117,7 @@ field_generator power level display
 	if(active)
 		to_chat(user, "The [src] needs to be off.")
 		return
-	else if(W.is_wrench())
+	else if(W.has_tool_quality(TOOL_WRENCH))
 		switch(state)
 			if(0)
 				state = 1
@@ -111,22 +125,22 @@ field_generator power level display
 				user.visible_message("[user.name] secures [src.name] to the floor.", \
 					"You secure the external reinforcing bolts to the floor.", \
 					"You hear ratchet")
-				src.anchored = 1
+				src.anchored = TRUE
 			if(1)
 				state = 0
 				playsound(src, W.usesound, 75, 1)
 				user.visible_message("[user.name] unsecures [src.name] reinforcing bolts from the floor.", \
 					"You undo the external reinforcing bolts.", \
 					"You hear ratchet")
-				src.anchored = 0
+				src.anchored = FALSE
 			if(2)
-				to_chat(user, "<font color='red'>The [src.name] needs to be unwelded from the floor.</font>")
+				to_chat(user, span_red("The [src.name] needs to be unwelded from the floor."))
 				return
-	else if(istype(W, /obj/item/weapon/weldingtool))
-		var/obj/item/weapon/weldingtool/WT = W
+	else if(W.has_tool_quality(TOOL_WELDER))
+		var/obj/item/weldingtool/WT = W.get_welder()
 		switch(state)
 			if(0)
-				to_chat(user, "<font color='red'>The [src.name] needs to be wrenched to the floor.</font>")
+				to_chat(user, span_red("The [src.name] needs to be wrenched to the floor."))
 				return
 			if(1)
 				if (WT.remove_fuel(0,user))
@@ -134,7 +148,7 @@ field_generator power level display
 					user.visible_message("[user.name] starts to weld the [src.name] to the floor.", \
 						"You start to weld the [src] to the floor.", \
 						"You hear welding")
-					if (do_after(user,20 * WT.toolspeed))
+					if (do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 						if(!src || !WT.isOn()) return
 						state = 2
 						to_chat(user, "You weld the field generator to the floor.")
@@ -146,7 +160,7 @@ field_generator power level display
 					user.visible_message("[user.name] starts to cut the [src.name] free from the floor.", \
 						"You start to cut the [src] free from the floor.", \
 						"You hear welding")
-					if (do_after(user,20 * WT.toolspeed))
+					if (do_after(user, 2 SECONDS * WT.toolspeed, target = src))
 						if(!src || !WT.isOn()) return
 						state = 1
 						to_chat(user, "You cut the [src] free from the floor.")
@@ -156,11 +170,7 @@ field_generator power level display
 		..()
 		return
 
-
-/obj/machinery/field_generator/emp_act()
-	return 0
-
-/obj/machinery/field_generator/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/field_generator/bullet_act(obj/item/projectile/Proj)
 	if(istype(Proj, /obj/item/projectile/beam))
 		power += Proj.damage * EMITTER_DAMAGE_POWER_TRANSFER
 		update_icon()
@@ -177,6 +187,7 @@ field_generator power level display
 	active = 0
 	spawn(1)
 		src.cleanup()
+		set_light(0)
 	update_icon()
 
 /obj/machinery/field_generator/proc/turn_on()
@@ -189,6 +200,7 @@ field_generator power level display
 			update_icon()
 			if(warming_up >= 3)
 				start_fields()
+				set_light(light_range_on, light_power_on)
 	update_icon()
 
 
@@ -212,15 +224,15 @@ field_generator power level display
 		return 1
 	else
 		for(var/mob/M in viewers(src))
-			M.show_message("<font color='red'>\The [src] shuts down!</font>")
+			M.show_message(span_red("\The [src] shuts down!"))
 		turn_off()
 		log_game("FIELDGEN([x],[y],[z]) Lost power and was ON.")
-		investigate_log("ran out of power and <font color='red'>deactivated</font>","singulo")
+		investigate_log("ran out of power and " + span_red("deactivated"),"singulo")
 		src.power = 0
 		return 0
 
 //Tries to draw the needed power from our own power reserve, or connected generators if we can. Returns the amount of power we were able to get.
-/obj/machinery/field_generator/proc/draw_power(var/draw = 0, var/list/flood_list = list())
+/obj/machinery/field_generator/proc/draw_power(draw = 0, list/flood_list = list())
 	flood_list += src
 
 	if(src.power >= draw)//We have enough power
@@ -255,7 +267,7 @@ field_generator power level display
 	src.active = 2
 
 
-/obj/machinery/field_generator/proc/setup_field(var/NSEW)
+/obj/machinery/field_generator/proc/setup_field(NSEW)
 	var/turf/T = src.loc
 	var/obj/machinery/field_generator/G
 	var/steps = 0
@@ -333,12 +345,21 @@ field_generator power level display
 	//I want to avoid using global variables.
 	spawn(1)
 		var/temp = 1 //stops spam
-		for(var/obj/singularity/O in machines)
+		for(var/obj/singularity/O in GLOB.machines)
 			if(O.last_warning && temp)
 				if((world.time - O.last_warning) > 50) //to stop message-spam
 					temp = 0
 					admin_chat_message(message = "SINGUL/TESLOOSE!", color = "#FF2222") //VOREStation Add
-					message_admins("A singulo exists and a containment field has failed.",1)
-					investigate_log("has <font color='red'>failed</font> whilst a singulo exists.","singulo")
+					message_admins("A singulo exists and a containment field has failed.")
+					investigate_log("has " + span_red("failed") + " whilst a singulo exists.","singulo")
 					log_game("FIELDGEN([x],[y],[z]) Containment failed while singulo/tesla exists.")
 			O.last_warning = world.time
+
+/obj/machinery/field_generator/pre_mapped
+	state = 2 //Start welded.
+	anchored = TRUE
+
+
+/obj/machinery/field_generator/pre_mapped/Initialize(mapload)
+	. = ..()
+	update_icon()

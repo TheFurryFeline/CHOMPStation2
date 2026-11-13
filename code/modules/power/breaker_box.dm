@@ -12,9 +12,10 @@
 	//directwired = 0
 	var/icon_state_on = "bbox_on"
 	var/icon_state_off = "bbox_off"
-	density = 1
-	anchored = 1
-	circuit = /obj/item/weapon/circuitboard/breakerbox
+	density = TRUE
+	anchored = TRUE
+	unacidable = TRUE
+	circuit = /obj/item/circuitboard/breakerbox
 	var/on = 0
 	var/busy = 0
 	var/directions = list(1,2,4,8,5,6,9,10)
@@ -25,10 +26,10 @@
 	for(var/obj/structure/cable/C in src.loc)
 		qdel(C)
 	. = ..()
-	for(var/datum/tgui_module/rcon/R in world)
+	for(var/datum/tgui_module/rcon/R in SStgui.all_uis)
 		R.FindDevices()
 
-/obj/machinery/power/breakerbox/Initialize()
+/obj/machinery/power/breakerbox/Initialize(mapload)
 	. = ..()
 	default_apply_parts()
 
@@ -36,31 +37,34 @@
 	icon_state = "bbox_on"
 
 // Enabled on server startup. Used in substations to keep them in bypass mode.
-/obj/machinery/power/breakerbox/activated/Initialize()
+/obj/machinery/power/breakerbox/activated/Initialize(mapload)
 	. = ..()
+	return INITIALIZE_HINT_LATELOAD
+
+/obj/machinery/power/breakerbox/activated/LateInitialize()
 	set_state(1)
 
 /obj/machinery/power/breakerbox/examine(mob/user)
 	. = ..()
 	if(on)
-		. += "<span class='notice'>It seems to be online.</span>"
+		. += span_notice("It seems to be online.")
 	else
-		. += "<span class='warning'>It seems to be offline.</span>"
+		. += span_warning("It seems to be offline.")
 
 /obj/machinery/power/breakerbox/attack_ai(mob/user)
 	if(update_locked)
-		to_chat(user, "<font color='red'>System locked. Please try again later.</font>")
+		to_chat(user, span_red("System locked. Please try again later."))
 		return
 
 	if(busy)
-		to_chat(user, "<font color='red'>System is busy. Please wait until current operation is finished before changing power settings.</font>")
+		to_chat(user, span_red("System is busy. Please wait until current operation is finished before changing power settings."))
 		return
 
 	busy = 1
-	to_chat(user, "<font color='green'>Updating power settings...</font>")
-	if(do_after(user, 50))
+	to_chat(user, span_green("Updating power settings..."))
+	if(do_after(user, 5 SECONDS, target = src))
 		set_state(!on)
-		to_chat(user, "<font color='green'>Update Completed. New setting:[on ? "on": "off"]</font>")
+		to_chat(user, span_green("Update Completed. New setting:[on ? "on": "off"]"))
 		update_locked = 1
 		spawn(600)
 			update_locked = 0
@@ -69,35 +73,35 @@
 
 /obj/machinery/power/breakerbox/attack_hand(mob/user)
 	if(update_locked)
-		to_chat(user, "<font color='red'>System locked. Please try again later.</font>")
+		to_chat(user, span_red("System locked. Please try again later."))
 		return
 
 	if(busy)
-		to_chat(user, "<font color='red'>System is busy. Please wait until current operation is finished before changing power settings.</font>")
+		to_chat(user, span_red("System is busy. Please wait until current operation is finished before changing power settings."))
 		return
 
 	busy = 1
 	for(var/mob/O in viewers(user))
-		O.show_message(text("<font color='red'>[user] started reprogramming [src]!</font>"), 1)
+		O.show_message(span_red(text("[user] started reprogramming [src]!")), 1)
 
-	if(do_after(user, 50))
+	if(do_after(user, 5 SECONDS, target = src))
 		set_state(!on)
 		user.visible_message(\
-		"<span class='notice'>[user.name] [on ? "enabled" : "disabled"] the breaker box!</span>",\
-		"<span class='notice'>You [on ? "enabled" : "disabled"] the breaker box!</span>")
+		span_notice("[user.name] [on ? "enabled" : "disabled"] the breaker box!"),\
+		span_notice("You [on ? "enabled" : "disabled"] the breaker box!"))
 		update_locked = 1
 		spawn(600)
 			update_locked = 0
 	busy = 0
 
-/obj/machinery/power/breakerbox/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
-	if(istype(W, /obj/item/device/multitool))
-		var/newtag = input(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system") as text
+/obj/machinery/power/breakerbox/attackby(obj/item/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/multitool))
+		var/newtag = tgui_input_text(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system", "", MAX_NAME_LEN)
 		if(newtag)
 			RCon_tag = newtag
-			to_chat(user, "<span class='notice'>You changed the RCON tag to: [newtag]</span>")
+			to_chat(user, span_notice("You changed the RCON tag to: [newtag]"))
 	if(on)
-		to_chat(user, "<font color='red'>Disable the breaker before performing maintenance.</font>")
+		to_chat(user, span_red("Disable the breaker before performing maintenance."))
 		return
 	if(default_deconstruction_screwdriver(user, W))
 		return
@@ -106,7 +110,7 @@
 	if(default_part_replacement(user, W))
 		return
 
-/obj/machinery/power/breakerbox/proc/set_state(var/state)
+/obj/machinery/power/breakerbox/proc/set_state(state)
 	on = state
 	if(on)
 		icon_state = icon_state_on

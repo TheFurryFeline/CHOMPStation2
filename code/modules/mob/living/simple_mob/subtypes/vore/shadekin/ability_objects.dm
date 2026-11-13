@@ -8,9 +8,10 @@
 	var/shift_mode = NOT_WHILE_SHIFTED
 	var/ab_sound
 
-/obj/effect/shadekin_ability/New(var/new_kin)
-	..()
-	my_kin = new_kin
+/obj/effect/shadekin_ability/Initialize(mapload)
+	. = ..()
+	if(issimplekin(loc))
+		my_kin = loc
 	loc = null
 
 /obj/effect/shadekin_ability/Destroy()
@@ -19,44 +20,43 @@
 
 /obj/effect/shadekin_ability/proc/atom_button_text()
 	var/shift_denial
-
-	if(shift_mode == NOT_WHILE_SHIFTED && (my_kin.ability_flags & AB_PHASE_SHIFTED))
+	if(shift_mode == NOT_WHILE_SHIFTED && my_kin.comp.in_phase)
 		shift_denial = "Physical Only"
-	else if(shift_mode == ONLY_WHILE_SHIFTED && !(my_kin.ability_flags & AB_PHASE_SHIFTED))
+	else if(shift_mode == ONLY_WHILE_SHIFTED && !(my_kin.comp.in_phase))
 		shift_denial = "Shifted Only"
 
 	if(shift_denial)
 		name = shift_denial
 	else
-		name = my_kin.energy >= cost ? "Activate" : "No Energy"
+		name = my_kin.comp.dark_energy >= cost ? "Activate" : "No Energy"
 	return src
 
-/obj/effect/shadekin_ability/Click(var/location, var/control, var/params)
+/obj/effect/shadekin_ability/Click(location, control, params)
 	if(my_kin.stat) return
 
 	var/list/clickprops = params2list(params)
 	var/opts = clickprops["shift"]
 
 	if(opts)
-		to_chat(my_kin,"<span class='notice'><b>[name]</b> (Cost: [cost]%) - [desc]</span>")
+		to_chat(my_kin,span_notice(span_bold("[name]") + " (Cost: [cost]%) - [desc]"))
 	else
 		do_ability(my_kin)
 
 /obj/effect/shadekin_ability/proc/do_ability()
 	if(my_kin.stat)
-		to_chat(my_kin,"<span class='warning'>Can't use that ability in your state!</span>")
+		to_chat(my_kin,span_warning("Can't use that ability in your state!"))
 		return FALSE
-	if(shift_mode == NOT_WHILE_SHIFTED && (my_kin.ability_flags & AB_PHASE_SHIFTED))
-		to_chat(my_kin,"<span class='warning'>Can't use that ability while phase shifted!</span>")
+	if(shift_mode == NOT_WHILE_SHIFTED && (my_kin.comp.in_phase))
+		to_chat(my_kin,span_warning("Can't use that ability while phase shifted!"))
 		return FALSE
-	else if(shift_mode == ONLY_WHILE_SHIFTED && !(my_kin.ability_flags & AB_PHASE_SHIFTED))
-		to_chat(my_kin,"<span class='warning'>Can only use that ability while phase shifted!</span>")
+	else if(shift_mode == ONLY_WHILE_SHIFTED && !(my_kin.comp.in_phase))
+		to_chat(my_kin,span_warning("Can only use that ability while phase shifted!"))
 		return FALSE
-	else if(my_kin.energy < cost)
-		to_chat(my_kin,"<span class='warning'>Not enough energy for that ability!</span>")
+	else if(my_kin.comp.dark_energy < cost)
+		to_chat(my_kin,span_warning("Not enough energy for that ability!"))
 		return FALSE
 
-	my_kin.energy -= cost
+	my_kin.comp.dark_energy -= cost
 	if(ab_sound)
 		playsound(src,ab_sound,75,1)
 
@@ -74,7 +74,7 @@
 	if(!..())
 		return
 	my_kin.phase_shift()
-	if(my_kin.ability_flags & AB_PHASE_SHIFTED)
+	if(my_kin.comp.in_phase)
 		cost = 0 //Shifting back is free (but harmful in light)
 	else
 		cost = initial(cost)
@@ -90,15 +90,15 @@
 	if(!..())
 		return
 	if(!my_kin.mend_other())
-		my_kin.energy += cost //Refund due to abort
+		my_kin.comp.dark_energy += cost //Refund due to abort
 /*
 /datum/modifier/shadekin/heal_boop
 	name = "Shadekin Regen"
 	desc = "You feel serene and well rested."
 	mob_overlay_state = "green_sparkles"
 
-	on_created_text = "<span class='notice'>Sparkles begin to appear around you, and all your ills seem to fade away.</span>"
-	on_expired_text = "<span class='notice'>The sparkles have faded, although you feel much healthier than before.</span>"
+	on_created_text = span_notice("Sparkles begin to appear around you, and all your ills seem to fade away.")
+	on_expired_text = span_notice("The sparkles have faded, although you feel much healthier than before.")
 	stacks = MODIFIER_STACK_EXTEND
 
 /datum/modifier/shadekin/heal_boop/tick()
@@ -129,13 +129,13 @@
 	desc = "Darkness envelops you."
 	mob_overlay_state = ""
 
-	on_created_text = "<span class='notice'>You drag part of The Dark into realspace, enveloping yourself.</span>"
-	on_expired_text = "<span class='warning'>You lose your grasp on The Dark and realspace reasserts itself.</span>"
+	on_created_text = span_notice("You drag part of The Dark into realspace, enveloping yourself.")
+	on_expired_text = span_warning("You lose your grasp on The Dark and realspace reasserts itself.")
 	stacks = MODIFIER_STACK_EXTEND
 	var/mob/living/simple_mob/shadekin/my_kin
 
 /datum/modifier/shadekin/create_shade/tick()
-	if(my_kin.ability_flags & AB_PHASE_SHIFTED)
+	if(my_kin.comp.in_phase)
 		expire()
 
 /datum/modifier/shadekin/create_shade/on_applied()

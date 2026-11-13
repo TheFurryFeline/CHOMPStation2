@@ -3,7 +3,7 @@
 /mob/living/simple_mob/mechanical/hivebot/ranged_damage
 	maxHealth = 2 LASERS_TO_KILL // 60 health
 	health = 2 LASERS_TO_KILL
-	projectiletype = /obj/item/projectile/bullet/a22lr //CHOMP Edit No longer uses Hivebot bullet. This is a 22 long rifle bullet now.
+	projectiletype = /obj/item/projectile/bullet/hivebot
 
 // The regular ranged hivebot, that fires somewhat weak projectiles.
 /mob/living/simple_mob/mechanical/hivebot/ranged_damage/basic
@@ -79,14 +79,12 @@
 	name = "ember"
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "explosion_particle"
-	modifier_type_to_apply = /datum/modifier/fire
-	modifier_duration = 6 SECONDS // About 15 damage per stack, as Life() ticks every two seconds.
+	incendiary = 3
 	damage = 0
 	nodamage = TRUE
 
 	impact_effect_type = /obj/effect/temp_visual/impact_effect
 	hitsound_wall = 'sound/weapons/effects/searwall.ogg'
-
 
 // Close to mid-ranged shooter that arcs over other things, ideal if allies are in front of it.
 // Difference from siege hivebots is that siege hivebots have limited charges for their attacks, are very long range, and
@@ -112,11 +110,13 @@
 /mob/living/simple_mob/mechanical/hivebot/ranged_damage/siege
 	name = "siege engine hivebot"
 	desc = "A large robot capable of delivering long range bombardment."
-	projectiletype = /obj/item/projectile/arc/test
+	projectiletype = /obj/item/projectile/arc/fragmentation/mortar
 	icon_scale_x = 2
 	icon_scale_y = 2
 	icon_state = "red"
 	icon_living = "red"
+
+	organ_names = /datum/decl/mob_organ_names/hivebotsiege
 
 	player_msg = "You are capable of firing <b>very long range bombardment attacks</b>.<br>\
 	To use, click on a tile or enemy at a long range. Note that the projectile arcs in the air, \
@@ -154,3 +154,6 @@
 	name = "anti-personnel artillery hivebot"
 	desc = "A large robot capable of delivering fragmentation shells to rip apart their fleshy enemies."
 	projectiletype = /obj/item/projectile/arc/fragmentation
+
+/datum/decl/mob_organ_names/hivebotsiege
+	hit_zones = list("central chassis", "armor plating", "reinforced positioning servo", "head", "sensor suite", "manipulator arm", "heavy weapons mount", "advanced weapons array", "front right leg", "front left leg", "rear left leg", "rear right leg")

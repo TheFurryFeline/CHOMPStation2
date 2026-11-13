@@ -1,6 +1,6 @@
 /datum/category_item/catalogue/fauna/frog
 	name = "Wildlife - Giant Frog"
-	desc = "Classification: Anura gigantus\
+	desc = "Classification: Anura Gigantus\
 	<br><br>\
 	A frog is any member of a diverse and largely carnivorous group of short-bodied, tailless amphibians composing \
 	the order Anura. This specific species - Anura gigantus - is a mutated form of frogs, largely due to exposure to mutagen chemicals. \
@@ -14,13 +14,13 @@
 	order to make use of the ephemeral pools before they dry up. Because of this, the frog population is through the roof and has \
 	become a major issue for various colonies and stations.\
 	<br>\
-	These animals, are considered an invasive species, and thus hunters are encouraged to hunt them." //CHOMPedit
+	These animals, are considered an invasive species, and thus hunters are encouraged to hunt them."
 	value = CATALOGUER_REWARD_TRIVIAL
 
 /mob/living/simple_mob/vore/aggressive/frog
 	name = "giant frog"
 	desc = "You've heard of having a frog in your throat, now get ready for the reverse."
-	tt_desc = "Anura gigantus"
+	tt_desc = "Anura Gigantus"
 	catalogue_data = list(/datum/category_item/catalogue/fauna/frog)
 
 	icon_dead = "frog-dead"
@@ -28,7 +28,11 @@
 	icon_state = "frog"
 	icon = 'icons/mob/vore.dmi'
 
-	movement_cooldown = 4 //fast as fucc boie.
+	movement_cooldown = 0.5 //fast as fucc boie.
+	can_be_drop_pred = 1 //They can tongue vore.
+
+	meat_amount = 4
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 
 	harm_intent_damage = 5
 	melee_damage_lower = 5
@@ -36,12 +40,34 @@
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee
 
+	special_attack_min_range = 1
+	special_attack_max_range = 5
+	special_attack_cooldown = 100
+
+	can_be_drop_prey = FALSE
+	allow_mind_transfer = TRUE
+
 // Pepe is love, not hate.
-/mob/living/simple_mob/vore/aggressive/frog/New()
+/mob/living/simple_mob/vore/aggressive/frog/Initialize(mapload)
+	. = ..()
 	if(rand(1,1000000) == 1)
 		name = "rare Pepe"
 		desc = "You found a rare Pepe. Screenshot for good luck."
-	..()
+
+/mob/living/simple_mob/vore/aggressive/frog/do_special_attack(atom/A)
+	set_AI_busy(TRUE)
+	do_windup_animation(A, 20)
+	addtimer(CALLBACK(src, PROC_REF(chargeend), A), 20)
+
+/mob/living/simple_mob/vore/aggressive/frog/proc/chargeend(atom/A)
+	if(stat) //you are dead
+		set_AI_busy(FALSE)
+		return
+	playsound(src, 'sound/vore/sunesound/pred/schlorp.ogg', 25)
+	var/obj/item/projectile/beam/appendage/appendage_attack = new /obj/item/projectile/beam/appendage(get_turf(loc))
+	appendage_attack.old_style_target(A, src)
+	appendage_attack.launch_projectile(A, BP_TORSO, src)
+	set_AI_busy(FALSE)
 
 // Activate Noms!
 /mob/living/simple_mob/vore/aggressive/frog

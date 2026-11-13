@@ -5,8 +5,6 @@
 /obj/item/clothing/suit/storage/hooded/techpriest
 	name = "tech priest robe"
 	desc = "Praise be to the Omnissiah."
-	icon = 'icons/obj/clothing/suits_vr.dmi'
-	icon_override = 'icons/mob/suit_vr.dmi'
 	icon_state = "techpriest"
 	hoodtype = /obj/item/clothing/head/hood/techpriest
 	armor = list(melee = 20, bullet = 10, laser = 10, energy = 10, bomb = 25, bio = 50, rad = 25)
@@ -22,20 +20,21 @@
 	hoodtype = /obj/item/clothing/head/hood/galahad
 	armor = list(melee = 80, bullet = 50, laser = 10, energy = 0, bomb = 0, bio = 0, rad = 0)
 	siemens_coefficient = 2
-	action_button_name = "Toggle Knight Headgear"
-	
+	actions_types = list(/datum/action/item_action/toggle_knight_headgear)
+	resistance_flags = FIRE_PROOF
+
 /obj/item/clothing/suit/storage/hooded/knight/galahad
 	name = "crusader's armor"
 	desc = "ye olde knight, risen again."
 	icon_state = "galahad"
 	hoodtype = /obj/item/clothing/head/hood/galahad
-	
+
 /obj/item/clothing/suit/storage/hooded/knight/lancelot
 	name = "crusader's armor"
 	desc = "ye olde knight, risen again."
 	icon_state = "lancelot"
 	hoodtype = /obj/item/clothing/head/hood/lancelot
-	
+
 /obj/item/clothing/suit/storage/hooded/knight/robin
 	name = "crusader's armor"
 	desc = "ye olde knight, risen again. This one seems slightly faster than the rest, but weaker."
@@ -45,6 +44,24 @@
 	slowdown = -1
 	siemens_coefficient = 3
 
+// Weaker variants for the redgate
+
+/obj/item/clothing/suit/storage/hooded/knight/chain
+	name = "chain armor"
+	icon_state = "chain"
+	hoodtype = /obj/item/clothing/head/hood/chain
+	armor = list(melee = 60, bullet = 10, laser = 10, energy = 0, bomb = 0, bio = 0, rad = 0)
+	slowdown = 0.5
+	actions_types = list(/datum/action/item_action/toggle_knight_headgear)
+
+/obj/item/clothing/suit/storage/hooded/knight/chain/lezzy
+	icon_state = "lezzy"
+	hoodtype = /obj/item/clothing/head/hood/chain
+
+/obj/item/clothing/suit/storage/hooded/knight/chain/black_white
+	icon_state = "black_white"
+	hoodtype = /obj/item/clothing/head/hood/chain
+
 // Costume Knight Gear Here
 /obj/item/clothing/suit/storage/hooded/knight_costume
 	name = "crusader's costume armor"
@@ -53,18 +70,130 @@
 	icon = 'icons/obj/clothing/knights_vr.dmi'
 	icon_override = 'icons/obj/clothing/knights_vr.dmi'
 	hoodtype = /obj/item/clothing/head/hood/galahad_costume
-	action_button_name = "Toggle Knight Headgear"
-	
+	actions_types = list(/datum/action/item_action/toggle_knight_headgear)
+
 /obj/item/clothing/suit/storage/hooded/knight_costume/galahad
 	icon_state = "galahad"
 	hoodtype = /obj/item/clothing/head/hood/galahad_costume
-	
+
 /obj/item/clothing/suit/storage/hooded/knight_costume/lancelot
 	icon_state = "lancelot"
 	hoodtype = /obj/item/clothing/head/hood/lancelot_costume
-	
+
 /obj/item/clothing/suit/storage/hooded/knight_costume/robin
 	name = "crusader's armor"
 	desc = "ye olde knight, risen again. This one seems slightly faster than the rest, but weaker."
 	icon_state = "robin"
 	hoodtype = /obj/item/clothing/head/hood/robin_costume
+
+// Talon Winter Coat
+/obj/item/clothing/suit/storage/hooded/wintercoat/talon
+	name = "Talon winter coat"
+	desc = "A cozy winter coat, covered in thick fur and baring the colors of ITV Talon."
+	icon_state = "taloncoat"
+	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0)
+	hoodtype = /obj/item/clothing/head/hood/winter/talon
+
+/obj/item/clothing/suit/storage/hooded/wintercoat/talon/refreshed
+	name = "Refreshed Talon winter coat"
+	desc = "A refreshed cozy winter coat, covered in thick fur and baring the colors of ITV Talon."
+	icon = 'icons/inventory/suit/item.dmi'
+	default_worn_icon = 'icons/inventory/suit/mob.dmi'
+	icon_state = "taloncoatr"
+	hoodtype = /obj/item/clothing/head/hood/winter/talon/refreshed
+
+// Food costumes
+/obj/item/clothing/suit/storage/hooded/foodcostume	//Separate type of costume that does not cover arms and legs. Similar to a cheap mascot costume. <Guy>
+	name = DEVELOPER_WARNING_NAME
+	body_parts_covered = CHEST
+	flags_inv = HIDETIE|HIDEHOLSTER
+	cold_protection = CHEST
+	actions_types = list(/datum/action/item_action/toggle_hood)
+
+/obj/item/clothing/suit/storage/hooded/foodcostume/hotdog	//Belly filler uniform :^).
+	name = "hotdog costume"
+	desc = "A giant hotdog costume, comes with authentic artificial hotdog scent."
+	icon_state = "hotdog"
+	item_state_slots = list(slot_r_hand_str = "hotdog", slot_l_hand_str = "hotdog")
+	hoodtype = /obj/item/clothing/head/hood/hotdog_hood
+
+/obj/item/clothing/suit/storage/hooded/foodcostume/turnip	//Honey wake up, new vorny jail uniform just dropped.
+	name = "turnip costume"
+	desc = "A giant turnip costume, extra padding helps the wearer stand in the same spot for hours."
+	icon_state = "turnip"
+	item_state_slots = list(slot_r_hand_str = "turnip", slot_l_hand_str = "turnip")
+	hoodtype = /obj/item/clothing/head/hood/turnip_hood
+
+//Functional hoodie
+
+/obj/item/clothing/suit/storage/hooded/hoodie
+	name = "hoodie"
+	desc = "A warm jacket, now featuring a hood!"
+	icon_state = "hoodie_plain"
+	item_state_slots = list(slot_r_hand_str = "grey_hoodie", slot_l_hand_str = "grey_hoodie")
+	body_parts_covered = CHEST|ARMS|LEGS
+	flags_inv = HIDEHOLSTER
+	cold_protection = CHEST|ARMS|LEGS
+	min_cold_protection_temperature = SPACE_SUIT_MIN_COLD_PROTECTION_TEMPERATURE
+	hoodtype = /obj/item/clothing/head/hood/hoodie
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_SUIT_REGULATORS)
+
+/obj/item/clothing/suit/storage/hooded/hoodie/redtrim
+	name = "red-trimmed hoodie"
+	desc = "A warm jacket, now featuring a hood and a bold red trim!"
+	icon_state = "hoodie_redtrim"
+
+/obj/item/clothing/suit/storage/hooded/hoodie/bluetrim
+	name = "blue-trimmed hoodie"
+	desc = "A warm jacket, now featuring a hood and a cool blue trim!"
+	icon_state = "hoodie_bluetrim"
+
+/obj/item/clothing/suit/storage/hooded/hoodie/greentrim
+	name = "green-trimmed hoodie"
+	desc = "A warm jacket, now featuring a hood and a chilled green trim!"
+	icon_state = "hoodie_greentrim"
+
+/obj/item/clothing/suit/storage/hooded/hoodie/purpletrim
+	name = "purple-trimmed hoodie"
+	desc = "A warm jacket, now featuring a hood and a smart purple trim!"
+	icon_state = "hoodie_purpletrim"
+
+/obj/item/clothing/suit/storage/hooded/hoodie/yellowtrim
+	name = "yellow-trimmed hoodie"
+	desc = "A warm jacket, now featuring a hood and an eye-catching yellow trim!"
+	icon_state = "hoodie_yellowtrim"
+
+// CC Winter Coat
+/obj/item/clothing/suit/storage/hooded/wintercoat/centcom
+	name = "centcom winter coat"
+	desc = "A cozy winter coat, covered in green fur and the colors of CentCom. Armored for extra protection."
+	icon_state = "coatcentcom"
+	armor = list(melee = 40, bullet = 45, laser = 45, energy = 35, bomb = 40, bio = 25, rad = 25, fire = 35, acid = 50) //there is no cc armor here to base it off so, here's the values from the original cc coat
+	hoodtype = /obj/item/clothing/head/hood/winter/centcom
+
+/obj/item/clothing/suit/storage/hooded/wintercoat
+	sprite_sheets = list(	SPECIES_TESHARI = 'icons/inventory/suit/mob_teshari.dmi',
+							SPECIES_VOX = 'icons/inventory/suit/mob_vox.dmi')
+
+//Hoodies worth their weight in gold (as in you can unbutton them and toggle the hood independently)
+/obj/item/clothing/suit/storage/hooded/toggle/colorable
+	name = "hoodie"
+	desc = "A rather plain hoodie. If you can't find it in your closet, chances are your significant other is borrowing it."
+	icon_state = "choodie"
+	hoodtype = /obj/item/clothing/head/hood/toggleable/colorable
+	open = FALSE
+
+/obj/item/clothing/suit/storage/hooded/toggle/colorable/sleeveless
+	name = "sleeveless hoodie"
+	desc = "Either your arms were too hot or the sleeves vaporized when you gave someone a 'gunshow' with your muscles. Either way, the sleeves are missing."
+	icon_state = "choodie_sleeveless"
+
+/obj/item/clothing/suit/storage/hooded/toggle/colorable/cropped
+	name = "cropped hoodie"
+	desc = "It's not that this is a size too small, you just like showing off your tum. I guess."
+	icon_state = "choodie_crop"
+
+/obj/item/clothing/suit/storage/hooded/toggle/colorable/shortsleeve
+	name = "shortsleeve hoodie"
+	desc = "For the times you can't decide between having sleeves and not having them."
+	icon_state = "choodie_shortsleeve"

@@ -5,11 +5,11 @@
 	ov_lowwater.plane = PLANE_LIGHTING_ABOVE
 	ov_lownutri = image(icon = icon, icon_state = "over_lownutri3")
 	ov_lownutri.plane = PLANE_LIGHTING_ABOVE
-	ov_harvest = image(icon = icon, icon_state = "over_alert3")
+	ov_harvest = image(icon = icon, icon_state = "over_harvest3")
 	ov_harvest.plane = PLANE_LIGHTING_ABOVE
-	ov_frozen = image(icon = icon, icon_state = "over_harvest3")
+	ov_frozen = image(icon = icon, icon_state = "over_frozen3")
 	ov_frozen.plane = PLANE_LIGHTING_ABOVE
-	ov_alert3 = image(icon = icon, icon_state = "over_frozen3")
+	ov_alert3 = image(icon = icon, icon_state = "over_alert3")
 	ov_alert3.plane = PLANE_LIGHTING_ABOVE
 
 //Refreshes the icon and sets the luminosity
@@ -44,7 +44,7 @@
 			if(!seed.growth_stages)
 				seed.update_growth_stages()
 			if(!seed.growth_stages)
-				to_world("<span class='danger'>Seed type [seed.get_trait(TRAIT_PLANT_ICON)] cannot find a growth stage value.</span>")
+				to_chat(world, span_danger("Seed type [seed.get_trait(TRAIT_PLANT_ICON)] cannot find a growth stage value."))
 				return
 			var/overlay_stage = 1
 			if(age >= seed.get_trait(TRAIT_MATURATION))

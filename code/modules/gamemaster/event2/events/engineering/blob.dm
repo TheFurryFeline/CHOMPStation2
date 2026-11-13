@@ -31,17 +31,17 @@
 
 /datum/event2/meta/blob/get_weight()
 	// Count the 'fighters'.
-	var/list/engineers = metric.get_people_in_department(DEPARTMENT_ENGINEERING)
-	var/list/security = metric.get_people_in_department(DEPARTMENT_SECURITY)
+	var/list/engineers = GLOB.metric.get_people_in_department(DEPARTMENT_ENGINEERING)
+	var/list/security = GLOB.metric.get_people_in_department(DEPARTMENT_SECURITY)
 
 	if(engineers.len + security.len < required_fighters)
 		return 0
 
 	// Now count the 'support'.
-	var/list/medical = metric.get_people_in_department(DEPARTMENT_MEDICAL)
+	var/list/medical = GLOB.metric.get_people_in_department(DEPARTMENT_MEDICAL)
 	var/need_medical = FALSE
 
-	var/list/robotics = metric.get_people_with_job(/datum/job/roboticist)
+	var/list/robotics = GLOB.metric.get_people_with_job(/datum/job/roboticist)
 	var/need_robotics = FALSE
 
 	// Determine what kind of support might be needed.
@@ -99,39 +99,37 @@
 	open_turfs = find_random_turfs(5 + number_of_blobs)
 
 	if(!open_turfs.len)
-		log_debug("Blob infestation event: Giving up after failure to find blob spots.")
+		log_game("Blob infestation event: Giving up after failure to find blob spots.")
 		abort()
 
 /datum/event2/event/blob/start()
 	for(var/i = 1 to number_of_blobs)
 		var/turf/T = pick(open_turfs)
 		var/obj/structure/blob/core/new_blob = new spawn_blob_type(T)
-		blobs += weakref(new_blob)
+		blobs += WEAKREF(new_blob)
 		open_turfs -= T // So we can't put two cores on the same tile if doing multiblob.
-		log_debug("Spawned [new_blob.overmind.blob_type.name] blob at [get_area(new_blob)].")
+		log_game("Spawned [new_blob.overmind.blob_type.name] blob at [get_area(new_blob)].")
 
 /datum/event2/event/blob/should_end()
-	for(var/WR in blobs)
-		var/weakref/weakref = WR
+	for(var/datum/weakref/weakref as anything in blobs)
 		if(weakref.resolve()) // If the weakref is resolvable, that means the blob hasn't been deleted yet.
 			return FALSE
 	return TRUE // Only end if all blobs die.
 
 // Normally this does nothing, but is useful if aborted by an admin.
 /datum/event2/event/blob/end()
-	for(var/WR in blobs)
-		var/weakref/weakref = WR
+	for(var/datum/weakref/weakref as anything in blobs)
 		var/obj/structure/blob/core/B = weakref.resolve()
 		if(istype(B))
 			qdel(B)
+	blobs.Cut()
 
 /datum/event2/event/blob/announce()
 	if(!ended) // Don't announce if the blobs die early.
 		var/danger_level = 0
 		var/list/blob_type_names = list()
 		var/multiblob = FALSE
-		for(var/WR in blobs)
-			var/weakref/weakref = WR
+		for(var/datum/weakref/weakref as anything in blobs)
 			var/obj/structure/blob/core/B = weakref.resolve()
 			if(!istype(B))
 				continue
@@ -146,8 +144,8 @@
 			multiblob = TRUE
 
 		var/list/lines = list()
-		lines += "Confirmed outbreak of level [7 + danger_level] biohazard[multiblob ? "s": ""] \
-		aboard [location_name()]. All personnel must contain the outbreak."
+		//lines += "Confirmed outbreak of level [7 + danger_level] biohazard[multiblob ? "s": ""]
+		lines += "Confirmed outbreak of level 5 biohazard[multiblob ? "s": ""] aboard [location_name()]. All personnel must contain the outbreak."
 
 		if(danger_level >= BLOB_DIFFICULTY_MEDIUM) // Tell them what kind of blob it is if it's tough.
 			lines += "The biohazard[multiblob ? "s have": " has"] been identified as [english_list(blob_type_names)]."
@@ -160,4 +158,4 @@
 		if(danger_level >= BLOB_DIFFICULTY_SUPERHARD)
 			lines += "Extreme caution is advised."
 
-		command_announcement.Announce(lines.Join("\n"), "Biohazard Alert", new_sound = 'sound/AI/outbreak7.ogg')
+		GLOB.command_announcement.Announce(lines.Join("\n"), "Hazardous Biomass - URGENT!", new_sound = ANNOUNCER_MSG_BIOHAZARD_FIVE) // Chomp edit - Better wording and also made the alert level 5. Lower number = More urgent.

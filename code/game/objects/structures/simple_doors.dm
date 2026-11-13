@@ -1,8 +1,11 @@
 /obj/structure/simple_door
 	name = "door"
-	density = 1
-	anchored = 1
+	desc = "A regular door. Usually found only found outside space-stations."
+	description_info = "If you hold left alt whilst left-clicking on a door, you can knock on it to announce your presence to anyone on the other side! Alternately if you are on HARM intent when doing this, you will bang loudly on the door!"
+	density = TRUE
+	anchored = TRUE
 	can_atmos_pass = ATMOS_PASS_DENSITY
+	breakable = TRUE
 
 	icon = 'icons/obj/doors/material_doors.dmi'
 	icon_state = "metal"
@@ -12,6 +15,16 @@
 	var/isSwitchingStates = 0
 	var/hardness = 1
 	var/oreAmount = 7
+	var/knock_sound = 'sound/machines/door/knock_glass.ogg'
+	var/knock_hammer_sound = 'sound/weapons/sonic_jackhammer.ogg'
+
+	var/locked = FALSE	//has the door been locked?
+	var/lock_id = null	//does the door have an associated key?
+	var/lock_type = "simple"	//string matched to "pick_type" on /obj/item/lockpick
+	var/can_pick = TRUE	//can it be picked/bypassed?
+	var/lock_difficulty = 1	//multiplier to picking/bypassing time
+	var/keysound = 'sound/items/toolbelt_equip.ogg'
+	rad_insulation = RAD_MEDIUM_INSULATION
 
 /obj/structure/simple_door/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	TemperatureAct(exposed_temperature)
@@ -20,13 +33,22 @@
 	hardness -= material.combustion_effect(get_turf(src),temperature, 0.3)
 	CheckHardness()
 
-/obj/structure/simple_door/New(var/newloc, var/material_name)
-	..()
+/obj/structure/simple_door/Initialize(mapload, material_name)
+	. = ..()
+	set_material(material_name)
+	if(!material)
+		return INITIALIZE_HINT_QDEL
+
+/obj/structure/simple_door/Destroy()
+	STOP_PROCESSING(SSobj, src)
+	update_nearby_tiles()
+	return ..()
+
+/obj/structure/simple_door/proc/set_material(material_name)
 	if(!material_name)
-		material_name = DEFAULT_WALL_MATERIAL
+		material_name = MAT_STEEL
 	material = get_material_by_name(material_name)
 	if(!material)
-		qdel(src)
 		return
 	hardness = max(1,round(material.integrity/10))
 	icon_state = material.door_icon_base
@@ -39,11 +61,6 @@
 	if(material.products_need_process())
 		START_PROCESSING(SSobj, src)
 	update_nearby_tiles(need_rebuild=1)
-
-/obj/structure/simple_door/Destroy()
-	STOP_PROCESSING(SSobj, src)
-	update_nearby_tiles()
-	return ..()
 
 /obj/structure/simple_door/get_material()
 	return material
@@ -64,6 +81,23 @@
 /obj/structure/simple_door/attack_hand(mob/user as mob)
 	return TryToSwitchState(user)
 
+/* // CHOMPEDIT: disabling becaue alt-clicking to view a turf is pretty important.
+/obj/structure/simple_door/click_alt(mob/user as mob)
+	. = ..()
+	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	if(!Adjacent(user))
+		return
+	else if(user.a_intent == I_HURT)
+		src.visible_message(span_warning("[user] hammers on \the [src]!"), span_warning("Someone hammers loudly on \the [src]!"))
+		src.add_fingerprint(user)
+		playsound(src, knock_hammer_sound, 50, 0, 3)
+	else if(user.a_intent == I_HELP)
+		src.visible_message("[user] knocks on \the [src].", "Someone knocks on \the [src].")
+		src.add_fingerprint(user)
+		playsound(src, knock_sound, 50, 0, 3)
+	return
+*/
+
 /obj/structure/simple_door/CanPass(atom/movable/mover, turf/target)
 	if(istype(mover, /obj/effect/beam))
 		return !opacity
@@ -75,7 +109,10 @@
 		var/mob/M = user
 		if(!material.can_open_material_door(user))
 			return
-		if(world.time - user.last_bumped <= 60)
+		if(locked && state == 0)
+			to_chat(M,span_warning("It's locked!"))
+			return
+		if(world.time - last_bumped <= 60)
 			return
 		if(M.client)
 			if(iscarbon(M))
@@ -98,7 +135,7 @@
 	playsound(src, material.dooropen_noise, 100, 1)
 	flick("[material.door_icon_base]opening",src)
 	sleep(10)
-	density = 0
+	density = FALSE
 	set_opacity(0)
 	state = 1
 	update_icon()
@@ -110,7 +147,7 @@
 	playsound(src, material.dooropen_noise, 100, 1)
 	flick("[material.door_icon_base]closing",src)
 	sleep(10)
-	density = 1
+	density = TRUE
 	set_opacity(1)
 	state = 0
 	update_icon()
@@ -123,45 +160,56 @@
 	else
 		icon_state = material.door_icon_base
 
-/obj/structure/simple_door/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/structure/simple_door/attackby(obj/item/W as obj, mob/user as mob)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-	if(istype(W,/obj/item/weapon/pickaxe))
-		var/obj/item/weapon/pickaxe/digTool = W
-		visible_message("<span class='danger'>[user] starts digging [src]!</span>")
-		if(do_after(user,digTool.digspeed*hardness) && src)
-			visible_message("<span class='danger'>[user] finished digging [src]!</span>")
+	if(istype(W,/obj/item/simple_key))
+		var/obj/item/simple_key/key = W
+		if(state)
+			to_chat(user,span_notice("\The [src] must be closed in order for you to lock it."))
+		else if(key.key_id != src.lock_id)
+			to_chat(user,span_warning("The [key] doesn't fit \the [src]'s lock!"))
+		else if(key.key_id == src.lock_id)
+			visible_message(span_notice("[user] [key.keyverb] \the [key] and [locked ? "unlocks" : "locks"] \the [src]."))
+			locked = !locked
+			playsound(src, keysound,100, 1)
+		return
+	if(istype(W,/obj/item/pickaxe) && breakable)
+		var/obj/item/pickaxe/digTool = W
+		visible_message(span_danger("[user] starts digging [src]!"))
+		if(do_after(user,digTool.digspeed*hardness, target = src) && src)
+			visible_message(span_danger("[user] finished digging [src]!"))
 			Dismantle()
-	else if(istype(W,/obj/item/weapon)) //not sure, can't not just weapons get passed to this proc?
+	else if(istype(W,/obj/item) && breakable) //not sure, can't not just weapons get passed to this proc?
 		hardness -= W.force/10
-		visible_message("<span class='danger'>[user] hits [src] with [W]!</span>")
-		if(material == get_material_by_name("resin"))
+		visible_message(span_danger("[user] hits [src] with [W]!"))
+		if(material == get_material_by_name(MAT_RESIN))
 			playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
-		else if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD)))
+		else if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD) || get_material_by_name(MAT_HARDWOOD)))
 			playsound(src, 'sound/effects/woodcutting.ogg', 100, 1)
 		else
 			playsound(src, 'sound/weapons/smash.ogg', 50, 1)
 		CheckHardness()
-	else if(istype(W,/obj/item/weapon/weldingtool))
-		var/obj/item/weapon/weldingtool/WT = W
+	else if(W.has_tool_quality(TOOL_WELDER) && breakable)
+		var/obj/item/weldingtool/WT = W.get_welder()
 		if(material.ignition_point && WT.remove_fuel(0, user))
 			TemperatureAct(150)
 	else
 		attack_hand(user)
 	return
 
-/obj/structure/simple_door/bullet_act(var/obj/item/projectile/Proj)
-	hardness -= Proj.force/10
+/obj/structure/simple_door/bullet_act(obj/item/projectile/Proj)
+	take_damage(Proj.damage/10)
 	CheckHardness()
 
-/obj/structure/simple_door/take_damage(var/damage)
+/obj/structure/simple_door/take_damage(damage)
 	hardness -= damage/10
 	CheckHardness()
 
-/obj/structure/simple_door/attack_generic(var/mob/user, var/damage, var/attack_verb)
-	visible_message("<span class='danger'>[user] [attack_verb] the [src]!</span>")
-	if(material == get_material_by_name("resin"))
+/obj/structure/simple_door/attack_generic(mob/user, damage, attack_verb)
+	visible_message(span_danger("[user] [attack_verb] the [src]!"))
+	if(material == get_material_by_name(MAT_RESIN))
 		playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
-	else if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD)))
+	else if(material == (get_material_by_name(MAT_WOOD) || get_material_by_name(MAT_SIFWOOD) || get_material_by_name(MAT_HARDWOOD)))
 		playsound(src, 'sound/effects/woodcutting.ogg', 100, 1)
 	else
 		playsound(src, 'sound/weapons/smash.ogg', 50, 1)
@@ -175,7 +223,7 @@
 
 /obj/structure/simple_door/proc/Dismantle(devastated = 0)
 	material.place_dismantled_product(get_turf(src))
-	visible_message("<span class='danger'>The [src] is destroyed!</span>")
+	visible_message(span_danger("The [src] is destroyed!"))
 	qdel(src)
 
 /obj/structure/simple_door/ex_act(severity = 1)
@@ -196,40 +244,115 @@
 /obj/structure/simple_door/process()
 	if(!material.radioactivity)
 		return
-	SSradiation.radiate(src, round(material.radioactivity/3))
+	radiation_pulse(
+		src,
+		max_range = 5,
+		threshold = RAD_MEDIUM_INSULATION,
+		chance = round((material.radioactivity * 0.33), 0.1),
+		minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+		strength = material.radioactivity
+	)
 
-/obj/structure/simple_door/iron/New(var/newloc,var/material_name)
-	..(newloc, "iron")
+/obj/structure/simple_door/iron/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_IRON)
 
-/obj/structure/simple_door/silver/New(var/newloc,var/material_name)
-	..(newloc, "silver")
+/obj/structure/simple_door/silver
+	rad_insulation = RAD_HEAVY_INSULATION
 
-/obj/structure/simple_door/gold/New(var/newloc,var/material_name)
-	..(newloc, "gold")
+/obj/structure/simple_door/silver/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_SILVER)
 
-/obj/structure/simple_door/uranium/New(var/newloc,var/material_name)
-	..(newloc, "uranium")
+/obj/structure/simple_door/gold
+	rad_insulation = RAD_HEAVY_INSULATION
 
-/obj/structure/simple_door/sandstone/New(var/newloc,var/material_name)
-	..(newloc, "sandstone")
+/obj/structure/simple_door/gold/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_GOLD)
 
-/obj/structure/simple_door/phoron/New(var/newloc,var/material_name)
-	..(newloc, "phoron")
+/obj/structure/simple_door/uranium
+	rad_insulation = RAD_NO_INSULATION
+	var/last_event = 0
+	/// Mutex to prevent infinite recursion when propagating radiation pulses
+	var/active = null
 
-/obj/structure/simple_door/diamond/New(var/newloc,var/material_name)
-	..(newloc, "diamond")
+/obj/structure/simple_door/uranium/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_URANIUM)
+	START_PROCESSING(SSobj, src)
 
-/obj/structure/simple_door/wood/New(var/newloc,var/material_name)
-	..(newloc, MAT_WOOD)
+/obj/structure/simple_door/uranium/proc/radiate()
+	SIGNAL_HANDLER
+	if(active)
+		return
+	if(world.time <= last_event + 1.5 SECONDS)
+		return
+	active = TRUE
+	radiation_pulse(
+		src,
+		max_range = 3,
+		threshold = RAD_LIGHT_INSULATION,
+		chance = URANIUM_IRRADIATION_CHANCE,
+		minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+		strength = 5
+	)
+	last_event = world.time
+	active = FALSE
 
-/obj/structure/simple_door/sifwood/New(var/newloc,var/material_name)
-	..(newloc, MAT_SIFWOOD)
+/obj/structure/simple_door/sandstone/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_SANDSTONE)
 
-/obj/structure/simple_door/resin/New(var/newloc,var/material_name)
-	..(newloc, "resin")
+/obj/structure/simple_door/phoron/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_PHORON)
 
-/obj/structure/simple_door/cult/New(var/newloc,var/material_name)
-	..(newloc, "cult")
+/obj/structure/simple_door/diamond
+	rad_insulation = RAD_EXTREME_INSULATION
+
+/obj/structure/simple_door/diamond/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_DIAMOND)
+
+//I was going to give wooden doors RAD_VERY_LIGHT_INSULATION but they need a proper parent instead of this garbage.
+/obj/structure/simple_door/wood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_WOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/hardwood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_HARDWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/sifwood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_SIFWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/birchwood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_BIRCHWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/pinewood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_PINEWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/oakwood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_OAKWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/acaciawood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_ACACIAWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/redwood/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_REDWOOD)
+	knock_sound = 'sound/machines/door/knock_wood.wav'
+
+/obj/structure/simple_door/resin/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_RESIN)
+
+/obj/structure/simple_door/cult/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_CULT)
+
+/obj/structure/simple_door/glamour/Initialize(mapload,material_name)
+	. = ..(mapload, material_name || MAT_GLAMOUR)
+
+/obj/structure/simple_door/snowbrick/Initialize(mapload, material_name)
+	. = ..(mapload, material_name || MAT_SNOWBRICK)
+
 
 /obj/structure/simple_door/cult/TryToSwitchState(atom/user)
 	if(isliving(user))
@@ -237,3 +360,30 @@
 		if(!iscultist(L) && !istype(L, /mob/living/simple_mob/construct))
 			return
 	..()
+
+// CHOMPedit start: Allows removing resin doors.
+/obj/structure/simple_door/resin/attack_hand(mob/user as mob)
+	usr.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	if (HULK in usr.mutations)
+		visible_message(span_warning("[usr] destroys the [name]!"))
+		hardness = 0
+	else
+
+		// Carbons can get straight through these.
+		if(istype(usr,/mob/living/carbon))
+			if(user.a_intent == I_HURT)
+				var/mob/living/carbon/M = usr
+				if(locate(/obj/item/organ/internal/xenos/hivenode) in M.internal_organs)
+					visible_message (span_warning("[usr] strokes the [name] and it melts away!"), 1)
+					hardness = 0
+					CheckHardness()
+					return
+				else
+					visible_message(span_warning("[usr] tears at the [name]!"))
+					hardness -= 2
+					CheckHardness()
+					return
+	CheckHardness()
+	TryToSwitchState(user)
+	return
+// CHOMPedit end.

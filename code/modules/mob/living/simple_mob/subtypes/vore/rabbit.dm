@@ -14,7 +14,7 @@
 	icon_rest = "rabbit_brown_rest"
 	icon = 'icons/mob/vore.dmi'
 
-	faction = "rabbit"
+	faction = FACTION_RABBIT
 	maxHealth = 30
 	health = 30
 
@@ -27,10 +27,13 @@
 	melee_damage_upper = 3
 	attacktext = list("nipped")
 
-	movement_cooldown = 3
+	movement_cooldown = 0
 
 	say_list_type = /datum/say_list/rabbit
 	ai_holder_type = /datum/ai_holder/simple_mob/passive
+
+	meat_amount = 3
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 
 	// Vore vars
 	vore_active = 1
@@ -40,13 +43,15 @@
 	vore_default_mode = DM_HOLD
 	vore_icons = SA_ICON_LIVING
 
+	allow_mind_transfer = TRUE
+
 	var/body_color 				//brown, black and white, leave blank for random
 
 	var/grumpiness = 0 			// This determines how grumpy we are. Pet us to increase it, leave us alone to decrease.
 	var/last_pet				// This tracks the last time someone patted us.
 	var/grump_decay = 5 SECONDS // This is how quickly our grumpiness decays.
 
-/mob/living/simple_mob/vore/rabbit/New()
+/mob/living/simple_mob/vore/rabbit/Initialize(mapload)
 	. = ..()
 
 	if(!body_color)
@@ -88,10 +93,22 @@
 		if(pounce_chance)
 			PounceTarget(user, pounce_chance)
 
+/mob/living/simple_mob/vore/rabbit/load_default_bellies()
+	. = ..()
+
+	var/obj/belly/B = vore_selected
+	B.name = "stomach"
+	B.desc = "With a sudden pounce, the rabbit begins swallowing you down with ease! A pink maw and surprisingly unintimidating teeth give way to the thing's pink, tight throat, until you're crammed down inside it's gut! Unless you happen to be drastically smaller than it, the inside of this thing's gut is incredibly cramped, as the fleshy pink walls undulate over your form. It's clearly still able to move with you inside somehow, despite the tiny size of the thing, as gastric sounds flood your ears. You've been bested by a RABBIT of all things!"
+	B.vore_sound = "Tauric Swallow"
+	B.release_sound = "Pred Escape"
+	B.fancy_vore = TRUE
+	B.belly_fullscreen_color = "#b15aac"
+	B.belly_fullscreen = "VBOanim_belly1"
+
 /datum/say_list/rabbit
 	speak = list("chrrrs.")
 	emote_hear = list("screms.")
-	emote_see = list("earflicks","wiggles it's tail", "wiggles its nose")
+	emote_see = list("earflicks","wiggles its tail", "wiggles its nose")
 
 /mob/living/simple_mob/vore/rabbit/black
 	icon_state = "rabbit_black"
@@ -137,7 +154,7 @@
 	melee_damage_upper = 3
 	attacktext = list("nipped")
 
-	movement_cooldown = 0.5 // very fast bunbun.
+	movement_cooldown = -2 // very fast bunbun.
 
 	vore_bump_chance = 10
 	vore_pounce_chance = 100

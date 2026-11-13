@@ -13,7 +13,7 @@
 	coat = null
 	update_icon()
 
-/obj/structure/coatrack/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/structure/coatrack/attackby(obj/item/W as obj, mob/user as mob)
 	var/can_hang = 0
 	for (var/T in allowed)
 		if(istype(W,T))
@@ -24,7 +24,7 @@
 		user.drop_from_inventory(coat, src)
 		update_icon()
 	else
-		to_chat(user, "<span class='notice'>You cannot hang [W] on [src]</span>")
+		to_chat(user, span_notice("You cannot hang [W] on [src]"))
 		return ..()
 
 /obj/structure/coatrack/CanPass(atom/movable/mover, turf/target)
@@ -43,10 +43,10 @@
 		return 1
 
 /obj/structure/coatrack/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	if (istype(coat, /obj/item/clothing/suit/storage/toggle/labcoat))
-		overlays += image(icon, icon_state = "coat_lab")
+		add_overlay("coat_lab")
 	if (istype(coat, /obj/item/clothing/suit/storage/toggle/labcoat/cmo))
-		overlays += image(icon, icon_state = "coat_cmo")
+		add_overlay("coat_cmo")
 	if (istype(coat, /obj/item/clothing/suit/storage/det_trench))
-		overlays += image(icon, icon_state = "coat_det")
+		add_overlay("coat_det")

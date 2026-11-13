@@ -5,7 +5,7 @@
 Basic tgui backend code consists of the following vars and procs:
 
 ```
-tgui_interact(mob/user, ui_key)
+tgui_interact(mob/user, datum/tgui/ui)
 tgui_data(mob/user)
 tgui_act(action, params)
 tgui_state()
@@ -13,15 +13,15 @@ tgui_state()
 
 - `src_object` - The atom, which UI corresponds to in the game world.
 - `tgui_interact` - The proc where you will handle a request to open an
-interface. Typically, you would update an existing UI (if it exists),
-or set up a new instance of UI by calling the `SStgui` subsystem.
+  interface. Typically, you would update an existing UI (if it exists),
+  or set up a new instance of UI by calling the `SStgui` subsystem.
 - `tgui_data` - In this proc you munges whatever complex data your `src_object`
-has into an associative list, which will then be sent to UI as a JSON string.
+  has into an associative list, which will then be sent to UI as a JSON string.
 - `tgui_act` - This proc receives user actions and reacts to them by changing
-the state of the game.
+  the state of the game.
 - `tgui_state` - This proc dictates under what conditions a UI may be interacted
-with. This may be the standard checks that check if you are in range and
-conscious, or more.
+  with. This may be the standard checks that check if you are in range and
+  conscious, or more.
 
 Once backend is complete, you create an new interface component on the
 frontend, which will receive this JSON data and render it on screen.
@@ -37,10 +37,10 @@ powerful interactions for embedded objects or remote access.
 Let's start with a very basic hello world.
 
 ```dm
-/obj/machinery/my_machine/tgui_interact(mob/user, datum/tgui/ui = null)
+/obj/machinery/my_machine/tgui_interact(mob/user, datum/tgui/ui)
   ui = SStgui.try_update_ui(user, src, ui)
   if(!ui)
-    ui = new(user, src, "MyMachine", name)
+    ui = new(user, src, "MyMachine")
     ui.open()
 ```
 
@@ -53,7 +53,7 @@ the `try_update_ui`), so we accept an existing UI to update.
 Inside the `if(!ui)` block (which means we are creating a new UI), we choose our
 template, title, and size; we can also set various options like `style` (for
 themes), or autoupdate. These options will be elaborated on later (as will
-`ui_state`s).
+`tgui_state`s).
 
 After `tgui_interact`, we need to define `tgui_data`. This just returns a list of
 data for our object to use. Let's imagine our object has a few vars:
@@ -76,8 +76,9 @@ input. The input's `action` and `params` are passed to the proc.
 
 ```dm
 /obj/machinery/my_machine/tgui_act(action, params)
-  if(..())
-    return TRUE
+  . = ..()
+  if(.)
+    return
   if(action == "change_color")
     var/new_color = params["color"]
     if(!(color in allowed_coors))
@@ -88,13 +89,20 @@ input. The input's `action` and `params` are passed to the proc.
 ```
 
 The `..()` (parent call) is very important here, as it is how we check that the
-user is allowed to use this interface (to avoid so-called href exploits). It is
-also very important to clamp and sanitize all input here. Always assume the user
-is attempting to exploit the game.
+user is allowed to use this interface (to avoid so-called href exploits). When
+any event has been handled `..()` will return `TRUE`. It is important to clamp
+and sanitize all input here. Always assume the user is attempting to exploit the
+game.
+
+When `..()` has returned `TRUE` your interface can safely assume that the user's
+action has been handled already by some parent proc and you should not continue
+to handle this, instead preserving and returning the parent proc's return value.
 
 Also note the use of `. = TRUE` (or `FALSE`), which is used to notify the UI
-that this input caused an update. This is especially important for UIs that do
-not auto-update, as otherwise the user will never see their change.
+that this input has been handled. When `tgui_act` eventually returns, a value of
+`TRUE` indicates that the input has been handled and that the UI should update.
+This is important for UIs that do not auto-update, as otherwise the user will
+not be able to see the interface update based on thier actions.
 
 ### Frontend
 
@@ -106,8 +114,7 @@ recommend getting yourself introduced to
 
 A React component is not a regular HTML template. A component is a
 javascript function, which accepts a `props` object (that contains
-properties passed to a component) and a `context` object (which is
-necessary to access UI data) as arguments, and outputs an HTML-like
+properties passed to a component) and outputs an HTML-like
 structure.
 
 So let's create our first React Component. Create a file with a name
@@ -115,32 +122,26 @@ So let's create our first React Component. Create a file with a name
 snippet (make sure component name matches the file name):
 
 ```jsx
-import { useBackend } from '../backend';
-import { Button, LabeledList, Section } from '../components';
-import { Window } from '../layouts';
+import { useBackend } from 'tgui/backend';
+import { Button, LabeledList, Section } from 'tgui-core/components';
+import { Window } from 'tgui/layouts';
 
-export const SampleInterface = (props, context) => {
-  const { act, data } = useBackend(context);
+export const SampleInterface = (props) => {
+  const { act, data } = useBackend();
   // Extract `health` and `color` variables from the `data` object.
-  const {
-    health,
-    color,
-  } = data;
+  const { health, color } = data;
   return (
     <Window resizable>
       <Window.Content scrollable>
         <Section title="Health status">
           <LabeledList>
-            <LabeledList.Item label="Health">
-              {health}
-            </LabeledList.Item>
-            <LabeledList.Item label="Color">
-              {color}
-            </LabeledList.Item>
+            <LabeledList.Item label="Health">{health}</LabeledList.Item>
+            <LabeledList.Item label="Color">{color}</LabeledList.Item>
             <LabeledList.Item label="Button">
               <Button
                 content="Dispatch a 'test' action"
-                onClick={() => act('test')} />
+                onClick={() => act('test')}
+              />
             </LabeledList.Item>
           </LabeledList>
         </Section>
@@ -150,25 +151,25 @@ export const SampleInterface = (props, context) => {
 };
 ```
 
-Here are the key variables you get from a `useBackend(context)` function:
+Here are the key variables you get from a `useBackend()` function:
 
 - `config` is part of core tgui. It contains meta-information about the
-interface and who uses it, BYOND refs to various objects, and so forth.
-You are rarely going to use it, but sometimes it can be used to your
-advantage when doing complex UIs.
+  interface and who uses it, BYOND refs to various objects, and so forth.
+  You are rarely going to use it, but sometimes it can be used to your
+  advantage when doing complex UIs.
 - `data` is the data returned from `tgui_data` and `tgui_static_data` procs in
-your DM code. Pretty straight forward.
+  your DM code. Pretty straight forward.
   - Note, that javascript doesn't have associative arrays, so when you
-  return an associative list from DM, it will be available in `data` as a
-  javascript object instead of an array. You can use it normally
-  like so: `object.key`, so it's not a problem if it's representing a
-  data structure, but common `Array` methods, such as `array.map(item => ...)`,
-  are not available on it. Always prefer returning clean arrays from your
-  code, since arrays are easier to work with in javascript!
+    return an associative list from DM, it will be available in `data` as a
+    javascript object instead of an array. You can use it normally
+    like so: `object.key`, so it's not a problem if it's representing a
+    data structure, but common `Array` methods, such as `array.map(item => ...)`,
+    are not available on it. Always prefer returning clean arrays from your
+    code, since arrays are easier to work with in javascript!
 - `act(name, params)` is a function, which you can call to dispatch an action
-to your DM code. It will be processed in `ui_act` proc. Action name will be
-available in `params["action"]`, mixed together with the rest of parameters
-you have passed in `params` object.
+  to your DM code. It will be processed in `tgui_act` proc. Action name will be
+  available in `params["action"]`, mixed together with the rest of parameters
+  you have passed in `params` object.
 
 **Let's talk about the syntax.**
 
@@ -179,17 +180,19 @@ expressions that look like html, and turns them into function calls.
 Take a look at this example:
 
 ```jsx
-<div className={'color-' + status}>
-  You are in {status} condition!
-</div>
+<div className={'color-' + status}>You are in {status} condition!</div>
 ```
 
 After compiling the code above, this is what it becomes:
 
 ```js
-createElement('div',
+createElement(
+  'div',
   { className: 'color-' + status },
-  'You are in ', status, ' condition!');
+  'You are in ',
+  status,
+  ' condition!',
+);
 ```
 
 It is very important to remember, that JSX is just a javascript expression
@@ -210,11 +213,7 @@ to a `<ProgressBar />` element. If `showProgress` is `false`, the whole
 expression evaluates to `false`, and `false` is not rendered by React.
 
 ```jsx
-<Box>
-  {showProgress && (
-    <ProgressBar value={progress} />
-  )}
-</Box>
+<Box>{showProgress && <ProgressBar value={progress} />}</Box>
 ```
 
 You can also use the `||` operator (the logical OR), which works the same way,
@@ -227,10 +226,8 @@ and builds a new array based on what was returned by that function.
 
 ```jsx
 <LabeledList>
-  {items.map(item => (
-    <LabeledList.Item
-      key={item.id}
-      label={item.label}>
+  {items.map((item) => (
+    <LabeledList.Item key={item.id} label={item.label}>
       {item.content}
     </LabeledList.Item>
   ))}
@@ -247,11 +244,11 @@ you can do in this situation, is divide and conquer. Grab a chunk of your
 JSX code, and wrap it into a second, smaller React component:
 
 ```jsx
-import { useBackend } from '../backend';
-import { Button, LabeledList, Section } from '../components';
-import { Window } from '../layouts';
+import { useBackend } from 'tgui/backend';
+import { Button, LabeledList, Section } from 'tgui-core/components';
+import { Window } from 'tgui/layouts';
 
-export const SampleInterface = (props, context) => {
+export const SampleInterface = (props) => {
   return (
     <Window resizable>
       <Window.Content scrollable>
@@ -261,24 +258,15 @@ export const SampleInterface = (props, context) => {
   );
 };
 
-const HealthStatus = (props, context) => {
-  const { act, data } = useBackend(context);
-  const {
-    user,
-  } = props;
-  const {
-    health,
-    color,
-  } = data;
+const HealthStatus = (props) => {
+  const { act, data } = useBackend();
+  const { user } = props;
+  const { health, color } = data;
   return (
-    <Section title={"Health status of: " + user}>
+    <Section title={'Health status of: ' + user}>
       <LabeledList>
-        <LabeledList.Item label="Health">
-          {health}
-        </LabeledList.Item>
-        <LabeledList.Item label="Color">
-          {color}
-        </LabeledList.Item>
+        <LabeledList.Item label="Health">{health}</LabeledList.Item>
+        <LabeledList.Item label="Color">{color}</LabeledList.Item>
       </LabeledList>
     </Section>
   );
@@ -292,10 +280,10 @@ here's what you need (note that you'll probably be forced to clean your shit up
 upon code review):
 
 ```dm
-/obj/copypasta/tgui_interact(mob/user, datum/tgui/ui = null)
+/obj/copypasta/tgui_interact(mob/user, datum/tgui/ui)
   ui = SStgui.try_update_ui(user, src, ui)
   if(!ui)
-    ui = new(user, src, "CopyPasta")
+    ui = new(user, src, "copypasta")
     ui.open()
 
 /obj/copypasta/tgui_data(mob/user)
@@ -305,7 +293,7 @@ upon code review):
 
 /obj/copypasta/tgui_act(action, params)
   if(..())
-    return TRUE
+    return
   switch(action)
     if("copypasta")
       var/newvar = params["var"]
@@ -318,32 +306,26 @@ upon code review):
 And the template:
 
 ```jsx
-import { useBackend } from '../backend';
-import { Button, LabeledList, Section } from '../components';
-import { Window } from '../layouts';
+import { useBackend } from 'tgui/backend';
+import { Button, LabeledList, Section } from 'tgui-core/components';
+import { Window } from 'tgui/layouts';
 
-export const SampleInterface = (props, context) => {
-  const { act, data } = useBackend(context);
+export const SampleInterface = (props) => {
+  const { act, data } = useBackend();
   // Extract `health` and `color` variables from the `data` object.
-  const {
-    health,
-    color,
-  } = data;
+  const { health, color } = data;
   return (
     <Window resizable>
       <Window.Content scrollable>
         <Section title="Health status">
           <LabeledList>
-            <LabeledList.Item label="Health">
-              {health}
-            </LabeledList.Item>
-            <LabeledList.Item label="Color">
-              {color}
-            </LabeledList.Item>
+            <LabeledList.Item label="Health">{health}</LabeledList.Item>
+            <LabeledList.Item label="Color">{color}</LabeledList.Item>
             <LabeledList.Item label="Button">
               <Button
                 content="Dispatch a 'test' action"
-                onClick={() => act('test')} />
+                onClick={() => act('test')}
+              />
             </LabeledList.Item>
           </LabeledList>
         </Section>

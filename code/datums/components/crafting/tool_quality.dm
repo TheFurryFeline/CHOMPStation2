@@ -1,6 +1,3 @@
-/obj/item
-	var/list/tool_qualities
-
 /// Used to check for a specific tool quality on an item.
 /// Returns TRUE or FALSE depending on whether `tool_quality` is found.
 /obj/item/proc/has_tool_quality(tool_quality)
@@ -27,3 +24,7 @@
 /// DEPRECATED PROC: DO NOT USE IN NEW CODE
 /obj/item/proc/is_multitool()
 	return has_tool_quality(TOOL_MULTITOOL)
+
+/// DEPRECATED PROC: DO NOT USE IN NEW CODE
+/obj/item/proc/is_welder()
+	return has_tool_quality(TOOL_WELDER)

@@ -3,7 +3,7 @@
 /area/mine
 	icon_state = "mining"
 	sound_env = ASTEROID
-	flags = AREA_FLAG_IS_NOT_PERSISTENT
+	flags = AREA_FLAG_IS_NOT_PERSISTENT | AREA_CRYOPLANET_SHIELDED
 
 /area/mine/explored
 	name = "Mine"
@@ -134,9 +134,9 @@
 	always_unpowered = 1
 	dynamic_lighting = 0
 
-	aft
-		name = "\improper Engineering Outpost Solar Array"
-		icon_state = "yellow"
+/area/outpost/engineering/solarsoutside/aft
+	name = "\improper Engineering Outpost Solar Array"
+	icon_state = "yellow"
 
 // Engineering Mining Outpost
 /area/outpost/engineering/mining

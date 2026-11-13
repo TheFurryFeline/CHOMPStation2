@@ -1,4 +1,4 @@
-/obj/item/weapon/gun/energy/sf2000
+/obj/item/gun/energy/sf2000
 	name = "SF 2000"
 	desc = "A oddly shaped red colored energy gun, can fire both stun and lethal lasers"
 	icon_state = "lasgunstun"
@@ -8,7 +8,6 @@
 	fire_delay = 10 // Handguns should be inferior to two-handed weapons.
 
 	projectile_type = /obj/item/projectile/beam/stun
-	origin_tech = list(TECH_COMBAT = 3, TECH_MAGNET = 2)
 	modifystate = "lasgunstun"
 
 	firemodes = list(
@@ -17,7 +16,7 @@
 		)
 
 
-/obj/item/weapon/gun/energy/gun/burst/mg42
+/obj/item/gun/energy/gun/burst/mg42
 	name = "MG42-E"
 	desc = "Space Blitzkrieg."
 	icon = 'icons/obj/gun_yw.dmi'
@@ -31,7 +30,6 @@
 	burst_delay = 0.5
 
 	projectile_type = /obj/item/projectile/beam/burstlaser
-	origin_tech = list(TECH_COMBAT = 4, TECH_MAGNET = 2, TECH_ILLEGAL = 3)
 	modifystate = "mg42-e"
 
 //	requires_two_hands = 1
@@ -39,12 +37,12 @@
 
 	firemodes = list(
 		list(mode_name="single fire", burst=1, projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg', charge_cost = 100),
-		list(mode_name="burst fire", burst=3, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
-		list(mode_name="5 laser burst", burst=5, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0,0,0), dispersion=list(0.0, 0.2, 0.5, 0.5, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
-		list(mode_name="15 laser burst, ye boi.", burst=15, fire_delay=null, move_delay=4, burst_accuracy=list(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0), dispersion=list(0.0, 0.2, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
+		list(mode_name="burst fire", burst=3, fire_delay=null, burst_accuracy=list(0,0,0), dispersion=list(0.0, 0.2, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
+		list(mode_name="5 laser burst", burst=5, fire_delay=null, burst_accuracy=list(0,0,0,0,0), dispersion=list(0.0, 0.2, 0.5, 0.5, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
+		list(mode_name="15 laser burst, ye boi.", burst=15, fire_delay=null, burst_accuracy=list(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0), dispersion=list(0.0, 0.2, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), projectile_type=/obj/item/projectile/beam/burstlaser, modifystate="mg42-e", fire_sound='sound/weapons/Laser.ogg'),
 		)
 
-/obj/item/weapon/gun/energy/x01
+/obj/item/gun/energy/x01
 	name = "X01 energy gun"
 	desc = "A rare weapon, handcrafted by a ArcLight manufactury on Luna. This one appears customized with older technology for the price a small fortune."
 	icon_state = "x01stun"
@@ -55,7 +53,6 @@
 	fire_delay = 8 // Handguns should be inferior to two-handed weapons.
 
 	projectile_type = /obj/item/projectile/beam/stun
-	origin_tech = list(TECH_COMBAT = 6, TECH_MAGNET = 5)
 	modifystate = "x01stun"
 
 	firemodes = list(

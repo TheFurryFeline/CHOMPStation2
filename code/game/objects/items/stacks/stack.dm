@@ -11,10 +11,10 @@
 
 /obj/item/stack
 	gender = PLURAL
-	origin_tech = list(TECH_MATERIAL = 1)
-	icon = 'icons/obj/stacks.dmi'
+	icon = 'icons/obj/stacks_ch.dmi' //CHOMPedit - materials update
 	randpixel = 7
-	center_of_mass = null
+	center_of_mass_x = 0
+	center_of_mass_y = 0
 	var/list/datum/stack_recipe/recipes
 	var/singular_name
 	var/amount = 1
@@ -28,21 +28,39 @@
 
 	var/pass_color = FALSE // Will the item pass its own color var to the created item? Dyed cloth, wood, etc.
 	var/strict_color_stacking = FALSE // Will the stack merge with other stacks that are different colors? (Dyed cloth, wood, etc)
+	var/is_building = FALSE
 
-/obj/item/stack/Initialize(var/ml, var/amount)
+	var/custom_handling = FALSE
+	var/beacons = FALSE
+	var/sandbags = FALSE
+
+/obj/item/stack/Initialize(mapload, starting_amount)
 	. = ..()
 	if(!stacktype)
 		stacktype = type
-	if(amount)
-		src.amount = amount
+	if(!isnull(starting_amount)) // Could be 0
+		// Negative numbers are 'give full stack', like -1
+		if(starting_amount < 0)
+			// But sometimes a coder forgot to define what that even means
+			if(max_amount)
+				starting_amount = max_amount
+			else
+				starting_amount = 1
+		set_amount(starting_amount, TRUE)
 	update_icon()
+	AddElement(/datum/element/sellable/material_stack)
 
 /obj/item/stack/Destroy()
-	if(uses_charge)
-		return 1
-	if (src && usr && usr.machine == src)
+	if (src && usr && usr.check_current_machine(src))
 		usr << browse(null, "window=stack")
+	if(islist(synths))
+		synths.Cut()
 	return ..()
+
+/obj/item/stack/get_material_composition(breakdown_flags)
+	. = ..()
+	for(var/M in .)
+		.[M] *= amount
 
 /obj/item/stack/update_icon()
 	if(no_variants)
@@ -56,27 +74,35 @@
 			icon_state = "[initial(icon_state)]_3"
 		item_state = initial(icon_state)
 
+/obj/item/stack/proc/get_examine_string()
+	if(!uses_charge)
+		return span_notice("There [src.amount == 1 ? "is" : "are"] [src.amount] [src.singular_name]\s in the stack.")
+	else
+		return span_notice("There is enough charge for [get_amount()].")
+
 /obj/item/stack/examine(mob/user)
 	. = ..()
 
 	if(Adjacent(user))
-		if(!uses_charge)
-			. += "There are [src.amount] [src.singular_name]\s in the stack."
-		else
-			. += "There is enough charge for [get_amount()]."
+		. += get_examine_string()
 
 /obj/item/stack/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	if(custom_handling)
+		return FALSE
 	tgui_interact(user)
 
 /obj/item/stack/tgui_interact(mob/user, datum/tgui/ui, datum/tgui/parent_ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "Stack", name)
+		ui = new(user, src, "MaterialStack", name)
 		ui.open()
 
 /obj/item/stack/tgui_data(mob/user, datum/tgui/ui, datum/tgui_state/state)
 	var/list/data = ..()
-	
+
 	data["amount"] = get_amount()
 
 	return data
@@ -120,14 +146,14 @@
 			if(get_amount() < 1)
 				qdel(src)
 				return
-			
+
 			var/datum/stack_recipe/R = locate(params["ref"])
 			if(!is_valid_recipe(R, recipes)) //href exploit protection
 				return FALSE
 			var/multiplier = text2num(params["multiplier"])
 			if(!multiplier || (multiplier <= 0)) //href exploit protection
 				return
-			produce_recipe(R, multiplier, usr)
+			produce_recipe(R, multiplier, ui.user)
 			return TRUE
 
 /obj/item/stack/proc/is_valid_recipe(datum/stack_recipe/R, list/recipe_list)
@@ -141,37 +167,43 @@
 
 	return FALSE
 
-/obj/item/stack/proc/produce_recipe(datum/stack_recipe/recipe, var/quantity, mob/user)
+/obj/item/stack/proc/produce_recipe(datum/stack_recipe/recipe, quantity, mob/user)
 	var/required = quantity*recipe.req_amount
 	var/produced = min(quantity*recipe.res_amount, recipe.max_res_amount)
 
+	if(is_building)
+		return
+
 	if (!can_use(required))
 		if (produced>1)
-			to_chat(user, "<span class='warning'>You haven't got enough [src] to build \the [produced] [recipe.title]\s!</span>")
+			to_chat(user, span_warning("You haven't got enough [src] to build \the [produced] [recipe.title]\s!"))
 		else
-			to_chat(user, "<span class='warning'>You haven't got enough [src] to build \the [recipe.title]!</span>")
+			to_chat(user, span_warning("You haven't got enough [src] to build \the [recipe.title]!"))
 		return
 
 	if (recipe.one_per_turf && (locate(recipe.result_type) in user.loc))
-		to_chat(user, "<span class='warning'>There is another [recipe.title] here!</span>")
+		to_chat(user, span_warning("There is another [recipe.title] here!"))
 		return
 
 	if (recipe.on_floor && !isfloor(user.loc))
-		to_chat(user, "<span class='warning'>\The [recipe.title] must be constructed on the floor!</span>")
+		to_chat(user, span_warning("\The [recipe.title] must be constructed on the floor!"))
 		return
 
 	if (recipe.time)
-		to_chat(user, "<span class='notice'>Building [recipe.title] ...</span>")
-		if (!do_after(user, recipe.time))
+		to_chat(user, span_notice("Building [recipe.title] ..."))
+		is_building = TRUE
+		if (!do_after(user, recipe.time, target = src))
+			is_building = FALSE
 			return
 
+	is_building = FALSE
 	if (use(required))
 		var/atom/O
 		if(recipe.use_material)
 			O = new recipe.result_type(user.loc, recipe.use_material)
 
-			if(istype(O, /obj))
-				var/obj/Ob = O
+			if(istype(O, /obj/item))
+				var/obj/item/Ob = O
 
 				if(LAZYLEN(Ob.matter))	// Law of equivalent exchange.
 					Ob.matter.Cut()
@@ -187,8 +219,8 @@
 			O = new recipe.result_type(user.loc)
 
 			if(recipe.matter_material)
-				if(istype(O, /obj))
-					var/obj/Ob = O
+				if(istype(O, /obj/item))
+					var/obj/item/Ob = O
 
 					if(LAZYLEN(Ob.matter))	// Law of equivalent exchange.
 						Ob.matter.Cut()
@@ -198,17 +230,18 @@
 
 					var/mattermult = istype(Ob, /obj/item) ? min(2000, 400 * Ob.w_class) : 2000
 
-					Ob.matter[recipe.use_material] = mattermult / produced * required
+					Ob.matter[recipe.matter_material] = mattermult / produced * required
 
 		O.set_dir(user.dir)
 		O.add_fingerprint(user)
-
 		if (istype(O, /obj/item/stack))
 			var/obj/item/stack/S = O
 			S.amount = produced
 			S.add_to_stacks(user)
-
-		if (istype(O, /obj/item/weapon/storage)) //BubbleWrap - so newly formed boxes are empty
+		if (isitem(O))
+			var/obj/item/P = O
+			P.persist_storable = FALSE
+		if (istype(O, /obj/item/storage)) //BubbleWrap - so newly formed boxes are empty
 			for (var/obj/item/I in O)
 				qdel(I)
 
@@ -225,19 +258,24 @@
 
 //Return 1 if an immediate subsequent call to use() would succeed.
 //Ensures that code dealing with stacks uses the same logic
-/obj/item/stack/proc/can_use(var/used)
-	if (get_amount() < used)
+/obj/item/stack/proc/can_use(used)
+	if(used < 0 || (used != round(used)))
+		stack_trace("Tried to use a bad stack amount: [used]. Location: [src.loc] ([src.x],[src.y],[src.z])") //CHOMPEdit
+		return 0
+	if(get_amount() < used)
 		return 0
 	return 1
 
-/obj/item/stack/proc/use(var/used)
-	if (!can_use(used))
+/obj/item/stack/proc/use(used)
+	if(!can_use(used))
 		return 0
 	if(!uses_charge)
 		amount -= used
 		if (amount <= 0)
-			if(usr)
-				usr.remove_from_mob(src)
+			// Tell container that we used up a stack
+			if(istype( loc, /obj/item/storage))
+				var/obj/item/storage/holder = loc
+				holder.remove_from_storage( src, null)
 			qdel(src) //should be safe to qdel immediately since if someone is still using this stack it will persist for a little while longer
 		update_icon()
 		return 1
@@ -248,9 +286,11 @@
 			var/datum/matter_synth/S = synths[i]
 			S.use_charge(charge_costs[i] * used) // Doesn't need to be deleted
 		return 1
-	return 0
 
-/obj/item/stack/proc/add(var/extra)
+/obj/item/stack/proc/add(extra)
+	if(extra < 0 || (extra != round(extra)))
+		stack_trace("Tried to add a bad stack amount: [extra]. Location: [src.loc] ([src.x],[src.y],[src.z])") //CHOMPEdit
+		return 0
 	if(!uses_charge)
 		if(amount + extra > get_max_amount())
 			return 0
@@ -265,6 +305,27 @@
 			var/datum/matter_synth/S = synths[i]
 			S.add_charge(charge_costs[i] * extra)
 
+/obj/item/stack/proc/set_amount(new_amount, no_limits = FALSE)
+	if(new_amount < 0 || (new_amount != round(new_amount)))
+		stack_trace("Tried to set a bad stack amount: [new_amount]. Location: [src.loc] ([src.x],[src.y],[src.z])") //CHOMPEdit
+		return 0
+
+	// Clean up the new amount
+	new_amount = max(round(new_amount), 0)
+
+	// Can exceed max if you really want
+	if(new_amount > max_amount && !no_limits)
+		new_amount = max_amount
+
+	amount = new_amount
+
+	// Can set it to 0 without qdel if you really want
+	if(amount == 0 && !no_limits)
+		qdel(src)
+		return FALSE
+
+	return TRUE
+
 /*
 	The transfer and split procs work differently than use() and add().
 	Whereas those procs take no action if the desired amount cannot be added or removed these procs will try to transfer whatever they can.
@@ -272,7 +333,7 @@
 */
 
 //attempts to transfer amount to S, and returns the amount actually transferred
-/obj/item/stack/proc/transfer_to(obj/item/stack/S, var/tamount=null, var/type_verified)
+/obj/item/stack/proc/transfer_to(obj/item/stack/S, tamount=null, type_verified)
 	if (!get_amount())
 		return 0
 	if ((stacktype != S.stacktype) && !type_verified)
@@ -283,6 +344,10 @@
 	if (isnull(tamount))
 		tamount = src.get_amount()
 
+	if(tamount < 0 || (tamount != round(tamount)))
+		stack_trace("Tried to transfer a bad stack amount: [tamount]. Location: [src.loc] ([src.x],[src.y],[src.z])") //CHOMPEdit
+		return 0
+
 	var/transfer = max(min(tamount, src.get_amount(), (S.get_max_amount() - S.get_amount())), 0)
 
 	var/orig_amount = src.get_amount()
@@ -290,16 +355,19 @@
 		S.add(transfer)
 		if (prob(transfer/orig_amount * 100))
 			transfer_fingerprints_to(S)
-			if(blood_DNA)
-				S.blood_DNA |= blood_DNA
+			transfer_blooddna_to(S)
 		return transfer
 	return 0
 
 //creates a new stack with the specified amount
-/obj/item/stack/proc/split(var/tamount)
+/obj/item/stack/proc/split(tamount)
 	if (!amount)
 		return null
 	if(uses_charge)
+		return null
+
+	if(tamount < 0 || (tamount != round(tamount)))
+		stack_trace("Tried to split a bad stack amount: [tamount]")
 		return null
 
 	var/transfer = max(min(tamount, src.amount, initial(max_amount)), 0)
@@ -310,8 +378,7 @@
 		newstack.color = color
 		if (prob(transfer/orig_amount * 100))
 			transfer_fingerprints_to(newstack)
-			if(blood_DNA)
-				newstack.blood_DNA |= blood_DNA
+			transfer_blooddna_to(newstack)
 		return newstack
 	return null
 
@@ -347,13 +414,16 @@
 			continue
 		var/transfer = src.transfer_to(item)
 		if (transfer)
-			to_chat(user, "<span class='notice'>You add a new [item.singular_name] to the stack. It now contains [item.amount] [item.singular_name]\s.</span>")
+			to_chat(user, span_notice("You add a new [item.singular_name] to the stack. It now contains [item.amount] [item.singular_name]\s."))
 		if(!amount)
 			break
 
 /obj/item/stack/attack_hand(mob/user as mob)
 	if (user.get_inactive_hand() == src)
-		var/N = input("How many stacks of [src] would you like to split off?  There are currently [amount].", "Split stacks", 1) as num|null
+		var/N = tgui_input_number(user, "How many stacks of [src] would you like to split off?  There are currently [amount].", "Split stacks", 1, amount, 1)
+		if(N != round(N))
+			to_chat(user, span_warning("You cannot separate a non-whole number of stacks!"))
+			return
 		if(N)
 			var/obj/item/stack/F = src.split(N)
 			if (F)
@@ -361,29 +431,36 @@
 				src.add_fingerprint(user)
 				F.add_fingerprint(user)
 				spawn(0)
-					if (src && usr.machine==src)
-						src.interact(usr)
+					if (src && user.check_current_machine(src))
+						src.interact(user)
 	else
 		..()
 	return
 
-/obj/item/stack/attackby(obj/item/W as obj, mob/user as mob)
-	if (istype(W, /obj/item/stack))
+/obj/item/stack/attackby(obj/item/W, mob/user)
+	if(istype(W, /obj/item/gripper))
+		var/obj/item/gripper/G = W
+		G.consolidate_stacks(src, user)
+		if(QDELETED(src))
+			return TRUE
+
+	else if(istype(W, /obj/item/stack))
 		var/obj/item/stack/S = W
 		src.transfer_to(S)
+		if(QDELETED(src))
+			return TRUE
 
-		spawn(0) //give the stacks a chance to delete themselves if necessary
-			if (S && usr.machine==S)
-				S.interact(usr)
-			if (src && usr.machine==src)
-				src.interact(usr)
+		if (S && user.check_current_machine(S))
+			S.interact(user)
+		if (src && user.check_current_machine(src))
+			src.interact(user)
 	else
 		return ..()
 
 /obj/item/stack/proc/combine_in_loc()
 	return //STUBBED for now, as it seems to randomly delete stacks
 
-/obj/item/stack/dropped(atom/old_loc)
+/obj/item/stack/dropped(mob/user, equipping, slot)
 	. = ..()
 	if(isturf(loc))
 		combine_in_loc()
@@ -392,6 +469,9 @@
 	. = ..()
 	if(pulledby && isturf(loc))
 		combine_in_loc()
+
+/obj/item/stack/proc/reagents_per_sheet()
+	return REAGENTS_PER_SHEET // units total of reagents when grinded
 
 /*
  * Recipe datum
@@ -433,6 +513,6 @@
 /datum/stack_recipe_list
 	var/title = "ERROR"
 	var/list/recipes = null
-	New(title, recipes)
-		src.title = title
-		src.recipes = recipes
+/datum/stack_recipe_list/New(title, recipes)
+	src.title = title
+	src.recipes = recipes

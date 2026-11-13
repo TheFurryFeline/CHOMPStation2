@@ -1,10 +1,8 @@
 /area/submap
 	name = "Submap Area"
 	icon_state = "submap"
-	flags = RAD_SHIELDED
+	flags = RAD_SHIELDED | AREA_FORBID_EVENTS | AREA_SECRET_NAME
 	ambience = AMBIENCE_RUINS
-	secret_name = TRUE
-	forbid_events = TRUE
 	flags = AREA_FLAG_IS_NOT_PERSISTENT
 
 /area/submap/event //To be used for Events not for regular PoIs
@@ -206,4 +204,8 @@
 
 /area/submap/SyndiSniper
 	name = "POI - Syndi Sniper"
+	ambience = AMBIENCE_SIF
+
+/area/submap/drgnplateu
+	name = "POI - Dragon Plateu"
 	ambience = AMBIENCE_SIF

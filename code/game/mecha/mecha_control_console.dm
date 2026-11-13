@@ -4,8 +4,8 @@
 	icon_keyboard = "rd_key"
 	icon_screen = "mecha"
 	light_color = "#a97faa"
-	req_access = list(access_robotics)
-	circuit = /obj/item/weapon/circuitboard/mecha_control
+	req_access = list(ACCESS_ROBOTICS)
+	circuit = /obj/item/circuitboard/mecha_control
 	var/list/located = list()
 	var/screen = 0
 	var/list/stored_data
@@ -26,13 +26,15 @@
 
 /obj/machinery/computer/mecha/tgui_data(mob/user, datum/tgui/ui, datum/tgui_state/state)
 	var/list/data = ..()
-	
-	data["beacons"] = list()
-	for(var/obj/item/mecha_parts/mecha_tracking/TR in world)
+
+
+	var/list/beacons = list()
+	for(var/obj/item/mecha_parts/mecha_tracking/TR in GLOB.mech_trackers)
 		var/list/tr_data = TR.tgui_data(user)
 		if(tr_data)
-			data["beacons"].Add(list(tr_data))
-	
+			beacons.Add(list(tr_data))
+	data["beacons"] = beacons
+
 	LAZYINITLIST(stored_data)
 	data["stored_data"] = stored_data
 
@@ -41,12 +43,12 @@
 /obj/machinery/computer/mecha/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("send_message")
 			var/obj/item/mecha_parts/mecha_tracking/MT = locate(params["mt"])
 			if(istype(MT))
-				var/message = sanitize(input(usr, "Input message", "Transmit message") as text)
+				var/message = tgui_input_text(ui.user, "Input message", "Transmit message", "", MAX_MESSAGE_LEN)
 				var/obj/mecha/M = MT.in_mecha()
 				if(message && M)
 					M.occupant_message(message)
@@ -63,7 +65,7 @@
 			if(istype(MT))
 				stored_data = MT.get_mecha_log()
 			return TRUE
-		
+
 		if("clear_log")
 			stored_data = null
 			return TRUE
@@ -73,7 +75,14 @@
 	desc = "Device used to transmit exosuit data."
 	icon = 'icons/obj/device.dmi'
 	icon_state = "motion2"
-	origin_tech = list(TECH_DATA = 2, TECH_MAGNET = 2)
+
+/obj/item/mecha_parts/mecha_tracking/Initialize(mapload)
+	. = ..()
+	GLOB.mech_trackers += src
+
+/obj/item/mecha_parts/mecha_tracking/Destroy()
+	GLOB.mech_trackers -= src
+	. = ..()
 
 /obj/item/mecha_parts/mecha_tracking/tgui_data(mob/user)
 	var/list/data = ..()
@@ -101,9 +110,11 @@
 
 	return data
 
-/obj/item/mecha_parts/mecha_tracking/emp_act()
+/obj/item/mecha_parts/mecha_tracking/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF)
+		return
 	qdel(src)
-	return
 
 /obj/item/mecha_parts/mecha_tracking/ex_act()
 	qdel(src)
@@ -117,7 +128,7 @@
 /obj/item/mecha_parts/mecha_tracking/proc/shock()
 	var/obj/mecha/M = in_mecha()
 	if(M)
-		M.emp_act(4)
+		M.emp_act(EMP_HARMLESS)
 	qdel(src)
 
 /obj/item/mecha_parts/mecha_tracking/proc/get_mecha_log()
@@ -127,15 +138,6 @@
 	return M.get_log_tgui()
 
 
-/obj/item/weapon/storage/box/mechabeacons
+/obj/item/storage/box/mechabeacons
 	name = "Exosuit Tracking Beacons"
-
-/obj/item/weapon/storage/box/mechabeacons/New()
-	..()
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
-	new /obj/item/mecha_parts/mecha_tracking(src)
+	starts_with = list(/obj/item/mecha_parts/mecha_tracking = 7)

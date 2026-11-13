@@ -6,24 +6,23 @@
 	icon_state = "pilot_helmet1"
 	item_icons = list(slot_head_str = 'icons/mob/pilot_helmet.dmi')
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/teshari/pilot_helmet.dmi'
+		SPECIES_TESHARI = 'icons/inventory/head/mob_teshari.dmi'
 		)
 	flags = THICKMATERIAL
 	armor = list(melee = 20, bullet = 10, laser = 10, energy = 5, bomb = 10, bio = 0, rad = 0)
 	flags_inv = HIDEEARS
-	cold_protection = HEAD
 	min_cold_protection_temperature = HELMET_MIN_COLD_PROTECTION_TEMPERATURE
-	heat_protection = HEAD
 	max_heat_protection_temperature = HELMET_MAX_HEAT_PROTECTION_TEMPERATURE
 	w_class = ITEMSIZE_NORMAL
 
 	var/obj/machinery/computer/shuttle_control/web/shuttle_comp
-	var/obj/screen/pilot_hud
+	var/atom/movable/screen/pilot_hud
 	var/list/images
 	var/list/raw_images
 	var/last_status
+	resistance_flags = FIRE_PROOF
 
-/obj/item/clothing/head/pilot/Initialize()
+/obj/item/clothing/head/pilot/Initialize(mapload)
 	. = ..()
 
 	images = list()
@@ -87,7 +86,7 @@
 	images["horizon"] = I
 	raw_images += I
 
-/obj/item/clothing/head/pilot/proc/update_hud(var/status)
+/obj/item/clothing/head/pilot/proc/update_hud(status)
 	if(last_status == status)
 		return
 
@@ -159,27 +158,26 @@
 	set category = "Object"
 	set src in usr
 
-	var/newcolor = input(usr,"Pick a color!","HUD Color") as null|color
+	var/newcolor = tgui_color_picker(usr,"Pick a color!","HUD Color")
 	if(newcolor)
 		for(var/img in list("top_words","left_bar","right_bar","flyboxes"))
 			var/image/I = images[img]
 			I.color = newcolor
 
 /obj/item/clothing/head/pilot/Destroy()
-	for(var/img in raw_images)
-		var/image/I = img
+	for(var/image/I as anything in raw_images)
 		I.loc = null
 	shuttle_comp = null
 	qdel(pilot_hud)
 	return ..()
 
-/obj/item/clothing/head/pilot/equipped(var/mob/user,var/slot)
+/obj/item/clothing/head/pilot/equipped(mob/user,slot)
 	. = ..()
 	if(slot == slot_head && user.client)
 		user.client.screen |= pilot_hud
 		user.client.images |= raw_images
 
-/obj/item/clothing/head/pilot/dropped(var/mob/user)
+/obj/item/clothing/head/pilot/dropped(mob/user, equipping, slot)
 	. = ..()
 	if(user.client)
 		user.client.screen -= pilot_hud
@@ -189,9 +187,13 @@
 	name = "pilot helmet"
 	desc = "Standard pilot gear. Protects the head from impacts. This one has a retractable visor"
 	icon_state = "pilot_helmet2"
-	action_button_name = "Toggle Visor"
+	actions_types = list(/datum/action/item_action/toggle_visor)
+	special_handling = TRUE
 
-/obj/item/clothing/head/pilot/alt/attack_self(mob/user as mob)
+/obj/item/clothing/head/pilot/alt/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(src.icon_state == initial(icon_state))
 		src.icon_state = "[icon_state]up"
 		to_chat(user, "You raise the visor on the pilot helmet.")

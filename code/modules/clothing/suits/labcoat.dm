@@ -6,9 +6,8 @@
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|ARMS
 	flags_inv = HIDEHOLSTER
-	allowed = list(/obj/item/device/analyzer,/obj/item/stack/medical,/obj/item/weapon/dnainjector,/obj/item/weapon/reagent_containers/dropper,/obj/item/weapon/reagent_containers/syringe,/obj/item/weapon/reagent_containers/hypospray,/obj/item/device/healthanalyzer,/obj/item/device/flashlight/pen,/obj/item/weapon/reagent_containers/glass/bottle,/obj/item/weapon/reagent_containers/glass/beaker,/obj/item/weapon/reagent_containers/pill,/obj/item/weapon/storage/pill_bottle,/obj/item/weapon/paper)
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_MEDICAL)
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 50, rad = 0)
-	index = 1
 
 /obj/item/clothing/suit/storage/toggle/labcoat/red
 	name = "red labcoat"
@@ -34,12 +33,6 @@
 	icon_state = "orange_labcoat"
 	item_state_slots = list(slot_r_hand_str = "orange_labcoat", slot_l_hand_str = "orange_labcoat")
 
-/obj/item/clothing/suit/storage/toggle/labcoat/green
-	name = "green labcoat"
-	desc = "A suit that protects against minor chemical spills. This one is green."
-	icon_state = "green_labcoat"
-	item_state_slots = list(slot_r_hand_str = "green_labcoat", slot_l_hand_str = "green_labcoat")
-
 /obj/item/clothing/suit/storage/toggle/labcoat/yellow
 	name = "yellow labcoat"
 	desc = "A suit that protects against minor chemical spills. This one is yellow."
@@ -52,6 +45,18 @@
 	icon_state = "pink_labcoat"
 	item_state_slots = list(slot_r_hand_str = "pink_labcoat", slot_l_hand_str = "pink_labcoat")
 
+/obj/item/clothing/suit/storage/toggle/labcoat/green
+	name = "green labcoat"
+	desc = "A suit that protects against minor chemical spills. This one is green."
+	icon_state = "green_labcoat"
+	item_state_slots = list(slot_r_hand_str = "green_labcoat", slot_l_hand_str = "green_labcoat")
+
+/obj/item/clothing/suit/storage/toggle/labcoat/mad
+	name = "The Mad's labcoat"
+	desc = "It makes you look capable of konking someone on the noggin and shooting them into space."
+	icon_state = "green_labcoat"
+	item_state_slots = list(slot_r_hand_str = "green_labcoat", slot_l_hand_str = "green_labcoat")
+
 /obj/item/clothing/suit/storage/toggle/labcoat/cmo
 	name = "chief medical officer's labcoat"
 	desc = "Bluer than the standard model."
@@ -59,40 +64,46 @@
 	item_state_slots = list(slot_r_hand_str = "cmo_labcoat", slot_l_hand_str = "cmo_labcoat")
 
 /obj/item/clothing/suit/storage/toggle/labcoat/cmoalt
-	name = "chief medical officer labcoat"
+	name = "chief medical officer's labcoat"
 	desc = "A labcoat with command blue highlights."
 	icon_state = "labcoat_cmoalt"
 	item_state_slots = list(slot_r_hand_str = "cmo_labcoat", slot_l_hand_str = "cmo_labcoat")
 
-/obj/item/clothing/suit/storage/toggle/labcoat/mad
-	name = "The Mad's labcoat"
-	desc = "It makes you look capable of konking someone on the noggin and shooting them into space."
-	icon_state = "labgreen"
-	item_state_slots = list(slot_r_hand_str = "green_labcoat", slot_l_hand_str = "green_labcoat")
-
 /obj/item/clothing/suit/storage/toggle/labcoat/genetics
-	name = "Geneticist labcoat"
+	name = JOB_GENETICIST + " labcoat"
 	desc = "A suit that protects against minor chemical spills. Has a blue stripe on the shoulder."
 	icon_state = "labcoat_gen"
 	item_state_slots = list(slot_r_hand_str = "genetics_labcoat", slot_l_hand_str = "genetics_labcoat")
 
 /obj/item/clothing/suit/storage/toggle/labcoat/chemist
-	name = "Chemist labcoat"
+	name = JOB_CHEMIST + " labcoat"
 	desc = "A suit that protects against minor chemical spills. Has an orange stripe on the shoulder."
 	icon_state = "labcoat_chem"
 	item_state_slots = list(slot_r_hand_str = "chemist_labcoat", slot_l_hand_str = "chemist_labcoat")
 
 /obj/item/clothing/suit/storage/toggle/labcoat/virologist
-	name = "Virologist labcoat"
+	name = JOB_ALT_VIROLOGIST + " labcoat"
 	desc = "A suit that protects against minor chemical spills. Offers slightly more protection against biohazards than the standard model. Has a green stripe on the shoulder."
 	icon_state = "labcoat_vir"
 	item_state_slots = list(slot_r_hand_str = "virologist_labcoat", slot_l_hand_str = "virologist_labcoat")
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 60, rad = 0)
 
+/obj/item/clothing/suit/storage/toggle/labcoat/roboticist
+	name = JOB_ROBOTICIST + " labcoat"
+	desc = "More like an eccentric coat than a labcoat. Helps pass off bloodstains as part of the aesthetic. Comes with red shoulder pads."
+	icon_state = "labcoat_robo"
+	item_state_slots = list(slot_r_hand_str = "labcoat", slot_l_hand_str = "labcoat")
+
 /obj/item/clothing/suit/storage/toggle/labcoat/science
-	name = "Scientist labcoat"
+	name = JOB_SCIENTIST + " labcoat"
 	desc = "A suit that protects against minor chemical spills. Has a purple stripe on the shoulder."
 	icon_state = "labcoat_tox"
+	item_state_slots = list(slot_r_hand_str = "science_labcoat", slot_l_hand_str = "science_labcoat")
+
+/obj/item/clothing/suit/storage/toggle/labcoat/rd
+	name = "research director's labcoat"
+	desc = "A flashy labcoat with purple markings. It belongs to the " + JOB_RESEARCH_DIRECTOR + "."
+	icon_state = "labcoat_rd"
 	item_state_slots = list(slot_r_hand_str = "science_labcoat", slot_l_hand_str = "science_labcoat")
 
 /obj/item/clothing/suit/storage/toggle/labcoat/emt
@@ -110,4 +121,11 @@
 	name = "golden plague doctor suit"
 	desc = "If it worked then, it works now. This classic design comes in gold."
 	icon_state = "plaguedoctor2"
-	index = 1
+
+/obj/item/clothing/suit/storage/toggle/labcoat/talon
+	name = "Talon labcoat"
+	desc = "A large, and extremely sterile labcoat that protects the wearer from chemical spills. This one has ITV Talon colored patterns along the labcoat, the designated shapes list it as a medical officer's labcoat."
+	icon = 'icons/inventory/suit/item.dmi'
+	default_worn_icon = 'icons/inventory/suit/mob.dmi'
+	icon_state = "talon_labcoat"
+	item_state_slots = list(slot_r_hand_str = "talon_labcoat", slot_l_hand_str = "talon_labcoat")

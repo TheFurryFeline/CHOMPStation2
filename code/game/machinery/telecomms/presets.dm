@@ -7,7 +7,6 @@
 
 /obj/machinery/telecomms/relay/preset/station
 	id = "Station Relay"
-	listening_level = 1
 	autolinkers = list("s_relay")
 
 /obj/machinery/telecomms/relay/preset/telecomms
@@ -28,7 +27,7 @@
 	id = "CentCom Relay"
 	hide = 1
 	toggled = 1
-	//anchored = 1
+	//anchored = TRUE
 	//use_power = 0
 	//idle_power_usage = 0
 	produces_heat = 0
@@ -48,7 +47,7 @@
 	network = "tcommsat"
 	produces_heat = 0
 	autolinkers = list("hub_cent", "c_relay", "s_relay", "m_relay", "r_relay", "hb_relay",
-	 "centcom", "receiverCent", "broadcasterCent") //VOREStation Edit - Added "hb_relay"
+		"centcom", "receiverCent", "broadcasterCent") //VOREStation Edit - Added "hb_relay"
 
 //Receivers
 
@@ -56,13 +55,13 @@
 	id = "Receiver A"
 	network = "tcommsat"
 	autolinkers = list("receiverA") // link to relay
-	freq_listening = list(AI_FREQ, SCI_FREQ, MED_FREQ, SUP_FREQ, SRV_FREQ, COMM_FREQ, ENG_FREQ, SEC_FREQ, ENT_FREQ)
+	freq_listening = list(AI_FREQ, SCI_FREQ, MED_FREQ, SUP_FREQ, SRV_FREQ, COMM_FREQ, ENG_FREQ, SEC_FREQ, BDCM_FREQ, ENT_FREQ, ATC_FREQ, CULTURE_FREQ)  // CHOMPEdit - Add BDCM_FREQ
 
 	//Common and other radio frequencies for people to freely use
-	New()
-		for(var/i = PUBLIC_LOW_FREQ, i < PUBLIC_HIGH_FREQ, i += 2)
-			freq_listening |= i
-		..()
+/obj/machinery/telecomms/receiver/preset_right/Initialize(mapload)
+	for(var/i = PUBLIC_LOW_FREQ, i < PUBLIC_HIGH_FREQ, i += 2)
+		freq_listening |= i
+	. = ..()
 
 /obj/machinery/telecomms/receiver/preset_cent
 	id = "CentCom Receiver"
@@ -86,12 +85,12 @@
 	freq_listening = list(SUP_FREQ, SRV_FREQ)
 	autolinkers = list("processor2", "supply", "service", "unused")
 
-/obj/machinery/telecomms/bus/preset_two/New()
+/obj/machinery/telecomms/bus/preset_two/Initialize(mapload)
 	for(var/i = PUBLIC_LOW_FREQ, i < PUBLIC_HIGH_FREQ, i += 2)
 		if(i == PUB_FREQ)
 			continue
 		freq_listening |= i
-	..()
+	. = ..()
 
 /obj/machinery/telecomms/bus/preset_three
 	id = "Bus 3"
@@ -102,7 +101,8 @@
 /obj/machinery/telecomms/bus/preset_four
 	id = "Bus 4"
 	network = "tcommsat"
-	freq_listening = list(ENG_FREQ, AI_FREQ, PUB_FREQ, ENT_FREQ)
+	freq_listening = list(ENG_FREQ, AI_FREQ, PUB_FREQ, ENT_FREQ, BDCM_FREQ) // CHOMPEdit
+
 	autolinkers = list("processor4", "engineering", "common")
 
 /obj/machinery/telecomms/bus/preset_cent
@@ -168,7 +168,8 @@
 
 /obj/machinery/telecomms/server/presets/common
 	id = "Common Server"
-	freq_listening = list(PUB_FREQ, AI_FREQ, ENT_FREQ) // AI Private and Common
+	freq_listening = list(PUB_FREQ, AI_FREQ, ENT_FREQ, BDCM_FREQ) // AI Private and Common // CHOMPEdit
+
 	autolinkers = list("common")
 
 // "Unused" channels, AKA all others.
@@ -177,12 +178,12 @@
 	freq_listening = list()
 	autolinkers = list("unused")
 
-/obj/machinery/telecomms/server/presets/unused/New()
+/obj/machinery/telecomms/server/presets/unused/Initialize(mapload)
 	for(var/i = PUBLIC_LOW_FREQ, i < PUBLIC_HIGH_FREQ, i += 2)
 		if(i == AI_FREQ || i == PUB_FREQ)
 			continue
 		freq_listening |= i
-	..()
+	. = ..()
 
 /obj/machinery/telecomms/server/presets/command
 	id = "Command Server"

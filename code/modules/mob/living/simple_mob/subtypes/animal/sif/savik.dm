@@ -21,7 +21,7 @@
 	name = "savik"
 	tt_desc = "S Pistris tellus" //landshark
 	catalogue_data = list(/datum/category_item/catalogue/fauna/savik)
-	faction = "savik"
+	faction = FACTION_SAVIK
 
 	icon_state = "savik"
 	icon_living = "savik"
@@ -30,8 +30,8 @@
 
 	maxHealth = 125
 	health = 125
-	minbodytemp = 175 //yw edit, Makes mobs survive cryogaia temps
-	movement_cooldown = 0.5 SECONDS
+	minbodytemp = 175
+	movement_cooldown = -1
 	heat_resist = -0.50
 	cold_resist = 0.75
 	melee_damage_lower = 15
@@ -42,13 +42,15 @@
 	melee_attack_delay = 1 SECOND
 	attacktext = list("mauled")
 
+	organ_names = /datum/decl/mob_organ_names/savik
+
 	player_msg = "You have the ability to <b>berserk at will</b>, which will grant strong physical bonuses for \
 	a short period of time, however it will tire you and you will be much weaker for awhile after it expires."
 
 	tame_items = list(
 	/obj/item/organ = 70,
-	/obj/item/weapon/reagent_containers/food/snacks/meat/crab = 30,
-	/obj/item/weapon/reagent_containers/food/snacks/meat = 20
+	/obj/item/reagent_containers/food/snacks/crabmeat = 30,
+	/obj/item/reagent_containers/food/snacks/meat = 20
 	)
 
 	say_list_type = /datum/say_list/savik
@@ -64,7 +66,7 @@
 		if(health <= (maxHealth * 0.5)) // At half health, and fighting someone currently.
 			berserk()
 
-/mob/living/simple_mob/animal/sif/savik/fail_tame(var/obj/O, var/mob/user)
+/mob/living/simple_mob/animal/sif/savik/fail_tame(obj/O, mob/user)
 	..()
 
 	if(prob(30))	// They don't like people messing with them and their food.
@@ -77,6 +79,9 @@
 /mob/living/simple_mob/animal/sif/savik/verb/berserk()
 	set name = "Berserk"
 	set desc = "Enrage and become vastly stronger for a period of time, however you will be weaker afterwards."
-	set category = "Abilities"
+	set category = "Abilities.Savik"
 
 	add_modifier(/datum/modifier/berserk, 30 SECONDS)
+
+/datum/decl/mob_organ_names/savik
+	hit_zones = list("head", "torso", "left foreleg", "right foreleg", "left hind leg", "right hind leg", "right bone plate", "left bone plate", "tail", "left claw", "right claw")

@@ -78,7 +78,6 @@
 	pixel_y = 24
 	},
 /obj/structure/cable{
-	d2 = 4;
 	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -129,8 +128,6 @@
 /area/shuttle/salamander_head)
 "bY" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -160,7 +157,6 @@
 	pixel_y = -24
 	},
 /obj/structure/cable{
-	d2 = 4;
 	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -194,7 +190,7 @@
 	dir = 1
 	},
 /turf/simulated/floor/tiled/techfloor,
-/area/shuttle/salamander_q2)
+/area/shuttle/salamander_q1)
 "dj" = (
 /turf/simulated/floor/plating,
 /area/shuttle/salamander_engineering)
@@ -221,8 +217,6 @@
 /area/shuttle/salamander_engineering)
 "dO" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -270,7 +264,7 @@
 "eG" = (
 /obj/machinery/atmospherics/unary/vent_pump/on,
 /turf/simulated/floor/tiled/techfloor,
-/area/shuttle/salamander_q2)
+/area/shuttle/salamander_q1)
 "eJ" = (
 /obj/effect/map_helper/airlock/sensor/int_sensor,
 /obj/machinery/airlock_sensor{
@@ -286,8 +280,6 @@
 "eP" = (
 /obj/machinery/door/firedoor/glass,
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -319,6 +311,16 @@
 	},
 /turf/simulated/floor/plating,
 /area/shuttle/salamander_engineering)
+"fu" = (
+/obj/structure/bed/pod,
+/obj/item/bedsheet/blue,
+/obj/machinery/light_switch{
+	dir = 4;
+	pixel_x = 22
+	},
+/obj/effect/landmark/late_antag/trader,
+/turf/simulated/floor/tiled/techfloor,
+/area/shuttle/salamander_q1)
 "fB" = (
 /obj/machinery/light,
 /turf/simulated/floor/plating,
@@ -337,8 +339,6 @@
 /area/shuttle/salamander_engineering)
 "fE" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/structure/railing/grey{
@@ -378,8 +378,8 @@
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/salamander)
 "fZ" = (
-/obj/item/device/suit_cooling_unit,
-/obj/item/weapon/tank/air,
+/obj/item/suit_cooling_unit,
+/obj/item/tank/air,
 /obj/item/clothing/suit/space/void/refurb,
 /obj/item/clothing/head/helmet/space/void/refurb,
 /obj/structure/handrail,
@@ -391,8 +391,6 @@
 /area/shuttle/salamander)
 "gl" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -402,7 +400,7 @@
 	dir = 10
 	},
 /turf/simulated/floor/tiled/techfloor,
-/area/shuttle/salamander_q2)
+/area/shuttle/salamander_q1)
 "gv" = (
 /obj/machinery/power/apc{
 	dir = 8;
@@ -410,7 +408,6 @@
 	pixel_x = -28
 	},
 /obj/structure/cable{
-	d2 = 2;
 	icon_state = "0-2"
 	},
 /obj/structure/handrail,
@@ -493,8 +490,6 @@
 /area/shuttle/salamander)
 "hp" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/manifold4w/hidden/supply,
@@ -517,8 +512,6 @@
 /area/shuttle/salamander_engineering)
 "hO" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -551,8 +544,6 @@
 /area/shuttle/salamander_engineering)
 "im" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -562,13 +553,9 @@
 /area/shuttle/salamander_engineering)
 "is" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -578,8 +565,6 @@
 /area/shuttle/salamander_engineering)
 "iC" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -589,8 +574,6 @@
 /area/shuttle/salamander)
 "iJ" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -620,8 +603,6 @@
 /area/shuttle/salamander)
 "iS" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -632,8 +613,6 @@
 /area/shuttle/salamander)
 "iW" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers{
@@ -677,18 +656,12 @@
 /area/shuttle/salamander)
 "jT" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 8;
 	icon_state = "1-8"
 	},
 /obj/machinery/atmospherics/pipe/manifold4w/hidden/scrubbers,
@@ -707,8 +680,6 @@
 	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -731,8 +702,6 @@
 /area/shuttle/salamander_engineering)
 "kL" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/structure/handrail{
@@ -741,6 +710,10 @@
 /obj/structure/closet/autolok_wall{
 	dir = 4;
 	pixel_x = 32
+	},
+/obj/structure/panic_button{
+	pixel_x = 32;
+	pixel_y = -32
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/shuttle/salamander_engineering)
@@ -778,8 +751,6 @@
 "ld" = (
 /obj/machinery/door/firedoor/glass,
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -863,14 +834,14 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/obj/item/weapon/tank/phoron/pressurized,
-/obj/item/weapon/tank/phoron/pressurized,
+/obj/item/tank/phoron/pressurized,
+/obj/item/tank/phoron/pressurized,
 /obj/structure/closet/walllocker{
 	dir = 1;
 	name = "Spare Fuel";
 	pixel_y = -32
 	},
-/obj/item/weapon/tool/crowbar/red,
+/obj/item/tool/crowbar/red,
 /obj/item/stack/material/tritium{
 	amount = 25
 	},
@@ -970,8 +941,6 @@
 /area/shuttle/salamander_cockpit)
 "nB" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 8;
 	icon_state = "1-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -1021,8 +990,8 @@
 /area/shuttle/salamander)
 "oi" = (
 /obj/structure/closet/secure_closet/freezer/fridge,
-/obj/item/weapon/storage/box/donkpockets,
-/obj/item/weapon/storage/box/donkpockets,
+/obj/item/storage/box/donkpockets,
+/obj/item/storage/box/donkpockets,
 /obj/random/snack,
 /obj/random/snack,
 /obj/random/snack,
@@ -1048,7 +1017,7 @@
 /area/shuttle/salamander_cockpit)
 "oF" = (
 /obj/structure/bed/pod,
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /obj/machinery/light_switch{
 	dir = 4;
 	pixel_x = 22
@@ -1114,13 +1083,9 @@
 /area/shuttle/salamander)
 "qg" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -1144,7 +1109,6 @@
 	pixel_y = 24
 	},
 /obj/structure/cable{
-	d2 = 4;
 	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -1224,8 +1188,6 @@
 /area/shuttle/salamander)
 "rw" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/manifold4w/hidden/scrubbers,
@@ -1240,12 +1202,16 @@
 	dir = 4
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/salamander)
+"rP" = (
+/obj/structure/hull_corner{
+	dir = 8
+	},
+/turf/template_noop,
+/area/shuttle/salamander_head)
 "sb" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 8
@@ -1255,12 +1221,22 @@
 	},
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/salamander_engineering)
+"ts" = (
+/obj/structure/hull_corner,
+/turf/template_noop,
+/area/shuttle/salamander)
 "tA" = (
 /obj/machinery/pointdefense{
 	id_tag = "salamander_pd"
 	},
 /turf/simulated/floor/plating,
 /area/shuttle/salamander_engineering)
+"uf" = (
+/obj/structure/hull_corner{
+	dir = 1
+	},
+/turf/template_noop,
+/area/shuttle/salamander_galley)
 "ur" = (
 /obj/machinery/door/firedoor/glass,
 /obj/structure/grille,
@@ -1283,8 +1259,6 @@
 /area/shuttle/salamander_galley)
 "vI" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -1292,6 +1266,10 @@
 	},
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/salamander_cockpit)
+"wq" = (
+/obj/structure/hull_corner,
+/turf/template_noop,
+/area/shuttle/salamander_engineering)
 "wF" = (
 /obj/machinery/atmospherics/pipe/simple/visible{
 	dir = 6
@@ -1299,10 +1277,11 @@
 /obj/structure/catwalk,
 /turf/simulated/floor/plating,
 /area/shuttle/salamander)
+"xj" = (
+/turf/simulated/wall/shull,
+/area/shuttle/salamander_q1)
 "xL" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -1320,8 +1299,6 @@
 /area/shuttle/salamander)
 "yv" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -1340,8 +1317,6 @@
 /area/shuttle/salamander)
 "zO" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -1372,7 +1347,6 @@
 	pixel_y = -24
 	},
 /obj/structure/cable{
-	d2 = 4;
 	icon_state = "0-4"
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -1383,7 +1357,7 @@
 	pixel_x = -32
 	},
 /turf/simulated/floor/tiled/techfloor,
-/area/shuttle/salamander_q2)
+/area/shuttle/salamander_q1)
 "Bf" = (
 /obj/machinery/light{
 	dir = 1
@@ -1405,6 +1379,12 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/shuttle/salamander)
+"Bu" = (
+/obj/structure/hull_corner{
+	dir = 4
+	},
+/turf/template_noop,
+/area/shuttle/salamander_engineering)
 "BW" = (
 /obj/machinery/atmospherics/pipe/manifold4w/hidden/supply,
 /obj/machinery/atmospherics/pipe/simple/hidden/fuel{
@@ -1473,6 +1453,12 @@
 	},
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/salamander)
+"FV" = (
+/obj/machinery/pointdefense{
+	id_tag = "salamander_pd"
+	},
+/turf/simulated/floor/plating,
+/area/shuttle/salamander_q1)
 "Gj" = (
 /obj/machinery/door/firedoor/glass,
 /obj/structure/grille,
@@ -1482,8 +1468,6 @@
 /area/shuttle/salamander_cockpit)
 "HG" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/structure/handrail{
@@ -1504,8 +1488,8 @@
 /turf/simulated/floor/plating,
 /area/shuttle/salamander_cockpit)
 "IL" = (
-/obj/item/device/suit_cooling_unit,
-/obj/item/weapon/tank/air,
+/obj/item/suit_cooling_unit,
+/obj/item/tank/air,
 /obj/item/clothing/suit/space/void/refurb,
 /obj/item/clothing/head/helmet/space/void/refurb,
 /obj/structure/handrail{
@@ -1521,8 +1505,6 @@
 /area/shuttle/salamander)
 "IQ" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 8;
 	icon_state = "1-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
@@ -1594,6 +1576,20 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/shuttle/salamander)
+"Lb" = (
+/obj/machinery/door/firedoor/glass,
+/obj/structure/cable{
+	icon_state = "1-2"
+	},
+/obj/machinery/atmospherics/pipe/simple/hidden/supply{
+	dir = 1
+	},
+/obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
+/obj/machinery/door/airlock/voidcraft{
+	req_one_access = list(160)
+	},
+/turf/simulated/floor/tiled/techmaint,
+/area/shuttle/salamander_q1)
 "Lf" = (
 /obj/effect/floor_decal/industrial/warning,
 /turf/simulated/floor/tiled/techfloor,
@@ -1605,8 +1601,6 @@
 /area/shuttle/salamander)
 "No" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 8;
 	icon_state = "1-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -1688,8 +1682,6 @@
 "Qq" = (
 /obj/machinery/door/firedoor/glass,
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -1723,9 +1715,29 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/shuttle/salamander)
+"Rj" = (
+/obj/machinery/door/firedoor/glass,
+/obj/structure/grille,
+/obj/structure/window/reinforced/full,
+/obj/structure/window/reinforced,
+/obj/structure/window/reinforced{
+	dir = 1
+	},
+/turf/simulated/floor/plating,
+/area/shuttle/salamander_q1)
+"Rm" = (
+/obj/structure/bed/pod,
+/obj/item/bedsheet/blue,
+/obj/machinery/alarm/alarms_hidden{
+	dir = 8;
+	pixel_x = 26
+	},
+/obj/effect/landmark/late_antag/trader,
+/turf/simulated/floor/tiled/techfloor,
+/area/shuttle/salamander_q1)
 "RO" = (
 /obj/structure/bed/pod,
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /obj/machinery/alarm/alarms_hidden{
 	dir = 8;
 	pixel_x = 26
@@ -1770,8 +1782,6 @@
 /area/shuttle/salamander_q2)
 "Td" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /obj/structure/railing/grey{
@@ -1790,8 +1800,8 @@
 /turf/simulated/wall/shull,
 /area/shuttle/salamander_head)
 "Tl" = (
-/obj/item/device/suit_cooling_unit,
-/obj/item/weapon/tank/air,
+/obj/item/suit_cooling_unit,
+/obj/item/tank/air,
 /obj/item/clothing/suit/space/void/refurb,
 /obj/item/clothing/head/helmet/space/void/refurb,
 /obj/structure/railing/grey{
@@ -1828,7 +1838,6 @@
 /area/shuttle/salamander)
 "Vh" = (
 /obj/structure/cable{
-	d2 = 2;
 	icon_state = "0-2"
 	},
 /obj/machinery/power/apc{
@@ -1878,10 +1887,14 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/universal,
 /turf/simulated/floor/plating,
 /area/shuttle/salamander_engineering)
+"WI" = (
+/obj/structure/hull_corner{
+	dir = 4
+	},
+/turf/template_noop,
+/area/shuttle/salamander)
 "WN" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /obj/machinery/door/airlock/multi_tile/metal{
@@ -1908,8 +1921,8 @@
 /turf/simulated/floor/plating,
 /area/shuttle/salamander)
 "Xc" = (
-/obj/item/device/suit_cooling_unit,
-/obj/item/weapon/tank/air,
+/obj/item/suit_cooling_unit,
+/obj/item/tank/air,
 /obj/item/clothing/suit/space/void/refurb,
 /obj/item/clothing/head/helmet/space/void/refurb,
 /obj/structure/railing/grey{
@@ -1960,7 +1973,6 @@
 	anchored = 1
 	},
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /obj/machinery/alarm/alarms_hidden{
@@ -2028,7 +2040,7 @@ WP
 WP
 WP
 WP
-WP
+wq
 Wj
 dj
 fn
@@ -2037,7 +2049,7 @@ Wj
 dj
 fn
 Wj
-WP
+Bu
 WP
 WP
 WP
@@ -2152,7 +2164,7 @@ WP
 "}
 (9,1,1) = {"
 WP
-WP
+ts
 VT
 VT
 Wj
@@ -2165,7 +2177,7 @@ lV
 Wj
 VT
 VT
-WP
+WI
 WP
 "}
 (10,1,1) = {"
@@ -2386,7 +2398,7 @@ WP
 "}
 (22,1,1) = {"
 WP
-WP
+rP
 Tg
 br
 cq
@@ -2399,7 +2411,7 @@ mR
 bI
 qu
 mR
-WP
+uf
 WP
 "}
 (23,1,1) = {"
@@ -2459,11 +2471,11 @@ WP
 (26,1,1) = {"
 WP
 WP
-bk
-Vz
+FV
+xj
 cY
 AN
-Vz
+xj
 hn
 yv
 Vz
@@ -2478,10 +2490,10 @@ WP
 WP
 WP
 WP
-ci
+Rj
 eG
 gl
-ld
+Lb
 hp
 jT
 ld
@@ -2496,10 +2508,10 @@ WP
 WP
 WP
 WP
-Vz
-oF
-RO
-Vz
+xj
+fu
+Rm
+xj
 fh
 xL
 Vz
@@ -2514,10 +2526,10 @@ WP
 WP
 WP
 WP
-Vz
-Vz
-Vz
-Vz
+xj
+xj
+xj
+xj
 DB
 jV
 Vz

@@ -1,5 +1,3 @@
-/* //CHOMPedit commented micromech stuff, because fuck this trash
-
 /obj/mecha/micro/utility/gopher //small digging creature, to keep the theme
 	desc = "A tough little utility mech for micro crewmembers, based on a miner borg chassis."
 	name = "Gopher"
@@ -9,7 +7,6 @@
 	dir_in = 2 //Facing south.
 	health = 100
 	deflect_chance = 10
-	damage_absorption = list("brute"=0.9,"fire"=1,"bullet"=1,"laser"=1,"energy"=1,"bomb"=1)
 	max_temperature = 15000
 	infra_luminosity = 6
 	wreckage = /obj/effect/decal/mecha_wreckage/micro/utility/gopher
@@ -21,4 +18,3 @@
 /obj/effect/decal/mecha_wreckage/micro/utility/gopher
 	name = "Gopher wreckage"
 	icon_state = "gopher-broken"
-*/

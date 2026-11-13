@@ -1,12 +1,13 @@
 // -- Datums -- //
 
 /obj/effect/overmap/visitable/sector/alienship
-	name = "Unknown Vessel"
+	name = "precursor vessel"
+	icon_state = "unkn_o"
+	unknown_state = "ship"
 	desc = "An unknown vessel detected by sensors."
 	start_x = 12
 	start_y = 12
 	icon_state = "ship"
-	color = "#ff00ff" //Sandy
 	initial_generic_waypoints = list("tether_excursion_alienship")
 
 // -- Objs -- //
@@ -16,7 +17,7 @@
 	icon = 'alienship.dmi'
 	icon_state = null
 	mouse_opacity = 0
-	invisibility = 101
+	invisibility = INVISIBILITY_ABSTRACT
 
 	//Shared!
 	var/static/mission_mode
@@ -27,7 +28,7 @@
 	var/door_on_mode
 	var/teleport_on_mode
 
-/obj/away_mission_init/alienship/Initialize()
+/obj/away_mission_init/alienship/Initialize(mapload)
 	. = ..()
 
 	if(!mission_mode) //WE ARE NUMBER ONE
@@ -54,7 +55,7 @@
 /obj/machinery/porta_turret/alien/ion
 	name = "interior anti-boarding turret"
 	desc = "A very tough looking turret made by alien hands."
-	installation = /obj/item/weapon/gun/energy/ionrifle/weak
+	installation = /obj/item/gun/energy/ionrifle/weak
 	enabled = TRUE
 	lethal = TRUE
 	ailock = TRUE
@@ -94,13 +95,13 @@
 	icon_state = "w2e"
 	teleport_on_mode = "w2e"
 
-/obj/item/weapon/reagent_containers/hypospray/autoinjector/alien
+/obj/item/reagent_containers/hypospray/autoinjector/alien
 	name = "alien injector(?)"
 	desc = "It appears to contain some sort of liquid and has a needle for injecting."
 	icon = 'alienship.dmi'
 	icon_state = "alien_injector"
 	item_state = "autoinjector"
-	filled_reagents = list("rezadone" = 4, "corophizine" = 1)
+	filled_reagents = list(REAGENT_ID_REZADONE = 4, REAGENT_ID_COROPHIZINE = 1)
 
 
 // -- Areas -- //
@@ -113,7 +114,7 @@
 	var/area/dump_area
 	var/obj/shuttle_connector/shuttle_friend
 
-/area/shuttle/excursion/away_alienship/Initialize()
+/area/shuttle/excursion/away_alienship/Initialize(mapload)
 	. = ..()
 	dump_area = locate(/area/tether_away/alienship/equip_dump)
 
@@ -129,16 +130,16 @@
 			R.update_power()
 
 		//Teleport time!
-		for(var/mob in player_list) //This is extreme, but it's very hard to find people hiding in things, and this is pretty cheap.
+		for(var/mob in GLOB.player_list) //This is extreme, but it's very hard to find people hiding in things, and this is pretty cheap.
 			try
 				if(isliving(mob) && get_area(mob) == src)
 					abduct(mob)
 			catch
-				log_debug("Problem doing [mob] for Alienship arrival teleport!")
+				log_runtime("Problem doing [mob] for Alienship arrival teleport!")
 
 		did_entry = TRUE
 
-/area/shuttle/excursion/away_alienship/proc/abduct(var/mob/living/mob)
+/area/shuttle/excursion/away_alienship/proc/abduct(mob/living/mob)
 	if(isliving(mob))
 		var/mob/living/L = mob
 
@@ -158,18 +159,19 @@
 		L.forceMove(pick(get_area_turfs(dump_area)))
 		if(!issilicon(L)) //Don't drop borg modules...
 			for(var/obj/item/I in L)
-				if(istype(I,/obj/item/weapon/implant) || istype(I,/obj/item/device/nif))
+				if(istype(I,/obj/item/implant) || istype(I,/obj/item/nif))
 					continue
-				if(istype(I,/obj/item/weapon/holder))
-					var/obj/item/weapon/holder/H = I
+				if(istype(I,/obj/item/holder))
+					var/obj/item/holder/H = I
 					var/mob/living/M = H.held_mob
 					M.forceMove(get_turf(H))
 					abduct(M)
 				L.drop_from_inventory(I, loc)
 		L.Paralyse(10)
+		L.Sleeping(10)
 		L.forceMove(get_turf(pick(teleport_to)))
 		L << 'sound/effects/bamf.ogg'
-		to_chat(L,"<span class='warning'>You're starting to come to. You feel like you've been out for a few minutes, at least...</span>")
+		to_chat(L,span_warning("You're starting to come to. You feel like you've been out for a few minutes, at least..."))
 
 /area/tether_away/alienship
 	name = "\improper Away Mission - Unknown Vessel"

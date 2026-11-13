@@ -9,16 +9,15 @@
 	desc = "It's an underfloor wiring terminal for power equipment."
 	level = 1
 	var/obj/machinery/power/master = null
-	anchored = 1
+	anchored = TRUE
 	plane = PLATING_PLANE
 	layer = WIRES_LAYER+0.01
 
 
-/obj/machinery/power/terminal/New()
-	..()
+/obj/machinery/power/terminal/Initialize(mapload)
+	. = ..()
 	var/turf/T = src.loc
 	if(level==1) hide(!T.is_plating())
-	return
 
 /obj/machinery/power/terminal/Destroy()
 	if(master)
@@ -26,13 +25,13 @@
 		master = null
 	return ..()
 
-/obj/machinery/power/terminal/hide(var/i)
-	invisibility = i ? 101 : 0
+/obj/machinery/power/terminal/hide(i)
+	invisibility = i ? INVISIBILITY_ABSTRACT : INVISIBILITY_NONE
 	icon_state = i ? "term-f" : "term"
 
 /obj/machinery/power/terminal/hides_under_flooring()
 	return 1
 
-/obj/machinery/power/terminal/overload(var/obj/machinery/power/source)
+/obj/machinery/power/terminal/overload(obj/machinery/power/source)
 	if(master)
 		master.overload(source)

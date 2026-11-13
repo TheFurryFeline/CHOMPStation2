@@ -37,71 +37,71 @@ length to avoid portals or something i guess?? Not that they're counted right no
 // Also added 'exclude' turf to avoid travelling over; defaults to null
 
 
-PriorityQueue
+/datum/PriorityQueue
 	var/list/queue
-	var/proc/comparison_function
+	var/comparison_function
 
-	New(compare)
-		queue = list()
-		comparison_function = compare
+/datum/PriorityQueue/New(compare)
+	queue = list()
+	comparison_function = compare
 
-	proc/IsEmpty()
-		return !queue.len
+/datum/PriorityQueue/proc/IsEmpty()
+	return !queue.len
 
-	proc/Enqueue(var/data)
-		queue.Add(data)
-		var/index = queue.len
+/datum/PriorityQueue/proc/Enqueue(data)
+	queue.Add(data)
+	var/index = queue.len
 
-		//From what I can tell, this automagically sorts the added data into the correct location.
-		while(index > 2 && call(comparison_function)(queue[index / 2], queue[index]) > 0)
-			queue.Swap(index, index / 2)
-			index /= 2
+	//From what I can tell, this automagically sorts the added data into the correct location.
+	while(index > 2 && call(comparison_function)(queue[index / 2], queue[index]) > 0)
+		queue.Swap(index, index / 2)
+		index /= 2
 
-	proc/Dequeue()
-		if(!queue.len)
-			return 0
-		return Remove(1)
+/datum/PriorityQueue/proc/Dequeue()
+	if(!queue.len)
+		return 0
+	return Remove(1)
 
-	proc/Remove(var/index)
-		if(index > queue.len)
-			return 0
+/datum/PriorityQueue/proc/Remove(index)
+	if(index > queue.len)
+		return 0
 
-		var/thing = queue[index]
-		queue.Swap(index, queue.len)
-		queue.Cut(queue.len)
-		if(index < queue.len)
-			FixQueue(index)
-		return thing
+	var/thing = queue[index]
+	queue.Swap(index, queue.len)
+	queue.Cut(queue.len)
+	if(index < queue.len)
+		FixQueue(index)
+	return thing
 
-	proc/FixQueue(var/index)
-		var/child = 2 * index
-		var/item = queue[index]
+/datum/PriorityQueue/proc/FixQueue(index)
+	var/child = 2 * index
+	var/item = queue[index]
 
-		while(child <= queue.len)
-			if(child < queue.len && call(comparison_function)(queue[child], queue[child + 1]) > 0)
-				child++
-			if(call(comparison_function)(item, queue[child]) > 0)
-				queue[index] = queue[child]
-				index = child
-			else
-				break
-			child = 2 * index
-		queue[index] = item
+	while(child <= queue.len)
+		if(child < queue.len && call(comparison_function)(queue[child], queue[child + 1]) > 0)
+			child++
+		if(call(comparison_function)(item, queue[child]) > 0)
+			queue[index] = queue[child]
+			index = child
+		else
+			break
+		child = 2 * index
+	queue[index] = item
 
-	proc/List()
-		return queue.Copy()
+/datum/PriorityQueue/proc/List()
+	return queue.Copy()
 
-	proc/Length()
-		return queue.len
+/datum/PriorityQueue/proc/Length()
+	return queue.len
 
-	proc/RemoveItem(data)
-		var/index = queue.Find(data)
-		if(index)
-			return Remove(index)
+/datum/PriorityQueue/proc/RemoveItem(data)
+	var/index = queue.Find(data)
+	if(index)
+		return Remove(index)
 
-PathNode
+/datum/PathNode
 	var/datum/position
-	var/PathNode/previous_node
+	var/datum/PathNode/previous_node
 
 	var/best_estimated_cost
 	var/estimated_cost
@@ -109,22 +109,22 @@ PathNode
 	var/cost
 	var/nodes_traversed
 
-	New(_position, _previous_node, _known_cost, _cost, _nodes_traversed)
-		position = _position
-		previous_node = _previous_node
+/datum/PathNode/New(_position, _previous_node, _known_cost, _cost, _nodes_traversed)
+	position = _position
+	previous_node = _previous_node
 
-		known_cost = _known_cost
-		cost = _cost
-		estimated_cost = cost + known_cost
+	known_cost = _known_cost
+	cost = _cost
+	estimated_cost = cost + known_cost
 
-		best_estimated_cost = estimated_cost
-		nodes_traversed = _nodes_traversed
+	best_estimated_cost = estimated_cost
+	nodes_traversed = _nodes_traversed
 
-proc/PathWeightCompare(PathNode/a, PathNode/b)
+/proc/PathWeightCompare(datum/PathNode/a, datum/PathNode/b)
 	return a.estimated_cost - b.estimated_cost
 
-proc/AStar(var/start, var/end, var/proc/adjacent, var/proc/dist, var/max_nodes, var/max_node_depth = 30, var/min_target_dist = 0, var/min_node_dist, var/id, var/datum/exclude)
-	var/PriorityQueue/open = new /PriorityQueue(/proc/PathWeightCompare)
+/proc/AStar(start, end, adjacent, dist, max_nodes, max_node_depth = 30, min_target_dist = 0, min_node_dist, id, datum/exclude)
+	var/datum/PriorityQueue/open = new /datum/PriorityQueue(/proc/PathWeightCompare)
 	var/list/closed = list()
 	var/list/path
 	var/list/path_node_by_position = list()
@@ -132,10 +132,10 @@ proc/AStar(var/start, var/end, var/proc/adjacent, var/proc/dist, var/max_nodes, 
 	if(!start)
 		return 0
 
-	open.Enqueue(new /PathNode(start, null, 0, call(start, dist)(end), 0))
+	open.Enqueue(new /datum/PathNode(start, null, 0, call(start, dist)(end), 0))
 
 	while(!open.IsEmpty() && !path)
-		var/PathNode/current = open.Dequeue()
+		var/datum/PathNode/current = open.Dequeue()
 		closed.Add(current.position)
 
 		if(current.position == end || call(current.position, dist)(end) <= min_target_dist)
@@ -164,14 +164,14 @@ proc/AStar(var/start, var/end, var/proc/adjacent, var/proc/dist, var/max_nodes, 
 
 			//handle removal of sub-par positions
 			if(datum in path_node_by_position)
-				var/PathNode/target = path_node_by_position[datum]
+				var/datum/PathNode/target = path_node_by_position[datum]
 				if(target.best_estimated_cost)
 					if(best_estimated_cost + call(datum, dist)(end) < target.best_estimated_cost)
 						open.RemoveItem(target)
 					else
 						continue
 
-			var/PathNode/next_node = new (datum, current, best_estimated_cost, call(datum, dist)(end), current.nodes_traversed + 1)
+			var/datum/PathNode/next_node = new (datum, current, best_estimated_cost, call(datum, dist)(end), current.nodes_traversed + 1)
 			path_node_by_position[datum] = next_node
 			open.Enqueue(next_node)
 

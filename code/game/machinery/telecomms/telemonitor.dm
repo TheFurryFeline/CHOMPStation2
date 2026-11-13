@@ -14,7 +14,7 @@
 	var/screen = 0				// the screen number:
 	var/list/machinelist = list()	// the machines located by the computer
 	var/obj/machinery/telecomms/SelectedMachine
-	circuit = /obj/item/weapon/circuitboard/comm_monitor
+	circuit = /obj/item/circuitboard/comm_monitor
 
 	var/network = "NULL"		// the network to probe
 
@@ -26,28 +26,28 @@
 	data["network"] = network
 	data["temp"] = temp
 
-	data["machinelist"] = list()
+	var/list/machinelistData = list()
 	for(var/obj/machinery/telecomms/T in machinelist)
-		data["machinelist"].Add(list(list(
+		machinelistData.Add(list(list(
 			"id" = T.id,
 			"name" = T.name,
 		)))
+	data["machinelist"] = machinelistData
 
 	data["selectedMachine"] = null
 	if(SelectedMachine)
 		data["selectedMachine"] = list(
 			"id" = SelectedMachine.id,
 			"name" = SelectedMachine.name,
-			"links" = list(),
 		)
-
+		var/list/links = list()
 		for(var/obj/machinery/telecomms/T in SelectedMachine.links)
 			if(!T.hide)
-				data["selectedMachine"]["links"].Add(list(list(
+				links.Add(list(list(
 					"id" = T.id,
 					"name" = T.name
 				)))
-
+		data["selectedMachine"]["links"] = links
 	return data
 
 /obj/machinery/computer/telecomms/monitor/attack_hand(mob/user)
@@ -61,11 +61,11 @@
 		ui = new(user, src, "TelecommsMachineBrowser", name)
 		ui.open()
 
-/obj/machinery/computer/telecomms/monitor/tgui_act(action, params)
+/obj/machinery/computer/telecomms/monitor/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
-	add_fingerprint(usr)
+	add_fingerprint(ui.user)
 
 	switch(action)
 		if("view")
@@ -100,15 +100,15 @@
 			. = TRUE
 
 		if("network")
-			var/newnet = input(usr, "Which network do you want to view?", "Comm Monitor", network) as null|text
-			if(newnet && ((usr in range(1, src) || issilicon(usr))))
+			var/newnet = tgui_input_text(ui.user, "Which network do you want to view?", "Comm Monitor", network, 15)
+			if(newnet && ((ui.user in range(1, src)) || issilicon(ui.user)))
 				if(length(newnet) > 15)
 					set_temp("FAILED: NETWORK TAG STRING TOO LENGTHY", "bad")
 					return TRUE
 				network = newnet
 				machinelist = list()
 				set_temp("NEW NETWORK TAG SET IN ADDRESS \[[network]\]", "good")
-			
+
 			. = TRUE
 
 		if("cleartemp")
@@ -116,13 +116,12 @@
 			. = TRUE
 
 
-/obj/machinery/computer/telecomms/monitor/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/computer/telecomms/monitor/emag_act(remaining_charges, mob/user)
 	if(!emagged)
 		playsound(src, 'sound/effects/sparks4.ogg', 75, 1)
 		emagged = 1
-		to_chat(user, "<span class='notice'>You you disable the security protocols</span>")
-		src.updateUsrDialog()
+		to_chat(user, span_notice("You you disable the security protocols"))
 		return 1
 
-/obj/machinery/computer/telecomms/monitor/proc/set_temp(var/text, var/color = "average")
+/obj/machinery/computer/telecomms/monitor/proc/set_temp(text, color = "average")
 	temp = list("color" = color, "text" = text)

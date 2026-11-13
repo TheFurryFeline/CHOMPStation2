@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "shelter_6.dmm"
 #endif
 
@@ -7,7 +7,7 @@
 /datum/map_template/om_ships/tabiranth
 	name = "OM Ship - Tabiranth"
 	desc = "A prototype deployable assault shuttle."
-	mappath = 'shelter_6.dmm'
+	mappath = "maps/offmap_vr/om_ships/shelter_6.dmm"
 	annihilate = TRUE
 
 // The shuttle's area(s)
@@ -21,7 +21,7 @@
 /obj/machinery/computer/shuttle_control/explore/tabiranth
 	name = "short jump console"
 	shuttle_tag = "NDV Tabiranth"
-	req_one_access = list(access_cent_general)
+	req_one_access = list(ACCESS_CENT_GENERAL)
 
 // A shuttle lateloader landmark
 /obj/effect/shuttle_landmark/shuttle_initializer/tabiranth
@@ -42,12 +42,11 @@
 
 // The 'ship'
 /obj/effect/overmap/visitable/ship/landable/tabiranth
-	scanner_name = "Experimental Dropship"
+	name = "Experimental Dropship"
 	scanner_desc = @{"[i]Registration[/i]: UNKNOWN
 [i]Class[/i]: Assault Dropship
 [i]Transponder[/i]: Transmitting (MIL), NanoTrasen
 [b]Notice[/b]: Experimental vessel"}
-	color = "#8800ff" //Indigo
 	vessel_mass = 3000
 	vessel_size = SHIP_SIZE_SMALL
 	shuttle = "NDV Tabiranth"

@@ -29,20 +29,24 @@
 	name = "space carp"
 	desc = "A ferocious, fang-bearing creature that resembles a fish."
 	catalogue_data = list(/datum/category_item/catalogue/fauna/carp)
+	icon = 'icons/mob/carp.dmi'
 	icon_state = "carp"
 	icon_living = "carp"
 	icon_dead = "carp_dead"
 	icon_gib = "carp_gib"
 
-	faction = "carp"
+	faction = FACTION_CARP
 	maxHealth = 25
 	health = 25
-	movement_cooldown = 0 // Carp go fast
+	movement_cooldown = -2
 	hovering = TRUE
+	density = FALSE
 
-	response_help = "pets the"
-	response_disarm = "gently pushes aside the"
-	response_harm = "hits the"
+	vore_active = TRUE
+	vore_icons = 0
+	response_help = "pets"
+	response_disarm = "gently pushes aside"
+	response_harm = "hits"
 
 	melee_damage_lower = 7 // About 14 DPS.
 	melee_damage_upper = 7
@@ -51,19 +55,142 @@
 	attack_sound = 'sound/weapons/bite.ogg'
 	attacktext = list("bitten")
 
-	meat_amount = 1
-	meat_type = /obj/item/weapon/reagent_containers/food/snacks/carpmeat
+	organ_names = /datum/decl/mob_organ_names/fish
+
+	meat_amount = 5
+	meat_type = /obj/item/reagent_containers/food/snacks/carpmeat
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee
 
 	var/knockdown_chance = 15
 
-/mob/living/simple_mob/animal/space/carp/apply_melee_effects(var/atom/A)
+	var/random_color = FALSE
+	var/rarechance = 1
+
+	export_research_value = TECHWEB_TIER_1_POINTS
+	export_research_diminished_max = 4
+
+	var/static/list/carp_colors = list(\
+	"lightpurple" = "#c3b9f1", \
+	"lightpink" = "#da77a8", \
+	"green" = "#70ff25", \
+	"grape" = "#df0afb", \
+	"swamp" = "#e5e75a", \
+	"turquoise" = "#04e1ed", \
+	"brown" = "#ca805a", \
+	"teal" = "#20e28e", \
+	"lightblue" = "#4d88cc", \
+	"rusty" = "#dd5f34", \
+	"beige" = "#bbaeaf", \
+	"yellow" = "#f3ca4a", \
+	"blue" = "#09bae1", \
+	"palegreen" = "#7ef099", \
+	)
+	var/static/list/carp_colors_rare = list(\
+	"silver" = "#fdfbf3", \
+	)
+	can_be_drop_prey = FALSE
+
+/mob/living/simple_mob/animal/space/carp/Initialize(mapload)
+	. = ..()
+	carp_randomify(rarechance)
+	update_icons()
+	AddComponent(/datum/component/swarming)
+
+// This is so carps can swarm
+/mob/living/simple_mob/animal/space/carp/CanPass(atom/movable/mover, turf/target)
+	if(isliving(mover) && !istype(mover, /mob/living/simple_mob/animal/space/carp) && mover.density == TRUE && stat != DEAD)
+		return FALSE
+	return ..()
+
+/mob/living/simple_mob/animal/space/carp/proc/carp_randomify(rarechance)
+	if(random_color)
+		var/our_color
+		if(prob(rarechance))
+			our_color = pick(carp_colors_rare)
+			add_atom_colour(carp_colors_rare[our_color], FIXED_COLOUR_PRIORITY)
+		else
+			our_color = pick(carp_colors)
+			add_atom_colour(carp_colors[our_color], FIXED_COLOUR_PRIORITY)
+		regenerate_icons()
+
+/mob/living/simple_mob/animal/space/carp/proc/add_carp_overlay()
+	if(!random_color)
+		return
+	var/mutable_appearance/base_overlay = mutable_appearance(icon, "base_mouth")
+	base_overlay.appearance_flags = RESET_COLOR
+	add_overlay(base_overlay)
+
+/mob/living/simple_mob/animal/space/carp/proc/add_dead_carp_overlay()
+	if(!random_color)
+		return
+	var/mutable_appearance/base_dead_overlay = mutable_appearance(icon, "base_dead_mouth")
+	base_dead_overlay.appearance_flags = RESET_COLOR
+	add_overlay(base_dead_overlay)
+
+/mob/living/simple_mob/animal/space/carp/death(gibbed)
+	. = ..()
+	if(!random_color || gibbed)
+		return
+	regenerate_icons()
+
+/mob/living/simple_mob/animal/space/carp/revive()
+	..()
+	regenerate_icons()
+
+/mob/living/simple_mob/animal/space/carp/regenerate_icons()
+	..()
+	if(!random_color)
+		return
+	if(stat != DEAD)
+		add_carp_overlay()
+	else
+		add_dead_carp_overlay()
+
+/mob/living/simple_mob/animal/space/carp/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		if(prob(knockdown_chance))
-			L.Weaken(3)
-			L.visible_message(span("danger", "\The [src] knocks down \the [L]!"))
+			L.add_modifier(/datum/modifier/entangled, 4 SECONDS) // replacing weaken/slowdown with slow down
+			L.visible_message(span_danger("\The [src] knocks down \the [L]!"))
+
+/mob/living/simple_mob/animal/space/carp/load_default_bellies()
+	. = ..()
+	var/obj/belly/B = vore_selected
+	B.name = "Stomach"
+	B.desc = "The toothy jaws of the space carp gnash down around your body while its throat opens up to suck you inside. The vicious attack is too swift for you to stop it. You're dragged down its short esophagus, then dumped into its muscular digestive system. Your body curls tight in the cramped confines of its slimy stomach; pushing aside a caustic mixture of other unrecognizable detritus. You realize the soupy chime consists of past explorers who went missing long ago. If you can't push your way back up to freedom, your fate will be the same."
+	B.mode_flags = DM_FLAG_THICKBELLY
+	B.digest_brute = 0.5
+	B.digest_burn = 0.5
+	B.escapechance = 20
+	B.belly_fullscreen = "VBOanim_belly1"
+	B.belly_fullscreen_color = "#660021"
+	B.belly_fullscreen_color2 = "#660021"
+	B.fancy_vore = 1
+
+	B.emote_lists[DM_DIGEST] = list(
+		"They say a space carp's belly can digest almost anything. You're going to find out first hand if you stay here for much longer.",
+		"The gastric fluids sizzle ferociously as they ooze across your form.",
+		"A possessive squeeze of the wrinkled walls forces you to scrunch against yourself, as if to say you're not even a bother. This powerful digestive system has processed far more hazardous prey than you.",
+		"The rubbery flesh of the carp's stomach lining constantly pulverizes you from all sides.",
+		"Slowly but surely, everything around you is digested. Organic or not, it's all nourishment to the carp.",
+		"The carp's disgusting innards slowly mix you around with acid. As far as it's concerned, you're nothing but fish food now.",
+		"The stomach walls of the fishy predator push against you from all sides, smushing you into the leftovers of the last adventurer to wind up here.",
+		"The carp's belly gushes over you with slow, muscular compressions. Every passing second allows more acid to be rubbed against you."
+		)
+
+	B.struggle_messages_inside = list(
+		"You jab with all your strength to free yourself from the carp's putrid gut.",
+		"The carp's belly bounces at your thrashing while the creature hunts its next meal.",
+		"You push and pry at the stomach sphincter, trying to force your way out.",
+		"You shove against the back of the carp's stomach for leverage as you try forcing your head up its throat.",
+		"You try to wriggle yourself out of the carp's belly before it grinds you into chum.",
+		"Your feisty squirming is rewarded with a tight CLENCH from all sides. The carp stubbornly reminds you that it has eaten far worse."
+		)
+
+	B.struggle_messages_outside = list(
+		"%pred's stomach lurches with movement beneath its underbelly scales. Someone is alive in there!"
+		)
 
 // Subtypes.
 
@@ -82,7 +209,7 @@
 
 	maxHealth = 50
 	health = 50
-	movement_cooldown = 5 // Slower than the younger carp.
+	movement_cooldown = 1 // Slower than the younger carp.
 	mob_size = MOB_LARGE
 
 	pixel_x = -16
@@ -90,20 +217,21 @@
 	icon_expected_width = 64
 	icon_expected_height = 32
 
-	meat_amount = 3
+	meat_amount = 7
 
 
 /mob/living/simple_mob/animal/space/carp/large/huge
 	name = "great white carp"
 	desc = "A very rare breed of carp- and a very aggressive one."
-	icon = 'icons/mob/64x64.dmi'
-	icon_dead = "megacarp_dead"
+	icon = 'icons/mob/vore64x64.dmi'
+	icon_dead = "megacarp-dead"
 	icon_living = "megacarp"
 	icon_state = "megacarp"
+	vore_icons = SA_ICON_LIVING
 
 	maxHealth = 230
 	health = 230
-	movement_cooldown = 10
+	movement_cooldown = 3
 
 	melee_damage_lower = 15 // About 20 DPS.
 	melee_damage_upper = 25
@@ -113,8 +241,45 @@
 	icon_expected_width = 64
 	icon_expected_height = 64
 
-	meat_amount = 10
+	meat_amount = 15
 
+	knockdown_chance = 15
+
+/mob/living/simple_mob/animal/space/carp/large/huge/vorny
+	name = "great white carp"
+	desc = "A very rare breed of carp- and a very hungry one."
+
+	maxHealth = 230
+	health = 230
+	movement_cooldown = 3
+
+	melee_damage_lower = 1 // Minimal damage to make the knockdown work.
+	melee_damage_upper = 1
+
+	pixel_y = -16
+	default_pixel_y = -16
+	icon_expected_width = 64
+	icon_expected_height = 64
+
+	meat_amount = 15
+
+	knockdown_chance = 50
+	ai_holder_type = /datum/ai_holder/simple_mob/vore
+
+/mob/living/simple_mob/animal/space/carp/large/huge/vorny/load_default_bellies()
+	. = ..()
+	var/obj/belly/B = vore_selected
+	B.name = "stomach"
+	B.desc = "You've been swallowed whole and alive by a massive white carp! The stomach around you is oppressively tight, squeezing and grinding wrinkled walls across your body, making it hard to make any movement at all. The chamber is flooded with fluids that completely overwhelm you."
+	B.mode_flags = DM_FLAG_THICKBELLY
+	B.digest_brute = 2
+	B.digest_burn = 2
+	B.digest_oxy = 1
+	B.digestchance = 100
+	B.absorbchance = 0
+	B.escapechance = 3
+	B.selective_preference = DM_DIGEST
+	B.escape_stun = 10
 
 /mob/living/simple_mob/animal/space/carp/holographic
 	name = "holographic carp"
@@ -128,10 +293,11 @@
 	icon_gib = null
 	meat_amount = 0
 	meat_type = null
+	vore_icons = FALSE
 
 	mob_class = MOB_CLASS_PHOTONIC // Xeno-taser won't work on this as its not a 'real' carp.
 
-/mob/living/simple_mob/animal/space/carp/holographic/Initialize()
+/mob/living/simple_mob/animal/space/carp/holographic/Initialize(mapload)
 	set_light(2) // Hologram lighting.
 	return ..()
 
@@ -144,7 +310,7 @@
 
 // Called on death.
 /mob/living/simple_mob/animal/space/carp/holographic/proc/derez()
-	visible_message(span("notice", "\The [src] fades away!"))
+	visible_message(span_notice("\The [src] fades away!"))
 	qdel(src)
 
 /mob/living/simple_mob/animal/space/carp/holographic/gib()
@@ -154,4 +320,55 @@
 	..()
 	derez()
 
+// a slow-moving carp with the appearance of a sea mine and behaviour of a sea mine
+/mob/living/simple_mob/animal/space/carp/puffer
+	name = "puffercarp"
+	desc = "A bloated, inflated carp covered in spines."
+	catalogue_data = list(/datum/category_item/catalogue/fauna/carp, /datum/category_item/catalogue/fauna/carp/puffer)
+	icon_state = "puffercarp"
+	icon_living = "puffercarp"
+	icon_dead = "puffercarp_dead"
+	icon_gib = "generic_gib"
+	movement_cooldown = 15
+	var/ready_to_blow = TRUE
 
+/datum/category_item/catalogue/fauna/carp/puffer
+	name = "Voidborne Fauna - Space Carp: puffer variant"
+	desc = "An unusual subspecies of space carp with a novel defensive \
+	and reproductive strategy - once the puffercarp is ready to spread spores \
+	it begins to produce a highly volatile compound within its gas bladders, \
+	which in addition to providing them with a means of propulsion through space \
+	as per most space carp species, affords the puffercarp with a somewhat unique trait \
+	- namely, that they are able to ignite and detonate their gas bladders \
+	at will, and will do so aggressively when threatened. The bladders also tend to ignite \
+	when struck by thermal or electrical discharges, or even sympathetic detonation from \
+	other explosives - including other nearby puffercarp. As a result, most voidborne \
+	predators have a tendency to keep clear, but even if this deterrent doesn't work the resulting \
+	explosion serves to scatter their spores over a massive area - this improved seeding \
+	strategy compared to regular carp results in the propagation of the species despite the \
+	fact that it means each adult carp can only reproduce exactly once. \
+	<br><br>\
+	Due to their premature mortality it is extremely rare to see a puffercarp grow to any notable \
+	size, often appearing to be somewhat stunted in growth compared to other subspecies, \
+	their gas bloating being the only thing that brings them close to \
+	the normal scale of an adult carp. "
+	value = CATALOGUER_REWARD_HARD //if you can hang around close enough to this thing without setting it off, you deserve it
+
+/mob/living/simple_mob/animal/space/carp/puffer/proc/kaboom()
+	if(ready_to_blow)
+		ready_to_blow = FALSE
+		gib()
+		var/turf/T = get_turf(src)
+		explosion(T, -1, -1, 4, 4)
+
+
+/mob/living/simple_mob/animal/space/carp/puffer/apply_melee_effects() //it gets close enough to attack? EXPLODE
+	kaboom()
+
+/mob/living/simple_mob/animal/space/carp/puffer/adjustFireLoss(amount,include_robo) //you make it hot? EXPLODE
+	if(amount>0)
+		kaboom()
+	..()
+
+/mob/living/simple_mob/animal/space/carp/puffer/ex_act() //explode? YOU BETTER BELIEVE THAT'S AN EXPLODE
+	kaboom()

@@ -12,7 +12,7 @@
 	var/display_name	// For displaying in text
 	var/gender = NEUTER
 
-datum/category_group/underwear/dd_SortValue()
+/datum/category_group/underwear/dd_SortValue()
 	return sort_order
 
 /datum/category_group/underwear/top
@@ -53,17 +53,17 @@ datum/category_group/underwear/dd_SortValue()
 
 /datum/category_item/underwear/New()
 	if(has_color)
-		tweaks += gear_tweak_free_color_choice
+		tweaks += GLOB.gear_tweak_free_color_choice
 
 /datum/category_item/underwear/dd_SortValue()
 	if(always_last)
 		return "~"+name
 	return name
 
-/datum/category_item/underwear/proc/is_default(var/gender)
+/datum/category_item/underwear/proc/is_default(gender)
 	return is_default
 
-/datum/category_item/underwear/proc/generate_image(var/list/metadata, var/layer = FLOAT_LAYER)
+/datum/category_item/underwear/proc/generate_image(list/metadata, layer = FLOAT_LAYER, digitigrade = FALSE)
 	if(!icon_state)
 		return
 

@@ -4,7 +4,7 @@
 	icon_keyboard = "atmos_key"
 	icon_screen = "area_atmos"
 	light_color = "#e6ffff"
-	circuit = /obj/item/weapon/circuitboard/area_atmos
+	circuit = /obj/item/circuitboard/area_atmos
 
 	var/list/connectedscrubbers = list()
 	var/status = ""
@@ -14,14 +14,14 @@
 	//Simple variable to prevent me from doing attack_hand in both this and the child computer
 	var/zone = "This computer is working on a wireless range, the range is currently limited to "
 
-/obj/machinery/computer/area_atmos/Initialize()
+/obj/machinery/computer/area_atmos/Initialize(mapload)
 	. = ..()
 	scanscrubbers()
 
-/obj/machinery/computer/area_atmos/attack_ai(var/mob/user as mob)
+/obj/machinery/computer/area_atmos/attack_ai(mob/user as mob)
 	return src.attack_hand(user)
 
-/obj/machinery/computer/area_atmos/attack_hand(var/mob/user as mob)
+/obj/machinery/computer/area_atmos/attack_hand(mob/user as mob)
 	if(..(user))
 		return
 	tgui_interact(user)
@@ -33,15 +33,13 @@
 		ui.open()
 
 /obj/machinery/computer/area_atmos/tgui_data(mob/user)
-	var/list/data = list()
-	
-	data["scrubbers"] = list()
+	var/list/working = list()
 	for(var/id in connectedscrubbers)
 		var/obj/machinery/portable_atmospherics/powered/scrubber/huge/scrubber = connectedscrubbers[id]
 		if(!validscrubber(scrubber))
 			connectedscrubbers -= scrubber
 			continue
-		data["scrubbers"].Add(list(list(
+		working.Add(list(list(
 			"id" = id,
 			"name" = scrubber.name,
 			"on" = scrubber.on,
@@ -51,12 +49,12 @@
 			"area" = get_area(scrubber),
 		)))
 
-	return data
+	return list("scrubbers" = working)
 
-/obj/machinery/computer/area_atmos/tgui_act(action, params)
+/obj/machinery/computer/area_atmos/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("toggle")
 			var/scrub_id = params["id"]
@@ -68,19 +66,19 @@
 			S.update_icon()
 			. = TRUE
 		if("allon")
-			INVOKE_ASYNC(src, .proc/toggle_all, TRUE)
+			INVOKE_ASYNC(src, PROC_REF(toggle_all), TRUE)
 			. = TRUE
 		if("alloff")
-			INVOKE_ASYNC(src, .proc/toggle_all, FALSE)
+			INVOKE_ASYNC(src, PROC_REF(toggle_all), FALSE)
 			. = TRUE
 		if("scan")
-			scanscrubbers()
+			scanscrubbers_user(ui.user)
 			. = TRUE
 
-	add_fingerprint(usr)
+	add_fingerprint(ui.user)
 
 /obj/machinery/computer/area_atmos/proc/toggle_all(on)
-	for(var/id in connectedscrubbers)	
+	for(var/id in connectedscrubbers)
 		var/obj/machinery/portable_atmospherics/powered/scrubber/huge/S = connectedscrubbers["[id]"]
 		if(!validscrubber(S))
 			connectedscrubbers -= S
@@ -105,13 +103,14 @@
 	if(!found)
 		status = "ERROR: No scrubber found!"
 
-	updateUsrDialog()
+/obj/machinery/computer/area_atmos/proc/scanscrubbers_user(mob/user) //Used when the user is in the UI and scans for scrubbers.
+	scanscrubbers()
 
 // The one that only works in the same map area
 /obj/machinery/computer/area_atmos/area
 	zone = "This computer is working in a wired network limited to this area."
 
-/obj/machinery/computer/area_atmos/area/scanscrubbers()
+/obj/machinery/computer/area_atmos/area/scanscrubbers(mob/user)
 	connectedscrubbers.Cut()
 
 	var/found = 0
@@ -123,9 +122,10 @@
 	if(!found)
 		status = "ERROR: No scrubber found!"
 
-	src.updateUsrDialog()
+/obj/machinery/computer/area_atmos/area/scanscrubbers_user(mob/user) //Used when the user is in the UI and scans for scrubbers.
+	scanscrubbers()
 
-/obj/machinery/computer/area_atmos/area/validscrubber(var/obj/machinery/portable_atmospherics/powered/scrubber/huge/scrubber)
+/obj/machinery/computer/area_atmos/area/validscrubber(obj/machinery/portable_atmospherics/powered/scrubber/huge/scrubber)
 	if(!istype(scrubber))
 		return FALSE
 

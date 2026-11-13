@@ -17,17 +17,8 @@
 	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. This one is devoid of any identifying markings or rank indicators."
 	icon_state = "rig-vintagecrew"
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
-	slowdown = 0.5
 	armor = list(melee = 30, bullet = 15, laser = 15,energy = 5, bomb = 20, bio = 100, rad = 50)
-	allowed = list(/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/storage/briefcase/inflatable,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/weapon/pickaxe,
-			/obj/item/weapon/shovel
-			)
+	allowed = list(POCKET_ALL_TANKS, POCKET_GENERIC, POCKET_EMERGENCY, POCKET_SUIT_REGULATORS, POCKET_ENGINEERING, POCKET_MINING)
 
 //Engineering Crewsuit (ORANGE, RING)
 //This is probably the most appealing to get your hands on for basic protection and the specialist stuff
@@ -40,7 +31,7 @@
 	armor = list(melee = 40, bullet = 20, laser = 20, energy = 5, bomb = 35, bio = 100, rad = 100)
 	min_pressure_protection = 0  * ONE_ATMOSPHERE
 	max_pressure_protection = 15 * ONE_ATMOSPHERE
-	max_heat_protection_temperature = FIRE_HELMET_MAX_HEAT_PROTECTION_TEMPERATURE
+	max_heat_protection_temperature = SPACE_SUIT_MAX_HEAT_PROTECTION_TEMPERATURE+10000
 
 /obj/item/clothing/suit/space/void/refurb/engineering
 	name = "vintage engineering voidsuit"
@@ -51,27 +42,9 @@
 	armor = list(melee = 40, bullet = 20, laser = 20, energy = 5, bomb = 35, bio = 100, rad = 100)
 	min_pressure_protection = 0  * ONE_ATMOSPHERE
 	max_pressure_protection = 15 * ONE_ATMOSPHERE
-	max_heat_protection_temperature = FIRESUIT_MAX_HEAT_PROTECTION_TEMPERATURE
-	allowed = list(/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/device/t_scanner,
-			/obj/item/weapon/rcd,
-			/obj/item/weapon/rcd_ammo,
-			/obj/item/weapon/storage/toolbox,
-			/obj/item/weapon/storage/briefcase/inflatable,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/device/robotanalyzer,
-			/obj/item/device/geiger,
-			/obj/item/weapon/tool,
-			/obj/item/weapon/weldingtool,
-			/obj/item/weapon/cell,
-			/obj/item/weapon/pickaxe,
-			/obj/item/device/measuring_tape,
-			/obj/item/device/lightreplacer,
-			/obj/item/weapon/shovel
-			)
+	max_heat_protection_temperature = SPACE_SUIT_MAX_HEAT_PROTECTION_TEMPERATURE+10000
+	breach_threshold = 14 //These are kinda thicc
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_ALL_TANKS, POCKET_SUIT_REGULATORS, POCKET_ENGINEERING, POCKET_CE, POCKET_MINING, POCKET_HEAVYTOOLS)
 
 //Medical Crewsuit (GREEN, CROSS)
 //This thing is basically tissuepaper, but it has very solid rad protection for its age
@@ -93,21 +66,8 @@
 	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. The green and white markings indicate this as a medic's suit."
 	icon_state = "rig-vintagemedic"
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
-	slowdown = 0.5
 	armor = list(melee = 30, bullet = 15, laser = 15, energy = 5, bomb = 25, bio = 100, rad = 75)
-	allowed = list(/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/storage/firstaid,
-			/obj/item/device/healthanalyzer,
-			/obj/item/device/robotanalyzer,
-			/obj/item/device/mass_spectrometer,
-			/obj/item/device/halogen_counter,
-			/obj/item/stack/medical,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/weapon/cell
-			)
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_ALL_TANKS, POCKET_SUIT_REGULATORS, POCKET_MEDICAL)
 
 //Marine Crewsuit (BLUE, SHIELD)
 //Really solid, balance between Sec and Sec EVA, but it has slightly worse shock protection
@@ -126,27 +86,14 @@
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
 	slowdown = 1
 	armor = list(melee = 40, bullet = 35, laser = 35, energy = 5, bomb = 40, bio = 100, rad = 50)
+	breach_threshold = 14 //These are kinda thicc
+	resilience = 0.15 //Armored
 	siemens_coefficient = 0.8
-	allowed = list(/obj/item/weapon/gun,
-			/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/melee,
-			/obj/item/weapon/grenade,
-			/obj/item/device/flash,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/weapon/handcuffs,
-			/obj/item/device/hailer,
-			/obj/item/device/holowarrant,
-			/obj/item/device/megaphone,
-			/obj/item/ammo_magazine,
-			/obj/item/weapon/cell
-			)
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_ALL_TANKS, POCKET_SUIT_REGULATORS, POCKET_SECURITY)
 
 //Officer Crewsuit (GOLD, X)
 //The best of the bunch - at the time, this would have been almost cutting edge
-//Now it's good, but it's badly outclassed by the hot shit that the TSCs and such can get 
+//Now it's good, but it's badly outclassed by the hot shit that the TSCs and such can get
 /obj/item/clothing/head/helmet/space/void/refurb/officer
 	name = "vintage officer's voidsuit helmet"
 	desc = "A refurbished early contact era voidsuit helmet of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. The visor has a bad habit of fogging up and collecting condensation, but it beats sucking hard vacuum. This variant appears to be an officer's, and has the best protection of all the old models."
@@ -162,23 +109,10 @@
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
 	slowdown = 1
 	armor = list(melee = 50, bullet = 45, laser = 45, energy = 10, bomb = 30, bio = 100, rad = 60)
+	breach_threshold = 16 //Extra Thicc
+	resilience = 0.1 //Heavily Armored
 	siemens_coefficient = 0.7
-	allowed = list(/obj/item/weapon/gun,
-			/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/melee,
-			/obj/item/weapon/grenade,
-			/obj/item/device/flash,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/weapon/handcuffs,
-			/obj/item/device/hailer,
-			/obj/item/device/holowarrant,
-			/obj/item/device/megaphone,
-			/obj/item/ammo_magazine,
-			/obj/item/weapon/cell
-			)
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_ALL_TANKS, POCKET_SUIT_REGULATORS, POCKET_SECURITY)
 
 //Pilot Crewsuit (ROYAL BLUE, I)
 //The lightest weight of the lot, but protection is about the same as the crew variant's. It has an extra helmet variant for those who prefer that design.
@@ -201,17 +135,11 @@
 	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. The royal blue markings indicate this is the pilot's variant; low protection but ultra-lightweight."
 	icon_state = "rig-vintagepilot"
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
-	slowdown = 0.25
+	slowdown = 0
 	armor = list(melee = 25, bullet = 20, laser = 20, energy = 5, bomb = 20, bio = 100, rad = 50)
 	siemens_coefficient = 0.9
-	allowed = list(/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/storage/briefcase/inflatable,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			)
-			
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_ALL_TANKS, POCKET_SUIT_REGULATORS, POCKET_MINING)
+
 //Scientist Crewsuit (PURPLE, O)
 //Baseline values are slightly worse than the gray crewsuit, but it has significantly better Energy protection and is the only other suit with 100% rad immunity besides the engi suit
 /obj/item/clothing/head/helmet/space/void/refurb/research
@@ -232,31 +160,27 @@
 	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. The purple markings indicate this as a scientist's suit. Keep your eyes open for ropes."
 	icon_state = "rig-vintagescientist"
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
-	slowdown = 0.5
 	armor = list(melee = 25, bullet = 10, laser = 10, energy = 50, bomb = 10, bio = 100, rad = 100)
 	siemens_coefficient = 0.8
-	allowed = list(/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/storage/firstaid,
-			/obj/item/device/healthanalyzer,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/device/ano_scanner,
-			/obj/item/device/depth_scanner,
-			/obj/item/device/xenoarch_multi_tool,
-			/obj/item/device/measuring_tape,
-			/obj/item/device/reagent_scanner,
-			/obj/item/device/robotanalyzer,
-			/obj/item/device/analyzer,
-			/obj/item/device/cataloguer,
-			/obj/item/device/universal_translator,
-			/obj/item/weapon/tool/crowbar,
-			/obj/item/stack/marker_beacon,
-			/obj/item/stack/flag,
-			/obj/item/weapon/clipboard,
-			/obj/item/weapon/cell
-			)
+	allowed = list(POCKET_ALL_TANKS, POCKET_GENERIC, POCKET_EMERGENCY, POCKET_SUIT_REGULATORS, POCKET_MINING, POCKET_XENOARC, /obj/item/storage/firstaid)
+
+//Miner's Crewsuit (BROWN)
+//Basically just the basic suit, but with brown markings. If anyone wants to tweak this, go wild.
+/obj/item/clothing/head/helmet/space/void/refurb/mining
+	name = "vintage miner's's voidsuit helmet"
+	desc = "A refurbished early contact era voidsuit helmet of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. The visor has a bad habit of fogging up and collecting condensation, but it beats sucking hard vacuum. This one has brown markings, denoting it as a miner's helmet."
+	icon_state = "rig0-vintageminer"
+	item_state_slots = list(slot_r_hand_str = "syndicate-helm-black", slot_l_hand_str = "syndicate-helm-black")
+	armor = list(melee = 30, bullet = 15, laser = 15,energy = 5, bomb = 20, bio = 100, rad = 50)
+	light_overlay = "helmet_light"
+
+/obj/item/clothing/suit/space/void/refurb/mining
+	name = "vintage miner's voidsuit"
+	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. This one has brown markings, denoting it as a miner's suit."
+	icon_state = "rig-vintageminer"
+	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
+	armor = list(melee = 30, bullet = 15, laser = 15,energy = 5, bomb = 20, bio = 100, rad = 50)
+	allowed = list(POCKET_ALL_TANKS, POCKET_GENERIC, POCKET_EMERGENCY, POCKET_MINING)
 
 //Mercenary Crewsuit (RED, CROSS)
 //The best of the best, this should be ultra-rare
@@ -275,23 +199,7 @@
 	item_state_slots = list(slot_r_hand_str = "sec_voidsuitTG", slot_l_hand_str = "sec_voidsuitTG")
 	slowdown = 1.5 //the tradeoff for being hot shit almost on par with a crimson suit is that it slows you down even more
 	armor = list(melee = 55, bullet = 45, laser = 45, energy = 25, bomb = 50, bio = 100, rad = 50)
+	breach_threshold = 16 //Extra Thicc
+	resilience = 0.05 //Military Armor
 	siemens_coefficient = 0.6
-	allowed = list(/obj/item/weapon/gun,
-			/obj/item/device/flashlight,
-			/obj/item/weapon/tank,
-			/obj/item/device/suit_cooling_unit,
-			/obj/item/weapon/melee,
-			/obj/item/weapon/grenade,
-			/obj/item/device/flash,
-			/obj/item/device/gps,
-			/obj/item/device/radio/beacon,
-			/obj/item/weapon/handcuffs,
-			/obj/item/device/hailer,
-			/obj/item/device/holowarrant,
-			/obj/item/device/megaphone,
-			/obj/item/ammo_magazine,
-			/obj/item/device/spaceflare,
-			/obj/item/device/powersink,
-			/obj/item/device/radio_jammer,
-			/obj/item/weapon/cell
-			)
+	allowed = list(POCKET_ALL_TANKS, POCKET_GENERIC, POCKET_EMERGENCY, POCKET_SUIT_REGULATORS, POCKET_SECURITY)

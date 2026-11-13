@@ -1,6 +1,7 @@
 // Reorganized and somewhat cleaned up.
 // AI code has been made into a datum, inside the AI module folder.
 
+
 /mob/living/simple_mob
 	name = "animal"
 	desc = ""
@@ -15,6 +16,8 @@
 	mob_push_flags = ~HEAVY
 
 	has_huds = TRUE // We do show AI status huds for buildmode players
+
+	digest_leave_remains = TRUE
 
 	var/tt_desc = null //Tooltip description
 
@@ -37,6 +40,7 @@
 	var/image/modifier_overlay = null // Holds overlays from modifiers.
 	var/image/eye_layer = null		// Holds the eye overlay.
 	var/has_eye_glow = FALSE		// If true, adds an overlay over the lighting plane for [icon_state]-eyes.
+	var/custom_eye_color = null
 	attack_icon = 'icons/effects/effects.dmi' //Just the default, played like the weapon attack anim
 	attack_icon_state = "slash" //Just the default
 
@@ -45,7 +49,7 @@
 	var/has_langs = list(LANGUAGE_GALCOM)// Text name of their language if they speak something other than galcom. They speak the first one.
 
 	//Movement things.
-	var/movement_cooldown = 5			// Lower is faster.
+	var/movement_cooldown = 1			//VOREStation Edit - 1 is slower than normal human speed // Lower is faster.
 	var/movement_sound = null			// If set, will play this sound when it moves on its own will.
 	var/turn_sound = null				// If set, plays the sound when the mob's dir changes in most cases.
 	var/movement_shake_radius = 0		// If set, moving will shake the camera of all living mobs within this radius slightly.
@@ -58,7 +62,8 @@
 	var/list/friends = list()		// Mobs on this list wont get attacked regardless of faction status.
 	var/harm_intent_damage = 3		// How much an unarmed harm click does to this mob.
 	var/list/loot_list = list()		// The list of lootable objects to drop, with "/path = prob%" structure
-	var/obj/item/weapon/card/id/myid// An ID card if they have one to give them access to stuff.
+	var/obj/item/card/id/myid// An ID card if they have one to give them access to stuff.
+	var/organ_names = /datum/decl/mob_organ_names //'False' bodyparts that can be shown as hit by projectiles in place of the default humanoid bodyplan.
 
 	//Mob environment settings
 	var/minbodytemp = 250			// Minimum "okay" temperature in kelvin
@@ -74,6 +79,8 @@
 	var/max_co2 = 5					// CO2 max
 	var/min_n2 = 0					// N2 min
 	var/max_n2 = 0					// N2 max
+	var/min_ch4 = 0					// CH4 min
+	var/max_ch4 = 5					// CH4 max
 	var/unsuitable_atoms_damage = 2	// This damage is taken when atmos doesn't fit all the requirements above
 
 	//Hostility settings
@@ -108,8 +115,10 @@
 	var/melee_attack_delay = 2			// If set, the mob will do a windup animation and can miss if the target moves out of the way.
 	var/ranged_attack_delay = null
 	var/special_attack_delay = null
-	var/ranged_cooldown = 0 //CHOMP Addition. This is part of a timer in combat.dm.
-	var/ranged_cooldown_time = 0 //CHOMP Addition: This variable can be thrown into mob variables in order to allow the mob to move AND shoot at the same time. The previous "ranged_attack_delay" is a dumb way of handling ranged attacks because it sleeps the entire mob - this one uses an internalized timer so it is slightly smarter.
+	var/ranged_cooldown = 0
+	var/ranged_cooldown_time = 0
+	var/picked_color = FALSE
+	var/picked_size = FALSE
 
 	//Special attacks
 //	var/special_attack_prob = 0				// The chance to ATTEMPT a special_attack_target(). If it fails, it will do a regular attack instead.
@@ -133,15 +142,6 @@
 				"bio" = 100,
 				"rad" = 100
 				)
-	var/list/armor_soak = list(		// Values for getsoak() checks.
-				"melee" = 0,
-				"bullet" = 0,
-				"laser" = 0,
-				"energy" = 0,
-				"bomb" = 0,
-				"bio" = 0,
-				"rad" = 0
-				)
 	// Protection against heat/cold/electric/water effects.
 	// 0 is no protection, 1 is total protection. Negative numbers increase vulnerability.
 	var/heat_resist = 0.0
@@ -162,10 +162,40 @@
 	var/limb_icon
 	// Used for if the mob can drop limbs. Overrides the icon cache key, so it doesn't keep remaking the icon needlessly.
 	var/limb_icon_key
+	var/understands_common = TRUE 		//VOREStation Edit - Makes it so that simplemobs can understand galcomm without being able to speak it.
+	var/heal_countdown = 5				//VOREStation Edit - A cooldown ticker for passive healing
+	var/list/myid_access = list() //VOREStation Edit
+	var/ID_provided = FALSE //VOREStation Edit
+	var/damage_fatigue_mult = 1			// Our multiplier for how heavily mobs are affected by injury. [UPDATE THIS IF THE FORMULA CHANGES]: Formula = injury_level = round(rand(1,3) * damage_fatigue_mult * clamp(((rand(2,5) * (h / getMaxHealth())) - rand(0,2)), 1, 5))
+	var/injury_level = 0 				// What our injury level is. Rather than being the flat damage, this is the amount added to various delays to simulate injuries in a manner as lightweight as possible.
+	var/threshold = 0.6					// When we start slowing down. Configure this setting per-mob. Default is 60%
+	var/injury_enrages = FALSE			// Do injuries enrage (aka strengthen) our mob? If yes, we'll interpret how hurt we are differently.
 
-/mob/living/simple_mob/Initialize()
-	verbs -= /mob/verb/observe
+	// Stasis cage cargo export values
+	var/export_research_value				// Amount of research points gained when this mob is sold from cargo in a stasis cage
+	var/export_research_diminished_max   	// Amount of mobs that can be sold before the value reaches its lowest point
+
+	var/has_recoloured = FALSE
+	var/hunting_cooldown = 0
+	var/hasthermals = TRUE
+	var/isthermal = 0
+
+	//vars for vore_icons toggle control
+	var/vore_icons_cache = null // null by default. Going from ON to OFF should store vore_icons val here, OFF to ON reset as null
+
+	var/obj/movement_target //Used by some mobs to hunt down food. Mainly noodle and Ian.
+
+	//no stripping of simplemobs
+	strip_pref = FALSE
+	blocks_emissive = EMISSIVE_BLOCK_UNIQUE // Note, this should be refactored to drop priority overlays
+
+/mob/living/simple_mob/Initialize(mapload)
+	remove_verb(src, /mob/verb/observe)
 	health = maxHealth
+
+	if(ID_provided) //VOREStation Edit
+		myid = new /obj/item/card/id(src)
+		myid.access = myid_access.Copy()
 
 	for(var/L in has_langs)
 		languages |= GLOB.all_languages[L]
@@ -175,9 +205,18 @@
 	if(has_eye_glow)
 		add_eyes()
 
-	if(!IsAdvancedToolUser())	//CHOMPSTATION edit: Moved here so the verb is useable before initialising vorgans.
-		verbs |= /mob/living/simple_mob/proc/animal_nom
-		verbs |= /mob/living/proc/shred_limb
+	if(vore_active)	// Moved here so the verb is useable before initialising vorgans.
+		add_verb(src,/mob/living/simple_mob/proc/animal_nom)
+		add_verb(src,/mob/living/proc/shred_limb)
+	add_verb(src,/mob/living/simple_mob/proc/nutrition_heal)
+
+	if(organ_names)
+		organ_names = GET_DECL(organ_names)
+
+	if(CONFIG_GET(flag/allow_simple_mob_recolor))
+		add_verb(src, /mob/living/simple_mob/proc/ColorMate)
+
+	AddElement(/datum/element/footstep, FOOTSTEP_MOB_SHOE, 1, -6) // Need to go through all of the mobs to give them proper footsteps...
 
 	return ..()
 
@@ -189,6 +228,7 @@
 
 	friends.Cut()
 	languages.Cut()
+	movement_target = null
 
 	if(has_eye_glow)
 		remove_eyes()
@@ -201,7 +241,47 @@
 //Client attached
 /mob/living/simple_mob/Login()
 	. = ..()
-	to_chat(src,"<b>You are \the [src].</b> [player_msg]")
+	add_verb(src,/mob/living/simple_mob/proc/pick_size)
+	add_verb(src,/mob/living/simple_mob/proc/pick_color)
+	to_chat(src,span_boldnotice("You are \the [src].") + " [player_msg]")
+	if(vore_active && !voremob_loaded)
+		init_vore(TRUE)
+	if(hasthermals)
+		add_verb(src, /mob/living/simple_mob/proc/hunting_vision) //So that maint preds can see prey through walls, to make it easier to find them.
+
+
+/mob/living/simple_mob/proc/pick_size()
+	set name = "Pick Size"
+	set category = "Abilities.Settings"
+
+	if(picked_size)
+		to_chat(src, span_notice("You have already picked a size! If you picked the wrong size, ask an admin to change your picked_size variable to 0."))
+		return
+	if(!resizable)
+		to_chat(src, span_warning("You are immune to resizing!"))
+		return
+
+	var/nagmessage = "Pick a size between [RESIZE_MINIMUM * 100] to [RESIZE_MAXIMUM * 100]%. (Only usable once!)"
+	var/new_size = tgui_input_number(src, nagmessage, "Pick a Size", size_multiplier*100, RESIZE_MAXIMUM * 100, RESIZE_MINIMUM * 100)
+	if(size_range_check(new_size))
+		resize(new_size/100, uncapped = has_large_resize_bounds(), ignore_prefs = TRUE)
+		picked_size = TRUE
+		if(temporary_form)	//resizing both our forms
+			var/mob/living/L = temporary_form
+			L.resize(new_size/100, uncapped = has_large_resize_bounds(), ignore_prefs = TRUE)
+
+/mob/living/simple_mob/proc/pick_color()
+	set name = "Pick Color"
+	set category = "Abilities.Settings"
+	set desc = "You can set your color!"
+	if(picked_color)
+		to_chat(src, span_notice("You have already picked a color! If you picked the wrong color, ask an admin to change your picked_color variable to 0."))
+		return
+	var/newcolor = tgui_color_picker(usr, "Choose a color.", "", color)
+	if(newcolor)
+		color = newcolor
+	picked_color = TRUE
+	update_icon()
 
 /mob/living/simple_mob/SelfMove(turf/n, direct, movetime)
 	var/turf/old_turf = get_turf(src)
@@ -234,29 +314,37 @@
 
 	// Turf related slowdown
 	var/turf/T = get_turf(src)
-	if(T && T.movement_cost && !hovering) // Flying mobs ignore turf-based slowdown. Aquatic mobs ignore water slowdown, and can gain bonus speed in it.
+	if(T && T.movement_cost && !(hovering || flying || is_incorporeal())) // Flying mobs ignore turf-based slowdown. Aquatic mobs ignore water slowdown, and can gain bonus speed in it.
 		if(istype(T,/turf/simulated/floor/water) && aquatic_movement)
 			. -= aquatic_movement - 1
 		else
 			. += T.movement_cost
+		if(flying)
+			adjust_nutrition(-0.5)
 
 	if(purge)//Purged creatures will move more slowly. The more time before their purge stops, the slower they'll move.
 		if(. <= 0)
 			. = 1
 		. *= purge
 
-	if(m_intent == "walk")
+	if(m_intent == I_WALK)
 		. *= 1.5
 
-	 . += config.animal_delay
+	// VOREStation Edit Start
+	if(injury_enrages) // If we enrage, then do this, else
+		. -= injury_level
+	else
+		. += injury_level
+	// VOREStation Edit Stop
 
-	 . += ..()
+	. += CONFIG_GET(number/animal_delay)
 
+	. += ..()
 
-/mob/living/simple_mob/Stat()
-	..()
-	if(statpanel("Status") && show_stat_health)
-		stat(null, "Health: [round((health / getMaxHealth()) * 100)]%")
+/mob/living/simple_mob/get_status_tab_items()
+	. = ..()
+	. += ""
+	. += "Health: [round((health / getMaxHealth()) * 100)]%"
 
 /mob/living/simple_mob/lay_down()
 	..()
@@ -266,23 +354,125 @@
 		icon_state = icon_living
 	update_icon()
 
+/mob/living/simple_mob/proc/chase_target(ticker)
+	if(QDELETED(movement_target))
+		movement_target = null
+		return
 
-/mob/living/simple_mob/say_quote(var/message, var/datum/language/speaking = null)
+	if(ticker < 10 && (get_dist(src, movement_target) > 1)) //We only chase our target for 10 tiles or until we are next to them.
+		step_to(src,movement_target,1)
+		addtimer(CALLBACK(src, PROC_REF(chase_target), ++ticker), 3, TIMER_DELETE_ME)
+		return
+
+	face_atom(movement_target)
+
+	if(isturf(movement_target.loc))
+		UnarmedAttack(movement_target)
+	else if(ishuman(movement_target.loc) && prob(20))
+		visible_emote("stares at the [movement_target] that [movement_target.loc] has with an unknowable gaze.")
+	movement_target = null
+
+
+/mob/living/simple_mob/say_quote(message, datum/language/speaking = null)
 	if(speak_emote.len)
 		. = pick(speak_emote)
 	else if(speaking)
 		. = ..()
 
-/mob/living/simple_mob/get_speech_ending(verb, var/ending)
+/mob/living/simple_mob/get_speech_ending(verb, ending)
 	return verb
 
 /mob/living/simple_mob/is_sentient()
-	return mob_class & MOB_CLASS_HUMANOID|MOB_CLASS_ANIMAL|MOB_CLASS_SLIME // Update this if needed.
+	return mob_class & (MOB_CLASS_HUMANOID|MOB_CLASS_ANIMAL|MOB_CLASS_SLIME) // Update this if needed.
 
 /mob/living/simple_mob/get_nametag_desc(mob/user)
-	return "<i>[tt_desc]</i>"
+	return span_italics("[tt_desc]")
 
 /mob/living/simple_mob/make_hud_overlays()
-	hud_list[STATUS_HUD]  = gen_hud_image(buildmode_hud, src, "ai_0", plane = PLANE_BUILDMODE)
-	hud_list[LIFE_HUD]	  = gen_hud_image(buildmode_hud, src, "ais_1", plane = PLANE_BUILDMODE)
+	hud_list[STATUS_HUD]  = gen_hud_image(GLOB.buildmode_hud, src, "ai_0", plane = PLANE_BUILDMODE)
+	hud_list[LIFE_HUD]	  = gen_hud_image(GLOB.buildmode_hud, src, "ais_1", plane = PLANE_BUILDMODE)
 	add_overlay(hud_list)
+
+//Makes it so that simplemobs can understand galcomm without being able to speak it.
+/mob/living/simple_mob/say_understands(mob/other, datum/language/speaking = null)
+	if(understands_common && (speaking?.name == LANGUAGE_GALCOM || !speaking))
+		return TRUE
+	return ..()
+
+/datum/decl/mob_organ_names
+	var/list/hit_zones = list("body") //When in doubt, it's probably got a body.
+
+/*
+ * How injured are we? Returns a number that is then added to movement cooldown and firing/melee delay respectively.
+ * Called by movement_delay and our firing/melee delay checks
+*/
+/mob/living/simple_mob/proc/get_injury_level(mob/living/simple_mob/M)
+	var/h = getMaxHealth() - getOxyLoss() - getToxLoss() - getFireLoss() - getBruteLoss() - getCloneLoss() - halloss // We're not updating our actual health here bc we want updatehealth() and other checks to handle that
+	if(h > 0) 												// Safety to prevent division by 0 errors
+		if((h / getMaxHealth()) <= threshold) 				// Essentially, did our health go down? We don't modify want to modify our total slowdown if we didn't actually take damage, and aren't below our threshold %
+			var/totaldelay = round(rand(1,3) * damage_fatigue_mult * clamp(((rand(2,5) * (h / getMaxHealth())) - rand(0,2)), 1, 5)) 	// totaldelay is how much delay we're going to feed into attacks and movement. Do NOT change this formula unless you know how to math.
+			injury_level = totaldelay 						// Adds our returned slowdown to the mob's injury level
+		else if((h / getMaxHealth()) >= threshold)			// If our health has gone up somehow, and we're over our threshold percentage now, reset it to full
+			injury_level = 0								// Reset to no slowdown
+
+/mob/living/simple_mob/proc/ColorMate()
+	set name = "Recolour"
+	set category = "Abilities.Settings"
+	set desc = "Allows to recolour once."
+
+	if(has_recoloured)
+		to_chat(src, "You've already recoloured yourself once. You are only allowed to recolour yourself once during a around.")
+		return
+
+	tgui_input_colormatrix(src, "Allows you to recolor yourself", "Animal Recolor", src, ui_state = GLOB.tgui_conscious_state)
+
+//Thermal vision adding
+
+/mob/living/simple_mob/proc/hunting_vision()
+	set name = "Track Prey Through Walls"
+	set category = "Abilities.Mob"
+	set desc = "Uses you natural predatory instincts to seek out prey even through walls, or your natural survival instincts to spot predators from a distance."
+
+	if(hunting_cooldown + 5 MINUTES < world.time)
+		to_chat(src, "You can sense other creatures by focusing carefully on your surroundings.")
+		sight |= SEE_MOBS
+		hunting_cooldown = world.time
+		spawn(600)
+			to_chat(src, "Your concentration wears off.")
+			sight -= SEE_MOBS
+	else if(hunting_cooldown + 5 MINUTES > world.time)
+		to_chat(src, "You must wait for a while before using this again.")
+
+/mob/living/simple_mob/proc/hunting_vision_plus()
+	set name = "Thermal vision toggle"
+	set category = "Abilities.Mob"
+	set desc = "Uses you natural predatory instincts to seek out prey even through walls, or your natural survival instincts to spot predators from a distance."
+
+	if(!isthermal)
+		to_chat(src, "You can sense other creatures by focusing carefully on your surroundings.")
+		sight |= SEE_MOBS
+	else
+		to_chat(src, "You stop sensing creatures beyond the walls.")
+		sight -= SEE_MOBS
+
+/mob/living/simple_mob/proc/character_directory_species()
+	return "simplemob"
+
+/mob/living/simple_mob/verb/toggle_vore_icons()
+
+	set name = "Toggle Vore Sprite"
+	set desc = "Toggle visibility of changed mob sprite when you have eaten other things."
+	set category = "Abilities.Vore"
+
+	if(!vore_icons && !vore_icons_cache)
+		to_chat(src,span_warning("This simplemob has no vore sprite."))
+	else if(isnull(vore_icons_cache))
+		vore_icons_cache = vore_icons
+		vore_icons = 0
+		to_chat(src,span_warning("Vore sprite disabled."))
+	else
+		vore_icons = vore_icons_cache
+		vore_icons_cache = null
+		to_chat(src,span_warning("Vore sprite enabled."))
+
+	update_icon()

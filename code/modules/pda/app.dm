@@ -5,7 +5,7 @@
 	var/notify_silent = 0
 	var/hidden = 0				// program not displayed in main menu
 	var/category = "General"	// the category to list it in on the main menu
-	var/obj/item/device/pda/pda	// if this is null, and the app is running code, something's gone wrong
+	var/obj/item/pda/pda	// if this is null, and the app is running code, something's gone wrong
 
 /datum/data/pda/Destroy()
 	pda = null
@@ -34,21 +34,21 @@
 			L = get(pda, /mob/living/silicon)
 
 		if(L)
-			to_chat(L, "[bicon(pda)] [message]")
+			to_chat(L, "[icon2html(pda,L.client)] [message]")
 			SStgui.update_user_uis(L, pda) // Update the receiving user's PDA UI so that they can see the new message
 
 	if(!notify_silent)
 		pda.play_ringtone()
 
 	if(blink && !(src in pda.notifying_programs))
-		pda.overlays += image(icon, "pda-r")
+		pda.add_overlay("pda-r")
 		pda.notifying_programs |= src
 
 /datum/data/pda/proc/unnotify()
 	if(src in pda.notifying_programs)
 		pda.notifying_programs -= src
 		if(!pda.notifying_programs.len)
-			pda.overlays -= image(icon, "pda-r")
+			pda.cut_overlay("pda-r")
 
 // An app has a button on the home screen and its own UI
 /datum/data/pda/app
@@ -72,7 +72,7 @@
 	pda.current_app = src
 	return 1
 
-/datum/data/pda/app/proc/update_ui(mob/user as mob, list/data)
+/datum/data/pda/app/proc/update_ui(mob/user, list/data)
 
 
 // Utilities just have a button on the home screen, but custom code when clicked
@@ -87,7 +87,7 @@
 	var/base_name
 	category = "Scanners"
 
-/datum/data/pda/utility/scanmode/New(obj/item/weapon/cartridge/C)
+/datum/data/pda/utility/scanmode/New(obj/item/cartridge/C)
 	..(C)
 	name = "Enable [base_name]"
 
@@ -104,6 +104,6 @@
 	pda.update_shortcuts()
 	return 1
 
-/datum/data/pda/utility/scanmode/proc/scan_mob(mob/living/C as mob, mob/living/user as mob)
+/datum/data/pda/utility/scanmode/proc/scan_mob(mob/living/C, mob/living/user)
 
-/datum/data/pda/utility/scanmode/proc/scan_atom(atom/A as mob|obj|turf|area, mob/user as mob)
+/datum/data/pda/utility/scanmode/proc/scan_atom(atom/A, mob/user)

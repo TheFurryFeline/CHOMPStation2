@@ -22,9 +22,7 @@
 	name = "\improper NDF skirt"
 	desc = "A black turtleneck and skirt, the elusive ladies' uniform of the Nanotrasen Defense Force."
 
-/obj/item/clothing/under/solgov/utility/sifguard_skirt/officer
-	name = "\improper NDF officer skirt"
-	desc = "A black turtleneck and skirt, the elusive ladies' uniform of the Nanotrasen Defense Force. This one has gold trim."
+
 
 /obj/item/clothing/under/solgov/utility/sifguard/officer
 	name = "\improper NDF officer's uniform"
@@ -57,16 +55,12 @@
 /obj/item/clothing/under/solgov/utility/army/olive
 	name = "olive fatigues"
 	desc = "An olive version of the USDF marine utility uniform, made from durable material." //YW EDIT: TCG to USDF
-	icon = 'icons/obj/clothing/uniforms_vr.dmi'
-	icon_override = 'icons/mob/uniform_vr.dmi'
 	icon_state = "bdu_olive"
 	item_state = "bdu_olive"
 
 /obj/item/clothing/under/solgov/utility/army/desert
 	name = "desert fatigues"
 	desc = "A desert version of the USDF marine utility uniform, made from durable material." //YW EDIT: TCG to USDF
-	icon = 'icons/obj/clothing/uniforms_vr.dmi'
-	icon_override = 'icons/mob/uniform_vr.dmi'
 	icon_state = "bdu_olive"
 	item_state = "bdu_olive"
 

@@ -1,3 +1,5 @@
+#define SMES_PER_PAGE 4
+
 /datum/tgui_module/rcon
 	name = "Power RCON"
 	tgui_id = "RCON"
@@ -5,25 +7,38 @@
 	var/list/known_SMESs = null
 	var/list/known_breakers = null
 
+	var/filtered_smeslist = list()
+
+	var/current_page = 1
+	var/number_pages = 0
+
+/datum/tgui_module/rcon/proc/filter_smeslist(page)
+	number_pages = (length(known_SMESs) + SMES_PER_PAGE - 1) / SMES_PER_PAGE
+	var/page_index = page - 1
+
+	var/lower_bound = page_index * SMES_PER_PAGE + 1
+	var/upper_bound = (page_index + 1) * SMES_PER_PAGE
+	upper_bound = min(upper_bound, length(known_SMESs))
+	filtered_smeslist = list()
+
+	for(var/index = lower_bound, index <= upper_bound, index++)
+		filtered_smeslist += known_SMESs[index]
+
 /datum/tgui_module/rcon/tgui_data(mob/user)
 	FindDevices() // Update our devices list
 	var/list/data = ..()
 
-	// SMES DATA (simplified view)
-	var/list/smeslist[0]
-	for(var/obj/machinery/power/smes/buildable/SMES in known_SMESs)
-		smeslist.Add(list(list(
-			"capacity" = SMES.capacity,
-			"capacityPercent" = round(100*SMES.charge/SMES.capacity, 0.1),
-			"charge" = SMES.charge,
-			"input_set" = SMES.input_attempt,
-			"input_val" = round(SMES.input_level/1000, 0.1),
-			"output_set" = SMES.output_attempt,
-			"output_val" = round(SMES.output_level/1000, 0.1),
-			"output_load" = round(SMES.output_used/1000, 0.1),
-			"RCON_tag" = SMES.RCon_tag
-		)))
+	filter_smeslist(current_page)
 
+	// SMES DATA (simplified view)
+	var/list/smeslist = list()
+	for(var/obj/machinery/power/smes/buildable/SMES in filtered_smeslist)
+		var/list/smes_data = SMES.tgui_data()
+		smes_data["RCON_tag"] = SMES.RCon_tag
+		smeslist.Add(list(smes_data))
+
+	data["pages"] = number_pages
+	data["current_page"] = current_page
 	data["smes_info"] = sortByKey(smeslist, "RCON_tag")
 
 	// BREAKER DATA (simplified view)
@@ -37,11 +52,15 @@
 
 	return data
 
-/datum/tgui_module/rcon/tgui_act(action, params)
+/datum/tgui_module/rcon/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
 	switch(action)
+		if("set_smes_page")
+			var/page = params["index"]
+			current_page = page
+			. = TRUE
 		if("smes_in_toggle")
 			var/obj/machinery/power/smes/buildable/SMES = GetSMESByTag(params["smes"])
 			if(SMES)
@@ -55,14 +74,22 @@
 		if("smes_in_set")
 			var/obj/machinery/power/smes/buildable/SMES = GetSMESByTag(params["smes"])
 			if(SMES)
-				var/inputset = (input(usr, "Enter new input level (0-[SMES.input_level_max/1000] kW)", "SMES Input Power Control", SMES.input_level/1000) as num) * 1000
-				SMES.set_input(inputset)
+				SMES.tgui_set_io(SMES_TGUI_INPUT, params["target"], text2num(params["adjust"]))
+				/* var/inputset = (tgui_input_number(ui.user, "Enter new input level (0-[SMES.input_level_max/1000] kW)", "SMES Input Power Control", SMES.input_level/1000))
+				if(inputset)
+					inputset *= 1000
+					SMES.set_input(inputset)
+				*/
 			. = TRUE
 		if("smes_out_set")
 			var/obj/machinery/power/smes/buildable/SMES = GetSMESByTag(params["smes"])
 			if(SMES)
-				var/outputset = (input(usr, "Enter new output level (0-[SMES.output_level_max/1000] kW)", "SMES Output Power Control", SMES.output_level/1000) as num) * 1000
-				SMES.set_output(outputset)
+				SMES.tgui_set_io(SMES_TGUI_OUTPUT, params["target"], text2num(params["adjust"]))
+				/* var/outputset = (tgui_input_number(ui.user, "Enter new output level (0-[SMES.output_level_max/1000] kW)", "SMES Output Power Control", SMES.output_level/1000))
+				if(outputset)
+					outputset *= 1000
+					SMES.set_input(outputset)
+				SMES.set_output(outputset) */
 			. = TRUE
 		if("toggle_breaker")
 			var/obj/machinery/power/breakerbox/toggle = null
@@ -71,7 +98,7 @@
 					toggle = breaker
 			if(toggle)
 				if(toggle.update_locked)
-					to_chat(usr, "The breaker box was recently toggled. Please wait before toggling it again.")
+					to_chat(ui.user, "The breaker box was recently toggled. Please wait before toggling it again.")
 				else
 					toggle.auto_toggle()
 			. = TRUE
@@ -80,7 +107,7 @@
 // Proc: GetSMESByTag()
 // Parameters: 1 (tag - RCON tag of SMES we want to look up)
 // Description: Looks up and returns SMES which has matching RCON tag
-/datum/tgui_module/rcon/proc/GetSMESByTag(var/tag)
+/datum/tgui_module/rcon/proc/GetSMESByTag(tag)
 	if(!tag)
 		return
 
@@ -104,7 +131,7 @@
 			known_SMESs.Add(SMES)
 
 	known_breakers = new /list()
-	for(var/obj/machinery/power/breakerbox/breaker in machines)
+	for(var/obj/machinery/power/breakerbox/breaker in GLOB.machines)
 		if(!(breaker.z in map_levels))
 			continue
 		if(breaker.RCon_tag != "NO_TAG")
@@ -112,7 +139,9 @@
 
 /datum/tgui_module/rcon/ntos
 	ntos = TRUE
-	
+
 /datum/tgui_module/rcon/robot
 /datum/tgui_module/rcon/robot/tgui_state(mob/user)
 	return GLOB.tgui_self_state
+
+#undef SMES_PER_PAGE

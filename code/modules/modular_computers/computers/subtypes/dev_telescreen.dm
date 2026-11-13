@@ -9,7 +9,7 @@
 	icon_state_screensaver = "standby"
 	hardware_flag = PROGRAM_TELESCREEN
 	anchored = TRUE
-	density = 0
+	density = FALSE
 	base_idle_power_usage = 75
 	base_active_power_usage = 300
 	max_hardware_size = 2
@@ -19,13 +19,8 @@
 	broken_damage = 150
 	w_class = ITEMSIZE_HUGE
 
-/obj/item/modular_computer/telescreen/New()
-	..()
-	// Allows us to create "north bump" "south bump" etc. named objects, for more comfortable mapping.
-	name = "telescreen"
-
-/obj/item/modular_computer/telescreen/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
-	if(W.is_crowbar())
+/obj/item/modular_computer/telescreen/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_CROWBAR))
 		if(anchored)
 			shutdown_computer()
 			anchored = FALSE
@@ -34,7 +29,7 @@
 			pixel_y = 0
 			to_chat(user, "You unsecure \the [src].")
 		else
-			var/choice = input(user, "Where do you want to place \the [src]?", "Offset selection") in list("North", "South", "West", "East", "This tile", "Cancel")
+			var/choice = tgui_input_list(user, "Where do you want to place \the [src]?", "Offset selection", list("North", "South", "West", "East", "This tile", "Cancel"))
 			var/valid = FALSE
 			switch(choice)
 				if("North")
@@ -53,7 +48,7 @@
 					valid = TRUE
 
 			if(valid)
-				anchored = 1
+				anchored = TRUE
 				screen_on = TRUE
 				to_chat(user, "You secure \the [src].")
 			return

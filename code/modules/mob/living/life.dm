@@ -1,18 +1,22 @@
 /mob/living/Life()
-	set invisibility = 0
+	set invisibility = INVISIBILITY_NONE
 	set background = BACKGROUND_ENABLED
+
+	SEND_SIGNAL(src, COMSIG_LIVING_LIFE)
 
 	..()
 
 	if (transforming)
 		return
-	handle_modifiers() //VOREStation Edit - Needs to be done even if in nullspace.
+	handle_modifiers() //Needs to be done even if in nullspace.
 	if(!loc)
 		return
 
-	var/datum/gas_mixture/environment = loc.return_air()
-
-	//handle_modifiers() // Do this early since it might affect other things later. //VOREStation Edit
+	var/datum/gas_mixture/environment
+	if(isbelly(loc))
+		environment = loc.return_air_for_internal_lifeform(src)
+	else
+		environment = loc.return_air()
 
 	handle_light()
 
@@ -21,7 +25,8 @@
 		handle_breathing()
 
 		//Mutations and radiation
-		handle_mutations_and_radiation()
+		handle_mutations()
+		handle_radiation()
 
 
 
@@ -33,34 +38,44 @@
 
 		. = 1
 
+		if(client)
+			var/idle_limit = 10 MINUTES
+			if(client.inactivity >= idle_limit && !away_from_keyboard && client.prefs?.read_preference(/datum/preference/toggle/auto_afk))	//if we're not already afk and we've been idle too long, and we have automarking enabled... then automark it
+				add_status_indicator("afk")
+				to_chat(src, span_notice("You have been idle for too long, and automatically marked as AFK."))
+				away_from_keyboard = TRUE
+			else if(away_from_keyboard && client.inactivity < idle_limit && !manual_afk) //if we're afk but we do something AND we weren't manually flagged as afk, unmark it
+				remove_status_indicator("afk")
+				to_chat(src, span_notice("You have been automatically un-marked as AFK."))
+				away_from_keyboard = FALSE
+
 	//Chemicals in the body, this is moved over here so that blood can be added after death
 	handle_chemicals_in_body()
+
+	// Handle viruses - Dead or not!
+	if(LAZYLEN(viruses))
+		handle_diseases()
 
 	//Handle temperature/pressure differences between body and environment
 	if(environment)
 		handle_environment(environment)
 
-	//Check if we're on fire
-	handle_fire()
-	
-	if(client && !(client.prefs.ambience_freq == 0))	// Handle re-running ambience to mobs if they've remained in an area, AND have an active client assigned to them, and do not have repeating ambience disabled.
+	if(client)	// Handle re-running ambience to mobs if they've remained in an area, AND have an active client assigned to them, and do not have repeating ambience disabled.
 		handle_ambience()
-	
-	//stuff in the stomach
-	//handle_stomach() //VOREStation Code
 
-	update_gravity(mob_has_gravity())
+	//stuff in the stomach
+
+	update_gravity(mob_get_gravity())
 
 	update_pulling()
 
-	for(var/obj/item/weapon/grab/G in src)
+	for(var/obj/item/grab/G in src)
 		G.process()
 
 	if(handle_regular_status_updates()) // Status & health update, are we dead or alive etc.
 		handle_disabilities() // eye, ear, brain damages
+		handle_addictions() // Dwugs
 		handle_statuses() //all special effects, stunned, weakened, jitteryness, hallucination, sleeping, etc
-
-	handle_actions()
 
 	update_canmove()
 
@@ -68,11 +83,22 @@
 
 	handle_vision()
 
+	handle_tf_holder()
+
+	handle_vr_derez()
+
 /mob/living/proc/handle_breathing()
 	return
 
-/mob/living/proc/handle_mutations_and_radiation()
-	return
+/mob/living/proc/handle_mutations()
+	SHOULD_CALL_PARENT(TRUE)
+	if(SEND_SIGNAL(src, COMSIG_HANDLE_MUTATIONS) & COMPONENT_BLOCK_LIVING_MUTATIONS)
+		return COMPONENT_BLOCK_LIVING_MUTATIONS
+
+/mob/living/proc/handle_radiation()
+	SHOULD_CALL_PARENT(TRUE)
+	if(SEND_SIGNAL(src, COMSIG_HANDLE_RADIATION) & COMPONENT_BLOCK_LIVING_RADIATION)
+		return COMPONENT_BLOCK_LIVING_RADIATION
 
 /mob/living/proc/handle_chemicals_in_body()
 	return
@@ -83,14 +109,18 @@
 /mob/living/proc/handle_random_events()
 	return
 
-/mob/living/proc/handle_environment(var/datum/gas_mixture/environment)
+/mob/living/proc/handle_environment(datum/gas_mixture/environment)
 	return
 
 /mob/living/proc/handle_stomach()
 	return
 
 /mob/living/proc/handle_ambience() // If you're in an ambient area and have not moved out of it for x time as configured per-client, and do not have it disabled, we're going to play ambience again to you, to help break up the silence.
-	if(world.time >= (lastareachange + client.prefs.ambience_freq MINUTES)) // Every 5 minutes (by default, set per-client), we're going to run a 35% chance (by default, also set per-client) to play ambience.
+	var/pref = read_preference(/datum/preference/numeric/ambience_freq)
+	if(!pref)
+		return
+
+	if(world.time >= (lastareachange + pref MINUTES)) // Every 5 minutes (by default, set per-client), we're going to run a 35% chance (by default, also set per-client) to play ambience.
 		var/area/A = get_area(src)
 		if(A)
 			lastareachange = world.time // This will refresh the last area change to prevent this call happening LITERALLY every life tick.
@@ -105,13 +135,8 @@
 /mob/living/proc/handle_regular_status_updates()
 	updatehealth()
 	if(stat != DEAD)
-		if(paralysis)
-			set_stat(UNCONSCIOUS)
-		else if (status_flags & FAKEDEATH)
-			set_stat(UNCONSCIOUS)
-		else
-			set_stat(CONSCIOUS)
-		return 1
+		set_stat(CONSCIOUS)
+		return TRUE
 
 /mob/living/proc/handle_statuses()
 	handle_stunned()
@@ -126,7 +151,7 @@
 /mob/living/proc/handle_stunned()
 	if(stunned)
 		AdjustStunned(-1)
-		throw_alert("stunned", /obj/screen/alert/stunned)
+		throw_alert("stunned", /atom/movable/screen/alert/stunned)
 	else
 		clear_alert("stunned")
 	return stunned
@@ -134,7 +159,7 @@
 /mob/living/proc/handle_weakened()
 	if(weakened)
 		AdjustWeakened(-1)
-		throw_alert("weakened", /obj/screen/alert/weakened)
+		throw_alert("weakened", /atom/movable/screen/alert/weakened)
 	else
 		clear_alert("weakened")
 	return weakened
@@ -152,7 +177,7 @@
 /mob/living/proc/handle_drugged()
 	if(druggy)
 		druggy = max(druggy-1, 0)
-		throw_alert("high", /obj/screen/alert/high)
+		throw_alert("high", /atom/movable/screen/alert/high)
 	else
 		clear_alert("high")
 	return druggy
@@ -165,7 +190,7 @@
 /mob/living/proc/handle_paralysed()
 	if(paralysis)
 		AdjustParalysis(-1)
-		throw_alert("paralyzed", /obj/screen/alert/paralyzed)
+		throw_alert("paralyzed", /atom/movable/screen/alert/paralyzed)
 	else
 		clear_alert("paralyzed")
 	return paralysis
@@ -173,24 +198,27 @@
 /mob/living/proc/handle_confused()
 	if(confused)
 		AdjustConfused(-1)
-		throw_alert("confused", /obj/screen/alert/confused)
+		throw_alert("confused", /atom/movable/screen/alert/confused)
 	else
 		clear_alert("confused")
 	return confused
 
 /mob/living/proc/handle_disabilities()
+	SEND_SIGNAL(src, COMSIG_HANDLE_DISABILITIES)
 	//Eyes
 	if(sdisabilities & BLIND || stat)	//blindness from disability or unconsciousness doesn't get better on its own
 		SetBlinded(1)
-		throw_alert("blind", /obj/screen/alert/blind)
+		throw_alert("blind", /atom/movable/screen/alert/blind)
 	else if(eye_blind)			//blindness, heals slowly over time
 		AdjustBlinded(-1)
-		throw_alert("blind", /obj/screen/alert/blind)
+		throw_alert("blind", /atom/movable/screen/alert/blind)
 	else
 		clear_alert("blind")
 
 	if(eye_blurry)			//blurry eyes heal slowly
 		eye_blurry = max(eye_blurry-1, 0)
+		if(eye_blurry > 100) //Max of 200 seconds of eye blurry.
+			eye_blurry = 100
 
 	//Ears
 	if(sdisabilities & DEAF)		//disabled-deaf, doesn't get better on its own
@@ -201,14 +229,11 @@
 			adjustEarDamage(-0.05,-1)
 
 /mob/living/handle_regular_hud_updates()
-	if(!client)
-		return 0
-	..()
-
+	. = ..()
+	if(!.)
+		return
 	handle_darksight()
-	handle_hud_icons()
-
-	return 1
+	handle_hud_icons_health()
 
 /mob/living/proc/update_sight()
 	if(!seedarkness)
@@ -224,25 +249,23 @@
 
 	return
 
-/mob/living/proc/handle_hud_icons()
-	handle_hud_icons_health()
-	return
-
 /mob/living/proc/handle_hud_icons_health()
-	return
+	SHOULD_CALL_PARENT(TRUE)
+	if(SEND_SIGNAL(src,COMSIG_MOB_HANDLE_HUD_HEALTH_ICON) & COMSIG_COMPONENT_HANDLED_HEALTH_ICON)
+		return FALSE
+	return TRUE
 
 /mob/living/proc/handle_light()
+	if(glow_override)
+		return FALSE
+
 	if(instability >= TECHNOMANCER_INSTABILITY_MIN_GLOW)
 		var/distance = round(sqrt(instability / 2))
 		if(distance)
 			set_light(distance, distance * 4, l_color = "#660066")
 			return TRUE
 
-	else if(on_fire)
-		set_light(min(round(fire_stacks), 3), round(fire_stacks), l_color = "#FF9933")
-		return TRUE
-
-	else if(glow_toggle)
+	else if(glow_toggle && !is_ventcrawling) // Hide the light in vents
 		set_light(glow_range, glow_intensity, glow_color)
 
 	else
@@ -250,6 +273,7 @@
 		return FALSE
 
 /mob/living/proc/handle_darksight()
+	SEND_SIGNAL(src,COMSIG_MOB_HANDLE_HUD_DARKSIGHT)
 	if(!seedarkness) //Cheap 'always darksight' var
 		dsoverlay.alpha = 255
 		return
@@ -266,7 +290,7 @@
 	//Snowflake treatment of potential locations
 	else if(istype(loc,/obj/mecha)) //I imagine there's like displays and junk in there. Use the lights!
 		brightness = 1
-	else if(istype(loc,/obj/item/weapon/holder)) //Poor carried teshari and whatnot should adjust appropriately
+	else if(istype(loc,/obj/item/holder)) //Poor carried teshari and whatnot should adjust appropriately
 		var/turf/T = get_turf(src)
 		brightness = T.get_lumcount()
 
@@ -277,3 +301,17 @@
 
 	//to_world("[src] in B:[round(brightness,0.1)] C:[round(current,0.1)] A2:[round(adjust_to,0.1)] D:[round(distance,0.01)] T:[round(distance*10 SECONDS,0.1)]")
 	animate(dsoverlay, alpha = (adjust_to*255), time = (distance*10 SECONDS))
+
+/mob/living/proc/handle_sleeping()
+	if(stat != DEAD && toggled_sleeping)
+		Sleeping(2)
+	if(sleeping)
+		if(iscarbon(src))
+			var/mob/living/carbon/C = src
+			AdjustSleeping(-1 * C.species.waking_speed)
+		else
+			AdjustSleeping(-1)
+		throw_alert("asleep", /atom/movable/screen/alert/asleep)
+	else
+		clear_alert("asleep")
+	return sleeping

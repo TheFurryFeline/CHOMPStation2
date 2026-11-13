@@ -9,7 +9,7 @@
 	var/list/instances		//What items are actually stored
 	var/stored				//The thing holding it is
 
-/datum/stored_item/New(var/stored, var/path, var/name = null, var/amount = 0)
+/datum/stored_item/New(stored, path, name = null, amount = 0)
 	src.item_path = path
 
 	if(!name)
@@ -34,7 +34,7 @@
 /datum/stored_item/proc/get_amount()
 	return instances ? instances.len : amount
 
-/datum/stored_item/proc/get_product(var/product_location)
+/datum/stored_item/proc/get_product(product_location)
 	if(!get_amount() || !product_location)
 		return
 	init_products()
@@ -42,9 +42,12 @@
 	var/atom/movable/product = instances[instances.len]	// Remove the last added product
 	instances -= product
 	product.forceMove(product_location)
+	if(istype(product, /obj/item))
+		var/obj/item/our_item = product
+		our_item.persist_storable = FALSE
 	return product
 
-/datum/stored_item/proc/add_product(var/atom/movable/product)
+/datum/stored_item/proc/add_product(atom/movable/product)
 	if(product.type != item_path)
 		return FALSE
 	init_products()
@@ -60,30 +63,35 @@
 		var/new_product = new item_path(stored)
 		instances += new_product
 
-
+/datum/stored_item/proc/refill_products(refill_amount)
+	if(!instances)
+		init_products()
+	for(var/i = 1 to refill_amount)
+		var/new_product = new item_path(stored)
+		instances += new_product
 
 /datum/stored_item/stack/get_amount()
 	return amount
 
-/datum/stored_item/stack/add_product(var/atom/movable/product)
+/datum/stored_item/stack/add_product(atom/movable/product)
 	. = ..()
 	if(.)
 		var/obj/item/stack/S = product
 		if(istype(S))
-			amount += S.amount
+			amount += S.get_amount()
 
-/datum/stored_item/stack/get_product(var/product_location, var/count)
+/datum/stored_item/stack/get_product(product_location, count)
 	if(!LAZYLEN(instances))
 		return null // Shouldn't happen, but will loudly complain if it breaks
-	
+
 	var/obj/item/stack/S = instances[1]
 	count = min(count, S.get_max_amount())
 	src.amount -= count // We won't vend more than one full stack per call
-	
+
 	// Case 1: Draw the full amount from the first instance
 	if(count < S.get_amount())
 		S = S.split(count)
-		
+
 	// Case 2: Amount at least one stack, or have to accumulate
 	else if(count >= S.get_amount())
 		count -= S.get_amount()
@@ -91,6 +99,8 @@
 		for(var/obj/item/stack/T as anything in instances)
 			if(count <= 0)
 				break
+			if(T.get_amount() <= count)
+				instances -=T
 			count -= T.transfer_to(S, count)
 
 	S.forceMove(product_location)

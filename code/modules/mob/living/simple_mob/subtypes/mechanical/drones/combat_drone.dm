@@ -39,11 +39,11 @@
 	icon_dead = "drone_dead"
 	has_eye_glow = TRUE
 
-	faction = "malf_drone"
+	faction = FACTION_MALF_DRONE
 
 	maxHealth = 50 // Shield has 150 for total of 200.
 	health = 50
-	movement_cooldown = 5
+	movement_cooldown = 1.5
 	hovering = TRUE
 
 	base_attack_cooldown = 5
@@ -54,13 +54,20 @@
 	response_disarm = "gently pushes aside"
 	response_harm = "hits"
 
+	organ_names = /datum/decl/mob_organ_names/combatdrone
+
 	ai_holder_type = /datum/ai_holder/simple_mob/ranged/kiting/threatening
 	say_list_type = /datum/say_list/malf_drone
 
 	var/datum/effect/effect/system/ion_trail_follow/ion_trail = null
 	var/obj/item/shield_projector/shields = null
 
-/mob/living/simple_mob/mechanical/combat_drone/Initialize()
+/mob/living/simple_mob/mechanical/combat_drone/melee
+	icon_state = "droneM"
+	icon_dead = "droneM_dead"
+	ai_holder_type = /datum/ai_holder/simple_mob/melee/hit_and_run
+
+/mob/living/simple_mob/mechanical/combat_drone/Initialize(mapload)
 	ion_trail = new
 	ion_trail.set_up(src)
 	ion_trail.start()
@@ -77,7 +84,7 @@
 	..(null,"suddenly breaks apart.")
 	qdel(src)
 
-/mob/living/simple_mob/mechanical/combat_drone/Process_Spacemove(var/check_drift = 0)
+/mob/living/simple_mob/mechanical/combat_drone/Process_Spacemove(check_drift = 0)
 	return TRUE
 
 /obj/item/projectile/beam/drone
@@ -95,10 +102,13 @@
 // Difference is that it should not be faster than you.
 /mob/living/simple_mob/mechanical/combat_drone/lesser
 	desc = "An automated combat drone with an aged apperance."
-	movement_cooldown = 10
+	movement_cooldown = 3
 
 
 // This one is the type spawned by the random event.
 // It won't wander away from its spawn point
 /mob/living/simple_mob/mechanical/combat_drone/event
 	ai_holder_type = /datum/ai_holder/simple_mob/ranged/kiting/threatening/event
+
+/datum/decl/mob_organ_names/combatdrone
+	hit_zones = list("chassis", "comms array", "sensor suite", "left weapons module", "right weapons module", "maneuvering thruster")

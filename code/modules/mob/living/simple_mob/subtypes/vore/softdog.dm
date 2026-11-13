@@ -2,7 +2,7 @@
 	name = "Wildlife - Dog"
 	desc = "It's a relatively ordinary looking canine. \
 	It has an ominous aura..."
-	value = CATALOGUER_REWARD_TRIVIAL
+	value = CATALOGUER_REWARD_EASY
 
 /mob/living/simple_mob/vore/woof
 	name = "dog"
@@ -15,10 +15,10 @@
 	icon_rest = "woof_rest"
 	icon = 'icons/mob/vore.dmi'
 
-	faction = "dog"
+	faction = FACTION_DOG
 	maxHealth = 600
 	health = 600
-	movement_cooldown = 1
+	movement_cooldown = -1
 
 	response_help = "pets"
 	response_disarm = "rudely paps"
@@ -27,6 +27,7 @@
 	harm_intent_damage = 5
 	melee_damage_lower = 5
 	melee_damage_upper = 1
+	catalogue_data = list(/datum/category_item/catalogue/fauna/woof)
 
 	var/knockdown_chance = 20
 
@@ -49,15 +50,15 @@
 
 	mob_size = MOB_SMALL
 
-	has_langs = list("Dog", "Canilunzt", "Galactic Common")
+	has_langs = list(LANGUAGE_ANIMAL, LANGUAGE_CANILUNZT, LANGUAGE_GALCOM)
 	say_list_type = /datum/say_list/softdog
 	swallowTime = 0.1 SECONDS
 
-/mob/living/simple_mob/vore/woof/New()
-	..()
+/mob/living/simple_mob/vore/woof/Initialize(mapload)
+	. = ..()
 
-	verbs += /mob/living/proc/ventcrawl
-	verbs += /mob/living/proc/hide
+	add_verb(src, /mob/living/proc/ventcrawl)
+	add_verb(src, /mob/living/proc/hide)
 
 /datum/say_list/softdog
 	speak = list("Woof~", "Woof!", "Yip!", "Yap!", "Yip~", "Yap~", "Awoooooo~", "Awoo!", "AwooooooooooOOOOOOoOooOoooOoOOoooo!")
@@ -93,10 +94,8 @@
 	vore_default_item_mode = IM_DIGEST
 
 
-/mob/living/simple_mob/vore/woof/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/vore/woof/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "You have found yourself pumping on down, down, down into this extremely soft dog. The slick touches of pulsing walls roll over you in greedy fashion as you're swallowed away, the flesh forms to your figure as in an instant the world is replaced by the hot squeeze of canine gullet. And in another moment a heavy GLLRMMPTCH seals you away, the dog tossing its head eagerly, the way forward stretching to accommodate your shape as you are greedily guzzled down. The wrinkled, doughy walls pulse against you in time to the creature's steady heartbeat. The sounds of the outside world muffled into obscure tones as the wet, grumbling rolls of this soft creature's gut hold you, churning you tightly such that no part of you is spared from these gastric affections."
@@ -131,7 +130,7 @@
 	B.digest_brute = 0.05
 	B.digest_burn = 0.05
 	B.mode_flags = 8
-	B.belly_fullscreen = "base"
+	B.belly_fullscreen = "a_tumby"
 	B.struggle_messages_inside = list(
 		"Your struggling only causes %pred's doughy gut to smother you against those wrinkled walls...",
 		"As you squirm, %pred's %belly flexxes over you heavily, forming you back into a small ball...",
@@ -171,12 +170,11 @@
 	icon_living = "cass"
 	icon_dead = "cass_dead"
 	icon_rest = "cass_rest"
+	ic_revivable = 0
 
-	faction = "theatre"
+	faction = FACTION_THEATRE
 	gender = PLURAL
 	ai_holder_type = /datum/ai_holder/simple_mob/woof/cass
-
-/mob/living/simple_mob/vore/woof/cass
 	vore_digest_chance = 0
 	vore_escape_chance = 25
 	digestable = 0
@@ -190,21 +188,22 @@
 	retaliate = 1
 	cooperative = TRUE
 	speak_chance = 1
+	lose_target_timeout = 0 // Easily distracted
 
 /datum/ai_holder/simple_mob/woof/hostile
 	hostile = 1
 	retaliate = 1
 
-/mob/living/simple_mob/vore/woof/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/vore/woof/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		if(prob(knockdown_chance))
 			L.Weaken(3)
-			L.visible_message(span("danger", "\The [src] pounces on \the [L]!"))
+			L.visible_message(span_danger("\The [src] pounces on \the [L]!"))
 
 /mob/living/simple_mob/vore/woof/hostile/melee
 
-	movement_cooldown = 0
+	movement_cooldown = -2
 
 	ai_holder_type = /datum/ai_holder/simple_mob/woof/hostile
 
@@ -245,4 +244,69 @@
 	ai_holder_type = /datum/ai_holder/simple_mob/ranged/kiting/threatening/woof
 
 	projectiletype = /obj/item/projectile/forcebolt/harmless/awoobolt
+	projectilesound = 'sound/voice/long_awoo.ogg'
+
+/mob/living/simple_mob/vore/woof/cass/attack_hand(mob/living/carbon/human/M as mob)
+	if(stat != DEAD)
+		return ..()
+	if(M.a_intent == I_HELP)
+		M.visible_message("[M] pets [src].", runemessage = "pets [src]")
+		if(do_after(M, 30 SECONDS, target = src))
+			faction = M.faction
+			revive()
+			sight = initial(sight)
+			see_in_dark = initial(see_in_dark)
+			see_invisible = initial(see_invisible)
+			update_icon()
+			visible_message("[src] stops playing dead.", runemessage = "[src] stops playing dead")
+		else
+			M.visible_message("The petting was interrupted!!!", runemessage = "The petting was interrupted")
+	return
+
+GLOBAL_VAR_INIT(woof_maximum, 0)
+GLOBAL_VAR_INIT(woof_current, 0)
+/mob/living/simple_mob/vore/woof/hostile/aweful
+	maxHealth = 100
+	health = 100
+	var/static/killswitch = FALSE
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/Initialize(mapload)
+	. = ..()
+	var/thismany = (rand(25,500)) / 100
+	resize(thismany, animate = FALSE, uncapped = TRUE, ignore_prefs = TRUE)
+	if(!GLOB.woof_current) //all our previous brothers have gone to valhallah
+		GLOB.woof_maximum = 0 //Let's start duplicating again
+	GLOB.woof_current++
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/Destroy()
+	GLOB.woof_current--
+	. = ..()
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/death()
+	. = ..()
+	var/thismany = rand(0,3)
+	if(!thismany || killswitch || GLOB.woof_maximum >= 20)
+		visible_message(span_notice("\The [src] evaporates into nothing..."))
+		qdel(src)
+		return
+	var/list/possiblewoofs = list(/mob/living/simple_mob/vore/woof/hostile/aweful/melee, /mob/living/simple_mob/vore/woof/hostile/aweful/ranged)
+	for(var/i = 1 to thismany)
+		var/mob/living/simple_mob/vore/woof/hostile/aweful/woof = pick(possiblewoofs)
+		new woof(loc, src)
+		GLOB.woof_maximum++
+		visible_message(span_warning("Another [src] appears!"))
+	qdel(src)
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/melee
+
+	movement_cooldown = -2
+
+	ai_holder_type = /datum/ai_holder/simple_mob/woof/hostile
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/ranged
+	movement_cooldown = -2
+
+	ai_holder_type = /datum/ai_holder/simple_mob/ranged/kiting/threatening/woof
+
+	projectiletype = /obj/item/projectile/awoo_missile
 	projectilesound = 'sound/voice/long_awoo.ogg'

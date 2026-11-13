@@ -1,7 +1,7 @@
 /obj/structure/closet/secure_closet/cargotech
 	name = "cargo technician's locker"
-	req_access = list(access_cargo)
-	closet_appearance = /decl/closet_appearance/secure_closet/cargo
+	req_access = list(ACCESS_CARGO)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/cargo
 
 	starts_with = list(
 		/obj/item/clothing/under/rank/cargotech,
@@ -11,25 +11,27 @@
 		/obj/item/clothing/suit/storage/hooded/wintercoat/cargo,
 		/obj/item/clothing/shoes/boots/winter/supply,
 		/obj/item/clothing/shoes/black,
-		/obj/item/device/radio/headset/headset_cargo,
-		/obj/item/device/radio/headset/headset_cargo/alt,
+		/obj/item/radio/headset/cargo,
+		/obj/item/radio/headset/alt/cargo,
+		/obj/item/radio/headset/earbud/cargo,
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/gloves/fingerless,
-		/obj/item/clothing/head/soft)
+		/obj/item/clothing/head/soft,
+		/obj/item/cargo_scanner)
 
-/obj/structure/closet/secure_closet/cargotech/Initialize()
+/obj/structure/closet/secure_closet/cargotech/Initialize(mapload)
 	if(prob(75))
-		starts_with += /obj/item/weapon/storage/backpack
+		starts_with += /obj/item/storage/backpack
 	else
-		starts_with += /obj/item/weapon/storage/backpack/satchel/norm
+		starts_with += /obj/item/storage/backpack/satchel/norm
 	if(prob(25))
-		starts_with += /obj/item/weapon/storage/backpack/dufflebag
+		starts_with += /obj/item/storage/backpack/dufflebag
 	return ..()
 
 /obj/structure/closet/secure_closet/quartermaster
 	name = "quartermaster's locker"
-	req_access = list(access_qm)
-	closet_appearance = /decl/closet_appearance/secure_closet/cargo/qm
+	req_access = list(ACCESS_QM)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/cargo/qm
 
 	starts_with = list(
 		/obj/item/clothing/under/rank/cargo,
@@ -37,52 +39,67 @@
 		/obj/item/clothing/under/rank/cargo/jeans,
 		/obj/item/clothing/under/rank/cargo/jeans/female,
 		/obj/item/clothing/shoes/brown,
-		/obj/item/device/radio/headset/headset_qm, //VOREStation Edit,
-		/obj/item/device/radio/headset/headset_qm/alt, //VOREStation Edit,
+		/obj/item/radio/headset/qm,
+		/obj/item/radio/headset/alt/qm,
+		/obj/item/radio/headset/earbud/qm,
+		/obj/item/clothing/under/rank/neo_qm,
+		/obj/item/clothing/under/rank/neo_qm_skirt,
+		/obj/item/clothing/under/rank/neo_qm_jacket,
+		/obj/item/clothing/under/rank/neo_qm_white,
+		/obj/item/clothing/under/rank/neo_qm_white_skirt,
+		/obj/item/clothing/under/rank/neo_qm_turtle,
+		/obj/item/clothing/under/rank/neo_qm_turtle_skirt,
+		/obj/item/clothing/under/rank/neo_gorka/qm,
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/gloves/fingerless,
-		/obj/item/clothing/suit/fire/firefighter,
-		/obj/item/weapon/tank/emergency/oxygen,
-		/obj/item/clothing/mask/gas,
+		/obj/item/tank/emergency/oxygen,
+		/obj/item/clothing/mask/gas/clear,
 		/obj/item/clothing/glasses/meson,
 		/obj/item/clothing/head/soft,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/cargo,
-		/obj/item/clothing/shoes/boots/winter/supply)
+		/obj/item/clothing/suit/storage/hooded/wintercoat/cargo/qm,
+		/obj/item/clothing/head/beret/qm,
+		/obj/item/clothing/shoes/boots/winter/supply,
+		/obj/item/cargo_scanner)
 
-/obj/structure/closet/secure_closet/quartermaster/Initialize()
+/obj/structure/closet/secure_closet/quartermaster/Initialize(mapload)
 	if(prob(75))
-		starts_with += /obj/item/weapon/storage/backpack
+		starts_with += /obj/item/storage/backpack
 	else
-		starts_with += /obj/item/weapon/storage/backpack/satchel/norm
+		starts_with += /obj/item/storage/backpack/satchel/norm
 	if(prob(25))
-		starts_with += /obj/item/weapon/storage/backpack/dufflebag
+		starts_with += /obj/item/storage/backpack/dufflebag
 	return ..()
 
 /obj/structure/closet/secure_closet/miner
 	name = "miner's equipment"
-	req_access = list(access_mining)
-	closet_appearance = /decl/closet_appearance/secure_closet/mining
+	req_access = list(ACCESS_MINING)
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/mining
 
 	starts_with = list(
-		/obj/item/device/radio/headset/headset_mine,
+		/obj/item/radio/headset/miner,
 		/obj/item/clothing/under/rank/miner,
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/shoes/black,
-		/obj/item/device/analyzer,
-		/obj/item/weapon/storage/bag/ore,
-		/obj/item/device/flashlight/lantern,
-		/obj/item/weapon/shovel,
-		/obj/item/weapon/pickaxe,
+		/obj/item/analyzer,
+		/obj/item/ore_bag,
+		/obj/item/storage/belt/miner,
+		/obj/item/flashlight/lantern,
+		/obj/item/shovel,
+		/obj/item/pickaxe/drill,
+		/obj/item/kinetic_crusher,
 		/obj/item/clothing/glasses/material,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/miner,
 		/obj/item/clothing/shoes/boots/winter/mining,
-		/obj/item/stack/marker_beacon/thirty)
+		/obj/item/emergency_beacon,
+		/obj/item/stack/marker_beacon/thirty,
+		/obj/item/storage/sample_container)
 
-/obj/structure/closet/secure_closet/miner/Initialize()
+/obj/structure/closet/secure_closet/miner/Initialize(mapload)
 	if(prob(50))
-		starts_with += /obj/item/weapon/storage/backpack/industrial
+		starts_with += /obj/item/storage/backpack/industrial
 	else
-		starts_with += /obj/item/weapon/storage/backpack/satchel/eng
+		starts_with += /obj/item/storage/backpack/satchel/eng
 	return ..()
 
 
@@ -90,26 +107,26 @@
 /obj/structure/closet/lumber
 	name = "Lumberjack's equipment"
 	desc = "It's a storage unit for Lumberjack equpiment, though it seems the lock is broken."
-	closet_appearance = /decl/closet_appearance/secure_closet/lumber
+	closet_appearance = /datum/decl/closet_appearance/secure_closet/lumber
 
 	starts_with = list(
-		/obj/item/device/radio/headset/headset_mine,
+		/obj/item/radio/headset/miner,
 		/obj/item/clothing/under/overalls,
 		/obj/item/clothing/gloves/light_brown,
 		/obj/item/clothing/gloves/black,
 		/obj/item/clothing/shoes/black,
-		/obj/item/weapon/material/knife/machete/hatchet,
-		/obj/item/weapon/gun/energy/kinetic_accelerator,
-		/obj/item/device/flashlight/lantern,
-		/obj/item/weapon/shovel,
+		/obj/item/material/knife/machete/hatchet,
+		/obj/item/gun/energy/kinetic_accelerator,
+		/obj/item/flashlight/lantern,
+		/obj/item/shovel,
 		/obj/item/clothing/glasses/material,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/miner,
 		/obj/item/clothing/shoes/boots/winter/mining,
 		/obj/item/stack/marker_beacon/thirty)
 
-/obj/structure/closet/lumber/Initialize()
+/obj/structure/closet/lumber/Initialize(mapload)
 	if(prob(50))
-		starts_with += /obj/item/weapon/storage/backpack/industrial
+		starts_with += /obj/item/storage/backpack/industrial
 	else
-		starts_with += /obj/item/weapon/storage/backpack/satchel/eng
+		starts_with += /obj/item/storage/backpack/satchel/eng
 	return ..()

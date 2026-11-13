@@ -1,11 +1,11 @@
 /datum/construction/mecha/scarab_chassis
 	steps = list(list("key"=/obj/item/mecha_parts/part/scarab_torso),//1
-					 list("key"=/obj/item/mecha_parts/part/scarab_left_arm),//2
-					 list("key"=/obj/item/mecha_parts/part/scarab_right_arm),//3
-					 list("key"=/obj/item/mecha_parts/part/scarab_left_legs),//4
-					 list("key"=/obj/item/mecha_parts/part/scarab_right_legs),//5
-					 list("key"=/obj/item/mecha_parts/part/scarab_head)
-					)
+					list("key"=/obj/item/mecha_parts/part/scarab_left_arm),//2
+					list("key"=/obj/item/mecha_parts/part/scarab_right_arm),//3
+					list("key"=/obj/item/mecha_parts/part/scarab_left_legs),//4
+					list("key"=/obj/item/mecha_parts/part/scarab_right_legs),//5
+					list("key"=/obj/item/mecha_parts/part/scarab_head)
+				)
 
 /datum/construction/mecha/scarab_chassis/custom_action(step, obj/item/I, mob/user)
 	user.visible_message("[user] has connected [I] to [holder].", "You connect [I] to [holder]")
@@ -28,87 +28,87 @@
 
 
 /datum/construction/reversible/mecha/scarab
-	result = "/obj/mecha/combat/scarab"
+	result = /obj/mecha/combat/scarab
 	steps = list(
 					//1
-					list("key"=/obj/item/weapon/weldingtool,
+					list("key"=IS_WELDER,
 							"backkey"=IS_WRENCH,
 							"desc"="External armor is wrenched."),
-					 //2
-					 list("key"=IS_WRENCH,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="External armor is installed."),
-					 //3
-					 list("key"=/obj/item/stack/material/plasteel,
-					 		"backkey"=/obj/item/weapon/weldingtool,
-					 		"desc"="Internal armor is welded."),
-					 //4
-					 list("key"=/obj/item/weapon/weldingtool,
-					 		"backkey"=IS_WRENCH,
-					 		"desc"="Internal armor is wrenched"),
-					 //5
-					 list("key"=IS_WRENCH,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Internal armor is installed"),
-					 //6
-					 list("key"=/obj/item/stack/material/steel,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="Advanced capacitor is secured"),
-					 //7
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Advanced capacitor is installed"),
-					 //8
-					 list("key"=/obj/item/weapon/stock_parts/capacitor/adv,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="Advanced scanner module is secured"),
-					 //9
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Advanced scanner module is installed"),
-					 //10
-					 list("key"=/obj/item/weapon/stock_parts/scanning_module/adv,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="Targeting module is secured"),
-					 //11
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Targeting module is installed"),
-					 //12
-					 list("key"=/obj/item/weapon/circuitboard/mecha/scarab/targeting,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="Peripherals control module is secured"),
-					 //13
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Peripherals control module is installed"),
-					 //14
-					 list("key"=/obj/item/weapon/circuitboard/mecha/scarab/peripherals,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="Central control module is secured"),
-					 //15
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_CROWBAR,
-					 		"desc"="Central control module is installed"),
-					 //16
-					 list("key"=/obj/item/weapon/circuitboard/mecha/scarab/main,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="The wiring is adjusted"),
-					 //17
-					 list("key"=/obj/item/weapon/tool/wirecutters,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="The wiring is added"),
-					 //18
-					 list("key"=/obj/item/stack/cable_coil,
-					 		"backkey"=IS_SCREWDRIVER,
-					 		"desc"="The hydraulic systems are active."),
-					 //19
-					 list("key"=IS_SCREWDRIVER,
-					 		"backkey"=IS_WRENCH,
-					 		"desc"="The hydraulic systems are connected."),
-					 //20
-					 list("key"=IS_WRENCH,
-					 		"desc"="The hydraulic systems are disconnected.")
+					//2
+					list("key"=IS_WRENCH,
+							"backkey"=IS_CROWBAR,
+							"desc"="External armor is installed."),
+					//3
+					list("key"=/obj/item/stack/material/plasteel,
+							"backkey"=IS_WELDER,
+							"desc"="Internal armor is welded."),
+					//4
+					list("key"=IS_WELDER,
+							"backkey"=IS_WRENCH,
+							"desc"="Internal armor is wrenched"),
+					//5
+					list("key"=IS_WRENCH,
+							"backkey"=IS_CROWBAR,
+							"desc"="Internal armor is installed"),
+					//6
+					list("key"=/obj/item/stack/material/steel,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="Advanced capacitor is secured"),
+					//7
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_CROWBAR,
+							"desc"="Advanced capacitor is installed"),
+					//8
+					list("key"=/obj/item/stock_parts/capacitor/adv,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="Advanced scanner module is secured"),
+					//9
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_CROWBAR,
+							"desc"="Advanced scanner module is installed"),
+					//10
+					list("key"=/obj/item/stock_parts/scanning_module/adv,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="Targeting module is secured"),
+					//11
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_CROWBAR,
+							"desc"="Targeting module is installed"),
+					//12
+					list("key"=/obj/item/circuitboard/mecha/scarab/targeting,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="Peripherals control module is secured"),
+					//13
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_CROWBAR,
+							"desc"="Peripherals control module is installed"),
+					//14
+					list("key"=/obj/item/circuitboard/mecha/scarab/peripherals,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="Central control module is secured"),
+					//15
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_CROWBAR,
+							"desc"="Central control module is installed"),
+					//16
+					list("key"=/obj/item/circuitboard/mecha/scarab/main,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="The wiring is adjusted"),
+					//17
+					list("key"=IS_WIRECUTTER,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="The wiring is added"),
+					//18
+					list("key"=/obj/item/stack/cable_coil,
+							"backkey"=IS_SCREWDRIVER,
+							"desc"="The hydraulic systems are active."),
+					//19
+					list("key"=IS_SCREWDRIVER,
+							"backkey"=IS_WRENCH,
+							"desc"="The hydraulic systems are connected."),
+					//20
+					list("key"=IS_WRENCH,
+							"desc"="The hydraulic systems are disconnected.")
 					)
 
 /datum/construction/reversible/mecha/scarab/action(obj/item/I,mob/user as mob)
@@ -142,8 +142,7 @@
 				holder.icon_state = "scarab_wire2"
 			else
 				user.visible_message("[user] removes the wiring from [holder].", "You remove the wiring from [holder].")
-				var/obj/item/stack/cable_coil/coil = new /obj/item/stack/cable_coil(get_turf(holder))
-				coil.amount = 4
+				new /obj/item/stack/cable_coil(get_turf(holder), 4)
 				holder.icon_state = "scarab_chassis_complete"
 		if(16)
 			if(diff==FORWARD)
@@ -159,7 +158,7 @@
 				holder.icon_state = "scarab_chip1"
 			else
 				user.visible_message("[user] removes the central control module from [holder].", "You remove the central computer mainboard from [holder].")
-				new /obj/item/weapon/circuitboard/mecha/scarab/main(get_turf(holder))
+				new /obj/item/circuitboard/mecha/scarab/main(get_turf(holder))
 				holder.icon_state = "scarab_wire2"
 		if(14)
 			if(diff==FORWARD)
@@ -175,7 +174,7 @@
 				holder.icon_state = "scarab_chip2"
 			else
 				user.visible_message("[user] removes the peripherals control module from [holder].", "You remove the peripherals control module from [holder].")
-				new /obj/item/weapon/circuitboard/mecha/scarab/peripherals(get_turf(holder))
+				new /obj/item/circuitboard/mecha/scarab/peripherals(get_turf(holder))
 				holder.icon_state = "scarab_chip1"
 		if(12)
 			if(diff==FORWARD)
@@ -191,7 +190,7 @@
 				holder.icon_state = "scarab_chip3"
 			else
 				user.visible_message("[user] removes the weapon control module from [holder].", "You remove the weapon control module from [holder].")
-				new /obj/item/weapon/circuitboard/mecha/scarab/targeting(get_turf(holder))
+				new /obj/item/circuitboard/mecha/scarab/targeting(get_turf(holder))
 				holder.icon_state = "scarab_chip2"
 		if(10)
 			if(diff==FORWARD)
@@ -207,7 +206,7 @@
 				holder.icon_state = "scarab_chip4"
 			else
 				user.visible_message("[user] removes the advanced scanner module from [holder].", "You remove the advanced scanner module from [holder].")
-				new /obj/item/weapon/stock_parts/scanning_module/adv(get_turf(holder))
+				new /obj/item/stock_parts/scanning_module/adv(get_turf(holder))
 				holder.icon_state = "scarab_chip3"
 		if(8)
 			if(diff==FORWARD)
@@ -223,7 +222,7 @@
 				holder.icon_state = "scarab_chip5"
 			else
 				user.visible_message("[user] removes the advanced capacitor from [holder].", "You remove the advanced capacitor from [holder].")
-				new /obj/item/weapon/stock_parts/capacitor/adv(get_turf(holder))
+				new /obj/item/stock_parts/capacitor/adv(get_turf(holder))
 				holder.icon_state = "scarab_chip5"
 		if(6)
 			if(diff==FORWARD)
@@ -238,8 +237,7 @@
 				holder.icon_state = "scarab_chip5"
 			else
 				user.visible_message("[user] pries internal armor layer from [holder].", "You prie internal armor layer from [holder].")
-				var/obj/item/stack/material/steel/MS = new /obj/item/stack/material/steel(get_turf(holder))
-				MS.amount = 5
+				new /obj/item/stack/material/steel(get_turf(holder), 5)
 				holder.icon_state = "scarab_chip5"
 		if(4)
 			if(diff==FORWARD)
@@ -261,8 +259,7 @@
 				holder.icon_state = "scarab_weld2"
 			else
 				user.visible_message("[user] pries the external armor layer from [holder].", "You pry external armor layer from [holder].")
-				var/obj/item/stack/material/plasteel/MS = new /obj/item/stack/material/plasteel(get_turf(holder))
-				MS.amount = 5
+				new /obj/item/stack/material/plasteel(get_turf(holder), 5)
 				holder.icon_state = "scarab_weld1"
 		if(1)
 			if(diff==FORWARD)

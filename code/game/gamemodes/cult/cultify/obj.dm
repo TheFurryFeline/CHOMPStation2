@@ -10,26 +10,26 @@
 /obj/effect/overlay/cultify()
 	return
 
-/obj/item/device/flashlight/lamp/cultify()
+/obj/item/flashlight/lamp/cultify()
 	new /obj/structure/cult/pylon(loc)
 	..()
 
 /obj/item/stack/material/wood/cultify()
 	return
 
-/obj/item/weapon/book/cultify()
-	new /obj/item/weapon/book/tome(loc)
+/obj/item/book/cultify()
+	new /obj/item/book/tome(loc)
 	..()
 
-/obj/item/weapon/material/sword/cultify()
-	new /obj/item/weapon/melee/cultblade(loc)
+/obj/item/material/sword/cultify()
+	new /obj/item/melee/cultblade(loc)
 	..()
 
-/obj/item/weapon/storage/backpack/cultify()
-	new /obj/item/weapon/storage/backpack/cultpack(loc)
+/obj/item/storage/backpack/cultify()
+	new /obj/item/storage/backpack/cultpack(loc)
 	..()
 
-/obj/item/weapon/storage/backpack/cultpack/cultify()
+/obj/item/storage/backpack/cultpack/cultify()
 	return
 
 /obj/machinery/cultify()
@@ -48,7 +48,7 @@
 /obj/machinery/atmospherics/cultify()
 	if(src.invisibility != INVISIBILITY_MAXIMUM)
 		src.invisibility = INVISIBILITY_MAXIMUM
-		density = 0
+		density = FALSE
 
 /obj/machinery/appliance/cooker/cultify()
 	new /obj/structure/cult/talisman(loc)
@@ -65,7 +65,7 @@
 /obj/machinery/door/cultify()
 	if(invisibility != INVISIBILITY_MAXIMUM)
 		invisibility = INVISIBILITY_MAXIMUM
-		density = 0
+		density = FALSE
 		anim(target = src, a_icon = 'icons/effects/effects.dmi', a_icon_state = "breakdoor", sleeptime = 10)
 		qdel(src)
 
@@ -109,6 +109,9 @@
 	new /obj/structure/simple_door/wood(loc)
 	..()
 
+/obj/structure/simple_door/wood
+	resistance_flags = FLAMMABLE
+
 /obj/structure/simple_door/wood/cultify()
 	return
 
@@ -131,8 +134,8 @@
 	// Make it a wood-reinforced wooden table.
 	// There are cult materials available, but it'd make the table non-deconstructable with how holotables work.
 	// Could possibly use a new material var for holographic-ness?
-	material = get_material_by_name("wood")
-	reinforced = get_material_by_name("wood")
+	material = get_material_by_name(MAT_WOOD)
+	reinforced = get_material_by_name(MAT_WOOD)
 	update_desc()
 	update_connections(1)
 	update_icon()

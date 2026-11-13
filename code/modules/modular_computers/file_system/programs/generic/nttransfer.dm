@@ -1,4 +1,4 @@
-var/global/nttransfer_uid = 0
+GLOBAL_VAR_INIT(nttransfer_uid, 0)
 
 /datum/computer_file/program/nttransfer
 	filename = "nttransfer"
@@ -8,11 +8,12 @@ var/global/nttransfer_uid = 0
 	program_key_state = "generic_key"
 	program_menu_icon = "transferthick-e-w"
 	size = 7
-	requires_ntnet = 1
+	requires_ntnet = TRUE
 	requires_ntnet_feature = NTNET_PEERTOPEER
 	network_destination = "other device via P2P tunnel"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 	tgui_id = "NtosNetTransfer"
+	category = PROG_UTIL
 
 	var/error = ""										// Error screen
 	var/server_password = ""							// Optional password to download the file.
@@ -23,11 +24,11 @@ var/global/nttransfer_uid = 0
 	var/download_completion = 0							// Download progress in GQ
 	var/actual_netspeed = 0								// Displayed in the UI, this is the actual transfer speed.
 	var/unique_token 									// UID of this program
-	var/upload_menu = 0									// Whether we show the program list and upload menu
+	var/upload_menu = FALSE								// Whether we show the program list and upload menu
 
 /datum/computer_file/program/nttransfer/New()
-	unique_token = nttransfer_uid
-	nttransfer_uid++
+	unique_token = GLOB.nttransfer_uid
+	GLOB.nttransfer_uid++
 	..()
 
 /datum/computer_file/program/nttransfer/process_tick()
@@ -46,7 +47,7 @@ var/global/nttransfer_uid = 0
 		if(!remote)
 			crash_download("Connection to remote server lost")
 
-/datum/computer_file/program/nttransfer/kill_program(var/forced = 0)
+/datum/computer_file/program/nttransfer/kill_program(forced = 0)
 	if(downloaded_file) // Client mode, clean up variables for next use
 		finalize_download()
 
@@ -63,8 +64,8 @@ var/global/nttransfer_uid = 0
 	finalize_download()
 
 //  Crashes the download and displays specific error message
-/datum/computer_file/program/nttransfer/proc/crash_download(var/message)
-	error = message ? message : "An unknown error has occured during download"
+/datum/computer_file/program/nttransfer/proc/crash_download(message)
+	error = message ? message : "An unknown error has occurred during download"
 	finalize_download()
 
 // Cleans up variables for next use
@@ -86,14 +87,14 @@ var/global/nttransfer_uid = 0
 		data["download_progress"] = download_completion
 		data["download_netspeed"] = actual_netspeed
 		data["download_name"] = "[downloaded_file.filename].[downloaded_file.filetype]"
-	
+
 	data["uploading"] = !!provided_file
 	if(provided_file)
 		data["upload_uid"] = unique_token
 		data["upload_clients"] = connected_clients.len
 		data["upload_haspassword"] = server_password ? 1 : 0
 		data["upload_filename"] = "[provided_file.filename].[provided_file.filetype]"
-	
+
 	data["upload_filelist"] = list()
 	if(upload_menu)
 		var/list/all_files = list()
@@ -104,11 +105,11 @@ var/global/nttransfer_uid = 0
 			"size" = F.size
 			)))
 		data["upload_filelist"] = all_files
-	
+
 	data["servers"] = list()
 	if(!(downloaded_file || provided_file || upload_menu))
 		var/list/all_servers = list()
-		for(var/datum/computer_file/program/nttransfer/P in ntnet_global.fileservers)
+		for(var/datum/computer_file/program/nttransfer/P in GLOB.ntnet_global.fileservers)
 			if(!P.provided_file)
 				continue
 			all_servers.Add(list(list(
@@ -126,14 +127,14 @@ var/global/nttransfer_uid = 0
 		return TRUE
 	switch(action)
 		if("PRG_downloadfile")
-			for(var/datum/computer_file/program/nttransfer/P in ntnet_global.fileservers)
+			for(var/datum/computer_file/program/nttransfer/P in GLOB.ntnet_global.fileservers)
 				if(P.unique_token == text2num(params["uid"]))
 					remote = P
 					break
 			if(!remote || !remote.provided_file)
 				return
 			if(remote.server_password)
-				var/pass = sanitize(input(usr, "Code 401 Unauthorized. Please enter password:", "Password required"))
+				var/pass = tgui_input_text(ui.user, "Code 401 Unauthorized. Please enter password:", "Password required", "", MAX_MESSAGE_LEN)
 				if(pass != remote.server_password)
 					error = "Incorrect Password"
 					return
@@ -144,14 +145,14 @@ var/global/nttransfer_uid = 0
 			error = ""
 			upload_menu = 0
 			finalize_download()
-			if(src in ntnet_global.fileservers)
-				ntnet_global.fileservers.Remove(src)
+			if(src in GLOB.ntnet_global.fileservers)
+				GLOB.ntnet_global.fileservers.Remove(src)
 			for(var/datum/computer_file/program/nttransfer/T in connected_clients)
 				T.crash_download("Remote server has forcibly closed the connection")
 			provided_file = null
 			return TRUE
 		if("PRG_setpassword")
-			var/pass = sanitize(input(usr, "Enter new server password. Leave blank to cancel, input 'none' to disable password.", "Server security", "none"))
+			var/pass = tgui_input_text(ui.user, "Enter new server password. Leave blank to cancel, input 'none' to disable password.", "Server security", "none", MAX_MESSAGE_LEN)
 			if(!pass)
 				return
 			if(pass == "none")
@@ -166,7 +167,7 @@ var/global/nttransfer_uid = 0
 						error = "I/O Error: File locked."
 						return
 					provided_file = F
-					ntnet_global.fileservers |= src
+					GLOB.ntnet_global.fileservers |= src
 					return
 			error = "I/O Error: Unable to locate file on hard drive."
 			return TRUE

@@ -1,6 +1,9 @@
-/**
+/*!
  * Base state and helpers for states. Just does some sanity checks,
  * implement a proper state for in-depth checks.
+ *
+ * Copyright (c) 2020 Aleksej Komarov
+ * SPDX-License-Identifier: MIT
  */
 
 /**
@@ -21,7 +24,7 @@
 
 	if(isobserver(user))
 		// Admins can always interact.
-		if(check_rights(R_ADMIN|R_EVENT, 0, src))
+		if(check_rights_for(user.client, R_ADMIN|R_EVENT|R_DEBUG))
 			. = max(., STATUS_INTERACTIVE)
 
 		// Regular ghosts can always at least view if in range.
@@ -85,7 +88,7 @@
  *
  * Check the distance for a living mob.
  * Really only used for checks outside the context of a mob.
- * Otherwise, use shared_living_ui_distance().
+ * Otherwise, use shared_living_tgui_distance().
  *
  * required src_object The object which owns the UI.
  * required user mob The mob who opened/is using the UI.
@@ -119,11 +122,27 @@
 		return STATUS_DISABLED
 	return STATUS_CLOSE // Otherwise, we got nothing.
 
-/mob/living/carbon/human/shared_living_tgui_distance(atom/movable/src_object)
-	if((TK in mutations) && (get_dist(src, src_object) <= 2))
+/**
+ * public
+ *
+ * Distance versus interaction check, with max'd update range.
+ *
+ * required src_object atom/movable The object which owns the UI.
+ *
+ * return UI_state The state of the UI.
+ */
+/mob/living/proc/shared_living_tgui_distance_bigscreen(atom/movable/src_object, viewcheck = TRUE)
+	// If the object is obscured, close it.
+	if(viewcheck && !(src_object in view(src)))
+		return STATUS_CLOSE
+
+	var/dist = get_dist(src_object, src)
+	if(dist <= 1) // Open and interact if 1-0 tiles away.
 		return STATUS_INTERACTIVE
-	return ..()
+	else if(dist <= world.view)
+		return STATUS_UPDATE
+	return STATUS_CLOSE // Otherwise, we got nothing.
 
 // Topic Extensions for old UIs
-/datum/proc/CanUseTopic(var/mob/user, var/datum/tgui_state/state)
+/datum/proc/CanUseTopic(mob/user, datum/tgui_state/state)
 	return tgui_status(user, state)

@@ -1,0 +1,267 @@
+/* Toys Guns!
+ *
+ * Contains:
+ *		Cap Gun
+ *		Shotgun
+ *		Pistol
+ *		N99 Pistol
+ *		Levergun
+ *		Revolver
+ *		Big Iron
+ *		Crossbow
+ *		Crossbow (Halloween)
+ *		Sawn Off
+ *		SMG
+ *		Laser Tag
+ */
+
+/*
+ * Cap Gun
+ */
+/obj/item/gun/projectile/revolver/capgun
+	name = "cap gun"
+	desc = "Looks almost like the real thing! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "cap_gun"
+	item_state = "revolver"
+	caliber = "caps"
+	ammo_type = /obj/item/ammo_casing/cap
+	projectile_type = /obj/item/projectile/bullet/cap
+	matter = list(MAT_STEEL = MATERIAL_COST(0.5))
+	handle_casings = null
+	recoil = 0 //it's a toy //CHOMP Edit
+
+/*
+ * Shotgun
+ */
+/obj/item/gun/projectile/shotgun/pump/toy
+	name = "\improper Donk-Soft shotgun"
+	desc = "Donk-Soft foam shotgun! It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "shotgun"
+	item_state = "shotgun"
+	max_shells = 6
+	w_class = ITEMSIZE_LARGE
+	force = 2
+	slot_flags = null
+	caliber = "foam"
+	load_method = SINGLE_CASING
+	ammo_type = /obj/item/ammo_casing/afoam_dart
+	projectile_type = /obj/item/projectile/bullet/foam_dart
+	matter = list(MAT_PLASTIC = MATERIAL_COST(1))
+	handle_casings = null
+	recoil = 0 //it's a toy //CHOMP Edit
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+/*
+ * Moist Nugget
+ */
+/obj/item/gun/projectile/shotgun/pump/toy/moistnugget
+	name = "\improper Donk-Soft mosin-nagant"
+	desc = "Donk-Soft foam mosin-nagant! It's Donk or Don't! Ages 8 and up."
+	description_fluff = "A special Donk-Soft rifle originally made to pair with a Soviet Soldier costume. It didn't catch on quite as well as other Donk-Soft products."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "moistnugget"
+	item_state = "moistnugget"
+	max_shells = 5
+	matter = list(MAT_PLASTIC = MATERIAL_COST(1.25))
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+/*
+ * Pistol
+ */
+/obj/item/gun/projectile/pistol/toy
+	name = "\improper Donk-Soft pistol"
+	desc = "Donk-Soft foam pistol! It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "pistol"
+	item_state = "gun"
+	magazine_type = /obj/item/ammo_magazine/mfoam_dart/pistol
+	allowed_magazines = list(/obj/item/ammo_magazine/mfoam_dart/pistol)
+	projectile_type = /obj/item/projectile/bullet/foam_dart
+	caliber = "foam"
+	load_method = MAGAZINE
+	matter = list(MAT_PLASTIC = MATERIAL_COST(0.5))
+	recoil = 0 //it's a toy //CHOMP Edit
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+/obj/item/gun/projectile/pistol/toy/update_icon()
+	if(ammo_magazine)
+		icon_state = initial(icon_state)
+	else
+		icon_state = "[initial(icon_state)]-e"
+
+/*
+ * N99 Pistol
+ */
+/obj/item/gun/projectile/pistol/toy/n99
+	name = "\improper Donk-Soft commemorative pistol"
+	desc = "A special made Donk-Soft pistol to promote 'Radius: Legend of the Demon Core', a popular post-apocolyptic TV series."
+	icon_state = "n99"
+	item_state = "gun"
+
+/obj/item/gun/projectile/pistol/toy/n99/update_icon()
+	if(ammo_magazine)
+		icon_state = initial(icon_state)
+	else
+		icon_state = "[initial(icon_state)]-e"
+
+/*
+ * Levergun
+ */
+/obj/item/gun/projectile/shotgun/pump/toy/levergun
+	name = "\improper Donk-Soft levergun"
+	desc = "Donk-Soft foam levergun! Time to cowboy up! Ages 8 and up."
+	icon_state = "leveraction"
+	item_state = "leveraction"
+	max_shells = 5
+	pump_animation = "leveraction-cycling"
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+/*
+ * Revolver
+ */
+/obj/item/gun/projectile/revolver/toy
+	name = "\improper Donk-Soft revolver"
+	desc = "Donk-Soft foam revolver! Time to cowboy up! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "revolver"
+	item_state = "revolver"
+	caliber = "foam"
+	ammo_type = /obj/item/ammo_casing/afoam_dart
+	projectile_type = /obj/item/projectile/bullet/foam_dart
+	load_method = SINGLE_CASING
+	max_shells = 6
+	matter = list(MAT_PLASTIC = MATERIAL_COST(0.5))
+	handle_casings = null
+	recoil = null //it's a toy
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+/*
+ * Big Iron
+ */
+/obj/item/gun/projectile/revolver/toy/big_iron
+	name = "\improper Donk-Soft big iron"
+	desc = "A special made Donk-Soft pistol to promote 'A Fistful of Phoron', a popular frontier novel series."
+	icon_state = "big_iron"
+	item_state = "revolver"
+
+/*
+ * Crossbow
+ */
+/obj/item/gun/projectile/revolver/toy/crossbow
+	name = "\improper Donk-Soft crossbow"
+	desc = "Donk-Soft foam crossbow! It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "foamcrossbow"
+	item_state = "foamcrossbow"
+	max_shells = 5
+
+/*
+ * Crossbow (Halloween)
+ */
+/obj/item/gun/projectile/revolver/toy/crossbow/halloween
+	name = "\improper Donk-Soft special edition crossbow"
+	desc = "A special edition Donk-Soft crossbow! Made special for your Halloween cosplay. It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "foamcrossbow_halloween"
+	item_state = "foamcrossbow_halloween"
+	max_shells = 5
+
+/*
+ * Sawn Off
+ */
+/obj/item/gun/projectile/revolver/toy/sawnoff //revolver code just because it's easier
+	name = "\improper Donk-Soft sawn off shotgun"
+	desc = "Donk-Soft foam sawn off! It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "sawnshotgun"
+	item_state = "dshotgun"
+	max_shells = 2
+	w_class = ITEMSIZE_NORMAL
+	matter = list(MAT_PLASTIC = MATERIAL_COST(0.75))
+
+/*
+ * SMG
+ */
+/obj/item/gun/projectile/automatic/toy
+	name = "\improper Donk-Soft SMG"
+	desc = "Donk-Soft foam SMG! It's Donk or Don't! Ages 8 and up."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "smg"
+	caliber = "foam"
+	w_class = ITEMSIZE_NORMAL
+	load_method = MAGAZINE
+	slot_flags = SLOT_BELT
+	magazine_type = /obj/item/ammo_magazine/mfoam_dart/smg
+	allowed_magazines = list(/obj/item/ammo_magazine/mfoam_dart/smg)
+	projectile_type = /obj/item/projectile/bullet/foam_dart
+	matter = list(MAT_PLASTIC = MATERIAL_COST(0.75))
+	recoil = null //it's a toy
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+
+	firemodes = list(
+		list(mode_name="semiauto",       burst=1, fire_delay=0.1, burst_accuracy=null, dispersion=null),
+		list(mode_name="3-round bursts", burst=3, fire_delay=null,    burst_accuracy=list(0,-2,-2), dispersion=null)
+	)
+
+/obj/item/gun/projectile/automatic/toy/riot
+	magazine_type = /obj/item/ammo_magazine/mfoam_dart/smg/riot
+
+/obj/item/gun/projectile/automatic/toy/update_icon()
+	if(ammo_magazine)
+		icon_state = initial(icon_state)
+	else
+		icon_state = "[initial(icon_state)]-e"
+/*
+ * Cyborg
+ */
+/obj/item/gun/projectile/cyborgtoy
+	name = "\improper Donk-Soft " + JOB_CYBORG + " Blaster"
+	desc = "Donk-Soft " + JOB_CYBORG + " Blaster! It's Donk or Don't! Adult supervision required. Use to toggle between battle and cleanup mode."
+	icon = 'icons/obj/gun_toy.dmi'
+	icon_state = "smg"
+	caliber = "foam"
+	manual_chamber = FALSE //CHOMPEdit, borgs can't manually chamber...
+	load_method = SINGLE_CASING
+	max_shells = 15
+	var/cleanup = 0
+	ammo_type = /obj/item/ammo_casing/afoam_dart
+	projectile_type = /obj/item/projectile/bullet/foam_dart
+	recoil = null
+	handle_casings = null
+	fire_sound = 'sound/items/syringeproj.ogg' //CHOMPedit
+	special_weapon_handling = TRUE
+
+/obj/item/gun/projectile/cyborgtoy/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
+	cleanup = !cleanup
+	to_chat(user, "The [src] is now on [cleanup ? "cleanup" : "battle"] mode.")
+
+/obj/item/gun/projectile/cyborgtoy/afterattack(atom/A, mob/living/user, adjacent, params)
+	if(cleanup)
+		if(!adjacent)
+			return 0
+		collectammo(A, user)
+		return 0
+	..()
+
+/obj/item/gun/projectile/cyborgtoy/proc/collectammo(atom/A, user)
+	if(loaded.len >= max_shells)
+		to_chat(user, "The [src] is at max capacity.")
+		return
+	var/T = get_turf(A)
+	var/success = 0
+	for(var/obj/item/ammo_casing/afoam_dart/D in T)
+		if(loaded.len >= max_shells)
+			break
+		D.loc = src
+		loaded.Insert(1, D)
+		success = 1
+	if(success)
+		playsound(src, 'sound/machines/hiss.ogg', 50, 0)
+		to_chat(user, "The [src] vacuums in the darts!")
+	else
+		to_chat(user, "No Donk-Soft brand foam darts detected. Aborting.")

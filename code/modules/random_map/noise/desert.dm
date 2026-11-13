@@ -6,10 +6,10 @@
 	descriptor = "desert (replacement)"
 	target_turf_type = /turf/space
 
-/datum/random_map/noise/desert/get_map_char(var/value)
+/datum/random_map/noise/desert/get_map_char(value)
 	return "<font color='#[value][value][value][value][value][value]'>[pick(list(",",".","'","`"))]</font>"
 
-/datum/random_map/noise/desert/get_appropriate_path(var/value)
+/datum/random_map/noise/desert/get_appropriate_path(value)
 	var/val = min(9,max(0,round((value/cell_range)*10)))
 	if(isnull(val)) val = 0
 	switch(val)
@@ -18,20 +18,20 @@
 		else
 			return /turf/simulated/floor/beach/sand/desert
 
-/datum/random_map/noise/desert/get_additional_spawns(var/value, var/turf/T)
+/datum/random_map/noise/desert/get_additional_spawns(value, turf/T)
 	var/val = min(9,max(0,round((value/cell_range)*10)))
 	if(isnull(val)) val = 0
 	switch(val)
 		if(2 to 3)
 			if(prob(60))
-				var/grass_path = pick(typesof(/obj/structure/flora/grass)-/obj/structure/flora/grass)
+				var/grass_path = pick(subtypesof(/obj/structure/flora/grass))
 				new grass_path(T)
 			if(prob(5))
 				var/mob_type = pick(list(/mob/living/simple_mob/animal/passive/lizard, /mob/living/simple_mob/animal/passive/mouse))
 				new mob_type(T)
 		if(5 to 6)
 			if(prob(20))
-				var/grass_path = pick(typesof(/obj/structure/flora/grass)-/obj/structure/flora/grass)
+				var/grass_path = pick(subtypesof(/obj/structure/flora/grass))
 				new grass_path(T)
 		if(7 to 9)
 			if(prob(60))

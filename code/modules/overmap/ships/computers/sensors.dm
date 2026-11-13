@@ -3,9 +3,16 @@
 	icon_keyboard = "teleport_key"
 	icon_screen = "teleport"
 	light_color = "#77fff8"
-	circuit = /obj/item/weapon/circuitboard/sensors
+	circuit = /obj/item/circuitboard/sensors
 	extra_view = 4
 	var/obj/machinery/shipsensors/sensors
+
+// fancy sprite
+/obj/machinery/computer/ship/sensors/adv
+	icon_keyboard = null
+	icon_state = "adv_sensors"
+	icon_screen = "adv_sensors_screen"
+	light_color = "#05A6A8"
 
 /obj/machinery/computer/ship/sensors/attempt_hook_up(obj/effect/overmap/visitable/ship/sector)
 	if(!(. = ..()))
@@ -15,7 +22,7 @@
 /obj/machinery/computer/ship/sensors/proc/find_sensors()
 	if(!linked)
 		return
-	for(var/obj/machinery/shipsensors/S in global.machines)
+	for(var/obj/machinery/shipsensors/S in GLOB.machines)
 		if(linked.check_ownership(S))
 			sensors = S
 			break
@@ -59,7 +66,7 @@
 		else
 			data["status"] = "OK"
 		var/list/contacts = list()
-		for(var/obj/effect/overmap/O in view(7,linked))
+		for(var/obj/effect/overmap/O in range(7,linked))
 			if(linked == O)
 				continue
 			if(!O.scannable)
@@ -81,8 +88,14 @@
 
 	switch(action)
 		if("viewing")
-			if(usr && !isAI(usr))
-				viewing_overmap(usr) ? unlook(usr) : look(usr)
+			if(ui.user && !isAI(ui.user))
+				if(!get_dist(ui.user, src) > 1 || ui.user.blinded || !linked)
+					. = FALSE
+				else if(!viewing_overmap(ui.user) && linked)
+					if(!viewers) viewers = list() // List must exist for pass by reference to work
+					start_coordinated_remoteview(ui.user, linked, viewers)
+				else
+					ui.user.reset_perspective()
 			. = TRUE
 
 		if("link")
@@ -92,15 +105,15 @@
 		if("scan")
 			var/obj/effect/overmap/O = locate(params["scan"])
 			if(istype(O) && !QDELETED(O) && (O in view(7,linked)))
-				new/obj/item/weapon/paper/(get_turf(src), O.get_scan_data(usr), "paper (Sensor Scan - [O])")
+				new/obj/item/paper/(get_turf(src), O.get_scan_data(ui.user), "paper (Sensor Scan - [O])")
 				playsound(src, "sound/machines/printer.ogg", 30, 1)
 			. = TRUE
 
 	if(sensors)
 		switch(action)
 			if("range")
-				var/nrange = input("Set new sensors range", "Sensor range", sensors.range) as num|null
-				if(tgui_status(usr, state) != STATUS_INTERACTIVE)
+				var/nrange = tgui_input_number(ui.user, "Set new sensors range", "Sensor range", sensors.range, world.view, round_value = FALSE )
+				if(tgui_status(ui.user, state) != STATUS_INTERACTIVE)
 					return FALSE
 				if(nrange)
 					sensors.set_range(CLAMP(nrange, 1, world.view))
@@ -109,7 +122,7 @@
 				sensors.toggle()
 				. = TRUE
 
-	if(. && !issilicon(usr))
+	if(. && !issilicon(ui.user))
 		playsound(src, "terminal_type", 50, 1)
 
 /obj/machinery/computer/ship/sensors/process()
@@ -118,16 +131,16 @@
 		return
 	if(sensors && sensors.use_power && sensors.powered())
 		var/sensor_range = round(sensors.range*1.5) + 1
-		linked.set_light(sensor_range + 0.5, 4)
+		linked.set_light(sensor_range + 0.5)
 	else
 		linked.set_light(0)
 
 /obj/machinery/shipsensors
 	name = "sensors suite"
 	desc = "Long range gravity scanner with various other sensors, used to detect irregularities in surrounding space. Can only run in vacuum to protect delicate quantum BS elements." //VOREStation Edit
-	icon = 'icons/obj/stationobjs_vr.dmi' //VOREStation Edit
+	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "sensors"
-	anchored = 1
+	anchored = TRUE
 	var/max_health = 200
 	var/health = 200
 	var/critical_heat = 50 // sparks and takes damage when active & above this heat
@@ -136,23 +149,23 @@
 	var/range = 1
 	idle_power_usage = 5000
 
-/obj/machinery/shipsensors/attackby(obj/item/weapon/W, mob/user)
+/obj/machinery/shipsensors/attackby(obj/item/W, mob/user)
 	var/damage = max_health - health
-	if(damage && istype(W, /obj/item/weapon/weldingtool))
+	if(damage && W.has_tool_quality(TOOL_WELDER))
 
-		var/obj/item/weapon/weldingtool/WT = W
+		var/obj/item/weldingtool/WT = W.get_welder()
 
 		if(!WT.isOn())
 			return
 
 		if(WT.remove_fuel(0,user))
-			to_chat(user, "<span class='notice'>You start repairing the damage to [src].</span>")
+			to_chat(user, span_notice("You start repairing the damage to [src]."))
 			playsound(src, 'sound/items/Welder.ogg', 100, 1)
-			if(do_after(user, max(5, damage / 5), src) && WT && WT.isOn())
-				to_chat(user, "<span class='notice'>You finish repairing the damage to [src].</span>")
+			if(do_after(user, max(5, damage / 5), target = src) && WT && WT.isOn())
+				to_chat(user, span_notice("You finish repairing the damage to [src]."))
 				take_damage(-damage)
 		else
-			to_chat(user, "<span class='notice'>You need more welding fuel to complete this task.</span>")
+			to_chat(user, span_notice("You need more welding fuel to complete this task."))
 			return
 		return
 	..()
@@ -175,15 +188,15 @@
 /obj/machinery/shipsensors/examine(mob/user)
 	. = ..()
 	if(health <= 0)
-		. += "<span class='danger'>It is wrecked.</span>"
+		. += span_danger("It is wrecked.")
 	else if(health < max_health * 0.25)
-		. += "<span class='danger'>It looks like it's about to break!</span>"
+		. += span_danger("It looks like it's about to break!")
 	else if(health < max_health * 0.5)
-		. += "<span class='danger'>It looks seriously damaged!</span>"
+		. += span_danger("It looks seriously damaged!")
 	else if(health < max_health * 0.75)
 		. += "It shows signs of damage!"
 
-/obj/machinery/shipsensors/bullet_act(var/obj/item/projectile/Proj)
+/obj/machinery/shipsensors/bullet_act(obj/item/projectile/Proj)
 	take_damage(Proj.get_structure_damage())
 	..()
 
@@ -200,7 +213,7 @@
 		if(!in_vacuum())
 			toggle()
 		if(heat > critical_heat)
-			src.visible_message("<span class='danger'>\The [src] violently spews out sparks!</span>")
+			src.visible_message(span_danger("\The [src] violently spews out sparks!"))
 			var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 			s.set_up(3, 1, src)
 			s.start()
@@ -221,8 +234,9 @@
 	range = nrange
 	change_power_consumption(1500 * (range**2), USE_POWER_IDLE) //Exponential increase, also affects speed of overheating
 
-/obj/machinery/shipsensors/emp_act(severity)
-	if(!use_power)
+/obj/machinery/shipsensors/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || !use_power)
 		return
 	take_damage(20/severity)
 	toggle()

@@ -18,13 +18,13 @@ They're also cool, and Rykka/Nyria wrote this uwu
 	value = CATALOGUER_REWARD_MEDIUM
 
 // Start Defining the mob here
-/mob/living/simple_mob/animal/hyena 
+/mob/living/simple_mob/animal/hyena
 	name = "Hyena"
 	desc = "Yeen! Its fur is a dusty yellow-brown color with black spots, and it has rounded ears... and SHARP TEETH! You inexplicably want to pet it, though."
 	tt_desc = "Crocuta crocuta"
 	catalogue_data = list(/datum/category_item/catalogue/fauna/hyena)
 
-	icon = 'icons/mob/animals48x32_ch.dmi'
+	icon = 'icons/mob/hyena.dmi'
 	icon_state = "yeen"
 	icon_living = "yeen"
 	icon_dead = "yeen_dead"
@@ -82,53 +82,55 @@ They're also cool, and Rykka/Nyria wrote this uwu
 
 	say_list_type = /datum/say_list/hyena
 
+	allow_mind_transfer = TRUE
+
 	var/obj/item/clothing/head/hat = null // The hat the yeen is wearing when initialized, var will update with the chosen hat.
 
 // Silly stuff. HATS! Give your yeen a hat today <3
 /mob/living/simple_mob/animal/hyena/verb/remove_hat()
 	set name = "Remove Hat"
 	set desc = "Remove the yeen's hat. You monster. ;~;"
-	set category = "Abilities"
+	set category = "Abilities.Hyena"
 	set src in view(1)
 
 	drop_hat(usr)
 
-/mob/living/simple_mob/animal/hyena/proc/drop_hat(var/mob/user)
+/mob/living/simple_mob/animal/hyena/proc/drop_hat(mob/user)
 	if(hat)
 		hat.forceMove(get_turf(user))
 		hat = null
 		update_icon()
 		if(user == src)
-			to_chat(user, "<span class='notice'>You removed your hat.</span>")
+			to_chat(user, span_notice("You removed your hat."))
 			return
-		to_chat(user, "<span class='warning'>You removed \the [src]'s hat. You monster. ;~;</span>")
+		to_chat(user, span_warning("You removed \the [src]'s hat. You monster. ;~;"))
 	else
 		if(user == src)
-			to_chat(user, "<span class='notice'>You are not wearing a hat!</span>")
+			to_chat(user, span_notice("You are not wearing a hat!"))
 			return
-		to_chat(user, "<span class='notice'>\The [src] is not wearing a hat!</span>")
+		to_chat(user, span_notice("\The [src] is not wearing a hat!"))
 
 /mob/living/simple_mob/animal/hyena/verb/give_hat()
 	set name = "Give Hat"
 	set desc = "Give the yeen a hat. You wonderful bean. <3"
-	set category = "Abilities"
+	set category = "Abilities.Hyena"
 	set src in view(1)
 
 	take_hat(usr)
 
-/mob/living/simple_mob/animal/hyena/proc/take_hat(var/mob/user)
+/mob/living/simple_mob/animal/hyena/proc/take_hat(mob/user)
 	if(hat)
 		if(user == src)
-			to_chat(user, "<span class='notice'>You already have a hat!</span>")
+			to_chat(user, span_notice("You already have a hat!"))
 			return
-		to_chat(user, "<span class='notice'>\The [src] already has a hat!</span>")
+		to_chat(user, span_notice("\The [src] already has a hat!"))
 	else
 		if(user == src)
 			if(istype(get_active_hand(), /obj/item/clothing/head))
 				hat = get_active_hand()
 				drop_from_inventory(hat, src)
 				hat.forceMove(src)
-				to_chat(user, "<span class='notice'>You put on the hat.</span>")
+				to_chat(user, span_notice("You put on the hat."))
 				update_icon()
 			return
 		else if(ishuman(user))
@@ -138,13 +140,13 @@ They're also cool, and Rykka/Nyria wrote this uwu
 				var/obj/item/clothing/head/newhat = H.get_active_hand()
 				H.drop_from_inventory(newhat, get_turf(src))
 				if(!stat)
-					intent = I_HELP
+					a_intent = I_HELP
 					newhat.attack_hand(src)
 			else if(src.get_active_hand())
-				to_chat(user, "<span class='notice'>\The [src] seems busy with \the [get_active_hand()] already!</span>")
+				to_chat(user, span_notice("\The [src] seems busy with \the [get_active_hand()] already!"))
 
 			else
-				to_chat(user, "<span class='warning'>You aren't holding a hat...</span>")
+				to_chat(user, span_warning("You aren't holding a hat..."))
 
 /datum/say_list/hyena
 	speak = list("Huff.", "|R|rr?", "Yap.", "Grr.", "Yip.", "SCREM!")
@@ -161,22 +163,7 @@ They're also cool, and Rykka/Nyria wrote this uwu
 	..()
 	if(hat)
 		var/hat_state = hat.item_state ? hat.item_state : hat.icon_state
-		var/image/I = image('icons/mob/head.dmi', src, hat_state)
+		var/image/I = image('icons/inventory/head/mob.dmi', src, hat_state)
 		I.pixel_y = -15 // Hyenas are smol! - TODO: Test this.
 		I.appearance_flags = RESET_COLOR
 		add_overlay(I)
-
-// Start Defining the mob here
-/mob/living/simple_mob/animal/hyena/Nyria 
-	name = "Nyria"
-	desc = "Yeen! This one seems familiar. Its fur is a dark, dusty reddish-brown color with black spots, and it has rounded ears... and SHARP TEETH! You inexplicably want to pet it, though."
-	tt_desc = "Crocuta crocuta"
-
-	icon_state = "nyria_yeen"
-	icon_living = "nyria_yeen"
-	icon_dead = "nyria_yeen_dead"
-
-	maxHealth = 225 // tuff yeen. <3
-	health = 225 // tuff yeen. <3
-
-	ai_holder_type = /datum/ai_holder/simple_mob/melee/pack_mob/nyria // Define here what type of enemy hyena is. Nyria is non-hostile.

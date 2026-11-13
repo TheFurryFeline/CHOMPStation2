@@ -28,7 +28,7 @@
 	tt_desc = "S Lepidoptera adamas"
 	catalogue_data = list(/datum/category_item/catalogue/fauna/glitterfly)
 
-	faction = "neutral"
+	faction = FACTION_NEUTRAL
 
 	icon_state = "butterfly"
 	icon_living = "butterfly"
@@ -38,7 +38,7 @@
 	maxHealth = 10
 	health = 10
 
-	movement_cooldown = -1
+	movement_cooldown = -2
 	hovering = TRUE
 
 	melee_damage_lower = 1
@@ -52,16 +52,18 @@
 
 	attacktext = list("bit", "buffeted", "slashed")
 
+	organ_names = /datum/decl/mob_organ_names/smallflying
+
 	tame_items = list(
-	/obj/item/weapon/reagent_containers/food/snacks/grown = 90,
-	/obj/item/weapon/reagent_containers/food/snacks/meat/crab = 10,
-	/obj/item/weapon/reagent_containers/food/snacks/meat = 5
+	/obj/item/reagent_containers/food/snacks/grown = 90,
+	/obj/item/reagent_containers/food/snacks/crabmeat = 10,
+	/obj/item/reagent_containers/food/snacks/meat = 5
 	)
 
 	say_list_type = /datum/say_list/glitterfly
 	ai_holder_type = /datum/ai_holder/simple_mob/melee/evasive/glitterfly
 
-/mob/living/simple_mob/animal/sif/glitterfly/Initialize()
+/mob/living/simple_mob/animal/sif/glitterfly/Initialize(mapload)
 	. = ..()
 	var/colorlist = list(rgb(rand(100,255), rand(100,255), rand(100,255)) =  10, rgb(rand(5,100), rand(5,100), rand(5,100)) = 2, "#222222" = 1)
 	color = pickweight(colorlist)
@@ -71,6 +73,8 @@
 
 	adjust_scale(round(rand(90, 105) / 100))
 
+	ADD_TRAIT(src, TRAIT_AMBIENT_PEST_MOB, ROUNDSTART_TRAIT)
+
 /mob/living/simple_mob/animal/sif/glitterfly/rare
 	name = "sparkling glitterfly"
 	desc = "A large, incredibly shiny butterfly!"
@@ -78,23 +82,23 @@
 	maxHealth = 30
 	health = 30
 
-	movement_cooldown = -2
+	movement_cooldown = -3
 
 	melee_damage_upper = 5
 
 	plane = PLANE_LIGHTING_ABOVE
 
-/mob/living/simple_mob/animal/sif/glitterfly/rare/Initialize()
+/mob/living/simple_mob/animal/sif/glitterfly/rare/Initialize(mapload)
 	. = ..()
 
-/mob/living/simple_mob/animal/sif/glitterfly/unique_tame_check(var/obj/O, var/mob/user)
+/mob/living/simple_mob/animal/sif/glitterfly/unique_tame_check(obj/O, mob/user)
 	. = ..()
 
 	if(.)
-		if(istype(O, /obj/item/weapon/reagent_containers/food/snacks/grown))
-			var/obj/item/weapon/reagent_containers/food/snacks/grown/G = O
+		if(istype(O, /obj/item/reagent_containers/food/snacks/grown))
+			var/obj/item/reagent_containers/food/snacks/grown/G = O
 
-			if(G.seed && G.seed.kitchen_tag == "berries")
+			if(G.seed && G.seed.kitchen_tag == PLANT_BERRIES)
 				return TRUE
 			return FALSE
 
@@ -123,3 +127,6 @@
 			return
 	else if(prob(1))
 		hostile = initial(hostile)
+
+/datum/decl/mob_organ_names/smallflying
+	hit_zones = list("body", "left wing", "right wing") //For flying things too tiny to be granular

@@ -16,7 +16,7 @@
 /obj/machinery/telecomms/attackby(obj/item/P as obj, mob/user as mob)
 
 	// Using a multitool lets you access the receiver's interface
-	if(istype(P, /obj/item/device/multitool))
+	if(istype(P, /obj/item/multitool))
 		attack_hand(user)
 
 	// REPAIRING: Use Nanopaste to repair 10-20 integrity points.
@@ -25,9 +25,9 @@
 		if (integrity < 100)               								//Damaged, let's repair!
 			if (T.use(1))
 				integrity = between(0, integrity + rand(10,20), 100)
-				to_chat(usr, "You apply the Nanopaste to [src], repairing some of the damage.")
+				to_chat(user, "You apply the Nanopaste to [src], repairing some of the damage.")
 		else
-			to_chat(usr, "This machine is already in perfect condition.")
+			to_chat(user, "This machine is already in perfect condition.")
 		return
 
 
@@ -36,12 +36,12 @@
 	if(default_deconstruction_crowbar(user, P))
 		return
 
-/obj/machinery/telecomms/attack_ai(var/mob/user as mob)
+/obj/machinery/telecomms/attack_ai(mob/user as mob)
 	attack_hand(user)
 
 /obj/machinery/telecomms/tgui_data(mob/user)
 	var/list/data = list()
-	
+
 	data["temp"] = temp
 	data["on"] = on
 
@@ -63,7 +63,7 @@
 
 		data["options"] = Options_Menu()
 
-		var/obj/item/device/multitool/P = get_multitool(user)
+		var/obj/item/multitool/P = get_multitool(user)
 		data["multitool"] = !!P
 		data["multitool_buffer"] = null
 		if(P && P.buffer)
@@ -71,33 +71,34 @@
 			data["multitool_buffer"] = list("name" = "[P.buffer]", "id" = "[P.buffer.id]")
 
 		var/i = 0
-		data["linked"] = list()
+		var/list/linked = list()
 		for(var/obj/machinery/telecomms/T in links)
 			i++
-			data["linked"].Add(list(list(
+			linked.Add(list(list(
 				"ref" = "\ref[T]",
 				"name" = "[T]",
 				"id" = T.id,
 				"index" = i,
 			)))
-		
-		data["filter"] = list()
-		if(LAZYLEN(freq_listening))
-			for(var/x in freq_listening)
-				data["filter"].Add(list(list(
-					"name" = "[format_frequency(x)]",
-					"freq" = x,
-				)))
+		data["linked"] = linked
+
+		var/list/filter = list()
+		for(var/x in freq_listening)
+			filter.Add(list(list(
+				"name" = "[format_frequency(x)]",
+				"freq" = x,
+			)))
+		data["filter"] = filter
 
 	return data
 
 /obj/machinery/telecomms/tgui_status(mob/user)
 	if(!issilicon(user))
-		if(!istype(user.get_active_hand(), /obj/item/device/multitool))
+		if(!istype(user.get_active_hand(), /obj/item/multitool))
 			return STATUS_CLOSE
 	. = ..()
 
-/obj/machinery/telecomms/attack_hand(var/mob/user as mob)
+/obj/machinery/telecomms/attack_hand(mob/user as mob)
 	tgui_interact(user)
 
 /obj/machinery/telecomms/tgui_interact(mob/user, datum/tgui/ui)
@@ -129,15 +130,15 @@
 
 /obj/machinery/proc/get_multitool(mob/user as mob)	//No need to have this being a telecomms specific proc.
 
-	var/obj/item/device/multitool/P = null
+	var/obj/item/multitool/P = null
 	// Let's double check
-	if(!issilicon(user) && istype(user.get_active_hand(), /obj/item/device/multitool))
+	if(!issilicon(user) && istype(user.get_active_hand(), /obj/item/multitool))
 		P = user.get_active_hand()
 	else if(isAI(user))
 		var/mob/living/silicon/ai/U = user
 		P = U.aiMulti
 	else if(isrobot(user) && in_range(user, src))
-		if(istype(user.get_active_hand(), /obj/item/device/multitool))
+		if(istype(user.get_active_hand(), /obj/item/multitool))
 			P = user.get_active_hand()
 	return P
 
@@ -150,7 +151,7 @@
 /*
 // Add an option to the processor to switch processing mode. (COMPRESS -> UNCOMPRESS or UNCOMPRESS -> COMPRESS)
 /obj/machinery/telecomms/processor/Options_Menu()
-	var/dat = "<br>Processing Mode: <A href='?src=\ref[src];process=1'>[process_mode ? "UNCOMPRESS" : "COMPRESS"]</a>"
+	var/dat = "<br>Processing Mode: <A href='byond://?src=\ref[src];process=1'>[process_mode ? "UNCOMPRESS" : "COMPRESS"]</a>"
 	return dat
 */
 // The topic for Additional Options. Use this for checking href links for your specific option.
@@ -209,15 +210,15 @@
 	data["change_freq"] = change_frequency
 	return data
 
-/obj/machinery/telecomms/bus/Options_Act(action, params)
+/obj/machinery/telecomms/bus/Options_Act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("change_freq")
 			. = TRUE
-			var/newfreq = input(usr, "Specify a new frequency for new signals to change to. Enter null to turn off frequency changing. Decimals assigned automatically.", src, network) as null|num
-			if(canAccess(usr))
+			var/newfreq = tgui_input_number(ui.user, "Specify a new frequency for new signals to change to. Enter null to turn off frequency changing. Decimals assigned automatically.", src, network, round_value=FALSE)
+			if(canAccess(ui.user))
 				if(newfreq)
 					if(findtext(num2text(newfreq), "."))
 						newfreq *= 10 // shift the decimal one place
@@ -225,7 +226,7 @@
 						change_frequency = newfreq
 						set_temp("-% New frequency to change to assigned: \"[newfreq] GHz\" %-", "average")
 				else
-					change_frequency = 0
+					change_frequency = ZERO_FREQ
 					set_temp("-% Frequency changing deactivated %-", "average")
 
 
@@ -266,18 +267,18 @@
 /obj/machinery/telecomms/receiver/Options_Act(action, params)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("range")
 			var/new_range = params["range"]
 			overmap_range = clamp(new_range, overmap_range_min, overmap_range_max)
 			update_idle_power_usage(initial(idle_power_usage)**(overmap_range+1))
 
-/obj/machinery/telecomms/tgui_act(action, params)
+/obj/machinery/telecomms/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
-	var/obj/item/device/multitool/P = get_multitool(usr)
+	var/obj/item/multitool/P = get_multitool(ui.user)
 
 	switch(action)
 		if("toggle")
@@ -287,15 +288,15 @@
 			. = TRUE
 
 		if("id")
-			var/newid = copytext(reject_bad_text(input(usr, "Specify the new ID for this machine", src, id) as null|text),1,MAX_MESSAGE_LEN)
-			if(newid && canAccess(usr))
+			var/newid = copytext(reject_bad_text(tgui_input_text(ui.user, "Specify the new ID for this machine", src, id)),1,MAX_MESSAGE_LEN)
+			if(newid && canAccess(ui.user))
 				id = newid
 				set_temp("-% New ID assigned: \"[id]\" %-", "average")
 				. = TRUE
 
 		if("network")
-			var/newnet = input(usr, "Specify the new network for this machine. This will break all current links.", src, network) as null|text
-			if(newnet && canAccess(usr))
+			var/newnet = tgui_input_text(ui.user, "Specify the new network for this machine. This will break all current links.", src, network, 15)
+			if(newnet && canAccess(ui.user))
 
 				if(length(newnet) > 15)
 					set_temp("-% Too many characters in new network tag %-", "average")
@@ -311,13 +312,13 @@
 
 
 		if("freq")
-			var/newfreq = input(usr, "Specify a new frequency to filter (GHz). Decimals assigned automatically.", src, network) as null|num
-			if(newfreq && canAccess(usr))
+			var/newfreq = tgui_input_number(ui.user, "Specify a new frequency to filter (GHz). Decimals assigned automatically.", src, max_value=9999)
+			if(newfreq && canAccess(ui.user))
 				if(findtext(num2text(newfreq), "."))
 					newfreq *= 10 // shift the decimal one place
 				if(!(newfreq in freq_listening) && newfreq < 10000)
 					freq_listening.Add(newfreq)
-					set_temp("-% New frequency filter assigned: \"[newfreq] GHz\" %-", "average")
+					set_temp("-% New frequency filter assigned: \"[newfreq/10] GHz\" %-", "average")
 				. = TRUE
 
 		if("delete")
@@ -370,14 +371,14 @@
 	if(Options_Act(action, params))
 		. = TRUE
 
-	add_fingerprint(usr)
+	add_fingerprint(ui.user)
 
-/obj/machinery/telecomms/proc/canAccess(var/mob/user)
+/obj/machinery/telecomms/proc/canAccess(mob/user)
 	if(issilicon(user) || in_range(user, src))
 		return 1
 	return 0
 
-/obj/machinery/telecomms/proc/set_temp(var/text, var/color = "average")
+/obj/machinery/telecomms/proc/set_temp(text, color = "average")
 	temp = list("color" = color, "text" = text)
 
 #undef TELECOMM_Z

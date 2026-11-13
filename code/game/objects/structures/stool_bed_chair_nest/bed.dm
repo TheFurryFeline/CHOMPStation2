@@ -13,27 +13,35 @@
 	icon = 'icons/obj/furniture.dmi'
 	icon_state = "bed"
 	pressure_resistance = 15
-	anchored = 1
-	can_buckle = 1
+	anchored = TRUE
+	can_buckle = TRUE
 	buckle_dir = SOUTH
 	buckle_lying = 1
 	var/datum/material/material
 	var/datum/material/padding_material
 	var/base_icon = "bed"
 	var/applies_material_colour = 1
+	var/flippable = TRUE
 
-/obj/structure/bed/New(var/newloc, var/new_material, var/new_padding_material)
-	..(newloc)
+/obj/structure/bed/Initialize(mapload, new_material, new_padding_material)
+	..()
 	color = null
 	if(!new_material)
-		new_material = DEFAULT_WALL_MATERIAL
+		new_material = MAT_STEEL
 	material = get_material_by_name(new_material)
 	if(!istype(material))
-		qdel(src)
-		return
+		stack_trace("Material of type: [new_material] does not exist.")
+		return INITIALIZE_HINT_QDEL
 	if(new_padding_material)
 		padding_material = get_material_by_name(new_padding_material)
 	update_icon()
+	if(flippable) // If we can't change directions, don't bother.
+		// Ugly check for chairs, beds can only be flipped north and south...
+		if(istype(src,/obj/structure/bed/chair))
+			AddElement(/datum/element/rotatable)
+		else
+			AddElement(/datum/element/rotatable/onlyflip)
+	return INITIALIZE_HINT_NORMAL
 
 /obj/structure/bed/get_material()
 	return material
@@ -45,20 +53,20 @@
 	cut_overlays()
 	// Base icon.
 	var/cache_key = "[base_icon]-[material.name]"
-	if(isnull(stool_cache[cache_key]))
+	if(isnull(GLOB.stool_cache[cache_key]))
 		var/image/I = image(icon, base_icon)
 		if(applies_material_colour) //VOREStation Add - Goes with added var
 			I.color = material.icon_colour
-		stool_cache[cache_key] = I
-	add_overlay(stool_cache[cache_key])
+		GLOB.stool_cache[cache_key] = I
+	add_overlay(GLOB.stool_cache[cache_key])
 	// Padding overlay.
 	if(padding_material)
 		var/padding_cache_key = "[base_icon]-padding-[padding_material.name]"
-		if(isnull(stool_cache[padding_cache_key]))
+		if(isnull(GLOB.stool_cache[padding_cache_key]))
 			var/image/I =  image(icon, "[base_icon]_padding")
 			I.color = padding_material.icon_colour
-			stool_cache[padding_cache_key] = I
-		add_overlay(stool_cache[padding_cache_key])
+			GLOB.stool_cache[padding_cache_key] = I
+		add_overlay(GLOB.stool_cache[padding_cache_key])
 	// Strings.
 	desc = initial(desc)
 	if(padding_material)
@@ -87,8 +95,8 @@
 				qdel(src)
 				return
 
-/obj/structure/bed/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(W.is_wrench())
+/obj/structure/bed/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_WRENCH))
 		playsound(src, W.usesound, 50, 1)
 		dismantle()
 		qdel(src)
@@ -101,17 +109,17 @@
 			user.drop_from_inventory(C)
 			qdel(C)
 			return
-		var/padding_type  	
+		var/padding_type
 		//CHOMPEDIT START: making carpets different and not just the boring basic red no matter carpet type, consider merging material variables at stack level in future - Jack
 		if(istype(W,/obj/item/stack/tile/carpet))
 			var/obj/item/stack/tile/carpet/M = W
 			if(M.material && (M.material.flags & MATERIAL_PADDING))
-				padding_type = "[M.material.name]"					
-		//CHOMPEDIT END	
+				padding_type = "[M.material.name]"
+		//CHOMPEDIT END
 		else if(istype(W,/obj/item/stack/material))
 			var/obj/item/stack/material/M = W
 			if(M.material && (M.material.flags & MATERIAL_PADDING))
-				padding_type = "[M.material.name]"		
+				padding_type = "[M.material.name]"
 		if(!padding_type)
 			to_chat(user, "You cannot pad \the [src] with that.")
 			return
@@ -123,7 +131,7 @@
 		add_padding(padding_type)
 		return
 
-	else if(W.is_wirecutter())
+	else if(W.has_tool_quality(TOOL_WIRECUTTER))
 		if(!padding_material)
 			to_chat(user, "\The [src] has no padding to remove.")
 			return
@@ -131,39 +139,52 @@
 		playsound(src, W.usesound, 100, 1)
 		remove_padding()
 
-	else if(istype(W, /obj/item/weapon/grab))
-		var/obj/item/weapon/grab/G = W
+	else if(istype(W, /obj/item/disk) || (istype(W, /obj/item/toy/plushie)))
+		user.drop_from_inventory(W, get_turf(src))
+		W.pixel_x = 10 //make sure they reach the pillow
+		W.pixel_y = -6
+		if(istype(W, /obj/item/disk))
+			user.visible_message(span_notice("[src] sleeps soundly. Sleep tight, disky."))
+
+	else if(istype(W, /obj/item/grab))
+		var/obj/item/grab/G = W
 		var/mob/living/affecting = G.affecting
 		if(has_buckled_mobs()) //Handles trying to buckle someone else to a chair when someone else is on it
-			to_chat(user, "<span class='notice'>\The [src] already has someone buckled to it.</span>")
+			to_chat(user, span_notice("\The [src] already has someone buckled to it."))
 			return
-		user.visible_message("<span class='notice'>[user] attempts to buckle [affecting] into \the [src]!</span>")
-		if(do_after(user, 20, G.affecting))
+		user.visible_message(span_notice("[user] attempts to buckle [affecting] into \the [src]!"))
+		if(do_after(user, 2 SECONDS, G.affecting, target = src))
 			affecting.loc = loc
 			spawn(0)
 				if(buckle_mob(affecting))
 					affecting.visible_message(\
-						"<span class='danger'>[affecting.name] is buckled to [src] by [user.name]!</span>",\
-						"<span class='danger'>You are buckled to [src] by [user.name]!</span>",\
-						"<span class='notice'>You hear metal clanking.</span>")
+						span_danger("[affecting.name] is buckled to [src] by [user.name]!"),\
+						span_danger("You are buckled to [src] by [user.name]!"),\
+						span_notice("You hear metal clanking."))
 			qdel(W)
 	else
 		..()
 
 /obj/structure/bed/proc/remove_padding()
 	if(padding_material)
-		padding_material.place_sheet(get_turf(src))
+		padding_material.place_sheet(get_turf(src), 1)
 		padding_material = null
 	update_icon()
 
-/obj/structure/bed/proc/add_padding(var/padding_type)
+/obj/structure/bed/proc/add_padding(padding_type)
 	padding_material = get_material_by_name(padding_type)
 	update_icon()
 
 /obj/structure/bed/proc/dismantle()
-	material.place_sheet(get_turf(src))
+	material.place_sheet(get_turf(src), 1)
 	if(padding_material)
-		padding_material.place_sheet(get_turf(src))
+		padding_material.place_sheet(get_turf(src), 1)
+
+/obj/structure/bed/ghosts_can_use_rotate_verbs()
+	return CONFIG_GET(flag/ghost_interaction)
+
+/obj/structure/bed/can_use_rotate_verbs_while_anchored()
+	return TRUE
 
 /obj/structure/bed/psych
 	name = "psychiatrist's couch"
@@ -171,19 +192,19 @@
 	icon_state = "psychbed"
 	base_icon = "psychbed"
 
-/obj/structure/bed/psych/New(var/newloc)
-	..(newloc,"wood","leather")
+/obj/structure/bed/psych/Initialize(mapload)
+	. = ..(mapload, MAT_WOOD, MAT_LEATHER)
 
-/obj/structure/bed/padded/New(var/newloc)
-	..(newloc,"plastic","cotton")
+/obj/structure/bed/padded/Initialize(mapload)
+	. = ..(mapload, MAT_PLASTIC, MAT_CLOTH)
 
 /obj/structure/bed/double
 	name = "double bed"
 	icon_state = "doublebed"
 	base_icon = "doublebed"
 
-/obj/structure/bed/double/padded/New(var/newloc)
-	..(newloc,"wood","cotton")
+/obj/structure/bed/double/padded/Initialize(mapload)
+	. = ..(mapload, MAT_WOOD, MAT_CLOTH)
 
 /obj/structure/bed/double/post_buckle_mob(mob/living/M as mob)
 	if(M.buckled == src)
@@ -201,22 +222,24 @@
 	desc = "A portable bed-on-wheels made for transporting medical patients."
 	icon = 'icons/obj/rollerbed.dmi'
 	icon_state = "rollerbed"
-	anchored = 0
-	surgery_odds = 75
+	anchored = FALSE
+	surgery_cleanliness = 60
 	var/bedtype = /obj/structure/bed/roller
 	var/rollertype = /obj/item/roller
+	flippable = FALSE
 
 /obj/structure/bed/roller/adv
 	name = "advanced roller bed"
 	icon_state = "rollerbedadv"
+	surgery_cleanliness = 75
 	bedtype = /obj/structure/bed/roller/adv
 	rollertype = /obj/item/roller/adv
 
 /obj/structure/bed/roller/update_icon()
 	return
 
-/obj/structure/bed/roller/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(W.is_wrench() || istype(W,/obj/item/stack) || W.is_wirecutter())
+/obj/structure/bed/roller/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_WRENCH) || istype(W,/obj/item/stack) || W.has_tool_quality(TOOL_WIRECUTTER))
 		return
 	else if(istype(W,/obj/item/roller_holder))
 		if(has_buckled_mobs())
@@ -235,7 +258,8 @@
 	desc = "A collapsed roller bed that can be carried around."
 	icon = 'icons/obj/rollerbed.dmi'
 	icon_state = "folded_rollerbed"
-	center_of_mass = list("x" = 17,"y" = 7)
+	center_of_mass_x = 17
+	center_of_mass_y = 7
 	slot_flags = SLOT_BACK
 	w_class = ITEMSIZE_LARGE
 	var/rollertype = /obj/item/roller
@@ -244,16 +268,19 @@
 	pickup_sound = 'sound/items/pickup/axe.ogg'
 
 /obj/item/roller/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	var/obj/structure/bed/roller/R = new bedtype(user.loc)
 	R.add_fingerprint(user)
 	qdel(src)
 
-/obj/item/roller/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/item/roller/attackby(obj/item/W as obj, mob/user as mob)
 
 	if(istype(W,/obj/item/roller_holder))
 		var/obj/item/roller_holder/RH = W
 		if(!RH.held)
-			to_chat(user, "<span class='notice'>You collect the roller bed.</span>")
+			to_chat(user, span_notice("You collect the roller bed."))
 			src.loc = RH
 			RH.held = src
 			return
@@ -275,17 +302,19 @@
 	icon_state = "rollerbed"
 	var/obj/item/roller/held
 
-/obj/item/roller_holder/New()
-	..()
+/obj/item/roller_holder/Initialize(mapload)
+	. = ..()
 	held = new /obj/item/roller(src)
 
-/obj/item/roller_holder/attack_self(mob/user as mob)
-
+/obj/item/roller_holder/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(!held)
-		to_chat(user, "<span class='notice'>The rack is empty.</span>")
+		to_chat(user, span_notice("The rack is empty."))
 		return
 
-	to_chat(user, "<span class='notice'>You deploy the roller bed.</span>")
+	to_chat(user, span_notice("You deploy the roller bed."))
 	var/obj/structure/bed/roller/R = new held.bedtype(user.loc)
 	R.add_fingerprint(user)
 	qdel(held)
@@ -294,19 +323,19 @@
 
 /obj/structure/bed/roller/Moved(atom/old_loc, direction, forced = FALSE)
 	. = ..()
-	
+
 	playsound(src, 'sound/effects/roll.ogg', 100, 1)
 
 /obj/structure/bed/roller/post_buckle_mob(mob/living/M as mob)
 	if(M.buckled == src)
 		M.pixel_y = 6
 		M.old_y = 6
-		density = 1
+		density = TRUE
 		icon_state = "[initial(icon_state)]_up"
 	else
 		M.pixel_y = 0
 		M.old_y = 0
-		density = 0
+		density = FALSE
 		icon_state = "[initial(icon_state)]"
 	update_icon()
 	return ..()
@@ -343,10 +372,43 @@
 	desc = "Whatever species designed this must've enjoyed relaxation as well. Looks vaguely comfy."
 	catalogue_data = list(/datum/category_item/catalogue/anomalous/precursor_a/alien_bed)
 	icon = 'icons/obj/abductor.dmi'
-	icon_state = "bed"
+	icon_state = "bed_red"
+	flippable = FALSE
 
 /obj/structure/bed/alien/update_icon()
 	return // Doesn't care about material or anything else.
 
-/obj/structure/bed/alien/attackby(obj/item/weapon/W, mob/user)
+/obj/structure/bed/alien/attackby(obj/item/W, mob/user)
 	return // No deconning.
+
+/*
+ * Dirty Mattress
+ */
+/obj/structure/dirtybed
+	name = "dirty mattress"
+	desc = "A stained matress. Guess it's better than sleeping on the floor."
+	icon = 'icons/obj/furniture.dmi'
+	icon_state = "dirtybed"
+	pressure_resistance = 15
+	anchored = TRUE
+	can_buckle = TRUE
+	buckle_dir = SOUTH
+	buckle_lying = 1
+
+/obj/structure/dirtybed/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_WRENCH))
+		playsound(src, W.usesound, 100, 1)
+		if(anchored)
+			user.visible_message("[user] begins unsecuring \the [src] from the floor.", "You start unsecuring \the [src] from the floor.")
+		else
+			user.visible_message("[user] begins securing \the [src] to the floor.", "You start securing \the [src] to the floor.")
+
+		if(do_after(user, 2 SECONDS * W.toolspeed, target = src))
+			if(!src) return
+			to_chat(user, span_notice("You [anchored? "un" : ""]secured \the [src]!"))
+			anchored = !anchored
+		return
+
+	if(!anchored)
+		to_chat(user,span_notice(" The bed isn't secured."))
+		return

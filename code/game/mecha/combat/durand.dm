@@ -8,7 +8,6 @@
 	health = 300
 	maxhealth = 300			//Don't forget to update the /old variant if  you change this number.
 	deflect_chance = 20
-	damage_absorption = list("brute"=0.5,"fire"=1.1,"bullet"=0.65,"laser"=0.85,"energy"=0.9,"bomb"=0.8)
 	max_temperature = 30000
 	infra_luminosity = 8
 	force = 40
@@ -37,12 +36,11 @@
 	icon_scale_y = 1.5
 
 /*
-/obj/mecha/combat/durand/New()
-	..()
+/obj/mecha/combat/durand/Initialize(mapload)
+	. = ..()
 	weapons += new /datum/mecha_weapon/ballistic/lmg(src)
 	weapons += new /datum/mecha_weapon/ballistic/scattershot(src)
 	selected_weapon = weapons[1]
-	return
 */
 
 
@@ -52,7 +50,7 @@
 	var/output = {"<div class='wr'>
 						<div class='header'>Special</div>
 						<div class='links'>
-						<a href='?src=\ref[src];toggle_defence_mode=1'>Toggle defence mode</a>
+						<a href='byond://?src=\ref[src];toggle_defence_mode=1'>Toggle defence mode</a>
 						</div>
 						</div>
 						"}
@@ -64,7 +62,7 @@
 /*
 /obj/mecha/combat/durand/get_stats_part()
 	var/output = ..()
-	output += "<b>Defence mode: [defence?"on":"off"]</b>"
+	output += span_bold("Defence mode: [defence?"on":"off"]")
 	return output
 */
 
@@ -81,8 +79,8 @@
 /obj/mecha/combat/durand/old
 	desc = "An aging combat exosuit utilized by many corporations. Originally developed to combat hostile alien lifeforms. This one is particularly worn looking and likely isn't as sturdy."
 
-/obj/mecha/combat/durand/old/New()
-	..()
+/obj/mecha/combat/durand/old/Initialize(mapload)
+	. = ..()
 	health = 25
 	maxhealth = 250	//Just slightly worse.
 	cell.charge = rand(0, (cell.charge/2))

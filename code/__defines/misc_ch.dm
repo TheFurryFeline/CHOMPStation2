@@ -1,4 +1,3 @@
-
 //Material defines
 #define MAT_CARPET				"red carpet"
 #define MAT_CARPET_TEAL			"teal carpet"
@@ -10,9 +9,24 @@
 #define MAT_CARPET_PURPLE		"purple carpet"
 #define MAT_CARPET_ORANGE		"orange carpet"
 
-//Casino prize dispenser stuff
-#define CAT_WEAPONS		1
-#define CAT_GEAR		2
-#define CAT_CLOTHING	4
-#define CAT_MISC		8
-#define CAT_DRINKS		16
+#define MAT_WISP				"strange wisp"
+#define MAT_FROSCALE			"frost scale"
+#define MAT_CRYSCALE			"crystal scale"
+#define MAT_DREAMSCALE			"furred scale"
+#define MAT_SHELLCHITIN			"shell chitin"
+
+#define RCD_FIRELOCK		"Firelock"			// Builds an emergency glass shutter
+#define RCD_WINDOOR			"Windoor"			// Build a window door
+#define RCD_FRAME			"Frame"				// Build a Machine or Computer frame
+#define RCD_WALLFRAME		"WallFrame"			// Build a selection of wall frames
+#define RCD_CONVEYOR		"Conveyor"			// Build direction conveyors
+#define RCD_TURRET			"Turret"			// Build turrets when emagged
+
+
+#define VANTAG_VORE_YE	"vantag_vore_ye"
+#define VANTAG_VORE_YD	"vantag_vore_yd"
+#define VANTAG_VORE_YA	"vantag_vore_ya"
+#define VANTAG_VORE_D	"vantag_vore_d"
+#define VANTAG_VORE_DE	"vantag_vore_de"
+#define VANTAG_VORE_DD	"vantag_vore_dd"
+#define VANTAG_VORE_DA	"vantag_vore_da"

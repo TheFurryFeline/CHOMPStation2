@@ -5,6 +5,9 @@ SUBSYSTEM_DEF(event_ticker)
 	name = "Events (Ticker)"
 	wait = 2 SECONDS
 	runlevels = RUNLEVEL_GAME
+	dependencies = list(
+		/datum/controller/subsystem/events
+	)
 
 	// List of `/datum/event2/event`s that are currently active, and receiving process() ticks.
 	var/list/active_events = list()
@@ -14,8 +17,7 @@ SUBSYSTEM_DEF(event_ticker)
 
 // Process active events.
 /datum/controller/subsystem/event_ticker/fire(resumed)
-	for(var/E in active_events)
-		var/datum/event2/event/event = E
+	for(var/datum/event2/event/event as anything in active_events)
 		event.process()
 		if(event.finished)
 			event_finished(event)
@@ -28,10 +30,10 @@ SUBSYSTEM_DEF(event_ticker)
 	event_started(E)
 
 /datum/controller/subsystem/event_ticker/proc/event_started(datum/event2/event/E)
-	log_debug("Event [E.type] is now being ran.")
+	log_game("Event [E.type] is now being ran.")
 	active_events += E
 
 /datum/controller/subsystem/event_ticker/proc/event_finished(datum/event2/event/E)
-	log_debug("Event [E.type] has finished.")
+	log_game("Event [E.type] has finished.")
 	active_events -= E
 	finished_events += E

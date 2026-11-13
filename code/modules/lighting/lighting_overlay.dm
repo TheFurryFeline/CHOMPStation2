@@ -1,52 +1,56 @@
-/var/total_lighting_overlays = 0
-/atom/movable/lighting_overlay
-	name = ""
-	mouse_opacity = 0
-	simulated = 0
-	anchored = 1
-	icon = LIGHTING_ICON
-	plane = PLANE_LIGHTING
-	//invisibility = INVISIBILITY_LIGHTING
-	color = LIGHTING_BASE_MATRIX
-	icon_state = "light1"
-	//auto_init = 0 // doesn't need special init
-	blend_mode = BLEND_OVERLAY
+/datum/lighting_object
+	///the underlay we are currently applying to our turf to apply light
+	var/mutable_appearance/current_underlay
 
-	var/lum_r = 0
-	var/lum_g = 0
-	var/lum_b = 0
-
+	///whether we are already in the SSlighting.objects_queue list
 	var/needs_update = FALSE
 
-/atom/movable/lighting_overlay/Initialize()
-	// doesn't need special init
-	initialized = TRUE
-	return INITIALIZE_HINT_NORMAL
+	var/sunlight_only = FALSE
 
-/atom/movable/lighting_overlay/New(var/atom/loc, var/no_update = FALSE)
-	. = ..()
-	verbs.Cut()
-	total_lighting_overlays++
+	///the turf that our light is applied to
+	var/turf/affected_turf
 
-	var/turf/T = loc //If this runtimes atleast we'll know what's creating overlays outside of turfs.
-	T.lighting_overlay = src
-	T.luminosity = 0
-	if(no_update)
+/datum/lighting_object/New(turf/source)
+	if(!SSlighting.initialized)
+		stack_trace("lighting_object created before SSlighting up!")
 		return
-	update_overlay()
-
-/atom/movable/lighting_overlay/proc/update_overlay()
-	set waitfor = FALSE
-	var/turf/T = loc
-
-	if(!istype(T))
-		if(loc)
-			log_debug("A lighting overlay realised its loc was NOT a turf (actual loc: [loc][loc ? ", " + loc.type : "null"]) in update_overlay() and got qdel'ed!")
-		else
-			log_debug("A lighting overlay realised it was in nullspace in update_overlay() and got pooled!")
+	if(!isturf(source))
 		qdel(src, force=TRUE)
+		stack_trace("a lighting object was assigned to [source], a non turf! ")
 		return
+	. = ..()
 
+	current_underlay = mutable_appearance(LIGHTING_ICON, "transparent", source.z, PLANE_LIGHTING, 255, RESET_COLOR | RESET_ALPHA | RESET_TRANSFORM)
+
+	affected_turf = source
+	if (affected_turf.lighting_object)
+		qdel(affected_turf.lighting_object, force = TRUE)
+		stack_trace("a lighting object was assigned to a turf that already had a lighting object!")
+
+	affected_turf.lighting_object = src
+	affected_turf.set_luminosity(0)
+
+	if(CONFIG_GET(number/starlight))
+		for(var/turf/space/space_tile in RANGE_TURFS(1, affected_turf))
+			space_tile.update_starlight()
+
+	needs_update = TRUE
+	SSlighting.objects_queue += src
+
+/datum/lighting_object/Destroy(force)
+	if (!force)
+		return QDEL_HINT_LETMELIVE
+	SSlighting.objects_queue -= src
+	if (isturf(affected_turf))
+		affected_turf.lighting_object = null
+		affected_turf.set_luminosity(1)
+		affected_turf.underlays -= current_underlay
+	affected_turf = null
+	return ..()
+
+/datum/lighting_object/proc/update()
+
+	if(sunlight_only) return
 	// To the future coder who sees this and thinks
 	// "Why didn't he just use a loop?"
 	// Well my man, it's because the loop performed like shit.
@@ -55,89 +59,80 @@
 	// Oh it's also shorter line wise.
 	// Including with these comments.
 
-	// See LIGHTING_CORNER_DIAGONAL in lighting_corner.dm for why these values are what they are.
-	// No I seriously cannot think of a more efficient method, fuck off Comic.
+	var/static/datum/lighting_corner/dummy/dummy_lighting_corner = new
 
-	var/datum/lighting_corner/cr = LAZYACCESS(T.corners,3) || dummy_lighting_corner
-	var/datum/lighting_corner/cg = LAZYACCESS(T.corners,2) || dummy_lighting_corner
-	var/datum/lighting_corner/cb = LAZYACCESS(T.corners,4) || dummy_lighting_corner
-	var/datum/lighting_corner/ca = LAZYACCESS(T.corners,1) || dummy_lighting_corner
+	var/turf/affected_turf = src.affected_turf
+	var/datum/lighting_corner/red_corner = affected_turf.lighting_corner_SW || dummy_lighting_corner
+	var/datum/lighting_corner/green_corner = affected_turf.lighting_corner_SE || dummy_lighting_corner
+	var/datum/lighting_corner/blue_corner = affected_turf.lighting_corner_NW || dummy_lighting_corner
+	var/datum/lighting_corner/alpha_corner = affected_turf.lighting_corner_NE || dummy_lighting_corner
 
-	var/max = max(cr.cache_mx, cg.cache_mx, cb.cache_mx, ca.cache_mx)
-
-	var/rr = cr.cache_r
-	var/rg = cr.cache_g
-	var/rb = cr.cache_b
-
-	var/gr = cg.cache_r
-	var/gg = cg.cache_g
-	var/gb = cg.cache_b
-
-	var/br = cb.cache_r
-	var/bg = cb.cache_g
-	var/bb = cb.cache_b
-
-	var/ar = ca.cache_r
-	var/ag = ca.cache_g
-	var/ab = ca.cache_b
+	var/max = max(red_corner.largest_color_luminosity, green_corner.largest_color_luminosity, blue_corner.largest_color_luminosity, alpha_corner.largest_color_luminosity)
 
 	#if LIGHTING_SOFT_THRESHOLD != 0
 	var/set_luminosity = max > LIGHTING_SOFT_THRESHOLD
 	#else
-	// Because of floating points, it won't even be a flat 0.
+	// Because of floating points™?, it won't even be a flat 0.
 	// This number is mostly arbitrary.
 	var/set_luminosity = max > 1e-6
 	#endif
 
-	if((rr & gr & br & ar) && (rg + gg + bg + ag + rb + gb + bb + ab == 8))
-	//anything that passes the first case is very likely to pass the second, and addition is a little faster in this case
-		icon_state = "transparent"
-		color = null
+	var/mutable_appearance/current_underlay = src.current_underlay
+	affected_turf.underlays -= current_underlay
+	if(red_corner.cache_r & green_corner.cache_r & blue_corner.cache_r & alpha_corner.cache_r && \
+		(red_corner.cache_g + green_corner.cache_g + blue_corner.cache_g + alpha_corner.cache_g + \
+		red_corner.cache_b + green_corner.cache_b + blue_corner.cache_b + alpha_corner.cache_b == 8))
+		//anything that passes the first case is very likely to pass the second, and addition is a little faster in this case
+		current_underlay.icon_state = "transparent"
+		current_underlay.color = null
 	else if(!set_luminosity)
-		icon_state = LIGHTING_ICON_STATE_DARK
-		color = null
+		current_underlay.icon_state = "dark"
+		current_underlay.color = null
 	else
-		icon_state = null
-		color = list(
-			rr, rg, rb, 00,
-			gr, gg, gb, 00,
-			br, bg, bb, 00,
-			ar, ag, ab, 00,
+		current_underlay.icon_state = "gradient"
+		current_underlay.color = null
+		current_underlay.color = list(
+			red_corner.cache_r, red_corner.cache_g, red_corner.cache_b, 00,
+			green_corner.cache_r, green_corner.cache_g, green_corner.cache_b, 00,
+			blue_corner.cache_r, blue_corner.cache_g, blue_corner.cache_b, 00,
+			alpha_corner.cache_r, alpha_corner.cache_g, alpha_corner.cache_b, 00,
 			00, 00, 00, 01
 		)
 
-	luminosity = set_luminosity
+	// Of note. Most of the cost in this proc is here, I think because color matrix'd underlays DO NOT cache well, which is what adding to underlays does
+	// We use underlays because objects on each tile would fuck with maptick. if that ever changes, use an object for this instead
+	affected_turf.underlays += current_underlay
+	affected_turf.set_luminosity(set_luminosity)
 
-// Variety of overrides so the overlays don't get affected by weird things.
-/atom/movable/lighting_overlay/ex_act()
-	return
+/datum/lighting_object/proc/removefromturf()
+	affected_turf.underlays -= current_underlay
 
-/atom/movable/lighting_overlay/singularity_act()
-	return
+/datum/lighting_object/proc/addtoturf()
+	affected_turf.underlays |= current_underlay
 
-/atom/movable/lighting_overlay/singularity_pull()
-	return
+/datum/lighting_object/proc/update_sun()
+	if(QDELETED(src))
+		return
+	//Used to have more code here, but it became redundant.
+	affected_turf.set_luminosity(1)
 
-/atom/movable/lighting_overlay/forceMove()
-	return 0 //should never move
+/datum/lighting_object/proc/set_sunonly(onlysun,datum/planet_sunlight_handler/pshandler)
+	if(QDELETED(affected_turf)) //this should never happen but god demanded I be sad
+		return
+	switch(sunlight_only)
+		if(SUNLIGHT_ONLY)
+			affected_turf.vis_contents -= pshandler.vis_overhead
+		if(SUNLIGHT_ONLY_SHADE)
+			affected_turf.vis_contents -= pshandler.vis_shade
+		if(FALSE)
+			affected_turf.underlays -= current_underlay
 
-/atom/movable/lighting_overlay/Move()
-	return 0
+	sunlight_only = onlysun
 
-/atom/movable/lighting_overlay/throw_at()
-	return 0
-
-/atom/movable/lighting_overlay/Destroy(var/force)
-	if (force)
-		total_lighting_overlays--
-		global.lighting_update_overlays     -= src
-		LAZYREMOVE(SSlighting.currentrun, src)
-
-		var/turf/T = loc
-		if(istype(T))
-			T.lighting_overlay = null
-			T.luminosity = 1
-
-		return ..()
-	else
-		return QDEL_HINT_LETMELIVE
+	switch(onlysun)
+		if(SUNLIGHT_ONLY)
+			affected_turf.vis_contents += pshandler.vis_overhead
+		if(SUNLIGHT_ONLY_SHADE)
+			affected_turf.vis_contents += pshandler.vis_shade
+		if(FALSE)
+			affected_turf.underlays |= current_underlay

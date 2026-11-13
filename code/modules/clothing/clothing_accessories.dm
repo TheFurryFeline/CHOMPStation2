@@ -1,6 +1,6 @@
 /obj/item/clothing/proc/can_attach_accessory(obj/item/clothing/accessory/A)
 	//Just no, okay
-	if(!A.slot)
+	if(!istype(A) || !A.slot)
 		return FALSE
 
 	//Not valid at all, not in the valid list period.
@@ -9,8 +9,7 @@
 
 	//Find all consumed slots
 	var/consumed_slots = 0
-	for(var/thing in accessories)
-		var/obj/item/clothing/accessory/AC = thing
+	for(var/obj/item/clothing/accessory/AC as anything in accessories)
 		consumed_slots |= AC.slot
 
 	//Mask to just consumed restricted
@@ -22,7 +21,7 @@
 
 	return TRUE
 
-/obj/item/clothing/attackby(var/obj/item/I, var/mob/user)
+/obj/item/clothing/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/clothing/accessory))
 		var/obj/item/clothing/accessory/A = I
 		if(attempt_attach_accessory(A, user))
@@ -35,7 +34,7 @@
 
 	..()
 
-/obj/item/clothing/attack_hand(var/mob/user)
+/obj/item/clothing/attack_hand(mob/user)
 	//only forward to the attached accessory if the clothing is equipped (not in a storage)
 	if(LAZYLEN(accessories) && src.loc == user)
 		for(var/obj/item/clothing/accessory/A in accessories)
@@ -47,7 +46,7 @@
 			return
 	return ..()
 
-/obj/item/clothing/MouseDrop(var/obj/over_object)
+/obj/item/clothing/MouseDrop(obj/over_object)
 	if (over_object && (ishuman(usr) || issmall(usr)))
 		//makes sure that the clothing is equipped so that we can't drag it into our hand from miles away.
 		if (!(src.loc == usr))
@@ -66,10 +65,10 @@
 				usr.put_in_l_hand(src)
 		src.add_fingerprint(usr)
 
-/obj/item/clothing/examine(var/mob/user)
+/obj/item/clothing/examine(mob/user)
 	. = ..(user)
 	if(LAZYLEN(accessories))
-		. += "It has the following attached: [counting_english_list(accessories)]"
+		. += "It has the following attached: [counting_english_list(user.client, accessories)]"
 
 /**
  *  Attach accessory A to src
@@ -80,18 +79,18 @@
 /obj/item/clothing/proc/attempt_attach_accessory(obj/item/clothing/accessory/A, mob/user)
 	if(!valid_accessory_slots)
 		if(user)
-			to_chat(user, "<span class='warning'>You cannot attach accessories of any kind to \the [src].</span>")
+			to_chat(user, span_warning("You cannot attach accessories of any kind to \the [src]."))
 		return FALSE
 
 	var/obj/item/clothing/accessory/acc = A
 	if(can_attach_accessory(acc))
 		if(user)
-			user.drop_item()
+			user.remove_from_mob(acc)
 		attach_accessory(user, acc)
 		return TRUE
 	else
 		if(user)
-			to_chat(user, "<span class='warning'>You cannot attach more accessories of this type to [src].</span>")
+			to_chat(user, span_warning("You cannot attach more accessories of this type to [src]."))
 		return FALSE
 
 
@@ -121,11 +120,28 @@
 	set category = "Object"
 	set src in usr
 
-	if(!istype(usr, /mob/living))
+	removetie_proc(usr)
+
+/obj/item/clothing/proc/removetie_proc(mob/living/user)
+
+	if(!isliving(user))
 		return
 
-	if(usr.stat)
+	if(user.stat)
 		return
+
+	// CHOMPEdit begin
+	if(iscarbon(usr))
+		var/mob/living/carbon/C = usr
+		if(C.handcuffed)
+			to_chat(C, span_warning("You cannot remove accessories while handcuffed!"))
+			return
+		else if(istype(C, /mob/living/carbon/human))
+			var/mob/living/carbon/human/H = C
+			if(H.ability_flags & 0x1)
+				to_chat(H, span_warning("You cannot remove accessories while phase shifted!"))
+				return
+	//CHOMPEdit end
 
 	var/obj/item/clothing/accessory/A
 	var/accessory_amount = LAZYLEN(accessories)
@@ -133,17 +149,15 @@
 		if(accessory_amount == 1)
 			A = accessories[1] // If there's only one accessory, just remove it without any additional prompts.
 		else
-			A = input("Select an accessory to remove from \the [src]") as null|anything in accessories
+			A = tgui_input_list(user, "Select an accessory to remove from \the [src]", "Accessory Choice", accessories)
 
 	if(A)
-		remove_accessory(usr,A)
+		if(A.can_remove)
+			remove_accessory(user,A)
+		else
+			to_chat(user, span_warning("It doesn't look like \the [A] can be taken off \the [src]."))
+
 
 	if(!LAZYLEN(accessories))
 		src.verbs -= /obj/item/clothing/proc/removetie_verb
 		accessories = null
-
-/obj/item/clothing/emp_act(severity)
-	if(LAZYLEN(accessories))
-		for(var/obj/item/clothing/accessory/A in accessories)
-			A.emp_act(severity)
-	..()

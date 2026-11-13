@@ -1,9 +1,9 @@
-#define DEFAULT_SEED "glowshroom"
+#define DEFAULT_SEED PLANT_GLOWSHROOM
 #define VINE_GROWTH_STAGES 5
 
-/proc/spacevine_infestation(var/potency_min=70, var/potency_max=100, var/maturation_min=5, var/maturation_max=15)
+/proc/spacevine_infestation(potency_min=70, potency_max=100, maturation_min=5, maturation_max=15)
 	spawn() //to stop the secrets panel hanging
-		var/list/turf/simulated/floor/turfs = list() //list of all the empty floor turfs in the hallway areas
+		var/list/turf/simulated/floor/turfs = list() //list of all the empty floor turfs in the hallway areas //CHOMPedit start: keeping old method over upstream's landmark method
 		for(var/areapath in typesof(/area/hallway))
 			var/area/A = locate(areapath)
 			for(var/turf/simulated/floor/F in A.contents)
@@ -11,7 +11,7 @@
 					turfs += F
 
 		if(turfs.len) //Pick a turf to spawn at if we can
-			var/turf/simulated/floor/T = pick(turfs)
+			var/turf/simulated/floor/T = pick(turfs) //CHOMPedit end
 			var/datum/seed/seed = SSplants.create_random_seed(1)
 			seed.set_trait(TRAIT_SPREAD,2)             // So it will function properly as vines.
 			seed.set_trait(TRAIT_POTENCY,rand(potency_min, potency_max)) // 70-100 potency will help guarantee a wide spread and powerful effects.
@@ -24,14 +24,14 @@
 			vine.mature_time = 0
 			vine.process()
 
-			message_admins("<span class='notice'>Event: Spacevines spawned at [T.loc] ([T.x],[T.y],[T.z])</span>")
+			message_admins(span_notice("Event: Spacevines spawned at [T.loc] ([T.x],[T.y],[T.z])"))
 			return
-		message_admins("<span class='notice'>Event: Spacevines failed to find a viable turf.</span>")
+		message_admins(span_notice("Event: Spacevines failed to find a viable turf."))
 
 /obj/effect/dead_plant
-	anchored = 1
+	anchored = TRUE
 	opacity = 0
-	density = 0
+	density = FALSE
 	color = DEAD_PLANT_COLOUR
 
 /obj/effect/dead_plant/attack_hand()
@@ -45,10 +45,10 @@
 
 /obj/effect/plant
 	name = "plant"
-	anchored = 1
-	can_buckle = 1
+	anchored = TRUE
+	can_buckle = TRUE
 	opacity = 0
-	density = 0
+	density = FALSE
 	icon = 'icons/obj/hydroponics_growing.dmi'
 	icon_state = "bush4-1"
 	pass_flags = PASSTABLE
@@ -74,7 +74,7 @@
 /obj/effect/plant/Destroy()
 	neighbors.Cut()
 	if(seed.get_trait(TRAIT_SPREAD)==2)
-		unsense_proximity(callback = .HasProximity, center = get_turf(src))
+		unsense_proximity(callback = TYPE_PROC_REF(/atom, HasProximity), center = get_turf(src))
 	SSplants.remove_plant(src)
 	for(var/obj/effect/plant/neighbor in range(1,src))
 		SSplants.add_plant(neighbor)
@@ -83,8 +83,12 @@
 /obj/effect/plant/single
 	spread_chance = 0
 
-/obj/effect/plant/New(var/newloc, var/datum/seed/newseed, var/obj/effect/plant/newparent)
-	..()
+/obj/effect/plant/Initialize(mapload, datum/seed/newseed, obj/effect/plant/newparent)
+	. = ..()
+	//VOREStation Edit Start
+	if(isopenturf(loc))
+		return INITIALIZE_HINT_QDEL
+	//VOREStation Edit End
 
 	if(!newparent)
 		parent = src
@@ -92,23 +96,19 @@
 		parent = newparent
 
 	if(!SSplants)
-		sleep(250) // ugly hack, should mean roundstart plants are fine. TODO initialize perhaps?
-	if(!SSplants)
-		to_world("<span class='danger'>Plant controller does not exist and [src] requires it. Aborting.</span>")
-		qdel(src)
-		return
+		to_chat(world, span_danger("Plant controller does not exist and [src] requires it. Aborting."))
+		return INITIALIZE_HINT_QDEL
 
 	if(!istype(newseed))
 		newseed = SSplants.seeds[DEFAULT_SEED]
 	seed = newseed
 	if(!seed)
-		qdel(src)
-		return
+		return INITIALIZE_HINT_QDEL
 
 	name = seed.display_name
 	max_health = round(seed.get_trait(TRAIT_ENDURANCE)/2)
 	if(seed.get_trait(TRAIT_SPREAD)==2)
-		sense_proximity(callback = .HasProximity) // Grabby
+		sense_proximity(callback = TYPE_PROC_REF(/atom,HasProximity)) // Grabby
 		max_growth = VINE_GROWTH_STAGES
 		growth_threshold = max_health/VINE_GROWTH_STAGES
 		icon = 'icons/obj/hydroponics_vines.dmi'
@@ -116,7 +116,7 @@
 		if(seed.get_trait(TRAIT_CARNIVOROUS) >= 2)
 			growth_type = 1 // WOOOORMS.
 		else if(!(seed.seed_noun in list("seeds","pits")))
-			if(seed.seed_noun == "nodes")
+			if(seed.seed_noun in list("nodes", "cuttings"))
 				growth_type = 3 // Biomass
 			else
 				growth_type = 4 // Mold
@@ -138,7 +138,7 @@
 	update_icon()
 	SSplants.add_plant(src)
 	//Some plants eat through plating.
-	if(islist(seed.chems) && !isnull(seed.chems["pacid"]))
+	if(islist(seed.chems) && !isnull(seed.chems[REAGENT_ID_PACID]))
 		var/turf/T = get_turf(src)
 		T.ex_act(prob(80) ? 3 : 2)
 
@@ -166,7 +166,12 @@
 		var/clr
 		if(seed.get_trait(TRAIT_BIOLUM_COLOUR))
 			clr = seed.get_trait(TRAIT_BIOLUM_COLOUR)
-		set_light(1+round(seed.get_trait(TRAIT_POTENCY)/20), l_color = clr)
+		//VOREStation Edit Start - Tons of super bright super long range lights everywhere is annoying and laggy, so let's limit it a bit.
+		var/blight = 1+round(seed.get_trait(TRAIT_POTENCY)/20)
+		if(blight >= 5)
+			blight = 5
+		set_light(blight, 0.5, l_color = clr)
+		//VOREStation Edit End
 		return
 	else
 		set_light(0)
@@ -196,20 +201,19 @@
 	if(growth>2 && growth == max_growth)
 		plane = ABOVE_PLANE
 		set_opacity(1)
-		if(!isnull(seed.chems["woodpulp"]))
-			density = 1
+		if(!isnull(seed.chems[REAGENT_ID_WOODPULP]))
+			density = TRUE
 	else
 		reset_plane_and_layer()
-		density = 0
+		density = FALSE
 
 /obj/effect/plant/proc/calc_dir()
-	set background = 1
 	var/turf/T = get_turf(src)
 	if(!istype(T)) return
 
 	var/direction = 16
 
-	for(var/wallDir in cardinal)
+	for(var/wallDir in GLOB.cardinal)
 		var/turf/newTurf = get_step(T,wallDir)
 		if(newTurf.density)
 			direction |= wallDir
@@ -238,23 +242,23 @@
 	floor = 1
 	return 1
 
-/obj/effect/plant/attackby(var/obj/item/weapon/W, var/mob/user)
+/obj/effect/plant/attackby(obj/item/W, mob/user)
 
 	user.setClickCooldown(user.get_attack_speed(W))
 	SSplants.add_plant(src)
 
-	if(W.is_wirecutter() || istype(W, /obj/item/weapon/surgical/scalpel))
+	if(W.has_tool_quality(TOOL_WIRECUTTER) || istype(W, /obj/item/surgical/scalpel))
 		if(sampled)
-			to_chat(user, "<span class='warning'>\The [src] has already been sampled recently.</span>")
+			to_chat(user, span_warning("\The [src] has already been sampled recently."))
 			return
 		if(!is_mature())
-			to_chat(user, "<span class='warning'>\The [src] is not mature enough to yield a sample yet.</span>")
+			to_chat(user, span_warning("\The [src] is not mature enough to yield a sample yet."))
 			return
 		if(!seed)
-			to_chat(user, "<span class='warning'>There is nothing to take a sample from.</span>")
+			to_chat(user, span_warning("There is nothing to take a sample from."))
 			return
 		if(sampled)
-			to_chat(user, "<span class='danger'>You cannot take another sample from \the [src].</span>")
+			to_chat(user, span_danger("You cannot take another sample from \the [src]."))
 			return
 		if(prob(70))
 			sampled = 1
@@ -306,7 +310,6 @@
 			if (prob(5))
 				die_off()
 				return
-		else
 	return
 
 /obj/effect/plant/proc/check_health()
@@ -315,3 +318,6 @@
 
 /obj/effect/plant/proc/is_mature()
 	return (health >= (max_health/3) && world.time > mature_time)
+
+#undef DEFAULT_SEED
+#undef VINE_GROWTH_STAGES

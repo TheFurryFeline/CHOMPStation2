@@ -26,10 +26,10 @@
 	icon_living = "corrupt-repairbot"
 	hovering = FALSE // Can trigger landmines.
 
-	faction = "underdark"
+	faction = FACTION_UNDERDARK
 	maxHealth = 25
 	health = 25
-	movement_cooldown = 0
+	movement_cooldown = -1
 	movement_sound = 'sound/effects/servostep.ogg'
 
 	pass_flags = PASSTABLE
@@ -39,7 +39,7 @@
 	melee_damage_lower = 6 // Approx 12 DPS.
 	melee_damage_upper = 6
 	base_attack_cooldown = 2.5 // Four attacks per second.
-	attack_sharp = 1
+	attack_sharp = TRUE
 	attack_edge = 1
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	attacktext = list("cut", "sliced")
@@ -51,7 +51,7 @@
 	ai_holder_type = /datum/ai_holder/simple_mob/melee/evasive
 
 
-/mob/living/simple_mob/mechanical/corrupt_maint_drone/apply_melee_effects(var/atom/A)
+/mob/living/simple_mob/mechanical/corrupt_maint_drone/apply_melee_effects(atom/A)
 	if(isliving(A))
 		var/mob/living/L = A
 		if(L.reagents)
@@ -62,7 +62,7 @@
 // Does actual poison injection, after all checks passed.
 /mob/living/simple_mob/mechanical/corrupt_maint_drone/proc/inject_poison(mob/living/L, target_zone)
 	if(prob(poison_chance))
-		to_chat(L, "<span class='warning'>Something burns in your veins.</span>")
+		to_chat(L, span_warning("Something burns in your veins."))
 		L.reagents.add_reagent(poison_type, poison_per_bite)
 
 

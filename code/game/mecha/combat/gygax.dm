@@ -8,7 +8,6 @@
 	health = 250
 	maxhealth = 250			//Don't forget to update the /old variant if  you change this number.
 	deflect_chance = 15
-	damage_absorption = list("brute"=0.75,"fire"=1,"bullet"=0.8,"laser"=0.7,"energy"=0.85,"bomb"=1)
 	max_temperature = 25000
 	infra_luminosity = 6
 	wreckage = /obj/effect/decal/mecha_wreckage/gygax
@@ -39,7 +38,7 @@
 	var/output = {"<div class='wr'>
 						<div class='header'>Special</div>
 						<div class='links'>
-						<a href='?src=\ref[src];toggle_leg_overload=1'>Toggle leg actuators overload</a>
+						<a href='byond://?src=\ref[src];toggle_leg_overload=1'>Toggle leg actuators overload</a>
 						</div>
 						</div>
 						"}
@@ -55,7 +54,6 @@
 	health = 400
 	maxhealth = 400
 	deflect_chance = 25
-	damage_absorption = list("brute"=0.6,"fire"=0.8,"bullet"=0.6,"laser"=0.5,"energy"=0.65,"bomb"=0.8)
 	max_temperature = 45000
 	overload_coeff = 1
 	wreckage = /obj/effect/decal/mecha_wreckage/gygax/dark
@@ -76,14 +74,12 @@
 		/obj/item/mecha_parts/mecha_equipment/teleporter
 		)
 
-/obj/mecha/combat/gygax/dark/add_cell(var/obj/item/weapon/cell/C=null)
+/obj/mecha/combat/gygax/dark/add_cell(obj/item/cell/C=null)
 	if(C)
 		C.forceMove(src)
 		cell = C
 		return
-	cell = new(src)
-	cell.charge = 30000
-	cell.maxcharge = 30000
+	cell = new /obj/item/cell/hyper(src)
 
 /obj/mecha/combat/gygax/serenity
 	desc = "A lightweight exosuit made from a modified Gygax chassis combined with proprietary VeyMed medical tech. It's faster and sturdier than most medical mechs, but much of the armor plating has been stripped out, leaving it more vulnerable than a regular Gygax."
@@ -94,7 +90,6 @@
 	maxhealth = 150
 	deflect_chance = 20
 	step_in = 2
-	damage_absorption = list("brute"=0.9,"fire"=1,"bullet"=0.9,"laser"=0.8,"energy"=0.9,"bomb"=1)
 	max_temperature = 20000
 	overload_coeff = 1
 	wreckage = /obj/effect/decal/mecha_wreckage/gygax/serenity
@@ -117,15 +112,14 @@
 
 	var/obj/item/clothing/glasses/hud/health/mech/hud
 
-/obj/mecha/combat/gygax/serenity/New()
-	..()
+/obj/mecha/combat/gygax/serenity/Initialize(mapload)
+	. = ..()
 	hud = new /obj/item/clothing/glasses/hud/health/mech(src)
-	return
 
-/obj/mecha/combat/gygax/serenity/moved_inside(var/mob/living/carbon/human/H as mob)
+/obj/mecha/combat/gygax/serenity/moved_inside(mob/living/carbon/human/H as mob)
 	if(..())
 		if(H.glasses)
-			occupant_message("<font color='red'>[H.glasses] prevent you from using [src] [hud]</font>")
+			occupant_message(span_red("[H.glasses] prevent you from using [src] [hud]!"))
 		else
 			H.glasses = hud
 			H.recalculate_vis()
@@ -146,8 +140,8 @@
 /obj/mecha/combat/gygax/old
 	desc = "A lightweight, security exosuit. Popular among private and corporate security. This one is particularly worn looking and likely isn't as sturdy."
 
-/obj/mecha/combat/gygax/old/New()
-	..()
+/obj/mecha/combat/gygax/old/Initialize(mapload)
+	. = ..()
 	health = 25
 	maxhealth = 250	//Just slightly worse.
 	cell.charge = rand(0, (cell.charge/2))

@@ -6,7 +6,7 @@
 	plane = MOB_PLANE
 	layer = ABOVE_MOB_LAYER
 	opacity = 1
-	density = 0
+	density = FALSE
 
 /obj/structure/curtain/open
 	icon_state = "open"
@@ -16,7 +16,7 @@
 
 /obj/structure/curtain/bullet_act(obj/item/projectile/P, def_zone)
 	if(!P.nodamage)
-		visible_message("<span class='warning'>[P] tears [src] down!</span>")
+		visible_message(span_warning("[P] tears [src] down!"))
 		qdel(src)
 	else
 		..(P, def_zone)
@@ -25,6 +25,14 @@
 	playsound(src, "rustle", 15, 1, -5)
 	toggle()
 	..()
+
+/obj/structure/curtain/attack_ai(mob/user)
+	if(!Adjacent(user))
+		return
+	if(!isrobot((user)))
+		return
+	playsound(src, "rustle", 15, 1, -5)
+	toggle()
 
 /obj/structure/curtain/proc/toggle()
 	set_opacity(!opacity)
@@ -38,13 +46,12 @@
 		layer = OBJ_LAYER
 
 /obj/structure/curtain/attackby(obj/item/P, mob/user)
-	if(P.is_wirecutter())
+	if(P.has_tool_quality(TOOL_WIRECUTTER))
 		playsound(src, P.usesound, 50, 1)
-		to_chat(user, "<span class='notice'>You start to cut the shower curtains.</span>")
-		if(do_after(user, 10))
-			to_chat(user, "<span class='notice'>You cut the shower curtains.</span>")
-			var/obj/item/stack/material/plastic/A = new /obj/item/stack/material/plastic( src.loc )
-			A.amount = 3
+		to_chat(user, span_notice("You start to cut the shower curtains."))
+		if(do_after(user, 1 SECOND, target = src))
+			to_chat(user, span_notice("You cut the shower curtains."))
+			new /obj/item/stack/material/plastic(src.loc, 3)
 			qdel(src)
 		return
 	else

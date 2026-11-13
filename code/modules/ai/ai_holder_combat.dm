@@ -15,7 +15,7 @@
 	ai_log("engage_target() : Entering.", AI_LOG_DEBUG)
 
 	// Can we still see them?
-	if(!target || !can_attack(target))
+	if(QDELETED(target) || !can_attack(target)) //CHOMPEdit
 		ai_log("engage_target() : Lost sight of target.", AI_LOG_TRACE)
 		if(lose_target()) // We lost them (returns TRUE if we found something else to do)
 			ai_log("engage_target() : Pursuing other options (last seen, or a new target).", AI_LOG_TRACE)
@@ -51,7 +51,7 @@
 		on_engagement(target)
 		if(firing_lanes && !test_projectile_safety(target))
 			// Nudge them a bit, maybe they can shoot next time.
-			var/turf/T = get_step(holder, pick(cardinal))
+			var/turf/T = get_step(holder, pick(GLOB.cardinal))
 			if(T)
 				holder.IMove(T) // IMove() will respect movement cooldown.
 				holder.face_atom(target)
@@ -132,8 +132,7 @@
 	ai_log("test_projectile_safety() : Test projectile did[!would_hit_primary_target ? " NOT " : " "]hit \the [AM]", AI_LOG_DEBUG)
 
 	// Make sure we don't have a chance to shoot our friends.
-	for(var/a in hit_things)
-		var/atom/A = a
+	for(var/atom/A as anything in hit_things)
 		ai_log("test_projectile_safety() : Evaluating \the [A] ([A.type]).", AI_LOG_TRACE)
 		if(isliving(A)) // Don't shoot at our friends, even if they're behind the target, as RNG can make them get hit.
 			var/mob/living/L = A
@@ -172,7 +171,7 @@
 /datum/ai_holder/proc/walk_to_target()
 	ai_log("walk_to_target() : Entering.", AI_LOG_DEBUG)
 	// Make sure we can still chase/attack them.
-	if(!target || !can_attack(target))
+	if(QDELETED(target) || !can_attack(target))
 		ai_log("walk_to_target() : Lost target.", AI_LOG_INFO)
 		lose_target()
 		return
@@ -252,7 +251,7 @@
 /datum/ai_holder/proc/destroy_surroundings(direction, violent = TRUE)
 	ai_log("destroy_surroundings() : Entering.", AI_LOG_TRACE)
 	if(!direction)
-		direction = pick(cardinal) // FLAIL WILDLY
+		direction = pick(GLOB.cardinal) // FLAIL WILDLY
 		ai_log("destroy_surroundings() : No direction given, picked [direction] randomly.", AI_LOG_DEBUG)
 
 	var/turf/problem_turf = get_step(holder, direction)
@@ -271,7 +270,7 @@
 		ai_log("destroy_surroundings() : Going to try to violently clear [problem_turf].", AI_LOG_DEBUG)
 		// First, kill windows in the way.
 		for(var/obj/structure/window/W in problem_turf)
-			if(W.dir == reverse_dir[holder.dir]) // So that windows get smashed in the right order
+			if(W.dir == GLOB.reverse_dir[holder.dir]) // So that windows get smashed in the right order
 				ai_log("destroy_surroundings() : Attacking side window.", AI_LOG_INFO)
 				return melee_attack(W)
 
@@ -293,14 +292,31 @@
 
 		// Kill common obstacle in the way like tables.
 		var/obj/structure/obstacle = locate(/obj/structure, problem_turf)
-		if(istype(obstacle, /obj/structure/window) || istype(obstacle, /obj/structure/closet) || istype(obstacle, /obj/structure/table) || istype(obstacle, /obj/structure/grille) || istype(obstacle, /obj/effect/weaversilk/wall))	//VOREStation Edit: spdr
+		var/list/common_obstacles = list(/obj/structure/window,
+											/obj/structure/closet,
+											/obj/structure/table,
+											/obj/structure/grille,
+											/obj/structure/barricade,
+											/obj/structure/girder,
+										)
+		if(is_type_in_list(obstacle, common_obstacles))
 			ai_log("destroy_surroundings() : Attacking generic structure.", AI_LOG_INFO)
 			return melee_attack(obstacle)
+
+		var/obj/effect/weaversilk/web = locate(/obj/effect/weaversilk, problem_turf)
+		if(istype(web, /obj/effect/weaversilk/wall))	//VOREStation Edit: spdr
+			ai_log("destroy_surroundings() : Attacking weaversilk effect.", AI_LOG_INFO)
+			return melee_attack(web)
 
 		for(var/obj/machinery/door/D in problem_turf) // Required since firelocks take up the same turf.
 			if(D.density)
 				ai_log("destroy_surroundings() : Attacking closed door.", AI_LOG_INFO)
 				return melee_attack(D)
+
+		// Should always be last thing attempted
+		if(!problem_turf.opacity)
+			ai_log("destroy_surroundings() : Attacking a transparent (window?) turf.", AI_LOG_INFO)
+			return melee_attack(problem_turf)
 
 	ai_log("destroy_surroundings() : Exiting due to nothing to attack.", AI_LOG_INFO)
 	return ATTACK_FAILED // Nothing to attack.

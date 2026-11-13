@@ -8,14 +8,16 @@
 	desc = "A solar directional tracker."
 	icon = 'icons/obj/power.dmi'
 	icon_state = "tracker"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	use_power = USE_POWER_OFF
 	var/glass_type = /obj/item/stack/material/glass
 
 	var/id = 0
 	var/sun_angle = 0		// sun angle as set by sun datum
 	var/obj/machinery/power/solar_control/control = null
+	var/SOLAR_MAX_DIST = 60		//VOREStation Addition //ChompEDIT - ours are >40 away
+
 
 /obj/machinery/power/tracker/Initialize(mapload, glass_type)
 	. = ..()
@@ -24,10 +26,10 @@
 
 /obj/machinery/power/tracker/Destroy()
 	unset_control() //remove from control computer
-	..()
+	. = ..()
 
 //set the control of the tracker to a given computer if closer than SOLAR_MAX_DIST
-/obj/machinery/power/tracker/proc/set_control(var/obj/machinery/power/solar_control/SC)
+/obj/machinery/power/tracker/proc/set_control(obj/machinery/power/solar_control/SC)
 	if(SC && (get_dist(src, SC) > SOLAR_MAX_DIST))
 		return 0
 	control = SC
@@ -40,7 +42,7 @@
 	control = null
 
 //updates the tracker icon and the facing angle for the control computer
-/obj/machinery/power/tracker/proc/set_angle(var/angle)
+/obj/machinery/power/tracker/proc/set_angle(angle)
 	sun_angle = angle
 
 	//set icon dir to show sun illumination
@@ -49,26 +51,25 @@
 	if(powernet && (powernet == control.powernet)) //update if we're still in the same powernet
 		control.cdir = angle
 
-/obj/machinery/power/tracker/attackby(var/obj/item/weapon/W, var/mob/user)
+/obj/machinery/power/tracker/attackby(obj/item/W, mob/user)
 
-	if(W.is_crowbar())
+	if(W.has_tool_quality(TOOL_CROWBAR))
 		playsound(src, 'sound/machines/click.ogg', 50, 1)
-		user.visible_message("<span class='notice'>[user] begins to take the glass off the solar tracker.</span>")
-		if(do_after(user, 50))
+		user.visible_message(span_notice("[user] begins to take the glass off the solar tracker."))
+		if(do_after(user, 5 SECONDS, target = src))
 			var/obj/item/solar_assembly/S = new(loc)
 			S.tracker = TRUE
 			S.anchored = TRUE
-			var/obj/item/stack/glass = new glass_type(loc)
-			glass.amount = 2
+			new glass_type(loc, 2)
 			playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
-			user.visible_message("<span class='notice'>[user] takes the glass off the tracker.</span>")
+			user.visible_message(span_notice("[user] takes the glass off the tracker."))
 			qdel(src)
 		return
 	..()
 
 // Tracker Electronic
 
-/obj/item/weapon/tracker_electronics
+/obj/item/tracker_electronics
 
 	name = "tracker electronics"
 	icon = 'icons/obj/doors/door_assembly.dmi'

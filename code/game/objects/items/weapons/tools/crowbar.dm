@@ -1,8 +1,7 @@
 /*
  * Crowbar
  */
-
-/obj/item/weapon/tool/crowbar
+/obj/item/tool/crowbar
 	name = "crowbar"
 	desc = "Used to remove floors and to pry open doors."
 	icon = 'icons/obj/tools.dmi'
@@ -13,8 +12,7 @@
 	pry = 1
 	item_state = "crowbar"
 	w_class = ITEMSIZE_SMALL
-	origin_tech = list(TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MAT_STEEL = MATERIAL_COST(0.025))
 	attack_verb = list("attacked", "bashed", "battered", "bludgeoned", "whacked")
 	usesound = 'sound/items/crowbar.ogg'
 	drop_sound = 'sound/items/drop/crowbar.ogg'
@@ -22,11 +20,16 @@
 	toolspeed = 1
 	tool_qualities = list(TOOL_CROWBAR)
 
-/obj/item/weapon/tool/crowbar/red
+/obj/item/tool/crowbar/red
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "red_crowbar"
 	item_state = "crowbar_red"
+	force = 10 //CHOMPedit
 
+/obj/item/tool/crowbar/old
+	icon = 'icons/obj/tools.dmi'
+	icon_state = "old_crowbar"
+	item_state = "crowbar"
 
 /datum/category_item/catalogue/anomalous/precursor_a/alien_crowbar
 	name = "Precursor Alpha Object - Hard Light Pry Tool"
@@ -41,7 +44,7 @@
 	the tool aligned while in use."
 	value = CATALOGUER_REWARD_EASY
 
-/obj/item/weapon/tool/crowbar/alien
+/obj/item/tool/crowbar/alien
 	name = "alien crowbar"
 	desc = "A hard-light crowbar. It appears to pry by itself, without any effort required."
 	catalogue_data = list(/datum/category_item/catalogue/anomalous/precursor_a/alien_crowbar)
@@ -49,53 +52,50 @@
 	usesound = 'sound/weapons/sonic_jackhammer.ogg'
 	icon_state = "crowbar"
 	toolspeed = 0.1
-	origin_tech = list(TECH_COMBAT = 4, TECH_ENGINEERING = 4)
 
-/obj/item/weapon/tool/crowbar/hybrid
+/obj/item/tool/crowbar/hybrid
 	name = "strange crowbar"
 	desc = "A crowbar whose head seems to phase in and out of view."
 	catalogue_data = list(/datum/category_item/catalogue/anomalous/precursor_a/alien_crowbar)
 	icon_state = "hybcrowbar"
 	usesound = 'sound/weapons/sonic_jackhammer.ogg'
 	toolspeed = 0.4
-	origin_tech = list(TECH_COMBAT = 4, TECH_ENGINEERING = 3)
 	reach = 2
 
-/obj/item/weapon/tool/crowbar/cyborg
-	name = "hydraulic crowbar"
-	desc = "A hydraulic prying tool, compact but powerful. Designed to replace crowbars in industrial synthetics."
-	usesound = 'sound/items/jaws_pry.ogg'
-	force = 10
-	toolspeed = 0.5
-
-/obj/item/weapon/tool/crowbar/power
-	name = "jaws of life"
-	desc = "A set of jaws of life, compressed through the magic of science. It's fitted with a prying head."
-	icon_state = "jaws_pry"
-	item_state = "jawsoflife"
-	matter = list(MAT_METAL=150, MAT_SILVER=50)
-	origin_tech = list(TECH_MATERIAL = 2, TECH_ENGINEERING = 2)
+/obj/item/tool/crowbar/power
+	name = "power pryer"
+	desc = "You shouldn't see this."
 	usesound = 'sound/items/jaws_pry.ogg'
 	force = 15
 	toolspeed = 0.25
-	var/obj/item/weapon/tool/wirecutters/power/counterpart = null
 
-/obj/item/weapon/tool/crowbar/power/New(newloc, no_counterpart = TRUE)
-	..(newloc)
-	if(!counterpart && no_counterpart)
-		counterpart = new(src, FALSE)
-		counterpart.counterpart = src
+/*
+ * Prybar
+ */
 
-/obj/item/weapon/tool/crowbar/power/Destroy()
-	if(counterpart)
-		counterpart.counterpart = null // So it can qdel cleanly.
-		QDEL_NULL(counterpart)
-	return ..()
+/obj/item/tool/prybar
+	name = "pry bar"
+	desc = "A steel bar with a wedge, designed specifically for opening unpowered doors in an emergency. It comes in a variety of configurations - collect them all!"
+	icon = 'icons/obj/tools_vr.dmi'
+	icon_state = "prybar"
+	item_state = "crowbar"
+	slot_flags = SLOT_BELT
+	force = 4
+	throwforce = 5
+	pry = 1
+	w_class = ITEMSIZE_SMALL
+	matter = list(MAT_STEEL = MATERIAL_COST(0.015))
+	attack_verb = list("whapped", "smacked", "swatted", "thwacked", "hit")
+	usesound = 'sound/items/crowbar.ogg'
+	toolspeed = 1
+	var/random_color = TRUE
 
-/obj/item/weapon/tool/crowbar/power/attack_self(mob/user)
-	playsound(src, 'sound/items/change_jaws.ogg', 50, 1)
-	user.drop_item(src)
-	counterpart.forceMove(get_turf(src))
-	src.forceMove(counterpart)
-	user.put_in_active_hand(counterpart)
-	to_chat(user, "<span class='notice'>You attach the cutting jaws to [src].</span>")
+/obj/item/tool/prybar/red
+	icon_state = "prybar_red"
+	item_state = "crowbar_red"
+	random_color = FALSE
+
+/obj/item/tool/prybar/Initialize(mapload)
+	. = ..()
+	if(random_color)
+		icon_state = "prybar[pick("","_green","_aubergine","_blue")]"

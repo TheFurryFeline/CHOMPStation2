@@ -1,7 +1,8 @@
-/**
- * tgui external
+/*!
+ * External tgui definitions, such as src_object APIs.
  *
- * Contains all external tgui declarations.
+ * Copyright (c) 2020 Aleksej Komarov
+ * SPDX-License-Identifier: MIT
  */
 
 /**
@@ -15,7 +16,7 @@
  * optional parent_ui datum/tgui A parent UI that, when closed, closes this UI as well.
  */
 
-/datum/proc/tgui_interact(mob/user, datum/tgui/ui = null, datum/tgui/parent_ui = null)
+/datum/proc/tgui_interact(mob/user, datum/tgui/ui = null, datum/tgui/parent_ui = null, custom_state = null)
 	return FALSE // Not implemented.
 
 /**
@@ -35,6 +36,7 @@
  * public
  *
  * Static Data to be sent to the UI.
+ *
  * Static data differs from normal data in that it's large data that should be
  * sent infrequently. This is implemented optionally for heavy uis that would
  * be sending a lot of redundant data frequently. Gets squished into one
@@ -67,6 +69,17 @@
 /**
  * public
  *
+ * Will force an update on static data for all viewers.
+ * Should be done manually whenever something happens to
+ * change static data.
+ */
+/datum/proc/update_static_data_for_all_viewers()
+	for (var/datum/tgui/window as anything in open_tguis)
+		window.send_full_update()
+
+/**
+ * public
+ *
  * Called on a UI when the UI receieves a href.
  * Think of this as Topic().
  *
@@ -76,9 +89,26 @@
  * return bool If the UI should be updated or not.
  */
 /datum/proc/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
+	SHOULD_CALL_PARENT(TRUE)
+	SEND_SIGNAL(src, COMSIG_UI_ACT, ui.user, action)
 	// If UI is not interactive or usr calling Topic is not the UI user, bail.
 	if(!ui || ui.status != STATUS_INTERACTIVE)
 		return TRUE
+	if(action == "change_ui_state")
+		var/mob/living/user = ui.user
+		//write_preferences will make sure it's valid for href exploits.
+		user.client.prefs.write_preference(GLOB.preference_entries[/datum/preference/choiced/tgui_layout], params["new_state"])
+
+/**
+ * public
+ *
+ * Called on a UI when the UI crashed.
+ *
+ * required payload list A list of the payload supposed to be set on the regular UI.
+ */
+/datum/proc/tgui_fallback(list/payload, mob/user)
+	SHOULD_CALL_PARENT(TRUE)
+	SEND_SIGNAL(src, COMSIG_UI_FALLBACK, usr)
 
 /**
  * public
@@ -116,7 +146,6 @@
  * Associative list of JSON-encoded shared states that were set by
  * tgui clients.
  */
-
 /datum/var/list/tgui_shared_states
 
 /**
@@ -132,6 +161,13 @@
  * Tracks open windows for a user.
  */
 /client/var/list/tgui_windows = list()
+
+/**
+ * global
+ *
+ * TRUE if cache was reloaded by tgui dev server at least once.
+ */
+/client/var/tgui_cache_reloaded = FALSE
 
 /**
  * public
@@ -151,15 +187,15 @@
 /client/verb/tgui_fix_white()
 	set desc = "Only use this if you have a broken TGUI window occupying your screen!"
 	set name = "Fix TGUI"
-	set category = "OOC"
+	set category = "OOC.Debug"
 
-	if(alert(src, "Only use this verb if you have a white TGUI window stuck on your screen.", "Fix TGUI", "Continue", "Nevermind") != "Continue")
+	if(alert(src, "Only use this verb if you have a white TGUI window stuck on your screen.", "Fix TGUI", "Continue", "Nevermind") != "Continue") // Not tgui_alert since we're fixing tgui
 		return
 
 	SStgui.close_user_uis(mob)
-	if(alert(src, "Did that fix the problem?", "Fix TGUI", "Yes", "No") == "No")
+	if(alert(src, "Did that fix the problem?", "Fix TGUI", "Yes", "No") == "No") // Not tgui_alert since we're fixing tgui
 		SStgui.force_close_all_windows(mob)
-		alert(src, "UIs should be fixed now. If not, please cry to your nearest coder.", "Fix TGUI")
+		alert(src, "UIs should be fixed now. If not, please cry to your nearest coder.", "Fix TGUI") // Not tgui_alert since we're fixing tgui
 
 /**
  * verb
@@ -173,12 +209,25 @@
 	// Name the verb, and hide it from the user panel.
 	set name = "uiclose"
 	set hidden = TRUE
-
-	var/mob/user = src && src.mob
+	var/mob/user = src?.mob
 	if(!user)
 		return
 	// Close all tgui datums based on window_id.
 	SStgui.force_close_window(user, window_id)
+
+/**
+ * A few edge cases that need to bypass topic limits currently, comment why!
+ *
+ * returns TRUE for bypass
+ */
+/proc/bypass_topic_limit(href_list)
+	// Deviation from TG. Our statbrowser has so many commands that logging in as a borg can cause it to rate limit you. This needs fixing eventually.
+	if(href_list["window_id"] == "statbrowser")
+		return TRUE
+	// Chunked messages will exceed the limit
+	if(href_list["tgui"] && href_list["type"] == "payloadChunk")
+		return TRUE
+	return FALSE
 
 /**
  * Middleware for /client/Topic.
@@ -188,25 +237,53 @@
 /proc/tgui_Topic(href_list)
 	// Skip non-tgui topics
 	if(!href_list["tgui"])
-		return TRUE
+		return FALSE
 	var/type = href_list["type"]
 	// Unconditionally collect tgui logs
 	if(type == "log")
-		log_tgui(usr, href_list["message"])
+		var/context = href_list["window_id"]
+		if (href_list["ns"])
+			context += " ([href_list["ns"]])"
+		log_tgui(usr, href_list["message"],
+			context = context)
+	// Reload all tgui windows
+	if(type == "cacheReloaded")
+		// Debugging should work, it can be bypassed anyway
+		if(/*!check_rights(R_ADMIN) ||*/ usr.client.tgui_cache_reloaded)
+			return TRUE
+		// Mark as reloaded
+		usr.client.tgui_cache_reloaded = TRUE
+		// Notify windows
+		var/list/windows = usr.client.tgui_windows
+		for(var/window_id in windows)
+			var/datum/tgui_window/window = windows[window_id]
+			if (window.status == TGUI_WINDOW_READY)
+				window.on_message(type, null, href_list)
+		return TRUE
 	// Locate window
 	var/window_id = href_list["window_id"]
 	var/datum/tgui_window/window
 	if(window_id)
 		window = usr.client.tgui_windows[window_id]
 		if(!window)
-			log_tgui(usr, "Error: Couldn't find the window datum, force closing.")
+			log_tgui(usr,
+				"Error: Couldn't find the window datum, force closing.",
+				context = window_id)
 			SStgui.force_close_window(usr, window_id)
-			return FALSE
+			return TRUE
+
 	// Decode payload
 	var/payload
 	if(href_list["payload"])
-		payload = json_decode(href_list["payload"])
+		var/payload_text = href_list["payload"]
+
+		if (!rustg_json_is_valid(payload_text))
+			log_tgui(usr, "Error: Invalid JSON")
+			return TRUE
+
+		payload = json_decode(payload_text)
+
 	// Pass message to window
 	if(window)
 		window.on_message(type, payload, href_list)
-	return FALSE
+	return TRUE

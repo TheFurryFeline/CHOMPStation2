@@ -14,20 +14,20 @@
 		announcement = "Massive migration of unknown biological entities has been detected near [station_name()], please stand-by." //CHOMPStation Edit: Restore original message.
 	else
 		announcement = "Unknown biological [spawned_spider.len == 1 ? "entity has" : "entities have"] been detected near [station_name()], please stand-by." //CHOMPStation Edit: Restore original message.
-	command_announcement.Announce(announcement, "Lifesign Alert")
+	GLOB.command_announcement.Announce(announcement, "Lifesign Alert", new_sound = ANNOUNCER_MSG_UNIDENTIFIED_LIFESIGNS)
 
 /datum/event/spider_migration/start()
 	if(severity == EVENT_LEVEL_MAJOR)
-		spawn_spider(landmarks_list.len)
+		spawn_spider(GLOB.landmarks_list.len)
 	else if(severity == EVENT_LEVEL_MODERATE)
 		spawn_spider(rand(4, 6)) 			//12 to 30 spider, in small groups
 	else
 		spawn_spider(rand(1, 3), 1, 2)	//1 to 6 spider, alone or in pairs
 
-/datum/event/spider_migration/proc/spawn_spider(var/num_groups, var/group_size_min=3, var/group_size_max=5)
+/datum/event/spider_migration/proc/spawn_spider(num_groups, group_size_min=3, group_size_max=5)
 	var/list/spawn_locations = list()
 
-	for(var/obj/effect/landmark/C in landmarks_list)
+	for(var/obj/effect/landmark/C in GLOB.landmarks_list)
 		if(C.name == "carpspawn")
 			spawn_locations.Add(C.loc)
 	spawn_locations = shuffle(spawn_locations)

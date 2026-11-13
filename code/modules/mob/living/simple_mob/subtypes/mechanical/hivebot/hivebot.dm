@@ -1,7 +1,3 @@
-// Hivebots are tuned towards how many default lasers are needed to kill them.
-// As such, if laser damage is ever changed, you should change this define.
-#define LASERS_TO_KILL * 40
-
 /mob/living/simple_mob/mechanical/hivebot
 	name = "hivebot"
 	desc = "A robot. It appears to be somewhat resilient, but lacks a true weapon."
@@ -9,7 +5,7 @@
 	icon_state = "basic"
 	icon_living = "basic"
 
-	faction = "hivebot"
+	faction = FACTION_HIVEBOT
 
 	maxHealth = 3 LASERS_TO_KILL
 	health = 3 LASERS_TO_KILL
@@ -17,7 +13,9 @@
 	movement_sound = 'sound/effects/servostep.ogg'
 
 	attacktext = list("clawed")
-	projectilesound = 'sound/weapons/Gunshot_old.ogg'
+	projectilesound = 'sound/weapons/gunshot_old.ogg'
+
+	organ_names = /datum/decl/mob_organ_names/hivebot
 
 	ai_holder_type = /datum/ai_holder/simple_mob/hivebot
 	say_list_type = /datum/say_list/hivebot
@@ -25,14 +23,14 @@
 
 /mob/living/simple_mob/mechanical/hivebot/death()
 	..()
-	visible_message(span("warning","\The [src] blows apart!"))
+	visible_message(span_warning("\The [src] blows apart!"))
 	new /obj/effect/decal/cleanable/blood/gibs/robot(src.loc)
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(3, 1, src)
 	s.start()
 	qdel(src)
 
-// The hivebot's default projectile. //CHOMP Edit this is no longer actually used by ranged_damage.dm for the hivebot. Hivebot now uses custom 22 long rifle.
+// The hivebot's default projectile.
 /obj/item/projectile/bullet/hivebot
 	damage = 10
 	damage_type = BRUTE
@@ -53,3 +51,6 @@
 	conserve_ammo = TRUE
 	firing_lanes = TRUE
 	can_flee = FALSE // Fearless dumb machines.
+
+/datum/decl/mob_organ_names/hivebot
+	hit_zones = list("central chassis", "positioning servo", "head", "sensor suite", "manipulator arm", "shoulder weapon mount", "weapons array", "front right leg", "front left leg", "rear left leg", "rear right leg")

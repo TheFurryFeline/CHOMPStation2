@@ -1,20 +1,19 @@
 // Procs to allow tiles to have material variables, consider unifying this on stack parent?
 // Uncertain if any of these procs can result in unforseen issues with tile objects, if there are bugs with tiles check if any of these procs are the cause
 
-/obj/item/stack/tile/New()
-	..()
+//^Does the bug this comment refers to even exist anymore. idk.
+
+/obj/item/stack/tile/Initialize(mapload)
+	. = ..()
 
 	if(!default_type)
 		default_type = DEFAULT_WALL_MATERIAL
 	material = get_material_by_name("[default_type]")
 	if(!material)
-		qdel(src)
-		return 0
+		return INITIALIZE_HINT_QDEL
 
-	recipes = material.get_recipes()
+	//recipes = material.get_recipes()	No.
 	stacktype = material.stack_type
-	if(islist(material.stack_origin_tech))
-		origin_tech = material.stack_origin_tech.Copy()
 
 	if(apply_colour)
 		color = material.icon_colour
@@ -22,8 +21,7 @@
 	if(!material.conductive)
 		flags |= NOCONDUCT
 
-	matter = material.get_matter()
-	return 1
+	//matter = material.get_matter()	Bad.
 
 
 /obj/item/stack/material/get_material()
@@ -100,3 +98,31 @@
 	desc = "A piece of orange carpet. It is the same size as a normal floor tile!"
 	icon_state = "tile-carpet"
 	default_type = MAT_CARPET_ORANGE
+
+/obj/item/stack/tile/carpet/brncarpet
+	icon_state = "tile-carpet"
+
+/obj/item/stack/tile/carpet/blucarpet2
+	icon_state = "tile-carpet"
+
+/obj/item/stack/tile/carpet/greencarpet
+	icon_state = "tile-carpet"
+
+/obj/item/stack/tile/carpet/purplecarpet
+	icon_state = "tile-carpet"
+
+/obj/item/stack/tile/carpet/geo
+	icon_state = "tile-carpet-deco"
+	desc = "A piece of carpet with a gnarly geometric design. It is the same size as a normal floor tile!"
+
+/obj/item/stack/tile/carpet/retro
+	icon_state = "tile-carpet-retro"
+	desc = "A piece of carpet with totally wicked blue space patterns. It is the same size as a normal floor tile!"
+
+/obj/item/stack/tile/carpet/retro_red
+	icon_state = "tile-carpet-retro-red"
+	desc = "A piece of carpet with red-ical space patterns. It is the same size as a normal floor tile!"
+
+/obj/item/stack/tile/carpet/happy
+	icon_state = "tile-carpet-happy"
+	desc = "A piece of carpet with happy patterns. It is the same size as a normal floor tile!"

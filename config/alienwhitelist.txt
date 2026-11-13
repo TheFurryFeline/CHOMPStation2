@@ -3,6 +3,7 @@ some~user - Species
 admiraldragon - Vox
 aetherelemental - Daemon
 arandomalien - Xenochimera
+arminazenith - Protean
 arokha - Protean
 aruis - Diona
 aruis - Xenochimera
@@ -26,13 +27,13 @@ mrsebbi - Xenochimera
 natje - Xenochimera
 nerdass - Protean
 ontejbjoav - Diona
+opheliathedreadful - Hanner
 oreganovulgaris - Xenochimera
 paradoxspace - Xenochimera
 pearlprophet - Protean
 phoenixx0 - Vox
 rapidvalj - Vox
 rapidvalj - Common Skrellian
-rapidvalj - High Skrellian
 rikaru19xjenkins - Xenochimera
 rixunie - Diona
 rykkastormheart - Xenochimera
@@ -48,7 +49,6 @@ storesund97 - Protean
 sharplight - Protean
 tastypred - Black-Eyed Shadekin
 tastypred - Xenochimera
-tastypred - Protean
 timidvi - Diona
 varonis - Xenochimera
 verkister - Xenochimera

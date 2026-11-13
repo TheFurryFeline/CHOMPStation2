@@ -6,14 +6,15 @@
 	desc = "A device for extracting power from high-energy plasma in toroidal fields."
 	icon = 'icons/obj/machines/power/fusion.dmi'
 	icon_state = "mag_trap0"
-	anchored = 1
+	anchored = TRUE
 	var/list/things_in_range = list()//what is in a radius of us?
 	var/list/fields_in_range = list()//What EM fields are in that radius?
 	var/list/active_field = list()//Our active field.
 	var/active = 0 //are we even on?
 	var/id_tag //needed for !!rasins!!
+	circuit = /obj/item/circuitboard/hydromagnetic_trap
 
-/obj/machinery/power/hydromagnetic_trap/attackby(var/obj/item/W, var/mob/user)
+/obj/machinery/power/hydromagnetic_trap/attackby(obj/item/W, mob/user)
 	if(default_unfasten_wrench(user, W))
 		return
 
@@ -71,3 +72,6 @@
 		if (FF.plasma_temperature <= MINIMUM_PLASMA_TEMPERATURE)
 			icon_state = "mag_trap0"
 	return
+
+#undef ENERGY_PER_K
+#undef MINIMUM_PLASMA_TEMPERATURE

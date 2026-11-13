@@ -10,7 +10,7 @@
 	var/max_home_distance = 3			// How far the mob can go away from its home before being told to go_home().
 										// Note that there is a 'BYOND cap' of 14 due to limitations of get_/step_to().
 	// Wandering.
-	var/wander = FALSE					// If true, the mob will randomly move in the four cardinal directions when idle.
+	var/wander = FALSE					// If true, the mob will randomly move in the four GLOB.cardinal directions when idle.
 	var/wander_delay = 0				// How many ticks until the mob can move a tile in handle_wander_movement().
 	var/base_wander_delay = 2			// What the above var gets set to when it wanders. Note that a tick happens every half a second.
 	var/wander_when_pulled = FALSE		// If the mob will refrain from wandering if someone is pulling it.
@@ -62,6 +62,7 @@
 		give_destination(home_turf, max_home_distance)
 	else
 		ai_log("go_home() : Told to go home without home_turf.", AI_LOG_ERROR)
+		pass() // Remove this ever ai_log does something
 
 /datum/ai_holder/proc/give_destination(turf/new_destination, min_distance = 1, combat = FALSE)
 	ai_log("give_destination() : Entering.", AI_LOG_DEBUG)
@@ -75,6 +76,7 @@
 		return TRUE
 	else
 		ai_log("give_destination() : Given null destination.", AI_LOG_ERROR)
+		pass() // Remove this ever ai_log does something
 
 	ai_log("give_destination() : Exiting.", AI_LOG_DEBUG)
 
@@ -126,7 +128,7 @@
 
 	if(path_display)
 		var/turf/T = src.path[1]
-		T.overlays -= path_overlay
+		T.cut_overlay(path_overlay)
 
 //	step_towards(holder, src.path[1])
 	if(holder.IMove(get_step_towards(holder, src.path[1])) != MOVEMENT_ON_COOLDOWN)
@@ -143,8 +145,10 @@
 /datum/ai_holder/proc/should_wander()
 	return (stance == STANCE_IDLE) && wander && !leader
 
-// Wanders randomly in cardinal directions.
+// Wanders randomly in GLOB.cardinal directions.
 /datum/ai_holder/proc/handle_wander_movement()
+	if(!holder)
+		return
 	ai_log("handle_wander_movement() : Entered.", AI_LOG_TRACE)
 	if(isturf(holder.loc) && can_act())
 		wander_delay--
@@ -154,7 +158,7 @@
 				return
 
 			var/moving_to = 0 // Apparently this is required or it always picks 4, according to the previous developer for simplemob AI.
-			moving_to = pick(cardinal)
+			moving_to = pick(GLOB.cardinal)
 			holder.set_dir(moving_to)
 			holder.IMove(get_step(holder,moving_to))
 			wander_delay = base_wander_delay
@@ -164,13 +168,13 @@
 	// No target, don't use the ladder
 	// Target is visible, don't use the ladder
 	if(!target || can_see_target(target))
-		return 
+		return
 
 	var/has_hands = TRUE
-	if(istype(holder, /mob/living/simple_mob))
+	if(isanimal(holder))
 		var/mob/living/simple_mob/S = holder
 		has_hands = S.has_hands
-	
+
 	// Don't have means to use a ladder or the space around it, don't use the ladder
 	if(!has_hands && !holder.hovering)
 		return
@@ -178,7 +182,7 @@
 	var/obj/structure/ladder/L = locate() in get_turf(holder)
 	if(!istype(L))
 		return // No ladder, can't use it
-	
+
 	if(!holder.may_climb_ladders(L))
 		return // Can't climb the ladder for other reasons (Probably inconsequential?)
 
@@ -187,6 +191,6 @@
 		directions += L.target_down
 	if(L.allowed_directions & UP)
 		directions += L.target_up
-	
+
 	if(directions.len)
 		L.climbLadder(holder, pick(directions))

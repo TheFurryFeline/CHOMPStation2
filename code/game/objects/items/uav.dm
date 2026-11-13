@@ -3,19 +3,24 @@
 #define UAV_PAIRING 2
 #define UAV_PACKED 3
 
-/obj/item/device/uav
+/obj/item/uav
 	name = "recon skimmer"
 	desc = "A semi-portable reconnaissance drone that folds into a backpack-sized carrying case."
 	icon = 'icons/obj/uav.dmi'
 	icon_state = "uav"
 
-	var/obj/item/weapon/cell/cell
+	var/obj/item/cell/cell
 	var/cell_type = null //Can put a starting cell here
 
-	density = 1 //Is dense, but not anchored, so you can swap with it
-	slowdown = 3 //Heevvee.
+	density = TRUE //Is dense, but not anchored, so you can swap with it
+	slowdown = 1.5 //Heevvee.
 
 	health = 100
+
+	light_system = MOVABLE_LIGHT_DIRECTIONAL
+	light_cone_y_offset = 5
+	light_range = 4
+	light_power = 4
 	var/power_per_process = 50 // About 6.5 minutes of use on a high-cell (10,000)
 	var/state = UAV_OFF
 
@@ -24,7 +29,7 @@
 	var/list/mob/living/masters
 
 	// So you know which is which
-	var/nickname = "Generic Droan"
+	var/nickname = "Unnamed UAV"
 
 	// Radial menu
 	var/static/image/radial_pickup = image(icon = 'icons/mob/radial.dmi', icon_state = "radial_pickup")
@@ -38,39 +43,39 @@
 	// Idle shutdown time
 	var/no_masters_time = 0
 
-/obj/item/device/uav/loaded
-	cell_type = /obj/item/weapon/cell/high
+/obj/item/uav/loaded
+	cell_type = /obj/item/cell/high
 
-/obj/item/device/uav/Initialize()
+/obj/item/uav/Initialize(mapload)
 	. = ..()
-	
+
 	if(!cell && cell_type)
 		cell = new cell_type
-	
+
 	ion_trail = new /datum/effect/effect/system/ion_trail_follow()
 	ion_trail.set_up(src)
 	ion_trail.stop()
 
-/obj/item/device/uav/Destroy()
-	qdel_null(cell)
-	qdel_null(ion_trail)
+/obj/item/uav/Destroy()
+	QDEL_NULL(cell)
+	QDEL_NULL(ion_trail)
 	LAZYCLEARLIST(masters)
 	STOP_PROCESSING(SSobj, src)
 	return ..()
 
-/obj/item/device/uav/examine(mob/user)
+/obj/item/uav/examine(mob/user)
 	. = ..()
 	if(Adjacent(user))
 		. += "It has <i>'[nickname]'</i> scribbled on the side."
 	if(!cell)
-		. += "<span class='warning'>It appears to be missing a power cell.</span>"
-	
-	if(health <= (initial(health)/4))
-		. += "<span class='warning'>It looks like it might break at any second!</span>"
-	else if(health <= (initial(health)/2))
-		. += "<span class='warning'>It looks pretty beaten up...</span>"
+		. += span_warning("It appears to be missing a power cell.")
 
-/obj/item/device/uav/attack_hand(var/mob/user)
+	if(health <= (initial(health)/4))
+		. += span_warning("It looks like it might break at any second!")
+	else if(health <= (initial(health)/2))
+		. += span_warning("It looks pretty beaten up...")
+
+/obj/item/uav/attack_hand(mob/user)
 	//Has to be on the ground to work with it properly
 	if(!isturf(loc))
 		return ..()
@@ -81,19 +86,21 @@
 		"Toggle Power" = radial_power,
 		"Pairing Mode" = radial_pair)
 	var/choice = show_radial_menu(user, src, options, require_near = !issilicon(user))
-	
+
 	switch(choice)
 		// Can pick up when off or packed
 		if("Pick Up")
 			if(state == UAV_OFF || state == UAV_PACKED)
 				return ..()
 			else
-				to_chat(user,"<span class='warning'>Turn [nickname] off or pack it first!</span>")
+				to_chat(user,span_warning("Turn [nickname] off or pack it first!"))
 				return
 		// Can disasemble or reassemble from packed or off (and this one takes time)
 		if("(Dis)Assemble")
-			if(can_transition_to(state == UAV_PACKED ? UAV_OFF : UAV_PACKED, user) && do_after(user, 10 SECONDS, src))
-				return toggle_packed(user)
+			if(can_transition_to(state == UAV_PACKED ? UAV_OFF : UAV_PACKED, user))
+				user.visible_message(span_infoplain(span_bold("[user]") + " starts [state == UAV_PACKED ? "unpacking" : "packing"] [src]."), span_info("You start [state == UAV_PACKED ? "unpacking" : "packing"] [src]."))
+				if(do_after(user, 10 SECONDS, target = src))
+					return toggle_packed(user)
 		// Can toggle power from on and off
 		if("Toggle Power")
 			if(can_transition_to(state == UAV_ON ? UAV_OFF : UAV_ON, user))
@@ -103,43 +110,43 @@
 			if(can_transition_to(state == UAV_PAIRING ? UAV_OFF : UAV_PAIRING, user))
 				return toggle_pairing(user)
 
-/obj/item/device/uav/attackby(var/obj/item/I, var/mob/user)
+/obj/item/uav/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/modular_computer) && state == UAV_PAIRING)
 		var/obj/item/modular_computer/MC = I
-		LAZYDISTINCTADD(MC.paired_uavs, weakref(src))
+		LAZYDISTINCTADD(MC.paired_uavs, WEAKREF(src))
 		playsound(src, 'sound/machines/buttonbeep.ogg', 50, 1)
-		visible_message("<span class='notice'>[user] pairs [I] to [nickname]</span>")
+		visible_message(span_notice("[user] pairs [I] to [nickname]"))
 		toggle_pairing()
-	
-	else if(I.is_screwdriver() && cell)
-		if(do_after(user, 3 SECONDS, src))
-			to_chat(user, "<span class='notice'>You remove [cell] into [nickname].</span>")
+
+	else if(I.has_tool_quality(TOOL_SCREWDRIVER) && cell)
+		if(do_after(user, 3 SECONDS, target = src))
+			to_chat(user, span_notice("You remove [cell] into [nickname]."))
 			playsound(src, I.usesound, 50, 1)
 			power_down()
 			cell.forceMove(get_turf(src))
 			cell = null
-	
-	else if(istype(I, /obj/item/weapon/cell) && !cell)
-		if(do_after(user, 3 SECONDS, src))
-			to_chat(user, "<span class='notice'>You insert [I] into [nickname].</span>")
+
+	else if(istype(I, /obj/item/cell) && !cell)
+		if(do_after(user, 3 SECONDS, target = src))
+			to_chat(user, span_notice("You insert [I] into [nickname]."))
 			playsound(src, 'sound/items/deconstruct.ogg', 50, 1)
 			power_down()
 			user.remove_from_mob(I)
 			I.forceMove(src)
 			cell = I
 
-	else if(istype(I, /obj/item/weapon/pen) || istype(I, /obj/item/device/flashlight/pen))
-		var/tmp_label = sanitizeSafe(input(user, "Enter a nickname for [src]", "Nickname", nickname), MAX_NAME_LEN)
+	else if(istype(I, /obj/item/pen) || istype(I, /obj/item/flashlight/pen))
+		var/tmp_label = tgui_input_text(user, "Enter a nickname for [src]", "Nickname", nickname, MAX_NAME_LEN)
 		if(length(tmp_label) > 50 || length(tmp_label) < 3)
-			to_chat(user, "<span class='notice'>The nickname must be between 3 and 50 characters.</span>")
+			to_chat(user, span_notice("The nickname must be between 3 and 50 characters."))
 		else
-			to_chat(user, "<span class='notice'>You scribble your new nickname on the side of [src].</span>")
+			to_chat(user, span_notice("You scribble your new nickname on the side of [src]."))
 			nickname = tmp_label
-			desc = initial(desc) + " This one has <span class='notice'>'[nickname]'</span> scribbled on the side."
+			desc = initial(desc) + " This one has "  + span_notice("'[nickname]'") + " scribbled on the side."
 	else
 		return ..()
 
-/obj/item/device/uav/proc/can_transition_to(var/new_state, var/mob/user)
+/obj/item/uav/proc/can_transition_to(new_state, mob/user)
 	switch(state) //Current one
 		if(UAV_ON)
 			if(new_state == UAV_OFF || new_state == UAV_PACKED)
@@ -156,10 +163,10 @@
 
 	if(!.)
 		if(user)
-			to_chat(user, "<span class='warning'>You can't do that while [nickname] is in this state.</span>")
+			to_chat(user, span_warning("You can't do that while [nickname] is in this state."))
 		return FALSE
 
-/obj/item/device/uav/update_icon()
+/obj/item/uav/update_icon()
 	cut_overlays()
 	switch(state)
 		if(UAV_PAIRING)
@@ -172,19 +179,19 @@
 		if(UAV_PACKED)
 			icon_state = "[initial(icon_state)]_packed"
 
-/obj/item/device/uav/process()
+/obj/item/uav/process()
 	if(cell?.use(power_per_process) != power_per_process)
-		visible_message("<span class='warning'>[src] sputters and thuds to the ground, inert.</span>")
+		visible_message(span_warning("[src] sputters and thuds to the ground, inert."))
 		playsound(src, 'sound/items/drop/metalboots.ogg', 75, 1)
 		power_down()
 		health -= initial(health)*0.25 //Lose 25% of your original health
-	
+
 	if(LAZYLEN(masters))
 		no_masters_time = 0
 	else if(no_masters_time++ > 50)
 		power_down()
 
-/obj/item/device/uav/proc/toggle_pairing()
+/obj/item/uav/proc/toggle_pairing()
 	switch(state)
 		if(UAV_PAIRING)
 			state = UAV_OFF
@@ -196,7 +203,7 @@
 			return TRUE
 	return FALSE
 
-/obj/item/device/uav/proc/toggle_power()
+/obj/item/uav/proc/toggle_power()
 	switch(state)
 		if(UAV_OFF)
 			power_up()
@@ -206,81 +213,82 @@
 			return TRUE
 	return FALSE
 
-/obj/item/device/uav/proc/toggle_packed()
-	if(UAV_ON)
+/obj/item/uav/proc/toggle_packed()
+	if(state == UAV_ON)
 		power_down()
 	switch(state)
 		if(UAV_OFF) //Packing
 			state = UAV_PACKED
 			w_class = ITEMSIZE_LARGE
-			slowdown = 1
+			slowdown = 0.5
 			density = FALSE
 			update_icon()
 			return TRUE
 		if(UAV_PACKED) //Unpacking
 			state = UAV_OFF
 			w_class = ITEMSIZE_HUGE
-			slowdown = 3
+			slowdown = 1.5
 			density = TRUE
 			update_icon()
 			return TRUE
 	return FALSE
 
-/obj/item/device/uav/proc/power_up()
+/obj/item/uav/can_fall()
+	if(ion_trail.on)
+		return FALSE
+	. = ..()
+
+/obj/item/uav/proc/power_up()
 	if(state != UAV_OFF || !isturf(loc))
 		return
 	if(cell?.use(power_per_process) != power_per_process)
-		visible_message("<span class='warning'>[src] sputters and chugs as it tries, and fails, to power up.</span>")
+		visible_message(span_warning("[src] sputters and chugs as it tries, and fails, to power up."))
 		return
 
 	state = UAV_ON
 	update_icon()
 	start_hover()
-	set_light(4, 4, "#FFFFFF")
+	set_light_on(TRUE)
 	START_PROCESSING(SSobj, src)
 	no_masters_time = 0
-	visible_message("<span class='notice'>[nickname] buzzes and lifts into the air.</span>")
+	visible_message(span_notice("[nickname] buzzes and lifts into the air."))
 
-/obj/item/device/uav/proc/power_down()
+/obj/item/uav/proc/power_down()
 	if(state != UAV_ON)
 		return
-	
+
 	state = UAV_OFF
 	update_icon()
 	stop_hover()
-	set_light(0)
+	set_light_on(FALSE)
 	LAZYCLEARLIST(masters)
 	STOP_PROCESSING(SSobj, src)
-	visible_message("<span class='notice'>[nickname] gracefully settles onto the ground.</span>")
+	visible_message(span_notice("[nickname] gracefully settles onto the ground."))
+	if(isopenspace(loc))
+		fall()
 
 //////////////// Helpers
-/obj/item/device/uav/get_cell()
+/obj/item/uav/get_cell()
 	return cell
 
-/obj/item/device/uav/relaymove(var/mob/user, direction, signal = 1)
-	if(signal && state == UAV_ON && (weakref(user) in masters))
+/obj/item/uav/relaymove(mob/user, direction, signal = 1)
+	if(signal && state == UAV_ON && (WEAKREF(user) in masters))
 		if(next_move <= world.time)
 			next_move = world.time + (1 SECOND/signal)
 			step(src, direction)
 		return TRUE // Even if we couldn't step, we're taking credit for absorbing the move
 	return FALSE
 
-/obj/item/device/uav/proc/get_status_string()
+/obj/item/uav/proc/get_status_string()
 	return "[nickname] - [get_x(src)],[get_y(src)],[get_z(src)] - I:[health]/[initial(health)] - C:[cell ? "[cell.charge]/[cell.maxcharge]" : "Not Installed"]"
 
-/obj/item/device/uav/proc/add_master(var/mob/living/M)
-	LAZYDISTINCTADD(masters, weakref(M))
+/obj/item/uav/proc/add_master(mob/living/M)
+	LAZYDISTINCTADD(masters, WEAKREF(M))
 
-/obj/item/device/uav/proc/remove_master(var/mob/living/M)
-	LAZYREMOVE(masters, weakref(M))
+/obj/item/uav/proc/remove_master(mob/living/M)
+	LAZYREMOVE(masters, WEAKREF(M))
 
-/obj/item/device/uav/check_eye()
-	if(state == UAV_ON)
-		return 0
-	else
-		return -1
-
-/obj/item/device/uav/proc/start_hover()
+/obj/item/uav/proc/start_hover()
 	if(!ion_trail.on) //We'll just use this to store if we're floating or not
 		ion_trail.start()
 		var/amplitude = 2 //maximum displacement from original position
@@ -295,48 +303,49 @@
 		animate(pixel_y = bottom, time = half_period, easing = SINE_EASING, loop = -1)						//down
 		animate(pixel_y = old_y, time = quarter_period, easing = SINE_EASING | EASE_IN, loop = -1)			//back
 
-/obj/item/device/uav/proc/stop_hover()
+/obj/item/uav/proc/stop_hover()
 	if(ion_trail.on)
 		ion_trail.stop()
 		animate(src, pixel_y = old_y, time = 5, easing = SINE_EASING | EASE_IN) //halt animation
 
-/obj/item/device/uav/hear_talk(var/mob/M, list/message_pieces, verb)
+/obj/item/uav/hear_talk(mob/M, list/message_pieces, verb)
 	var/name_used = M.GetVoice()
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
-		var/message = master.combine_message(message_pieces, verb, M)
-		var/rendered = "<i><span class='game say'>UAV received: <span class='name'>[name_used]</span> [message]</span></i>"
+		var/list/combined = master.combine_message(message_pieces, verb, M)
+		var/message = combined["formatted"]
+		var/rendered = span_game(span_say(span_italics("UAV received: " + span_name("[name_used]") + " [message]")))
 		master.show_message(rendered, 2)
 
-/obj/item/device/uav/see_emote(var/mob/living/M, text)
+/obj/item/uav/see_emote(mob/living/M, text)
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
-		var/rendered = "<i><span class='game say'>UAV received, <span class='message'>[text]</span></span></i>"
+		var/rendered = span_game(span_say(span_italics("UAV received, " + span_message("[text]"))))
 		master.show_message(rendered, 2)
 
-/obj/item/device/uav/show_message(msg, type, alt, alt_type)
+/obj/item/uav/show_message(msg, type, alt, alt_type)
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
-		var/rendered = "<i><span class='game say'>UAV received, <span class='message'>[msg]</span></span></i>"
+		var/rendered = span_game(span_say(span_italics("UAV received, " + span_message("[msg]"))))
 		master.show_message(rendered, type)
 
-/obj/item/device/uav/take_damage(var/damage)
+/obj/item/uav/take_damage(damage)
 	health -= damage
 	CheckHealth()
 	return
 
-/obj/item/device/uav/attack_generic(var/mob/user, var/damage, var/attack_verb)
-	visible_message("<span class='danger'>[user] [attack_verb] the [src]!</span>")
+/obj/item/uav/attack_generic(mob/user, damage, attack_verb)
+	visible_message(span_danger("[user] [attack_verb] the [src]!"))
 	playsound(src, 'sound/weapons/smash.ogg', 50, 1)
 	user.do_attack_animation(src)
 	health -= damage
 	CheckHealth()
 	return
 
-/obj/item/device/uav/ex_act(severity)
+/obj/item/uav/ex_act(severity)
 	switch(severity)
 		if(1.0)
 			die()
@@ -344,12 +353,12 @@
 			health -= 25
 			CheckHealth()
 
-/obj/item/device/uav/proc/CheckHealth()
+/obj/item/uav/proc/CheckHealth()
 	if(health <= 0)
 		die()
 
-/obj/item/device/uav/proc/die()
-	visible_message("<span class='danger'>[src] shorts out and explodes!</span>")
+/obj/item/uav/proc/die()
+	visible_message(span_danger("[src] shorts out and explodes!"))
 	power_down()
 	var/turf/T = get_turf(src)
 	qdel(src)
@@ -357,4 +366,5 @@
 
 #undef UAV_OFF
 #undef UAV_ON
+#undef UAV_PAIRING
 #undef UAV_PACKED

@@ -5,7 +5,7 @@
 	anchored = FALSE
 	density = FALSE
 	var/mob/living/carbon/human/attached = null
-	var/obj/item/weapon/reagent_containers/beaker = null
+	var/obj/item/reagent_containers/beaker = null
 
 /obj/machinery/feeder/update_icon()
 	if(attached)
@@ -51,8 +51,8 @@
 		update_icon()
 
 
-/obj/machinery/feeder/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(istype(W, /obj/item/weapon/reagent_containers))
+/obj/machinery/feeder/attackby(obj/item/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/reagent_containers))
 		if(!isnull(beaker))
 			. += "There is already a reagent container inserted!"
 			return
@@ -65,10 +65,9 @@
 		return
 
 	if(default_deconstruction_screwdriver(user, W))
-		if(do_after(user, 15))
+		if(do_after(user, 15, src))
 			to_chat(user, "You deconstruct the feeder.")
-			var/obj/item/stack/material/plastic/A = new /obj/item/stack/material/plastic(src.loc)
-			A.amount = 4
+			new /obj/item/stack/material/plastic(src.loc, 4)
 			if(beaker)
 				beaker.loc = get_turf(src)
 				beaker = null
@@ -108,13 +107,13 @@
 
 	if(beaker)
 		if(beaker.reagents && beaker.reagents.reagent_list.len)
-			. += "<span class='notice'>Inserted is \a [beaker] with [beaker.reagents.total_volume] units of liquid.</span>"
+			. += span_notice("Inserted is \a [beaker] with [beaker.reagents.total_volume] units of liquid.")
 		else
-			. += "<span class='notice'>Inserted is an empty [beaker].</span>"
+			. += span_notice("Inserted is an empty [beaker].")
 	else
-		. += "<span class='notice'>No container is inserted.</span>"
+		. += span_notice("No container is inserted.")
 
-	. += "<span class='notice'>[attached ? attached : "No one"] is being fed by it.</span>"
+	. += span_notice("[attached ? attached : "No one"] is being fed by it.")
 
 /obj/machinery/feeder/CanPass(atom/movable/mover, turf/target, height = 0, air_group = 0)
 	if(height && istype(mover) && mover.checkpass(PASSTABLE)) //allow bullets, beams, thrown objects, mice, drones, and the like through.

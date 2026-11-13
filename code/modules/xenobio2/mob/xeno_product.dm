@@ -10,9 +10,7 @@ Xenobiological product lives here as a basic type.
 	var/source = "Unknown"
 	var/product = "mess"
 	var/nameVar = "blah"
-	
+
 /obj/item/xenoproduct/Destroy()
-	traits.Destroy()	//Let's not leave any traits hanging around.
-	traits = null
-	..()
-	
+	QDEL_NULL(traits)
+	. = ..()

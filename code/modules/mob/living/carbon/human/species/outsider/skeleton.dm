@@ -2,7 +2,7 @@
 	name = SPECIES_SKELETON
 	name_plural = "Skeletons"
 	icobase = 'icons/mob/human_races/r_skeleton.dmi'
-	primitive_form = "Monkey"
+	primitive_form = SPECIES_MONKEY
 	language = "Sol Common"
 	unarmed_types = list(/datum/unarmed_attack/claws/strong, /datum/unarmed_attack/bite/sharp)	//Bones are pointy, fight me.
 	blurb = "Spooky Scary Skeletons!"
@@ -11,12 +11,13 @@
 	max_age = 110
 	health_hud_intensity = 1.5
 
-	flags = NO_SCAN | NO_PAIN | NO_SLIP | NO_POISON | NO_MINOR_CUT | NO_BLOOD | UNDEAD | NO_DEFIB
+	flags = NO_DNA | NO_SLEEVE | NO_PAIN | NO_SLIP | NO_POISON | NO_MINOR_CUT | NO_BLOOD | UNDEAD | NO_DEFIB
 	spawn_flags = SPECIES_IS_RESTRICTED
 	appearance_flags = null
 
-	male_scream_sound = null //CHOMPedit Screaming skeletons would be funny, but needs better sounds
-	female_scream_sound = null //CHOMPedit
+	// CHOMPedit: No sounds for this species
+	// male_scream_sound = null //CHOMPedit Screaming skeletons would be funny, but needs better sounds
+	// female_scream_sound = null //CHOMPedit
 
 	show_ssd = null
 

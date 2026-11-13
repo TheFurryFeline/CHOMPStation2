@@ -1,19 +1,25 @@
 /obj/structure/table/CanPass(atom/movable/mover, turf/target)
 	if(istype(mover,/obj/item/projectile))
 		return (check_cover(mover,target))
-	if (flipped == 1)
-		if (get_dir(loc, target) == dir)
+	if(mover.z > z)
+		return TRUE //This allows mobs to drop down onto tables from above
+	if(flipped == 1)
+		if(get_dir(mover, target) == GLOB.reverse_dir[dir]) // From elsewhere to here, can't move against our dir
 			return !density
-		else
-			return TRUE
+		return TRUE
 	if(istype(mover) && mover.checkpass(PASSTABLE))
 		return TRUE
 	if(locate(/obj/structure/table/bench) in get_turf(mover))
 		return FALSE
 	var/obj/structure/table/table = locate(/obj/structure/table) in get_turf(mover)
-	if(table && !table.flipped)
+	if(table && !(table.flipped == 1))
 		return TRUE
 	return FALSE
+
+/obj/structure/table/Uncross(atom/movable/mover, turf/target)
+	if(flipped == 1 && (get_dir(mover, target) == dir)) // From here to elsewhere, can't move in our dir
+		return !density
+	return TRUE
 
 //checks if projectile 'P' from turf 'from' can hit whatever is behind the table. Returns 1 if it can, 0 if bullet stops.
 /obj/structure/table/proc/check_cover(obj/item/projectile/P, turf/from)
@@ -40,46 +46,55 @@
 		if(prob(chance))
 			health -= P.damage/2
 			if (health > 0)
-				visible_message("<span class='warning'>[P] hits \the [src]!</span>")
+				visible_message(span_warning("[P] hits \the [src]!"))
 				return 0
 			else
-				visible_message("<span class='warning'>[src] breaks down!</span>")
+				visible_message(span_warning("[src] breaks down!"))
 				break_to_parts()
 				return 1
 	return 1
 
-/obj/structure/table/CheckExit(atom/movable/O as mob|obj, target as turf)
-	if(istype(O) && O.checkpass(PASSTABLE))
-		return 1
-	if (flipped==1)
-		if (get_dir(loc, target) == dir)
-			return !density
-		else
-			return 1
-	return 1
-
-
-/obj/structure/table/MouseDrop_T(obj/O as obj, mob/user as mob)
-
-	if ((!( istype(O, /obj/item/weapon) ) || user.get_active_hand() != O))
-		return ..()
-	if(isrobot(user))
+/obj/structure/table/MouseDrop_T(obj/O, mob/user, src_location, over_location, src_control, over_control, params)
+	if(user.stat)
 		return
-	user.unEquip(O, 0, src.loc)
-	return
+	if(can_reinforce && isliving(user) && istype(O, /obj/item/stack/material) && user.get_active_hand() == O && Adjacent(user))
+		reinforce_table(O, user)
+	else if(ismob(O.loc)) //If placing an item
+		if(!isitem(O) || user.get_active_hand() != O)
+			return ..()
+		if(isrobot(user))
+			return
+		user.drop_item()
+		if(O.loc != src.loc)
+			step(O, get_dir(O, src))
+
+	else if(isturf(O.loc) && isitem(O)) //If pushing an item on the tabletop
+		var/obj/item/I = O
+		if(I.anchored)
+			return
+
+		if((isliving(user)) && (Adjacent(user)) && !(user.incapacitated()))
+			if(O.w_class <= user.can_pull_size)
+				O.forceMove(loc)
+				auto_align(I, params, TRUE)
+			else
+				to_chat(user, span_warning("\The [I] is too big for you to move!"))
+			return
+
+	return ..()
 
 
-/obj/structure/table/attackby(obj/item/W as obj, mob/user as mob, var/hit_modifier, var/click_parameters)
+/obj/structure/table/attackby(obj/item/W, mob/user, hit_modifier, click_parameters)
 	if (!W) return
 
 	// Handle harm intent grabbing/tabling.
-	if(istype(W, /obj/item/weapon/grab) && get_dist(src,user)<2)
-		var/obj/item/weapon/grab/G = W
-		if (istype(G.affecting, /mob/living))
+	if(istype(W, /obj/item/grab) && get_dist(src,user)<2)
+		var/obj/item/grab/G = W
+		if (isliving(G.affecting))
 			var/mob/living/M = G.affecting
-			var/obj/occupied = turf_is_crowded()
+			var/obj/occupied = can_climb_turf(src)
 			if(occupied)
-				to_chat(user, "<span class='danger'>There's \a [occupied] in the way.</span>")
+				to_chat(user, span_danger("There's \a [occupied] in the way."))
 				return
 			if(!user.Adjacent(M))
 				return
@@ -87,99 +102,67 @@
 				if(user.a_intent == I_HURT)
 					if (prob(15))	M.Weaken(5)
 					M.apply_damage(8,def_zone = BP_HEAD)
-					visible_message("<span class='danger'>[G.assailant] slams [G.affecting]'s face against \the [src]!</span>")
+					visible_message(span_danger("[G.assailant] slams [G.affecting]'s face against \the [src]!"))
 					if(material)
 						playsound(src, material.tableslam_noise, 50, 1)
 					else
 						playsound(src, 'sound/weapons/tablehit1.ogg', 50, 1)
 					var/list/L = take_damage(rand(1,5))
 					// Shards. Extra damage, plus potentially the fact YOU LITERALLY HAVE A PIECE OF GLASS/METAL/WHATEVER IN YOUR FACE
-					for(var/obj/item/weapon/material/shard/S in L)
+					for(var/obj/item/material/shard/S in L)
 						if(prob(50))
-							M.visible_message("<span class='danger'>\The [S] slices [M]'s face messily!</span>",
-							                   "<span class='danger'>\The [S] slices your face messily!</span>")
+							M.visible_message(span_danger("\The [S] slices [M]'s face messily!"),
+												span_danger("\The [S] slices your face messily!"))
 							M.apply_damage(10, def_zone = BP_HEAD)
 							if(prob(2))
 								M.embed(S, def_zone = BP_HEAD)
 				else
-					to_chat(user, "<span class='danger'>You need a better grip to do that!</span>")
+					to_chat(user, span_danger("You need a better grip to do that!"))
 					return
 			else if(G.state > GRAB_AGGRESSIVE || world.time >= (G.last_action + UPGRADE_COOLDOWN))
 				M.forceMove(get_turf(src))
 				M.Weaken(5)
-				visible_message("<span class='danger'>[G.assailant] puts [G.affecting] on \the [src].</span>")
+				visible_message(span_danger("[G.assailant] puts [G.affecting] on \the [src]."))
 			qdel(W)
 			return
 
 	// Handle dismantling or placing things on the table from here on.
 	if(isrobot(user))
-		return
+		if(istype(W, /obj/item/gripper))
+			var/obj/item/gripper/robot_gripper = W
+			var/obj/item/item_to_drop = robot_gripper.get_wrapped_item()
+			robot_gripper.drop_item_nm(loc)
+			item_to_drop.do_drop_animation(user)
+			auto_align(item_to_drop, click_parameters)
+		return FALSE
 
 	if(W.loc != user) // This should stop mounted modules ending up outside the module.
 		return
 
-	if(istype(W, /obj/item/weapon/melee/energy/blade))
+	if(istype(W, /obj/item/melee/energy/blade))
 		var/datum/effect/effect/system/spark_spread/spark_system = new /datum/effect/effect/system/spark_spread()
 		spark_system.set_up(5, 0, src.loc)
 		spark_system.start()
 		playsound(src, 'sound/weapons/blade1.ogg', 50, 1)
 		playsound(src, "sparks", 50, 1)
-		user.visible_message("<span class='danger'>\The [src] was sliced apart by [user]!</span>")
+		user.visible_message(span_danger("\The [src] was sliced apart by [user]!"))
 		break_to_parts()
 		return
 
-	if(istype(W, /obj/item/weapon/melee/changeling/arm_blade))
-		user.visible_message("<span class='danger'>\The [src] was sliced apart by [user]!</span>")
+	if(istype(W, /obj/item/melee/changeling/arm_blade))
+		user.visible_message(span_danger("\The [src] was sliced apart by [user]!"))
 		break_to_parts()
 		return
 
 	if(can_plate && !material)
-		to_chat(user, "<span class='warning'>There's nothing to put \the [W] on! Try adding plating to \the [src] first.</span>")
+		to_chat(user, span_warning("There's nothing to put \the [W] on! Try adding plating to \the [src] first."))
 		return
 
 // Placing stuff on tables
-	if(user.unEquip(W, 0, src.loc) && user.is_preference_enabled(/datum/client_preference/precision_placement))
+	if(user.unEquip(W, 0, src.loc) && user.client?.prefs?.read_preference(/datum/preference/toggle/precision_placement))
+		W.do_drop_animation(user)
 		auto_align(W, click_parameters)
 		return 1
-
-#define CELLS 8								//Amount of cells per row/column in grid
-#define CELLSIZE (world.icon_size/CELLS)	//Size of a cell in pixels
-/*
-Automatic alignment of items to an invisible grid, defined by CELLS and CELLSIZE.
-Since the grid will be shifted to own a cell that is perfectly centered on the turf, we end up with two 'cell halves'
-on edges of each row/column.
-Each item defines a center_of_mass, which is the pixel of a sprite where its projected center of mass toward a turf
-surface can be assumed. For a piece of paper, this will be in its center. For a bottle, it will be (near) the bottom
-of the sprite.
-auto_align() will then place the sprite so the defined center_of_mass is at the bottom left corner of the grid cell
-closest to where the cursor has clicked on.
-Note: This proc can be overwritten to allow for different types of auto-alignment.
-*/
-
-/obj/item/var/list/center_of_mass = list("x" = 16,"y" = 16)
-
-/obj/structure/table/proc/auto_align(obj/item/W, click_parameters)
-	if(!W.center_of_mass)
-		W.randpixel_xy()
-		return
-
-	if(!click_parameters)
-		return
-
-	var/list/mouse_control = params2list(click_parameters)
-
-	var/mouse_x = text2num(mouse_control["icon-x"])
-	var/mouse_y = text2num(mouse_control["icon-y"])
-
-	if(isnum(mouse_x) && isnum(mouse_y))
-		var/cell_x = max(0, min(CELLS-1, round(mouse_x/CELLSIZE)))
-		var/cell_y = max(0, min(CELLS-1, round(mouse_y/CELLSIZE)))
-
-		W.pixel_x = (CELLSIZE * (0.5 + cell_x)) - W.center_of_mass["x"]
-		W.pixel_y = (CELLSIZE * (0.5 + cell_y)) - W.center_of_mass["y"]
-
-#undef CELLS
-#undef CELLSIZE
 
 /obj/structure/table/attack_tk() // no telehulk sorry
 	return

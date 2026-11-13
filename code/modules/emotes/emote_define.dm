@@ -4,12 +4,20 @@
 //   gender-appropriate version of the same.
 // - Impaired messages do not do any substitutions.
 
-/decl/emote
+/proc/get_emote_by_key(key)
+	if(!LAZYLEN(GLOB.emotes_by_key))
+		GLOB.decls_repository.get_decls_of_type(/datum/decl/emote) // GLOB.emotes_by_key will be updated in emote Initialize()
+	return GLOB.emotes_by_key[key]
+
+/datum/decl/emote
 	var/key                                             // Command to use emote ie. '*[key]'
 	var/emote_message_1p                                // First person message ('You do a flip!')
 	var/emote_message_3p                                // Third person message ('Urist McBackflip does a flip!')
 	var/emote_message_synthetic_1p                      // First person message for robits.
 	var/emote_message_synthetic_3p                      // Third person message for robits.
+
+	var/emote_message_mute_1p							// First person message for mutes.
+	var/emote_message_mute_3p							// Third person message for mutes.
 
 	var/emote_message_impaired                          // Deaf/blind message ('You hear someone flipping out.', 'You see someone opening and closing their mouth')
 
@@ -22,38 +30,58 @@
 	var/emote_message_radio_synthetic                   // As above, but for synthetics.
 	var/emote_message_muffled                           // A message to show if the emote is audible and the user is muzzled.
 
-	var/list/emote_sound                                // A sound for the emote to play. 
-	                                                    // Can either be a single sound, a list of sounds to pick from, or an 
-	                                                    // associative array of gender to single sounds/a list of sounds.
+	var/list/emote_sound                                // A sound for the emote to play.
+														// Can either be a single sound, a list of sounds to pick from, or an
+														// associative array of gender to single sounds/a list of sounds.
 	var/list/emote_sound_synthetic                      // As above, but used when check_synthetic() is true.
 	var/emote_volume = 50                               // Volume of sound to play.
 	var/emote_volume_synthetic = 50                     // As above, but used when check_synthetic() is true.
+	var/emote_delay = 1.2 SECONDS                       // Time in ds that this emote will block further emote use (spam prevention). // VOREStation Edit
 
 	var/message_type = VISIBLE_MESSAGE                  // Audible/visual flag
 	var/check_restraints                                // Can this emote be used while restrained?
 	var/check_range                                     // falsy, or a range outside which the emote will not work
 	var/conscious = TRUE                                // Do we need to be awake to emote this?
 	var/emote_range = 0                                 // If >0, restricts emote visibility to viewers within range.
+	var/able_mute = FALSE								// If it this emote doesn't require vocal chords.
 
-/decl/emote/proc/get_emote_message_1p(var/atom/user, var/atom/target, var/extra_params)
+	var/sound_preferences = list(/datum/preference/toggle/emote_noises) // Default emote sound_preferences is just emote_noises. Belch emote overrides this list for pref-checks.
+	var/sound_vary = FALSE
+
+/datum/decl/emote/Initialize()
+	. = ..()
+	if(key)
+		LAZYSET(GLOB.emotes_by_key, key, src)
+
+/datum/decl/emote/proc/get_emote_message_1p(atom/user, atom/target, extra_params)
 	if(target)
 		if(emote_message_synthetic_1p_target && check_synthetic(user))
 			return emote_message_synthetic_1p_target
 		return emote_message_1p_target
+	var/mob/living/mob
+	if(isliving(user))
+		mob = user
+	if(emote_message_mute_1p && HAS_MIND_TRAIT(mob, TRAIT_MIMING))
+		return emote_message_mute_1p
 	if(emote_message_synthetic_1p && check_synthetic(user))
 		return emote_message_synthetic_1p
 	return emote_message_1p
 
-/decl/emote/proc/get_emote_message_3p(var/atom/user, var/atom/target, var/extra_params)
+/datum/decl/emote/proc/get_emote_message_3p(atom/user, atom/target, extra_params)
 	if(target)
 		if(emote_message_synthetic_3p_target && check_synthetic(user))
 			return emote_message_synthetic_3p_target
 		return emote_message_3p_target
+	var/mob/living/mob
+	if(isliving(user))
+		mob = user
+	if(emote_message_mute_3p && HAS_MIND_TRAIT(mob, TRAIT_MIMING))
+		return emote_message_mute_3p
 	if(emote_message_synthetic_3p && check_synthetic(user))
 		return emote_message_synthetic_3p
 	return emote_message_3p
 
-/decl/emote/proc/get_emote_sound(var/atom/user)
+/datum/decl/emote/proc/get_emote_sound(atom/user)
 	if(check_synthetic(user) && emote_sound_synthetic)
 		return list(
 			"sound" = emote_sound_synthetic,
@@ -65,36 +93,58 @@
 			"vol" =   emote_volume
 		)
 
-/decl/emote/proc/do_emote(var/atom/user, var/extra_params)
-	if(ismob(user) && check_restraints)
+/datum/decl/emote/proc/do_emote(atom/user, extra_params)
+	var/name_to_use = user
+	if(ismob(user))
 		var/mob/M = user
-		if(M.restrained())
-			to_chat(user, SPAN_WARNING("You are restrained and cannot do that."))
+		if(M.transforming) //Transforming acts as a stasis.
 			return
+		if(check_restraints)
+			if(M.restrained())
+				to_chat(user, span_warning("You are restrained and cannot do that."))
+				return
+		if(M.absorbed && isbelly(M.loc)) // If absorbed in a belly, check and apply absorbed rename if applicable.
+			var/obj/belly/B = M.loc
+			if(B.absorbedrename_enabled)
+				name_to_use = B.absorbedrename_name
+				name_to_use = replacetext(name_to_use,"%pred", B.owner)
+				name_to_use = replacetext(name_to_use,"%belly", B.get_belly_name())
+				name_to_use = replacetext(name_to_use,"%prey", M.name)
 
 	var/atom/target
 	if(can_target() && extra_params)
-		extra_params = lowertext(extra_params)
-		for(var/atom/thing in view(user))
-			if(extra_params == lowertext(thing.name))
-				target = thing
-				break
+		var/target_dist
+		extra_params = trim(lowertext(extra_params))
+		for(var/atom/thing in view((isnull(check_range) ? world.view : check_range), user))
 
-	if(target && target != user && check_range)
-		if (get_dist(user, target) > check_range)
-			to_chat(user, SPAN_WARNING("\The [target] is too far away."))
+			if(!isturf(thing.loc))
+				continue
+
+			var/new_target_dist = get_dist(thing, user)
+			if(!isnull(target_dist) && target_dist > new_target_dist)
+				continue
+
+			if(findtext(lowertext(thing.name), extra_params))
+				target_dist = new_target_dist
+				target = thing
+
+		if(!target)
+			to_chat(user, span_warning("You cannot see a '[extra_params]' within range."))
 			return
 
 	var/use_1p = get_emote_message_1p(user, target, extra_params)
 	if(use_1p)
 		if(target)
 			use_1p = replace_target_tokens(use_1p, target)
-		use_1p = "<span class='emote'>[capitalize(replace_user_tokens(use_1p, user))]</span>"
-	var/use_3p = get_emote_message_3p(user, target, extra_params)
-	if(use_3p)
+		use_1p = span_emote("[capitalize(replace_user_tokens(use_1p, user))]")
+	var/prefinal_3p
+	var/use_3p
+	var/raw_3p = get_emote_message_3p(user, target, extra_params)
+	if(raw_3p)
 		if(target)
-			use_3p = replace_target_tokens(use_3p, target)
-		use_3p = "<span class='emote'><b>\The [user]</b> [replace_user_tokens(use_3p, user)]</span>"
+			raw_3p = replace_target_tokens(raw_3p, target)
+		prefinal_3p = replace_user_tokens(raw_3p, user)
+		use_3p = span_emote(span_bold("\The [name_to_use]") + " [prefinal_3p]")
 	var/use_radio = get_radio_message(user)
 	if(use_radio)
 		if(target)
@@ -105,49 +155,51 @@
 	if (!use_range)
 		use_range = world.view
 
-	if(ismob(user))
+	if(ismob(user) && (use_3p || use_1p)) //Adds functionality for emotes that don't give use feedback, such as bellyrubs.
 		var/mob/M = user
 		if(message_type == AUDIBLE_MESSAGE)
 			if(isliving(user))
 				var/mob/living/L = user
 				if(L.silent)
-					M.visible_message(message = "[user] opens their mouth silently!", self_message = "You cannot say anything!", blind_message = emote_message_impaired)
+					M.visible_message(message = "[name_to_use] opens their mouth silently!", self_message = "You cannot say anything!", blind_message = emote_message_impaired, runemessage = "opens their mouth silently!")
 					return
 				else
-					M.audible_message(message = use_3p, self_message = use_1p, deaf_message = emote_message_impaired, hearing_distance = use_range, radio_message = use_radio)
+					M.audible_message(message = use_3p, self_message = use_1p, deaf_message = emote_message_impaired, hearing_distance = use_range, radio_message = use_radio, runemessage = prefinal_3p)
 		else
-			M.visible_message(message = use_3p, self_message = use_1p, blind_message = emote_message_impaired, range = use_range)
+			M.visible_message(message = use_3p, self_message = use_1p, blind_message = emote_message_impaired, range = use_range, runemessage = prefinal_3p)
 
 	do_extra(user, target)
-	do_sound(user)
+	if(isliving(user))
+		var/mob/living/mob = user
+		if(!(HAS_MIND_TRAIT(mob, TRAIT_MIMING) && !able_mute))
+			do_sound(user)
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_EMOTE_PERFORMED, user, extra_params)
 
-/decl/emote/proc/replace_target_tokens(var/msg, var/atom/target)
+/datum/decl/emote/proc/replace_target_tokens(msg, atom/target)
 	. = msg
 	if(istype(target))
-		var/datum/gender/target_gender = gender_datums[target.get_visible_gender()]
-		. = replacetext(., "TARGET_THEM",  target_gender.him)
-		. = replacetext(., "TARGET_THEIR", target_gender.his)
-		. = replacetext(., "TARGET_SELF",  target_gender.himself)
-		. = replacetext(., "TARGET",       "<b>\the [target]</b>")
+		. = replacetext(., "TARGET_THEM",  target.p_them())
+		. = replacetext(., "TARGET_THEIR", target.p_their())
+		. = replacetext(., "TARGET_SELF",  target.p_themselves())
+		. = replacetext(., "TARGET",       span_bold("\the [target]"))
 
-/decl/emote/proc/replace_user_tokens(var/msg, var/atom/user)
+/datum/decl/emote/proc/replace_user_tokens(msg, atom/user)
 	. = msg
 	if(istype(user))
-		var/datum/gender/user_gender = gender_datums[user.get_visible_gender()]
-		. = replacetext(., "USER_THEM",  user_gender.him)
-		. = replacetext(., "USER_THEIR", user_gender.his)
-		. = replacetext(., "USER_SELF",  user_gender.himself)
-		. = replacetext(., "USER",       "<b>\the [user]</b>")
+		. = replacetext(., "USER_THEM",  user.p_them())
+		. = replacetext(., "USER_THEIR", user.p_their())
+		. = replacetext(., "USER_SELF",  user.p_themselves())
+		. = replacetext(., "USER",       span_bold("\the [user]"))
 
-/decl/emote/proc/get_radio_message(var/atom/user)
+/datum/decl/emote/proc/get_radio_message(atom/user)
 	if(emote_message_radio_synthetic && check_synthetic(user))
 		return emote_message_radio_synthetic
 	return emote_message_radio
 
-/decl/emote/proc/do_extra(var/atom/user, var/atom/target)
+/datum/decl/emote/proc/do_extra(atom/user, atom/target)
 	return
 
-/decl/emote/proc/do_sound(var/atom/user)
+/datum/decl/emote/proc/do_sound(atom/user)
 	var/list/use_sound = get_emote_sound(user)
 	if(!islist(use_sound) || length(use_sound) < 2)
 		return
@@ -160,18 +212,25 @@
 		if(islist(sound_to_play) && length(sound_to_play))
 			sound_to_play = pick(sound_to_play)
 	if(sound_to_play)
-		playsound(user.loc, sound_to_play, use_sound["vol"], 0, preference = /datum/client_preference/emote_noises) //VOREStation Add - Preference
+		if(istype(user, /mob))
+			var/mob/u = user
+			var/freq_to_use = u.voice_freq
+			if(u.emote_sound_mode == EMOTE_SOUND_NO_FREQ)
+				freq_to_use = 0
+			playsound(user.loc, sound_to_play, use_sound["vol"], u.read_preference(/datum/preference/toggle/random_emote_pitch) && sound_vary, extrarange = use_sound["exr"], frequency = freq_to_use, preference = sound_preferences, volume_channel = use_sound["volchannel"])
+		else
+			playsound(user.loc, sound_to_play, use_sound["vol"], sound_vary, extrarange = use_sound["exr"], frequency = null, preference = sound_preferences, volume_channel = use_sound["volchannel"])
 
-/decl/emote/proc/check_user(var/atom/user)
-	return TRUE
+/datum/decl/emote/proc/mob_can_use(mob/user)
+	return istype(user) && user.stat != DEAD && (type in user.get_available_emotes())
 
-/decl/emote/proc/can_target()
+/datum/decl/emote/proc/can_target()
 	return (emote_message_1p_target || emote_message_3p_target)
 
-/decl/emote/dd_SortValue()
+/datum/decl/emote/dd_SortValue()
 	return key
 
-/decl/emote/proc/check_synthetic(var/mob/living/user)
+/datum/decl/emote/proc/check_synthetic(mob/living/user)
 	. = istype(user) && user.isSynthetic()
 	if(!. && ishuman(user) && message_type == AUDIBLE_MESSAGE)
 		var/mob/living/carbon/human/H = user

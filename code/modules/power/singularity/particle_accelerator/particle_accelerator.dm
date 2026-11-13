@@ -33,11 +33,11 @@ proc
 process()
 check_build()
 
-Setup map
-  |EC|
-CC|FC|
-  |PB|
-PE|PE|PE
+ * Setup map
+ *   |EC|
+ * CC|FC|
+ *   |PB|
+ * PE|PE|PE
 
 
 Icon Addemdum
@@ -63,8 +63,8 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	desc = "Part of a Particle Accelerator."
 	icon = 'icons/obj/machines/particle_accelerator2.dmi'
 	icon_state = "none"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	var/obj/machinery/particle_accelerator/control_box/master = null
 	var/construction_state = 0
 	var/reference = null
@@ -72,11 +72,16 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	var/strength = null
 	var/desc_holder = null
 
+/obj/structure/particle_accelerator/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/rotatable)
+
 /obj/structure/particle_accelerator/Destroy()
 	construction_state = 0
 	if(master)
 		master.part_scan()
-	..()
+	. = ..()
 
 /obj/structure/particle_accelerator/end_cap
 	name = "Alpha Particle Generation Array"
@@ -89,40 +94,18 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	return
 
 
-/obj/structure/particle_accelerator/verb/rotate_clockwise()
-	set name = "Rotate Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 270))
-	return 1
-
-/obj/structure/particle_accelerator/verb/rotate_counterclockwise()
-	set name = "Rotate Counter Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 90))
-	return 1
-
 /obj/structure/particle_accelerator/examine(mob/user)
 	. = ..()
-	
+
 	switch(construction_state)
 		if(0)
-			. += "Looks like it's not attached to the flooring."
+			. += span_notice("Looks like it's not attached to the flooring.")
 		if(1)
-			. += "It is missing some cables."
+			. += span_notice("It is missing some cables.")
 		if(2)
-			. += "The panel is open."
+			. += span_notice("The panel is open.")
 		if(3)
-			. += "It is assembled."
+			. += span_notice("It is assembled.")
 
 /obj/structure/particle_accelerator/attackby(obj/item/W, mob/user)
 	if(istool(W))
@@ -137,7 +120,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	if(master?.active)
 		master.toggle_power()
 		log_game("PACCEL([x],[y],[z]) Was moved while active and turned off.")
-		investigate_log("was moved whilst active; it <font color='red'>powered down</font>.","singulo")
+		investigate_log("was moved whilst active; it " + span_red("powered down") + ".","singulo")
 
 /obj/structure/particle_accelerator/ex_act(severity)
 	switch(severity)
@@ -152,7 +135,6 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			if (prob(25))
 				qdel(src)
 				return
-		else
 	return
 
 /obj/structure/particle_accelerator/update_icon()
@@ -174,7 +156,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 		return 0
 
 
-/obj/structure/particle_accelerator/proc/report_ready(var/obj/O)
+/obj/structure/particle_accelerator/proc/report_ready(obj/O)
 	if(O && (O == master))
 		if(construction_state >= 3)
 			return 1
@@ -187,7 +169,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	return 0
 
 
-/obj/structure/particle_accelerator/proc/connect_master(var/obj/O)
+/obj/structure/particle_accelerator/proc/connect_master(obj/O)
 	if(O && istype(O,/obj/machinery/particle_accelerator/control_box))
 		if(O.dir == src.dir)
 			master = O
@@ -195,7 +177,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	return 0
 
 
-/obj/structure/particle_accelerator/proc/process_tool_hit(var/obj/item/O, var/mob/user)
+/obj/structure/particle_accelerator/proc/process_tool_hit(obj/item/O, mob/user)
 	if(!(O) || !(user))
 		return 0
 	if(!ismob(user) || !isobj(O))
@@ -204,16 +186,16 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 
 	switch(src.construction_state)//TODO:Might be more interesting to have it need several parts rather than a single list of steps
 		if(0)
-			if(O.is_wrench())
+			if(O.has_tool_quality(TOOL_WRENCH))
 				playsound(src, O.usesound, 75, 1)
-				src.anchored = 1
+				src.anchored = TRUE
 				user.visible_message("[user.name] secures the [src.name] to the floor.", \
 					"You secure the external bolts.")
 				temp_state++
 		if(1)
-			if(O.is_wrench())
+			if(O.has_tool_quality(TOOL_WRENCH))
 				playsound(src, O.usesound, 75, 1)
-				src.anchored = 0
+				src.anchored = FALSE
 				user.visible_message("[user.name] detaches the [src.name] from the floor.", \
 					"You remove the external bolts.")
 				temp_state--
@@ -223,16 +205,16 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 						"You add some wires.")
 					temp_state++
 		if(2)
-			if(O.is_wirecutter())//TODO:Shock user if its on?
+			if(O.has_tool_quality(TOOL_WIRECUTTER))//TODO:Shock user if its on?
 				user.visible_message("[user.name] removes some wires from the [src.name].", \
 					"You remove some wires.")
 				temp_state--
-			else if(O.is_screwdriver())
+			else if(O.has_tool_quality(TOOL_SCREWDRIVER))
 				user.visible_message("[user.name] closes the [src.name]'s access panel.", \
 					"You close the access panel.")
 				temp_state++
 		if(3)
-			if(O.is_screwdriver())
+			if(O.has_tool_quality(TOOL_SCREWDRIVER))
 				user.visible_message("[user.name] opens the [src.name]'s access panel.", \
 					"You open the access panel.")
 				temp_state--
@@ -244,7 +226,6 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			update_state()
 		update_icon()
 		return 1
-	return 0
 
 
 
@@ -253,8 +234,8 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	desc = "Part of a Particle Accelerator."
 	icon = 'icons/obj/machines/particle_accelerator2.dmi'
 	icon_state = "none"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	use_power = USE_POWER_OFF
 	idle_power_usage = 0
 	active_power_usage = 0
@@ -265,35 +246,17 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	var/strength = 0
 	var/desc_holder = null
 
-
-/obj/machinery/particle_accelerator/verb/rotate_clockwise()
-	set name = "Rotate Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 270))
-	return 1
-
-/obj/machinery/particle_accelerator/verb/rotate_counterclockwise()
-	set name = "Rotate Counter-Clockwise"
-	set category = "Object"
-	set src in oview(1)
-
-	if (src.anchored || usr:stat)
-		to_chat(usr, "It is fastened to the floor!")
-		return 0
-	src.set_dir(turn(src.dir, 90))
-	return 1
+/obj/machinery/particle_accelerator/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/rotatable)
 
 /obj/machinery/particle_accelerator/update_icon()
 	return
 
 /obj/machinery/particle_accelerator/examine(mob/user)
 	. = ..()
-	
+
 	switch(construction_state)
 		if(0)
 			. += "Looks like it's not attached to the flooring."
@@ -325,13 +288,12 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			if (prob(25))
 				qdel(src)
 				return
-		else
 	return
 
 /obj/machinery/particle_accelerator/proc/update_state()
 	return 0
 
-/obj/machinery/particle_accelerator/proc/process_tool_hit(var/obj/item/O, var/mob/user)
+/obj/machinery/particle_accelerator/proc/process_tool_hit(obj/item/O, mob/user)
 	if(!(O) || !(user))
 		return 0
 	if(!ismob(user) || !isobj(O))
@@ -339,16 +301,16 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	var/temp_state = src.construction_state
 	switch(src.construction_state)//TODO:Might be more interesting to have it need several parts rather than a single list of steps
 		if(0)
-			if(O.is_wrench())
+			if(O.has_tool_quality(TOOL_WRENCH))
 				playsound(src, O.usesound, 75, 1)
-				src.anchored = 1
+				src.anchored = TRUE
 				user.visible_message("[user.name] secures the [src.name] to the floor.", \
 					"You secure the external bolts.")
 				temp_state++
 		if(1)
-			if(O.is_wrench())
+			if(O.has_tool_quality(TOOL_WRENCH))
 				playsound(src, O.usesound, 75, 1)
-				src.anchored = 0
+				src.anchored = FALSE
 				user.visible_message("[user.name] detaches the [src.name] from the floor.", \
 					"You remove the external bolts.")
 				temp_state--
@@ -358,16 +320,16 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 						"You add some wires.")
 					temp_state++
 		if(2)
-			if(O.is_wirecutter())//TODO:Shock user if its on?
+			if(O.has_tool_quality(TOOL_WIRECUTTER))//TODO:Shock user if its on?
 				user.visible_message("[user.name] removes some wires from the [src.name].", \
 					"You remove some wires.")
 				temp_state--
-			else if(O.is_screwdriver())
+			else if(O.has_tool_quality(TOOL_SCREWDRIVER))
 				user.visible_message("[user.name] closes the [src.name]'s access panel.", \
 					"You close the access panel.")
 				temp_state++
 		if(3)
-			if(O.is_screwdriver())
+			if(O.has_tool_quality(TOOL_SCREWDRIVER))
 				user.visible_message("[user.name] opens the [src.name]'s access panel.", \
 					"You open the access panel.")
 				temp_state--
@@ -384,4 +346,12 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			update_use_power(USE_POWER_IDLE)
 		update_icon()
 		return 1
-	return 0
+
+/obj/structure/particle_accelerator/end_cap/pre_mapped
+	construction_state = 3
+	anchored = TRUE
+
+/obj/structure/particle_accelerator/end_cap/pre_mapped/Initialize(mapload)
+	. = ..()
+	update_state()
+	update_icon()

@@ -1,42 +1,26 @@
-var/list/_default_mob_emotes = list(
-	/decl/emote/visible,
-	/decl/emote/visible/scratch,
-	/decl/emote/visible/drool,
-	/decl/emote/visible/nod,
-	/decl/emote/visible/sway,
-	/decl/emote/visible/sulk,
-	/decl/emote/visible/twitch,
-	/decl/emote/visible/twitch_v,
-	/decl/emote/visible/dance,
-	/decl/emote/visible/roll,
-	/decl/emote/visible/shake,
-	/decl/emote/visible/jump,
-	/decl/emote/visible/shiver,
-	/decl/emote/visible/collapse,
-	/decl/emote/visible/spin,
-	/decl/emote/visible/sidestep,
-	/decl/emote/audible,
-	/decl/emote/audible/hiss,
-	/decl/emote/audible/whimper,
-	/decl/emote/audible/gasp,
-	/decl/emote/audible/scretch,
-	/decl/emote/audible/choke,
-	/decl/emote/audible/moan,
-	/decl/emote/audible/gnarl,
-)
-
-/mob
-	var/list/usable_emotes
-	var/nextemote = 1 //VOREStation Add
-
-/mob/proc/update_emotes(var/skip_sort)
-	usable_emotes = list()
-	for(var/emote in get_default_emotes())
-		var/decl/emote/emote_datum = decls_repository.get_decl(emote)
-		if(emote_datum.check_user(src))
-			usable_emotes[emote_datum.key] = emote_datum
-	if(!skip_sort)
-		usable_emotes = sortAssoc(usable_emotes)
-
-/mob/proc/get_default_emotes()
-	return global._default_mob_emotes
+GLOBAL_LIST_INIT(default_mob_emotes, list(
+	/datum/decl/emote/visible,
+	/datum/decl/emote/visible/scratch,
+	/datum/decl/emote/visible/drool,
+	/datum/decl/emote/visible/nod,
+	/datum/decl/emote/visible/sway,
+	/datum/decl/emote/visible/sulk,
+	/datum/decl/emote/visible/twitch,
+	/datum/decl/emote/visible/twitch_v,
+	/datum/decl/emote/visible/dance,
+	/datum/decl/emote/visible/roll,
+	/datum/decl/emote/visible/shake,
+	/datum/decl/emote/visible/jump,
+	/datum/decl/emote/visible/shiver,
+	/datum/decl/emote/visible/collapse,
+	/datum/decl/emote/visible/spin,
+	/datum/decl/emote/visible/sidestep,
+	/datum/decl/emote/audible,
+	/datum/decl/emote/audible/hiss,
+	/datum/decl/emote/audible/whimper,
+	/datum/decl/emote/audible/gasp,
+	/datum/decl/emote/audible/scretch,
+	/datum/decl/emote/audible/choke,
+	/datum/decl/emote/audible/moan,
+	/datum/decl/emote/audible/gnarl,
+))

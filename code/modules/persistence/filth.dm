@@ -5,9 +5,9 @@
 	icon_state = "mfloor1"
 	random_icon_states = list("mfloor1", "mfloor2", "mfloor3", "mfloor4", "mfloor5", "mfloor6", "mfloor7")
 	color = "#464f33"
-	anchored = 1
+	anchored = TRUE
 	persistent = TRUE
 
-/obj/effect/decal/cleanable/filth/Initialize()
+/obj/effect/decal/cleanable/filth/Initialize(mapload)
 	. = ..()
 	alpha = rand(180,220)

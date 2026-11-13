@@ -2,9 +2,9 @@
 
 // TURFS
 
-/proc/updateVisibility(atom/A, var/opacity_check = 1)
-	if(ticker)
-		for(var/datum/visualnet/VN in visual_nets)
+/proc/updateVisibility(atom/A, opacity_check = 1)
+	if(SSticker)
+		for(var/datum/visualnet/VN in GLOB.visual_nets)
 			VN.updateVisibility(A, opacity_check)
 
 /turf
@@ -15,9 +15,15 @@
 
 /turf/simulated/Destroy()
 	updateVisibility(src)
+	if(zone)
+		if(can_safely_remove_from_zone())
+			c_copy_air()
+			zone.remove(src)
+		else
+			zone.rebuild()
 	return ..()
 
-/turf/simulated/Initialize()
+/turf/simulated/Initialize(mapload)
 	. = ..()
 	updateVisibility(src)
 
@@ -28,8 +34,8 @@
 	updateVisibility(src)
 	return ..()
 
-/obj/structure/New()
-	..()
+/obj/structure/Initialize(mapload)
+	. = ..()
 	updateVisibility(src)
 
 // EFFECTS
@@ -38,7 +44,7 @@
 	updateVisibility(src)
 	return ..()
 
-/obj/effect/Initialize()
+/obj/effect/Initialize(mapload)
 	. = ..()
 	updateVisibility(src)
 

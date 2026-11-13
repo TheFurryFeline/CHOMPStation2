@@ -12,24 +12,22 @@
 /obj/item/animal_spawner
 	var/critter_type = /mob/living/simple_mob/animal/passive/mouse
 
-/obj/item/animal_spawner/Initialize()
+/obj/item/animal_spawner/Initialize(mapload)
 	..()
 
 	var/mob/living/simple_mob/critter = critter_type
 	if(!ispath(critter, /mob/living/simple_mob))
 		return INITIALIZE_HINT_QDEL
 
-	var/obj/item/weapon/holder/critter_holder = initial(critter.holder_type)
-	if(!ispath(critter_holder, /obj/item/weapon/holder))
+	var/obj/item/holder/critter_holder = initial(critter.holder_type)
+	if(!ispath(critter_holder, /obj/item/holder))
 		return INITIALIZE_HINT_QDEL
 
 	var/mob/M = loc
 	var/was_in_hands = istype(M) && (src == M.get_active_hand() || src == M.get_inactive_hand())
 
-	critter_holder = new(loc)
 	critter = new critter(critter_holder)
-	critter_holder.held_mob = critter
-	critter_holder.sync(critter)
+	critter_holder = new(loc, critter)
 
 	if(istype(M))
 		M.drop_from_inventory(src)
@@ -76,10 +74,10 @@
 
 /datum/ai_holder/simple_mob/passive/possum/poppy
 	var/static/list/aaa_words = list(
-		"delaminat", 
-		"meteor", 
-		"fire", 
-		"breach", 
+		"delaminat",
+		"meteor",
+		"fire",
+		"breach",
 		"loose",
 		"level 7",
 		"level seven",
@@ -90,9 +88,9 @@
 
 /datum/ai_holder/simple_mob/passive/possum/poppy/on_hear_say(mob/living/speaker, message)
 	. = ..()
-	addtimer(CALLBACK(src, .proc/check_keywords, message), rand(1 SECOND, 3 SECONDS))
+	addtimer(CALLBACK(src, PROC_REF(check_keywords), message), rand(1 SECOND, 3 SECONDS))
 
-/datum/ai_holder/simple_mob/passive/possum/poppy/proc/check_keywords(var/message)
+/datum/ai_holder/simple_mob/passive/possum/poppy/proc/check_keywords(message)
 	var/mob/living/simple_mob/animal/passive/opossum/poss = holder
 	if(!istype(poss) || holder.client || holder.stat != CONSCIOUS)
 		return
@@ -113,6 +111,7 @@
 	real_name = "opossum"
 	tt_desc = "Didelphis astrum"
 	desc = "It's an opossum, a small scavenging marsupial."
+	icon = 'icons/mob/pets.dmi'
 	icon_state = "possum"
 	item_state = "possum"
 	icon_living = "possum"
@@ -127,26 +126,28 @@
 	response_help = "pets"
 	response_disarm = "gently pushes aside"
 	response_harm = "stamps on"
-	density = 0
+	density = FALSE
+	organ_names = /datum/decl/mob_organ_names/possum
 	minbodytemp = 223
 	maxbodytemp = 323
 	universal_speak = FALSE
 	universal_understand = TRUE
-	holder_type = /obj/item/weapon/holder/possum
+	holder_type = /obj/item/holder/possum
 	mob_size = MOB_SMALL
 	can_pull_size = 2
 	can_pull_mobs = MOB_PULL_SMALLER
 	say_list_type = /datum/say_list/possum
 	catalogue_data = list(/datum/category_item/catalogue/fauna/opossum)
+	meat_amount = 2
 
-/mob/living/simple_mob/animal/passive/opossum/adjustBruteLoss(damage)
+/mob/living/simple_mob/animal/passive/opossum/adjustBruteLoss(amount,include_robo)
 	. = ..()
-	if(damage >= 3)
+	if(amount >= 3)
 		respond_to_damage()
 
-/mob/living/simple_mob/animal/passive/opossum/adjustFireLoss(damage)
+/mob/living/simple_mob/animal/passive/opossum/adjustFireLoss(amount,include_robo)
 	. = ..()
-	if(damage >= 3)
+	if(amount >= 3)
 		respond_to_damage()
 
 /mob/living/simple_mob/animal/passive/opossum/lay_down()
@@ -158,16 +159,16 @@
 		var/datum/ai_holder/simple_mob/passive/possum/poss_ai = ai_holder
 		if(!client && istype(poss_ai))
 			if(!poss_ai.is_angry)
-				visible_message("<b>\The [src]</b> hisses!")
+				visible_message(span_infoplain(span_bold("\The [src]") + " hisses!"))
 				poss_ai.is_angry = TRUE
 				poss_ai.be_angery_until = world.time + rand(30 SECONDS, 1 MINUTE)
 			else
-				visible_message("<b>\The [src]</b> dies!")
+				visible_message(span_infoplain(span_bold("\The [src]") + " dies!"))
 				resting = TRUE
 				poss_ai.play_dead_until = world.time + rand(1 MINUTE, 2 MINUTES)
 		update_icon()
 
-/mob/living/simple_mob/animal/passive/opossum/updateicon()
+/mob/living/simple_mob/animal/passive/opossum/update_icon()
 	update_icon()
 
 /mob/living/simple_mob/animal/passive/opossum/update_icon()
@@ -182,10 +183,10 @@
 	else
 		icon_state = icon_living
 
-/mob/living/simple_mob/animal/passive/opossum/Initialize()
+/mob/living/simple_mob/animal/passive/opossum/Initialize(mapload)
 	. = ..()
-	verbs += /mob/living/proc/ventcrawl
-	verbs += /mob/living/proc/hide
+	add_verb(src, /mob/living/proc/ventcrawl)
+	add_verb(src, /mob/living/proc/hide)
 
 /mob/living/simple_mob/animal/passive/opossum/poppy
 	name = "Poppy the Safety Possum"
@@ -196,5 +197,16 @@
 	icon_dead = "poppy_dead"
 	icon_rest = "poppy_dead"
 	tt_desc = "Didelphis astrum salutem"
-	holder_type = /obj/item/weapon/holder/possum/poppy
+	organ_names = /datum/decl/mob_organ_names/poppy
+	holder_type = /obj/item/holder/possum/poppy
 	ai_holder_type = /datum/ai_holder/simple_mob/passive/possum/poppy
+
+/datum/decl/mob_organ_names/possum
+	hit_zones = list("head", "body", "left foreleg", "right foreleg", "left hind leg", "right hind leg", "pouch")
+
+/datum/decl/mob_organ_names/poppy
+	hit_zones = list("head", "body", "left foreleg", "right foreleg", "left hind leg", "right hind leg", "pouch", "cute little jacket")
+
+/mob/living/simple_mob/animal/passive/opossum/beastmode/Initialize(mapload)
+	. = ..()
+	remove_verb(src,/mob/living/proc/ventcrawl) //No ventcrawl for hanner

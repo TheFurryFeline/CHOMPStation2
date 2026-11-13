@@ -4,7 +4,7 @@
 /obj/random/multiple/voidsuit
 	name = "Random Voidsuit"
 	desc = "This is a random voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "void"
 
 /obj/random/multiple/voidsuit/item_to_spawn()
@@ -46,8 +46,8 @@
 				/obj/item/clothing/head/helmet/space/void/medical
 			),
 			prob(5);list(
-				/obj/item/clothing/suit/space/void/medical/alt,
-				/obj/item/clothing/head/helmet/space/void/medical/alt
+				/obj/item/clothing/suit/space/void/medical/veymed,
+				/obj/item/clothing/head/helmet/space/void/medical/veymed
 			),
 			prob(5);list(
 				/obj/item/clothing/suit/space/void/medical/bio,
@@ -98,7 +98,7 @@
 /obj/random/multiple/voidsuit/mining
 	name = "Random Mining Voidsuit"
 	desc = "This is a random mining voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "rig-mining"
 
 /obj/random/multiple/voidsuit/mining/item_to_spawn()
@@ -116,7 +116,7 @@
 /obj/random/multiple/voidsuit/engineering
 	name = "Random Engineering Voidsuit"
 	desc = "This is a random engineering voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "rig-engineering"
 
 /obj/random/multiple/voidsuit/engineering/item_to_spawn()
@@ -146,7 +146,7 @@
 /obj/random/multiple/voidsuit/security
 	name = "Random Security Voidsuit"
 	desc = "This is a random security voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "rig-sec"
 
 /obj/random/multiple/voidsuit/security/item_to_spawn()
@@ -168,7 +168,7 @@
 /obj/random/multiple/voidsuit/medical
 	name = "Random Medical Voidsuit"
 	desc = "This is a random medical voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "rig-medical"
 
 /obj/random/multiple/voidsuit/medical/item_to_spawn()
@@ -178,8 +178,8 @@
 				/obj/item/clothing/head/helmet/space/void/medical
 			),
 			prob(1);list(
-				/obj/item/clothing/suit/space/void/medical/alt,
-				/obj/item/clothing/head/helmet/space/void/medical/alt
+				/obj/item/clothing/suit/space/void/medical/veymed,
+				/obj/item/clothing/head/helmet/space/void/medical/veymed
 			),
 			prob(3);list(
 				/obj/item/clothing/suit/space/void/medical/bio,
@@ -194,7 +194,7 @@
 /obj/random/multiple/voidsuit/vintage
 	name = "Random Vintage Voidsuit"
 	desc = "This is a random vintage voidsuit."
-	icon = 'icons/obj/clothing/spacesuits.dmi'
+	icon = 'icons/inventory/suit/item.dmi'
 	icon_state = "rig-vintagecrew"
 
 /obj/random/multiple/voidsuit/vintage/item_to_spawn()
@@ -227,6 +227,7 @@
 				/obj/item/clothing/suit/space/void/refurb/pilot,
 				/obj/item/clothing/head/helmet/space/void/refurb/pilot
 			),
+
 			prob(10);list(
 				/obj/item/clothing/suit/space/void/refurb/pilot,
 				/obj/item/clothing/head/helmet/space/void/refurb/pilot/alt
@@ -238,6 +239,10 @@
 			prob(10);list(
 				/obj/item/clothing/suit/space/void/refurb/research,
 				/obj/item/clothing/head/helmet/space/void/refurb/research/alt
+			),
+			prob(10);list(
+				/obj/item/clothing/suit/space/void/refurb/mining,
+				/obj/item/clothing/head/helmet/space/void/refurb/mining
 			),
 			prob(5);list(
 				/obj/item/clothing/suit/space/void/refurb/mercenary,
@@ -252,9 +257,13 @@
 	icon_state = "generic"
 
 /obj/random/rigsuit/item_to_spawn()
-	return pick(prob(4);/obj/item/weapon/rig/light/hacker,
-				prob(5);/obj/item/weapon/rig/industrial,
-				prob(5);/obj/item/weapon/rig/eva,
-				prob(4);/obj/item/weapon/rig/light/stealth,
-				prob(3);/obj/item/weapon/rig/hazard,
-				prob(1);/obj/item/weapon/rig/merc/empty)
+	return pick(prob(4);/obj/item/rig/light/hacker,
+				prob(5);/obj/item/rig/industrial,
+				prob(5);/obj/item/rig/eva,
+				prob(3);/obj/item/rig/hazard,
+				prob(1);/obj/item/rig/merc/empty,
+				prob(4);/obj/item/rig/light/stealth) // CHOMPEdit
+//VOREStation Add Start
+/obj/random/rigsuit/chancetofail
+	spawn_nothing_percentage = 50
+//VOREStation Add End

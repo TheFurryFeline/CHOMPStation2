@@ -17,7 +17,7 @@
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/space)
 "aj" = (
-/obj/item/weapon/pickaxe/jackhammer,
+/obj/item/pickaxe/jackhammer,
 /turf/simulated/mineral/floor/ignore_mapgen,
 /area/space)
 "ak" = (
@@ -32,9 +32,7 @@
 /area/awaymission/carpfarm/base)
 "an" = (
 /obj/structure/cable{
-	d2 = 2;
-	icon_state = "0-2";
-	pixel_y = 0
+	icon_state = "0-2"
 	},
 /obj/effect/floor_decal/industrial/outline/yellow,
 /obj/machinery/power/smes/buildable,
@@ -45,15 +43,13 @@
 	dir = 1
 	},
 /obj/effect/floor_decal/industrial/warning{
-	icon_state = "warning";
 	dir = 8
 	},
 /obj/machinery/power/terminal{
 	dir = 8
 	},
 /obj/structure/cable{
-	icon_state = "0-4";
-	d2 = 4
+	icon_state = "0-4"
 	},
 /turf/simulated/floor/plating,
 /area/awaymission/carpfarm/base)
@@ -61,7 +57,6 @@
 /obj/effect/floor_decal/industrial/outline/yellow,
 /obj/machinery/power/port_gen/pacman,
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /turf/simulated/floor/plating,
@@ -90,7 +85,6 @@
 "at" = (
 /obj/machinery/shower{
 	dir = 4;
-	icon_state = "shower";
 	pixel_x = 5
 	},
 /obj/machinery/door/window,
@@ -111,7 +105,6 @@
 	dir = 8
 	},
 /obj/machinery/light/small{
-	icon_state = "bulb1";
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -128,7 +121,7 @@
 /turf/simulated/floor/lino,
 /area/awaymission/carpfarm/base)
 "az" = (
-/obj/item/weapon/storage/toolbox/electrical,
+/obj/item/storage/toolbox/electrical,
 /obj/structure/cable,
 /obj/machinery/power/apc{
 	alarms_hidden = 1;
@@ -139,12 +132,11 @@
 /obj/effect/floor_decal/industrial/warning{
 	dir = 1
 	},
-/obj/item/weapon/paper/awaygate/carpfarm/suicide,
+/obj/item/paper/awaygate/carpfarm/suicide,
 /turf/simulated/floor/plating,
 /area/awaymission/carpfarm/base)
 "aA" = (
 /obj/effect/floor_decal/industrial/warning/corner{
-	icon_state = "warningcorner";
 	dir = 1
 	},
 /turf/simulated/floor/plating,
@@ -181,7 +173,7 @@
 /turf/simulated/floor/tiled/white,
 /area/awaymission/carpfarm/base)
 "aH" = (
-/obj/item/weapon/bedsheet,
+/obj/item/bedsheet,
 /obj/structure/bed/padded,
 /turf/simulated/floor/lino,
 /area/awaymission/carpfarm/base)
@@ -193,8 +185,8 @@
 /obj/item/clothing/suit/space/void/mining,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/head/helmet/space/void/mining,
-/obj/item/weapon/mining_scanner,
-/obj/item/weapon/tank/jetpack/oxygen,
+/obj/item/mining_scanner,
+/obj/item/tank/jetpack/oxygen,
 /obj/effect/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/plating,
 /area/awaymission/carpfarm/base)
@@ -203,7 +195,7 @@
 /area/awaymission/carpfarm/base)
 "aL" = (
 /obj/structure/closet/toolcloset,
-/obj/item/weapon/pickaxe/jackhammer,
+/obj/item/pickaxe/jackhammer,
 /obj/effect/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/plating,
 /area/awaymission/carpfarm/base)
@@ -227,15 +219,13 @@
 /area/awaymission/carpfarm/base)
 "aP" = (
 /obj/structure/sink{
-	icon_state = "sink";
 	dir = 8;
 	pixel_x = -12;
 	pixel_y = 2
 	},
 /obj/structure/mirror{
 	dir = 4;
-	pixel_x = -32;
-	pixel_y = 0
+	pixel_x = -32
 	},
 /turf/simulated/floor/tiled/white,
 /area/awaymission/carpfarm/base)
@@ -345,9 +335,9 @@
 	dir = 8
 	},
 /obj/structure/closet/crate/internals,
-/obj/item/weapon/tank/emergency/oxygen/engi,
-/obj/item/weapon/tank/emergency/oxygen/engi,
-/obj/item/weapon/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
@@ -356,9 +346,9 @@
 /area/awaymission/carpfarm/base)
 "bl" = (
 /obj/structure/closet/crate/internals,
-/obj/item/weapon/tank/emergency/oxygen/engi,
-/obj/item/weapon/tank/emergency/oxygen/engi,
-/obj/item/weapon/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
@@ -391,7 +381,7 @@
 /area/awaymission/carpfarm/base)
 "br" = (
 /obj/item/mecha_parts/mecha_equipment/tool/drill,
-/obj/item/weapon/storage/toolbox/mechanical,
+/obj/item/storage/toolbox/mechanical,
 /obj/structure/table/steel,
 /turf/simulated/floor/tiled,
 /area/awaymission/carpfarm/base)
@@ -468,7 +458,7 @@
 /area/awaymission/carpfarm/base)
 "bD" = (
 /obj/structure/closet/crate/secure/weapon,
-/obj/item/weapon/gun/projectile/shotgun/pump/rifle,
+/obj/item/gun/projectile/shotgun/pump/rifle,
 /obj/effect/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/dark,
 /area/awaymission/carpfarm/base)
@@ -500,15 +490,13 @@
 /area/awaymission/carpfarm/base)
 "bI" = (
 /obj/machinery/atmospherics/pipe/manifold/hidden{
-	dir = 1;
-	icon_state = "map"
+	dir = 1
 	},
 /turf/simulated/floor/tiled,
 /area/awaymission/carpfarm/base)
 "bJ" = (
 /obj/machinery/atmospherics/pipe/simple/hidden{
-	dir = 10;
-	icon_state = "intact"
+	dir = 10
 	},
 /obj/machinery/access_button{
 	command = "cycle_interior";
@@ -553,9 +541,7 @@
 	desc = "A warning sign which reads 'EXTERNAL AIRLOCK'";
 	icon_state = "space";
 	layer = 4;
-	name = "EXTERNAL AIRLOCK";
-	pixel_x = 0;
-	pixel_y = 0
+	name = "EXTERNAL AIRLOCK"
 	},
 /turf/simulated/wall/iron,
 /area/awaymission/carpfarm/base)
@@ -579,13 +565,13 @@
 /turf/simulated/floor/tiled,
 /area/awaymission/carpfarm/base)
 "bS" = (
-/obj/item/weapon/reagent_containers/food/snacks/cubancarp,
+/obj/item/reagent_containers/food/snacks/cubancarp,
 /obj/effect/floor_decal/corner/white/diagonal,
 /obj/structure/table/glass,
 /turf/simulated/floor/tiled,
 /area/awaymission/carpfarm/base)
 "bT" = (
-/obj/item/weapon/reagent_containers/food/snacks/carpmeat,
+/obj/item/reagent_containers/food/snacks/carpmeat,
 /obj/effect/floor_decal/corner/white/diagonal,
 /obj/structure/table/glass,
 /turf/simulated/floor/tiled,
@@ -607,7 +593,6 @@
 	frequency = 1375;
 	id_tag = "carp_airlock";
 	pixel_x = -28;
-	pixel_y = 0;
 	req_access = null;
 	tag_airpump = "carp_pump";
 	tag_chamber_sensor = "carp_sensor";
@@ -615,7 +600,6 @@
 	tag_interior_door = "carp_inner"
 	},
 /obj/effect/floor_decal/industrial/warning/cee{
-	icon_state = "warningcee";
 	dir = 8
 	},
 /turf/simulated/floor/plating,
@@ -627,14 +611,13 @@
 	id_tag = "carp_pump"
 	},
 /obj/effect/floor_decal/industrial/warning/cee{
-	icon_state = "warningcee";
 	dir = 4
 	},
 /turf/simulated/floor/plating,
 /area/awaymission/carpfarm/base)
 "bX" = (
 /obj/structure/closet/emcloset,
-/obj/item/weapon/storage/toolbox/emergency,
+/obj/item/storage/toolbox/emergency,
 /obj/machinery/airlock_sensor{
 	frequency = 1375;
 	id_tag = "carp_sensor";
@@ -726,7 +709,6 @@
 /area/space)
 "cl" = (
 /obj/effect/floor_decal/industrial/warning{
-	icon_state = "warning";
 	dir = 4
 	},
 /turf/simulated/floor/airless,
@@ -761,7 +743,11 @@
 /turf/space,
 /area/space)
 "Fi" = (
-/obj/effect/overmap/visitable/sector/tether_gateway/carpfarm,
+/obj/effect/overmap/visitable/sector/common_gateway/carpfarm,
+/turf/space,
+/area/space)
+"Ia" = (
+/obj/effect/landmark/hidden_level,
 /turf/space,
 /area/space)
 "Zb" = (
@@ -1197,7 +1183,7 @@ aa
 aa
 aa
 aa
-aa
+Ia
 aa
 "}
 (4,1,1) = {"

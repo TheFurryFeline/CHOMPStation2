@@ -1,79 +1,127 @@
 /obj/machinery/mineral/equipment_vendor/survey
 	name = "exploration equipment vendor"
 	desc = "An equipment vendor for explorers, points collected with a survey scanner can be spent here."
-	icon = 'icons/obj/machines/mining_machines_vr.dmi' //VOREStation Edit
-	icon_state = "exploration" //VOREStation Edit
+	icon = 'icons/obj/machines/mining_machines.dmi'
+	icon_state = "exploration"
 	density = TRUE
 	anchored = TRUE
-	circuit = /obj/item/weapon/circuitboard/exploration_equipment_vendor
-	icon_deny = "exploration-deny" //VOREStation Edit
-	icon_vend = "exploration-vend" //VOREStation Add
+	circuit = /obj/item/circuitboard/exploration_equipment_vendor
+	icon_deny = "exploration-deny"
+	icon_vend = "exploration-vend"
 
 /obj/machinery/mineral/equipment_vendor/survey/Initialize(mapload)
 	. = ..()
-	//VOREStation Edit Start - Heavily modified list
 	prize_list = list()
 	prize_list["Gear"] = list(
-		EQUIPMENT("Defense Equipment - Smoke Bomb",				/obj/item/weapon/grenade/smokebomb,									10),
-		EQUIPMENT("Defense Equipment - Plasteel Machete",		/obj/item/weapon/material/knife/machete,							50),
-		EQUIPMENT("Defense Equipment - Razor Drone Deployer",	/obj/item/weapon/grenade/spawnergrenade/manhacks/station/locked,	100),
-		EQUIPMENT("Defense Equipment - Sentry Drone Deployer",	/obj/item/weapon/grenade/spawnergrenade/ward,						150),
-		EQUIPMENT("Defense Equipment - Frontier Carbine",		/obj/item/weapon/gun/energy/locked/frontier/carbine,				750),
-		EQUIPMENT("Fishing Net",								/obj/item/weapon/material/fishing_net,								50),
-		EQUIPMENT("Titanium Fishing Rod",						/obj/item/weapon/material/fishing_rod/modern,						100),
-		EQUIPMENT("Durasteel Fishing Rod",						/obj/item/weapon/material/fishing_rod/modern/strong,				750),
-		EQUIPMENT("Fulton Beacon",								/obj/item/fulton_core,												300),
-		EQUIPMENT("Geiger Counter",								/obj/item/device/geiger,											75),
-		EQUIPMENT("GPS Device",									/obj/item/device/gps/mining,										10),
-		EQUIPMENT("Jump Boots",									/obj/item/clothing/shoes/bhop,										250),
-		EQUIPMENT("Mini-Translocator",							/obj/item/device/perfect_tele/one_beacon,							120),
-		EQUIPMENT("Survival Equipment - Insulated Poncho",		/obj/random/thermalponcho,											75),
+		EQUIPMENT("Brown Webbing",									/obj/item/clothing/accessory/storage/brown_vest,							500),
+		EQUIPMENT("Defense Equipment - Smoke Bomb",					/obj/item/grenade/smokebomb,												10),
+		EQUIPMENT("Defense Equipment - Razor Drone Deployer",		/obj/item/grenade/spawnergrenade/manhacks/station/locked,					100),
+		EQUIPMENT("Defense Equipment - Sentry Drone Deployer",		/obj/item/grenade/spawnergrenade/ward,										150),
+		EQUIPMENT("Defense Equipment - Phase Pistol",				/obj/item/gun/energy/locked/phasegun/pistol,								100), //CHOMPEDIT
+		EQUIPMENT("Defense Equipment - Marksman Frontier Phaser", 	/obj/item/gun/energy/locked/frontier/rifle,									800), //CHOMPADD
+		EQUIPMENT("Defense Equipment - Frontier Shotgun",			/obj/item/gun/energy/locked/frontier/shotgun,								800), //CHOMPADD
+		EQUIPMENT("Defense Equipment - Frontier Carbine",			/obj/item/gun/energy/locked/frontier/carbine,								800), //CHOMPEDIT
+		EQUIPMENT("Defense Equipment - Frontier Phaser",			/obj/item/gun/energy/locked/frontier,										600), //CHOMPADD
+		EQUIPMENT("Defense Equipment - Holdout Frontier Phaser", 	/obj/item/gun/energy/locked/frontier/holdout,								300), //CHOMPADD
+		EQUIPMENT("Defense Equipment - Phase Carbine",				/obj/item/gun/energy/locked/phasegun,										200), //CHOMPEDIT
+		EQUIPMENT("Defense Equipment - Phase Rifle",				/obj/item/gun/energy/locked/phasegun/rifle,									350), //CHOMPEDIT
+		EQUIPMENT("Defense Equipment - Plasteel Machete",			/obj/item/material/knife/machete,											50),
+		EQUIPMENT("Hybrid Equipment - Proto-Kinetic Machete",		/obj/item/kinetic_crusher/machete,											100),
+		EQUIPMENT("Hybrid Equipment - Proto-Kinetic Dagger",		/obj/item/kinetic_crusher/machete/dagger,									75),
+		EQUIPMENT("Hybrid Equipment - Proto-Kinetic Gauntlets",		/obj/item/kinetic_crusher/machete/gauntlets,								150),
+		EQUIPMENT("Machete Holster",								/obj/item/clothing/accessory/holster/machete,								10),
+		EQUIPMENT("Defense Equipment - PSG-B (Melee)",				/obj/item/personal_shield_generator/belt/melee/loaded, 						500),
+		EQUIPMENT("Defense Equipment - PSG-M (General)",			/obj/item/personal_shield_generator/belt/mining/loaded,						100),
+		EQUIPMENT("PSG-M Upgrade Disk",								/obj/item/borg/upgrade/shield_upgrade,										50),
+		EQUIPMENT("Fishing Net",									/obj/item/material/fishing_net,												50),
+		EQUIPMENT("Titanium Fishing Rod",							/obj/item/material/fishing_rod/modern,										100),
+		EQUIPMENT("Durasteel Fishing Rod",							/obj/item/material/fishing_rod/modern/strong,								750),
+		EQUIPMENT("Fulton Beacon",									/obj/item/fulton_core,														300),
+		EQUIPMENT("Geiger Counter",									/obj/item/geiger,															75),
+		EQUIPMENT("GPS Device",										/obj/item/gps/mining,														10),
+		EQUIPMENT("Jump Boots",										/obj/item/clothing/shoes/bhop,												250),
+		EQUIPMENT("Mini-Translocator",								/obj/item/perfect_tele/one_beacon,											120),
+		EQUIPMENT("Survey Tools - Mapping Unit",					/obj/item/mapping_unit,														150),
+		EQUIPMENT("Survey Tools - Mapping Beacon",					/obj/item/holomap_beacon,													25),
+		EQUIPMENT("Survey Tools - Advanced Cataloguer",				/obj/item/cataloguer/advanced,												300), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Insulated Poncho",			/obj/random/thermalponcho,													75),
+		EQUIPMENT("Survival Equipment - Glowstick", 				/obj/item/flashlight/glowstick,												5),
+		EQUIPMENT("Survival Equipment - Flare", 					/obj/item/flashlight/flare,													5),
+		EQUIPMENT("Survival Equipment - Radioisotope Glowstick",	/obj/item/flashlight/glowstick/radioisotope,								40),
+		EQUIPMENT("Survival Equipment - Modular Explorer Suit",		/obj/item/clothing/suit/armor/pcarrier/explorer,							200),
+		EQUIPMENT("Survival Equipment - Armored Jumpsuit",			/obj/item/clothing/under/explorer/armored,									200),
+		EQUIPMENT("Survival Equipment - Exploration Plate",			/obj/item/clothing/accessory/armor/armorplate/explorer,						50), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Exploration Arm Guards",	/obj/item/clothing/accessory/armor/armguards/explorer,						50), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Exploration Leg Guards",	/obj/item/clothing/accessory/armor/legguards/explorer,						50), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Exploration Riot shield",	/obj/item/shield/riot/explorer,												75), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Storage Pouch",				/obj/item/clothing/accessory/storage/pouches/green,							10), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Large Storage Pouch",		/obj/item/clothing/accessory/storage/pouches/large/green,					25), //CHOMPADD
+		EQUIPMENT("Survival Equipment - Pathfinder Belt",			/obj/item/storage/belt/explorer/pathfinder,									200), //CHOMPADD
+		EQUIPMENT("Exotic Sample Container",						/obj/item/storage/sample_container,											100),
 	)
 	prize_list["Consumables"] = list(
-		EQUIPMENT("1 Marker Beacon",		/obj/item/stack/marker_beacon,													1),
-		EQUIPMENT("10 Marker Beacons",		/obj/item/stack/marker_beacon/ten,												10),
-		EQUIPMENT("30 Marker Beacons",		/obj/item/stack/marker_beacon/thirty,											30),
-		EQUIPMENT("Fulton Pack",			/obj/item/extraction_pack,														125),
-		EQUIPMENT("Injector (L) - Glucose",	/obj/item/weapon/reagent_containers/hypospray/autoinjector/biginjector/glucose,	50),
-		EQUIPMENT("Injector (L) - Panacea",	/obj/item/weapon/reagent_containers/hypospray/autoinjector/biginjector/purity,	50),
-		EQUIPMENT("Injector (L) - Trauma",	/obj/item/weapon/reagent_containers/hypospray/autoinjector/biginjector/brute,	50),
-		EQUIPMENT("Nanopaste Tube",			/obj/item/stack/nanopaste,														100),
-		EQUIPMENT("Point Transfer Card",	/obj/item/weapon/card/mining_point_card/survey,									50),
-		EQUIPMENT("Shelter Capsule",		/obj/item/device/survivalcapsule,												50),
-		EQUIPMENT("Burn Medipen",			/obj/item/weapon/reagent_containers/hypospray/autoinjector/burn,				25),
-		EQUIPMENT("Detox Medipen",			/obj/item/weapon/reagent_containers/hypospray/autoinjector/detox,				25),
-		EQUIPMENT("Oxy Medipen",			/obj/item/weapon/reagent_containers/hypospray/autoinjector/oxy,					25),
-		EQUIPMENT("Trauma Medipen",			/obj/item/weapon/reagent_containers/hypospray/autoinjector/trauma,				25),
+		EQUIPMENT("1 Marker Beacon",								/obj/item/stack/marker_beacon,												1),
+		EQUIPMENT("10 Marker Beacons",								/obj/item/stack/marker_beacon/ten,											10),
+		EQUIPMENT("30 Marker Beacons",								/obj/item/stack/marker_beacon/thirty,										30),
+		EQUIPMENT("Fulton Pack",									/obj/item/extraction_pack,													125),
+		EQUIPMENT("Injector (L) - Glucose",							/obj/item/reagent_containers/hypospray/autoinjector/biginjector/glucose,	50),
+		EQUIPMENT("Injector (L) - Panacea",							/obj/item/reagent_containers/hypospray/autoinjector/biginjector/purity,		50),
+		EQUIPMENT("Injector (L) - Trauma",							/obj/item/reagent_containers/hypospray/autoinjector/biginjector/brute,		50),
+		EQUIPMENT("Nanopaste Tube",									/obj/item/stack/nanopaste,													100),
+		EQUIPMENT("Point Transfer Card",							/obj/item/card/mining_point_card/survey,									50),
+		EQUIPMENT("Shelter Capsule",								/obj/item/survivalcapsule,													50),
+		EQUIPMENT("Burn Medipen",									/obj/item/reagent_containers/hypospray/autoinjector/burn,					25),
+		EQUIPMENT("Detox Medipen",									/obj/item/reagent_containers/hypospray/autoinjector/detox,					25),
+		EQUIPMENT("Oxy Medipen",									/obj/item/reagent_containers/hypospray/autoinjector/oxy,					25),
+		EQUIPMENT("Trauma Medipen",									/obj/item/reagent_containers/hypospray/autoinjector/trauma,					25),
 	)
 	prize_list["Digging Tools"] = list(
-		EQUIPMENT("Survey Tools - Shovel",			/obj/item/weapon/shovel,	40),
-		EQUIPMENT("Survey Tools - Mechanical Trap",	/obj/item/weapon/beartrap,	50),
-		EQUIPMENT("Survey Tools - Binoculars",		/obj/item/device/binoculars,40),
+		EQUIPMENT("Survey Tools - Shovel",							/obj/item/shovel,															40),
+		EQUIPMENT("Survey Tools - Mechanical Trap",					/obj/item/beartrap,															50),
+		EQUIPMENT("Survey Tools - Binoculars",						/obj/item/binoculars,														40),
+		EQUIPMENT("Archeology Equipment - Chisels",					/obj/item/storage/excavation,												50),
+		EQUIPMENT("Archeology Equipment - Scanner",					/obj/item/depth_scanner,													50),
+		EQUIPMENT("Fine Excavation Kit - Measuring Tape",			/obj/item/measuring_tape,													10),
+
+	)
+	prize_list["Shelter Capsules"] = list(
+		EQUIPMENT("Shelter Capsule - Shelter (5x5)",				/obj/item/survivalcapsule,									50),
+		EQUIPMENT("Shelter Capsule - Pocket Dorm (5x5)",			/obj/item/survivalcapsule/pocketdorm,						50),
+		EQUIPMENT("Shelter Capsule - Kitchen (7x7)",				/obj/item/survivalcapsule/kitchen,							310),
+		EQUIPMENT("Shelter Capsule - Luxury Shelter (7x7)",			/obj/item/survivalcapsule/luxury,							310),
+		EQUIPMENT("Shelter Capsule - Alt. Luxury Shelter (7x7)",	/obj/item/survivalcapsule/luxuryalt,						310),
+		EQUIPMENT("Shelter Capsule - Redspace (7x7)",				/obj/item/survivalcapsule/randomized,						500),
+		EQUIPMENT("Shelter Capsule - Sauna (7x7)",					/obj/item/survivalcapsule/sauna,							310),
+		EQUIPMENT("Shelter Capsule - Rec Room + Cards Table (9x9)",	/obj/item/survivalcapsule/recroom,							500),
+		EQUIPMENT("Shelter Capsule - Luxury Rec Room (11x11)",		/obj/item/survivalcapsule/luxuryrecroom,					1000),
+		EQUIPMENT("Shelter Capsule - Bar (11x11)",					/obj/item/survivalcapsule/luxurybar,						1000),
+		EQUIPMENT("Shelter Capsule - Deluxe Cabin (11x11)",			/obj/item/survivalcapsule/luxurycabin,						1000),
+		EQUIPMENT("Shelter Capsule - Cafe (11x11)",					/obj/item/survivalcapsule/cafe,								1000),
 	)
 	prize_list["Miscellaneous"] = list(
-		EQUIPMENT("Absinthe",					/obj/item/weapon/reagent_containers/food/drinks/bottle/absinthe,	10),
-		EQUIPMENT("Whiskey",					/obj/item/weapon/reagent_containers/food/drinks/bottle/whiskey,		10),
-		EQUIPMENT("Cigar",						/obj/item/clothing/mask/smokable/cigarette/cigar/havana,			15),
-		EQUIPMENT("Digital Tablet - Standard",	/obj/item/modular_computer/tablet/preset/custom_loadout/standard,	50),
-		EQUIPMENT("Digital Tablet - Advanced",	/obj/item/modular_computer/tablet/preset/custom_loadout/advanced,	100),
-		EQUIPMENT("Industrial Equipment - Phoron Bore",	/obj/item/weapon/gun/magnetic/matfed/phoronbore/loaded,						300),
-		EQUIPMENT("Industrial Equipment - Inducer",			/obj/item/weapon/inducer,								90),
-		EQUIPMENT("Laser Pointer",				/obj/item/device/laser_pointer,										90),
-		EQUIPMENT("Luxury Shelter Capsule",		/obj/item/device/survivalcapsule/luxury,							310),
-		EQUIPMENT("Bar Shelter Capsule",		/obj/item/device/survivalcapsule/luxurybar,							1000),
-		EQUIPMENT("Plush Toy",					/obj/random/plushie,												30),
-		EQUIPMENT("Soap",						/obj/item/weapon/soap/nanotrasen,									20),
-		EQUIPMENT("Thalers - 100",				/obj/item/weapon/spacecash/c100,									100),
-		EQUIPMENT("Umbrella",					/obj/item/weapon/melee/umbrella/random,								20),
-		EQUIPMENT("UAV - Recon Skimmer",		/obj/item/device/uav,												40),
-
+		EQUIPMENT(REAGENT_ABSINTHE,									/obj/item/reagent_containers/food/drinks/bottle/absinthe,					10),
+		EQUIPMENT(REAGENT_WHISKEY,									/obj/item/reagent_containers/food/drinks/bottle/whiskey,					10),
+		EQUIPMENT("Cigar",											/obj/item/clothing/mask/smokable/cigarette/cigar/havana,					15),
+		EQUIPMENT("Digital Tablet - Standard",						/obj/item/modular_computer/tablet/preset/custom_loadout/standard,			50),
+		EQUIPMENT("Digital Tablet - Advanced",						/obj/item/modular_computer/tablet/preset/custom_loadout/advanced,			100),
+		EQUIPMENT("Industrial Equipment - Phoron Bore",				/obj/item/gun/magnetic/matfed/phoronbore/loaded,							300),
+		EQUIPMENT("Industrial Equipment - Inducer",					/obj/item/inducer,															750),
+		EQUIPMENT("Laser Pointer",									/obj/item/laser_pointer,													90),
+		EQUIPMENT("Plush Toy",										/obj/random/plushie,														30),
+		EQUIPMENT("Soap",											/obj/item/soap/nanotrasen,													20),
+		EQUIPMENT("Thalers - 100",									/obj/item/spacecash/c100,													100),
+		EQUIPMENT("Thalers - 1000",									/obj/item/spacecash/c1000,													1000),
+		EQUIPMENT("Umbrella",										/obj/item/melee/umbrella/random,											20),
+		EQUIPMENT("UAV - Recon Skimmer",							/obj/item/uav,																40),
+		EQUIPMENT("Mining-Grade PSG",								/obj/item/personal_shield_generator/belt/mining/loaded,						100), //CHOMPADD
+		EQUIPMENT("Security-Grade PSG",								/obj/item/personal_shield_generator/belt/security/loaded,					200), //CHOMPADD
+		EQUIPMENT("PSG Variant-P",			   						/obj/item/personal_shield_generator/belt/parry,	            				250), //CHOMPADD
 	)
-	//VOREStation Edit End
 
-/obj/machinery/mineral/equipment_vendor/survey/get_points(obj/item/weapon/card/id/target)
+/obj/machinery/mineral/equipment_vendor/survey/get_points(obj/item/card/id/target)
 	if(!istype(target))
 		return 0
 	return target.survey_points
 
-/obj/machinery/mineral/equipment_vendor/survey/remove_points(obj/item/weapon/card/id/target, amt)
+/obj/machinery/mineral/equipment_vendor/survey/remove_points(obj/item/card/id/target, amt)
 	target.survey_points -= amt

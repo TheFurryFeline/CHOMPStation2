@@ -58,13 +58,11 @@
 // Updates the chunk, makes sure that it doesn't update too much. If the chunk isn't being watched it will
 // instead be flagged to update the next time an AI Eye moves near it.
 
-/datum/chunk/proc/hasChanged(var/update_now = 0)
+/datum/chunk/proc/hasChanged(update_now = 0)
 	if(visible || update_now)
 		if(!updating)
 			updating = 1
-			spawn(UPDATE_BUFFER) // Batch large changes, such as many doors opening or closing at once
-				update()
-				updating = 0
+			addtimer(CALLBACK(src, PROC_REF(update)), UPDATE_BUFFER, TIMER_DELETE_ME) // Batch large changes, such as many doors opening or closing at once
 	else
 		changed = 1
 
@@ -86,20 +84,17 @@
 	visibleTurfs = newVisibleTurfs
 	obscuredTurfs = turfs - newVisibleTurfs
 
-	for(var/turf in visAdded)
-		var/turf/t = turf
+	for(var/turf/t as anything in visAdded)
 		if(LAZYLEN(t.obfuscations) && t.obfuscations[obfuscation.type])
 			obscured -= t.obfuscations[obfuscation.type]
-			for(var/eye in seenby)
-				var/mob/observer/eye/m = eye
+			for(var/mob/observer/eye/m as anything in seenby)
 				if(!m)
 					continue
 				var/client/client = m.GetViewerClient()
 				if(client)
 					client.images -= t.obfuscations[obfuscation.type]
 
-	for(var/turf in visRemoved)
-		var/turf/t = turf
+	for(var/turf/t as anything in visRemoved)
 		if(obscuredTurfs[t])
 			LAZYINITLIST(t.obfuscations)
 			if(!t.obfuscations[obfuscation.type])
@@ -108,16 +103,16 @@
 				t.obfuscations[obfuscation.type] = ob_image
 
 			obscured += t.obfuscations[obfuscation.type]
-			for(var/eye in seenby)
-				var/mob/observer/eye/m = eye
+			for(var/mob/observer/eye/m as anything in seenby)
 				if(!m)
 					seenby -= m
 					continue
 				var/client/client = m.GetViewerClient()
 				if(client)
 					client.images += t.obfuscations[obfuscation.type]
+	updating = 0
 
-/datum/chunk/proc/acquireVisibleTurfs(var/list/visible)
+/datum/chunk/proc/acquireVisibleTurfs(list/visible)
 
 // Create a new camera chunk, since the chunks are made as they are needed.
 
@@ -142,8 +137,7 @@
 
 	obscuredTurfs = turfs - visibleTurfs
 
-	for(var/turf in obscuredTurfs)
-		var/turf/t = turf
+	for(var/turf/t as anything in obscuredTurfs)
 		LAZYINITLIST(t.obfuscations)
 		if(!t.obfuscations[obfuscation.type])
 			var/image/ob_image = image(obfuscation.icon, t, obfuscation.icon_state, OBFUSCATION_LAYER)

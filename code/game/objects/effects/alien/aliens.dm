@@ -1,7 +1,6 @@
 /* Alien Effects!
  * Contains:
  *		effect/alien
- *		Resin
  *		Weeds
  *		Acid
  */
@@ -11,141 +10,8 @@
  */
 /obj/effect/alien
 	name = "alien thing"
-	desc = "theres something alien about this"
+	desc = "there's something alien about this"
 	icon = 'icons/mob/alien.dmi'
-
-/*
- * Resin
- */
-/obj/effect/alien/resin
-	name = "resin"
-	desc = "Looks like some kind of slimy growth."
-	icon_state = "resin"
-
-	density = 1
-	opacity = 1
-	anchored = 1
-	can_atmos_pass = ATMOS_PASS_NO
-	var/health = 200
-	//var/mob/living/affecting = null
-
-/obj/effect/alien/resin/wall
-	name = "resin wall"
-	desc = "Purple slime solidified into a wall."
-	icon_state = "resinwall" //same as resin, but consistency ho!
-
-/obj/effect/alien/resin/membrane
-	name = "resin membrane"
-	desc = "Purple slime just thin enough to let light pass through."
-	icon_state = "resinmembrane"
-	opacity = 0
-	health = 120
-
-/obj/effect/alien/resin/New()
-	..()
-	var/turf/T = get_turf(src)
-	T.thermal_conductivity = WALL_HEAT_TRANSFER_COEFFICIENT
-
-/obj/effect/alien/resin/Destroy()
-	var/turf/T = get_turf(src)
-	T.thermal_conductivity = initial(T.thermal_conductivity)
-	..()
-
-/obj/effect/alien/resin/proc/healthcheck()
-	if(health <=0)
-		density = 0
-		qdel(src)
-	return
-
-/obj/effect/alien/resin/bullet_act(var/obj/item/projectile/Proj)
-	health -= Proj.damage
-	..()
-	healthcheck()
-	return
-
-/obj/effect/alien/resin/attack_generic(var/mob/user, var/damage, var/attack_verb)
-	visible_message("<span class='danger'>[user] [attack_verb] the [src]!</span>")
-	playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
-	user.do_attack_animation(src)
-	health -= damage
-	healthcheck()
-	return
-
-/obj/effect/alien/resin/take_damage(var/damage)
-	health -= damage
-	healthcheck()
-	return
-
-/obj/effect/alien/resin/ex_act(severity)
-	switch(severity)
-		if(1.0)
-			health-=50
-		if(2.0)
-			health-=50
-		if(3.0)
-			if (prob(50))
-				health-=50
-			else
-				health-=25
-	healthcheck()
-	return
-
-/obj/effect/alien/resin/hitby(AM as mob|obj)
-	..()
-	for(var/mob/O in viewers(src, null))
-		O.show_message("<span class='danger'>[src] was hit by [AM].</span>", 1)
-	var/tforce = 0
-	if(ismob(AM))
-		tforce = 10
-	else
-		tforce = AM:throwforce
-	playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
-	health = max(0, health - tforce)
-	healthcheck()
-	..()
-	return
-
-/obj/effect/alien/resin/attack_hand()
-	usr.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-	if (HULK in usr.mutations)
-		to_chat(usr, "<span class='notice'>You easily destroy the [name].</span>")
-		for(var/mob/O in oviewers(src))
-			O.show_message("<span class='warning'>[usr] destroys the [name]!</span>", 1)
-		health = 0
-	else
-
-		// Aliens can get straight through these.
-		if(istype(usr,/mob/living/carbon))
-			var/mob/living/carbon/M = usr
-			if(locate(/obj/item/organ/internal/xenos/hivenode) in M.internal_organs)
-				for(var/mob/O in oviewers(src))
-					O.show_message("<span class='warning'>[usr] strokes the [name] and it melts away!</span>", 1)
-				health = 0
-				healthcheck()
-				return
-
-		to_chat(usr, "<span class='notice'>You claw at the [name].</span>")
-		for(var/mob/O in oviewers(src))
-			O.show_message("<span class='warning'>[usr] claws at the [name]!</span>", 1)
-		health -= rand(5,10)
-	healthcheck()
-	return
-
-/obj/effect/alien/resin/attackby(obj/item/weapon/W as obj, mob/user as mob)
-
-	user.setClickCooldown(user.get_attack_speed(W))
-	var/aforce = W.force
-	health = max(0, health - aforce)
-	playsound(src, 'sound/effects/attackblob.ogg', 100, 1)
-	healthcheck()
-	..()
-	return
-
-/obj/effect/alien/resin/CanPass(atom/movable/mover, turf/target)
-	if(istype(mover) && mover.checkpass(PASSGLASS))
-		return !opacity
-	return !density
-
 
 /*
  * Weeds
@@ -162,26 +28,28 @@
 	name = "growth"
 	desc = "Weird organic growth."
 	icon_state = "weeds"
-	anchored = 1
-	density = 0
+	anchored = TRUE
+	density = FALSE
+	unacidable = TRUE
 	plane = TURF_PLANE
 	layer = ABOVE_TURF_LAYER
+	var/delete_me
 
 	var/health = 15
 	var/obj/effect/alien/weeds/node/linked_node = null
 	var/static/list/weedImageCache
 
-/obj/effect/alien/weeds/Initialize(var/mapload, var/node, var/newcolor)
+/obj/effect/alien/weeds/Initialize(mapload, node, newcolor)
 	. = ..()
-	if(isspace(loc))
+	if(isspace(loc) || delete_me)
 		return INITIALIZE_HINT_QDEL
 
 	linked_node = node
-	if(newcolor)
-		color = newcolor
+//	if(newcolor)
+//		color = newcolor // CHOMPedit: No coloration.
 
 	if(icon_state == "weeds")
-		icon_state = pick("weeds", "weeds1", "weeds2")
+		icon_state = pick("weeds", "weeds1", "weeds2", "weeds3", "weeds4", "weeds5", "weeds6", "weeds7", "weeds8", "weeds9", "weeds10", "weeds11", "weeds12", "weeds13", "weeds14", "weeds15") // CHOMPedit: More icons variants.
 
 	fullUpdateWeedOverlays()
 
@@ -202,25 +70,30 @@
 	desc = "Weird glowing organic growth."
 	layer = ABOVE_TURF_LAYER+0.01
 	light_range = NODERANGE
+	light_on = TRUE
+	light_color = "#673972"
 
 	var/node_range = NODERANGE
-	var/set_color = "#321D37"
+//	var/set_color = "#321D37" // CHOMPedit:  Removing coloration.
 
-/obj/effect/alien/weeds/node/Initialize(var/mapload, var/node, var/newcolor)
+/obj/effect/alien/weeds/node/Initialize(mapload, node, newcolor)
 	. = ..()
 
 	for(var/obj/effect/alien/weeds/existing in loc)
 		if(existing == src)
 			continue
 		else
+			if(!(existing.flags & ATOM_INITIALIZED))
+				existing.delete_me = TRUE
+				continue
 			qdel(existing)
 
 	linked_node = src
 
-	if(newcolor)
-		set_color = newcolor
-	if(set_color)
-		color = set_color
+//	if(newcolor)
+//		set_color = newcolor
+//	if(set_color)
+//		color = set_color // CHOMPedit: Removing coloration.
 
 	START_PROCESSING(SSobj, src) // Only the node processes in a subsystem, the rest are process()'d by the node
 
@@ -272,7 +145,7 @@
 	if(get_dist(linked_node, src) > linked_node.node_range)
 		return
 
-	for(var/dirn in cardinal)
+	for(var/dirn in GLOB.cardinal)
 		var/turf/T1 = get_turf(src)
 		var/turf/T2 = get_step(src, dirn)
 
@@ -282,7 +155,7 @@
 		if(T1.c_airblock(T2) == BLOCKED)
 			continue
 
-		new /obj/effect/alien/weeds(T2, linked_node, color)
+		new /obj/effect/alien/weeds(T2, linked_node) // CHOMPedit: No coloration.
 
 /obj/effect/alien/weeds/node/process()
 	set background = 1
@@ -292,13 +165,12 @@
 	for(var/obj/effect/alien/weeds/W in orange(node_range, src))
 		nearby_weeds |= W
 
-	for(var/nbw in nearby_weeds)
-		var/obj/effect/alien/weeds/W = nbw
+	for(var/obj/effect/alien/weeds/W as anything in nearby_weeds)
 
 		if(!W.linked_node)
 			W.linked_node = src
 
-		W.color = W.linked_node.set_color
+//		W.color = W.linked_node.set_color // CHOMPedit: No coloration.
 
 		if(prob(max(10, 60 - (5 * nearby_weeds.len))))
 			W.process()
@@ -315,17 +187,17 @@
 				qdel(src)
 	return
 
-/obj/effect/alien/weeds/attackby(var/obj/item/weapon/W, var/mob/user)
+/obj/effect/alien/weeds/attackby(obj/item/W, mob/user)
 	user.setClickCooldown(user.get_attack_speed(W))
-	if(W.attack_verb.len)
-		visible_message("<span class='danger'>\The [src] have been [pick(W.attack_verb)] with \the [W][(user ? " by [user]." : ".")]</span>")
+	if(LAZYLEN(W.attack_verb))
+		visible_message(span_danger("\The [src] have been [pick(W.attack_verb)] with \the [W][(user ? " by [user]." : ".")]"))
 	else
-		visible_message("<span class='danger'>\The [src] have been attacked with \the [W][(user ? " by [user]." : ".")]</span>")
+		visible_message(span_danger("\The [src] have been attacked with \the [W][(user ? " by [user]." : ".")]"))
 
 	var/damage = W.force / 4.0
 
-	if(istype(W, /obj/item/weapon/weldingtool))
-		var/obj/item/weapon/weldingtool/WT = W
+	if(W.has_tool_quality(TOOL_WELDER))
+		var/obj/item/weldingtool/WT = W.get_welder()
 
 		if(WT.remove_fuel(0, user))
 			damage = 15
@@ -334,14 +206,14 @@
 	health -= damage
 	healthcheck()
 
-/obj/effect/alien/weeds/attack_generic(var/mob/user, var/damage, var/attack_verb)
-	visible_message("<span class='danger'>[user] [attack_verb] the [src]!</span>")
+/obj/effect/alien/weeds/attack_generic(mob/user, damage, attack_verb)
+	visible_message(span_danger("[user] [attack_verb] the [src]!"))
 	user.do_attack_animation(src)
 	health -= damage
 	healthcheck()
 	return
 
-/obj/effect/alien/weeds/take_damage(var/damage)
+/obj/effect/alien/weeds/take_damage(damage)
 	health -= damage
 	healthcheck()
 	return
@@ -355,6 +227,31 @@
 	if(exposed_temperature > 300 + T0C)
 		health -= 5
 		healthcheck()
+
+// CHOMPedit start - Smaller-ranged nodes for Xenomorph Hybrids, node/weed deletion.
+/obj/effect/alien/weeds/attack_hand(mob/user as mob)
+	usr.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	if (HULK in usr.mutations)
+		visible_message(span_warning("[usr] destroys the [name]!"))
+		health = 0
+	else
+
+		// Aliens can get straight through these.
+		if(istype(usr,/mob/living/carbon))
+			if(user.a_intent == I_HURT)
+				var/mob/living/carbon/M = usr
+				if(locate(/obj/item/organ/internal/xenos/hivenode) in M.internal_organs)
+					visible_message (span_warning("[usr] strokes the [name] and it melts away!"), 1)
+					health = 0
+					healthcheck()
+					return
+	healthcheck()
+	return
+
+/obj/effect/alien/weeds/node/weak
+	light_range = 2
+	node_range = 1
+// CHOMPedit end.
 
 #undef NODERANGE
 #undef WEED_NORTH_EDGING
@@ -372,16 +269,16 @@
 	desc = "Burbling corrossive stuff. I wouldn't want to touch it."
 	icon_state = "acid"
 
-	density = 0
+	density = FALSE
 	opacity = 0
-	anchored = 1
+	anchored = TRUE
 
 	var/atom/target
 	var/ticks = 0
 	var/target_strength = 0
 
-/obj/effect/alien/acid/New(loc, target)
-	..(loc)
+/obj/effect/alien/acid/Initialize(mapload, target)
+	. = ..()
 	src.target = target
 
 	if(isturf(target)) // Turf take twice as long to take down.
@@ -395,29 +292,31 @@
 		qdel(src)
 
 	ticks += 1
-
 	if(ticks >= target_strength)
 
 		for(var/mob/O in hearers(src, null))
-			O.show_message("<span class='alium'>[src.target] collapses under its own weight into a puddle of goop and undigested debris!</span>", 1)
+			O.show_message(span_alium("[src.target] collapses under its own weight into a puddle of goop and undigested debris!"), 1)
 
-		if(istype(target, /turf/simulated/wall)) // I hate turf code.
+		if(iswall(target))
 			var/turf/simulated/wall/W = target
-			W.dismantle_wall(1)
-		else
+			W.dismantle_wall()
+		else if(isfloor(target))
+			var/turf/simulated/floor/T = target
+			T.ex_act(1)
+		else if(isobj(target))
 			qdel(target)
 		qdel(src)
 		return
 
 	switch(target_strength - ticks)
 		if(6)
-			visible_message("<span class='alium'>[src.target] is holding up against the acid!</span>")
+			visible_message(span_alium("[src.target] is holding up against the acid!"))
 		if(4)
-			visible_message("<span class='alium'>[src.target]\s structure is being melted by the acid!</span>")
+			visible_message(span_alium("[src.target]\s structure is being melted by the acid!"))
 		if(2)
-			visible_message("<span class='alium'>[src.target] is struggling to withstand the acid!</span>")
+			visible_message(span_alium("[src.target] is struggling to withstand the acid!"))
 		if(0 to 1)
-			visible_message("<span class='alium'>[src.target] begins to crumble under the acid!</span>")
+			visible_message(span_alium("[src.target] begins to crumble under the acid!"))
 	spawn(rand(150, 200)) tick()
 
-//CHOMPedit old eggs removed
+//Xenomorph Effect egg removed, replaced with Structure Egg.

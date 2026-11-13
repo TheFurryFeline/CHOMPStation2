@@ -6,7 +6,7 @@
 
 /obj/effect/effect/confetti
 	name = "confetti"
-	icon = 'icons/effects/effects_ch.dmi'
+	icon = 'icons/effects/effects.dmi'
 	icon_state = "confetti"
 	opacity = 0
 	anchored = 0.0
@@ -14,12 +14,10 @@
 	var/amount = 6.0
 	var/time_to_live = 500
 
-/obj/effect/effect/confetti/New()
-	..()
+/obj/effect/effect/confetti/Initialize(mapload)
+	. = ..()
 	if(time_to_live)
-		spawn (time_to_live)
-			if(!QDELETED(src))
-				qdel(src)
+		QDEL_IN(src, time_to_live)
 				//make confetti on ground cleanable decal to spawn
 
 /datum/effect/effect/system/confetti_spread
@@ -39,7 +37,7 @@
 	if(direct)
 		direction = direct
 
-/datum/effect/effect/system/confetti_spread/start(var/I)
+/datum/effect/effect/system/confetti_spread/start(I)
 	var/i = 0
 	for(i=0, i<src.number, i++)
 		if(src.total_confetti > 20)
@@ -54,9 +52,9 @@
 			var/direction = src.direction
 			if(!direction)
 				if(src.cardinals)
-					direction = pick(cardinal)
+					direction = pick(GLOB.cardinal)
 				else
-					direction = pick(alldirs)
+					direction = pick(GLOB.alldirs)
 			for(i=0, i<pick(0,1,1,1,2,2,2,3), i++)
 				sleep(10)
 				step(confetti,direction)

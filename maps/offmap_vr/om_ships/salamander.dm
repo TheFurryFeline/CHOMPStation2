@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "salamander.dmm"
 #endif
 
@@ -7,18 +7,18 @@
 /datum/map_template/om_ships/salamander
 	name = "OM Ship - Salamander Corvette"
 	desc = "A medium multirole spacecraft."
-	mappath = 'salamander.dmm'
+	mappath = "maps/offmap_vr/om_ships/salamander.dmm"
 	annihilate = TRUE
 
 // Map template for spawning the shuttle
 /datum/map_template/om_ships/salamander_wreck
 	name = "OM Ship - Salamander Corvette Wreckage"
 	desc = "A medium multirole spacecraft, or at least what's left of it."
-	mappath = 'salamander_wreck.dmm'
+	mappath = "maps/offmap_vr/om_ships/salamander_wreck.dmm"
 	annihilate = TRUE
 
 // The shuttle's area(s)
-/area/shuttle/salamander	
+/area/shuttle/salamander
 	name = "\improper Salamander Cabin"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "gray"
@@ -39,35 +39,35 @@
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_q1	
+/area/shuttle/salamander_q1
 	name = "\improper Salamander Quarters 1"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "gray-p"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_q2	
+/area/shuttle/salamander_q2
 	name = "\improper Salamander Quarters 2"
 	icon = 'icons/turf/areas_vr_talon.dmi'
-	icon_state = "gray-p"
+	icon_state = "gray-s"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_galley	
+/area/shuttle/salamander_galley
 	name = "\improper Salamander Galley"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "dark-s"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_head	
+/area/shuttle/salamander_head
 	name = "\improper Salamander Head"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "dark-p"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_wreck	
+/area/shuttle/salamander_wreck
 	name = "\improper Wrecked Salamander Cabin"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "gray"
@@ -88,28 +88,28 @@
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_wreck_q1	
+/area/shuttle/salamander_wreck_q1
 	name = "\improper Wrecked Salamander Quarters 1"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "gray-p"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_wreck_q2	
+/area/shuttle/salamander_wreck_q2
 	name = "\improper Wrecked Salamander Quarters 2"
 	icon = 'icons/turf/areas_vr_talon.dmi'
-	icon_state = "gray-p"
+	icon_state = "gray-s"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_wreck_galley	
+/area/shuttle/salamander_wreck_galley
 	name = "\improper Wrecked Salamander Galley"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "dark-s"
 	requires_power = 1
 	has_gravity = 0
 
-/area/shuttle/salamander_wreck_head	
+/area/shuttle/salamander_wreck_head
 	name = "\improper Wrecked Salamander Head"
 	icon = 'icons/turf/areas_vr_talon.dmi'
 	icon_state = "dark-p"
@@ -148,12 +148,11 @@
 
 // The 'ship'
 /obj/effect/overmap/visitable/ship/landable/salamander
-	scanner_name = "Salamander-class Corvette"
+	name = "Salamander-class Corvette"
 	scanner_desc = @{"[i]Registration[/i]: ITV Independence
 [i]Class[/i]: Corvette
 [i]Transponder[/i]: Transmitting (CIV), non-hostile
 [b]Notice[/b]: Multirole independent vessel"}
-	color = "#00AA00" //green, because money
 	vessel_mass = 4500
 	vessel_size = SHIP_SIZE_LARGE
 	fore_dir = EAST
@@ -179,18 +178,18 @@
 
 // The 'ship'
 /obj/effect/overmap/visitable/ship/landable/salamander_wreck
-	scanner_name = "Wrecked Salamander-class Corvette"
+	name = "Wrecked Salamander-class Corvette"
 	scanner_desc = @{"[i]Registration[/i]: ITV Unity
 [i]Class[/i]: Corvette
 [i]Transponder[/i]: Not Transmitting
 [b]Notice[/b]: Damage to hull is consistent with intentional scuttling procedures, no distress call logged"}
-	color = "#008800" //green, because money
 	vessel_mass = 4500
 	vessel_size = SHIP_SIZE_LARGE
 	fore_dir = EAST
 	shuttle = "Salamander Wreckage"
+	known = FALSE
 
-/obj/item/weapon/paper/unity_notice
+/obj/item/paper/unity_notice
 	name = "hastily-scrawled missive"
 	info = {"<i>The writing on this scrap of paper is barely legible. Whoever wrote it was clearly in a hurry.</i><br>\
 <br>\

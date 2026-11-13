@@ -1,42 +1,16 @@
 /*********************MANUALS (BOOKS)***********************/
 
-/obj/item/weapon/book/manual
+/obj/item/book/manual
 	icon = 'icons/obj/library.dmi'
 	due_date = 0 // Game time in 1/10th seconds
 	unique = 1   // 0 - Normal book, 1 - Should not be treated as normal book, unable to be copied, unable to be modified
 
-
-/obj/item/weapon/book/manual/engineering_construction
-	name = "Station Repairs and Construction"
-	icon_state ="bookEngineering"
-	item_state = "book3"
-	author = "Engineering Encyclopedia"		 // Who wrote the thing, can be changed by pen or PC. It is not automatically assigned
-	title = "Station Repairs and Construction"
-
-/obj/item/weapon/book/manual/engineering_construction/New()
-	..()
-	dat = {"
-
-		<html><head>
-		</head>
-
-		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Guide_to_Construction&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
-		</body>
-
-		</html>
-
-		"}
-
-/obj/item/weapon/book/manual/engineering_particle_accelerator
+/obj/item/book/manual/engineering_particle_accelerator
 	name = "Particle Accelerator User's Guide"
 	icon_state ="bookParticleAccelerator"
 	item_state = "book15"
 	author = "Engineering Encyclopedia"		 // Who wrote the thing, can be changed by pen or PC. It is not automatically assigned
 	title = "Particle Accelerator User's Guide"
-
-/obj/item/weapon/book/manual/engineering_particle_accelerator/New()
-	..()
 	dat = {"<html>
 				<head>
 				<style>
@@ -56,9 +30,9 @@
 				<h2>Setting up the accelerator</h2>
 
 				<ol>
-					<li><b>Wrench</b> all pieces to the floor</li>
-					<li>Add <b>wires</b> to all the pieces</li>
-					<li>Close all the panels with your <b>screwdriver</b></li>
+					<li>"} + span_bold("Wrench") + {" all pieces to the floor</li>
+					<li>Add "} + span_bold("wires") + {" to all the pieces</li>
+					<li>Close all the panels with your "} + span_bold("screwdriver") + {"</li>
 				</ol>
 
 				<h2>Using the accelerator</h2>
@@ -67,7 +41,7 @@
 					<li>Open the control panel</li>
 					<li>Set the speed to 2</li>
 					<li>Start firing at the singularity generator</li>
-					<li><font color='red'><b>When the singularity reaches a large enough size so it starts moving on it's own set the speed down to 0, but don't shut it off</b></font></li>
+					<li>"} + span_red(span_bold("When the singularity reaches a large enough size so it starts moving on it's own set the speed down to 0, but don't shut it off")) + {"</li>
 					<li>Remember to wear a radiation suit when working with this machine... we did tell you that at the start, right?</li>
 				</ol>
 
@@ -76,15 +50,13 @@
 			"}
 
 
-/obj/item/weapon/book/manual/supermatter_engine
+/obj/item/book/manual/supermatter_engine
 	name = "Supermatter Engine Operating Manual"
 	icon_state = "bookSupermatter"
 	item_state = "book15"
 	author = "Central Engineering Division"
 	title = "Supermatter Engine Operating Manual"
-
-/obj/item/weapon/book/manual/supermatter_engine/New()
-	..()
+	//CHOMPEdit Start - Updated Supermatter Engine Manual
 	dat = {"<html>
 				<head>
 				<style>
@@ -101,7 +73,7 @@
 				<br>
 				<h2>OPERATING PRINCIPLES</h2>
 				<br>
-				<li>The supermatter crystal serves as the fundamental power source of the engine. Upon being charged, it begins to emit large amounts of heat and radiation, as well and oxygen and phoron gas. As oxygen accelerates the reaction and reacts with phoron to start a fire, it must be filtered out. It's recommended to filter out all gases besides nitrogen for standard operation. </li>
+				<li>The supermatter crystal serves as the fundamental power source of the engine. Upon being charged, it begins to emit large amounts of heat and radiation, as well and oxygen and phoron gas. As oxygen accelerates the reaction and reacts with phoron to start a fire, it must be filtered out. It's recommended to filter out all gases besides phoron for standard operation. </li>
 				<br>
 				<li>Gas in the reactor chamber housing the supermatter is circulated through the reactor loop, which passes through the filters and thermoelectric generators. The thermoelectric generators transfer heat from the reactor loop to the colder radiator loop, thereby generating power. Additional power is generated from internal turbines in the circulators.</li>
 				<br>
@@ -120,13 +92,15 @@
 				<br>
 				<h2>STANDARD STARTUP PROCEDURE</h2>
 				<ol>
-				<li>Fill reactor loop and radiator loop with three (3) standard canisters of nitrogen gas each.</li>
-				<li>Fill the waste handling radiator loop with one (1) standard canister of carbon dioxide gas.</li>
+				<li>Fill reactor loop and radiator loop with two (2) standard canisters (1871.75 moles, 20 celsius) of phoron gas each.</li>
+				<li>Fill the waste handling radiator loop with one (1) standard canister (1871.75 as well) of carbon dioxide gas.</li>
+				<li>You can confirm your canisters got enough gas in them by using your PDA's "Gas Scanner" feature, you must enable it and press your PDA against the canister.</li>
 				<li>Enable both the high power gas pumps near the thermo-electric generators and maximize the desired output.</li>
-				<li>Enable both the omni-filters and ensure they are set to filter nitrogen back into the system.</li>
+				<li>Enable both the omni-filters and ensure they are set to filter phoron back into the system.</li>
 				<li>Enable the gas pump from the filters to waste handling and maximize the desired output.</li>
 				<li>Close the monitoring room blast doors and open the reactor blast doors,</li>
-				<li>Fire 8-9 pulses from emitter at supermatter crystal. The expected power output is around a megawatt. NOTE: It will take a few minutes to heat up.</li>
+				<li>Fire 12-16 pulses from emitter at supermatter crystal. The expected power output is around a megawatt. NOTE: It will take a few minutes to heat up.</li>
+				<li>You can confirm desired power levels by checking the computer in the minotoring room, "Supermatter Monitoring". You want 300 EPR, more is safe but no higher than 700</li>
 				<li>Close the reactor blast doors and keep the monitoring room blast doors closed to prevent radiation leaking.</li>
 				</ol>
 				<br>
@@ -134,7 +108,7 @@
 				<ol>
 				<li>Ensure that radiation protection and meson goggles are worn at all times while working in the engine room.</li>
 				<li>Ensure that reactor and radiator loops are undamaged and unobstructed.</li>
-				<li>Ensure that, in a standard setup, only nitrogen is being filtered back into the system. Do not allow exhaust pressure to exceed 4500 kPa.</li>
+				<li>Ensure that, in a standard setup, only phoron is being filtered back into the system. Do not allow exhaust pressure to exceed 4500 kPa.</li>
 				<li>Ensure that engine room Area Power Controller (APC) and engine Superconducting Magnetic Energy Storage unit (SMES) are properly charged.</li>
 				<li>Ensure that reactor temperature does not exceed 5000K. In event of reactor temperature exceeding 5000K, see EMERGENCY COOLING PROCEDURE.</li>
 				<li>In event of imminent and/or unavoidable delamination, see EJECTION PROCEDURE.</li>
@@ -151,16 +125,16 @@
 				<h2>EJECTION PROCEDURE</h2>
 				<ol>
 				<li>Ensure the engine room has power. The blast doors and ejection platform are unresponsive without power.</li>
-				<li>Press Engine Ventilatory Control button to open engine core blast door to space.</li>
-				<li>Press Emergency Core Eject button to eject supermatter crystal. NOTE: Attempting crystal ejection while engine core vent is closed will result in ejection failure.</li>
-				<li>In event of ejection failure, <i>pending</i></li>
+				<li>Press Engine Ventilatory Control button to open engine core blast door to space. (In CE Office and next to the reactor shroud)</li>
+				<li>Press Emergency Core Eject button to eject supermatter crystal. (In CE Office, only) NOTE: Attempting crystal ejection while engine core vent is closed will result in ejection failure.</li>
+				<li>In event of ejection failure, "} + span_italics("good luck.") + {"</li>
 				</ol>
 				</body>
-			</html>"}
+			</html>"}			//CHOMPEdit End - Updated Supermatter Engine Manual
 
 // TESLA Engine
 
-/obj/item/weapon/book/manual/tesla_engine
+/obj/item/book/manual/tesla_engine
 	name = "Tesla Operating Manual"
 	icon_state ="bookTesla"
 	item_state = "book15"
@@ -202,7 +176,7 @@
 				<li>Bolt down Telsa Coils and Grounding Rods</li>
 				<li>Activate the Emitters</li>
 				<li>Activate each of the Field Generators, then wait until the containment field has completely formed.</li>
-				<li>Setup the Particle Accelerator (see our best seller <i>&quot;Particle Accelerator User&apos;s Guide&quot;</i>!) and activate it.</li>
+				<li>Setup the Particle Accelerator (see our best seller "} + span_italics("&quot;Particle Accelerator User&apos;s Guide&quot;") + {"!) and activate it.</li>
 				<li>After a short time the Telsa Generator will create an energy ball, being consumed in the process.</li>
 				</ol>
 				<br>
@@ -211,7 +185,7 @@
 				<li>Ensure that electrical protection and meson goggles are worn at all times while working in the engine room.</li>
 				<li>Ensure that Telsa Coils and/or Grounding Rods are placed to safely collect or ground any and all shock.</li>
 				<li>Ensure that all Emitters remain activated and have unobstructed lines of fire to the Field Generators.</li>
-				<li>Do <b>not</b> let the Emitters run out of power.</li>
+				<li>Do "} + span_bold("not") + {" let the Emitters run out of power.</li>
 				</ol>
 				<br>
 				<h2>SHUTDOWN PROCEDURE</h2>
@@ -224,22 +198,20 @@
 				<ol>
 				<li>Do not let it escape.</li>
 				<li>Have someone ready to blame when it does escape.</li>
-				<li>Buy our forthcoming manual &quot;<i>Celebrity Grounding Rod Shelters of the Galaxy</i>&quot;</li>
+				<li>Buy our forthcoming manual &quot;"} + span_italics("Celebrity Grounding Rod Shelters of the Galaxy") + {"&quot;</li>
 				</ol>
 				</body>
 			</html>"}
 
 //R-UST port
-/obj/item/weapon/book/manual/rust_engine
+/obj/item/book/manual/rust_engine	// CHOMPedit START : Updating the R-UST manual
 	name = "R-UST Operating Manual"
-	icon_state = "bookSupermatter"
+	icon = 'icons/obj/library_ch.dmi'
+	icon_state = "bookRusty" 				// Chompedit : Changed this to a new unique R-UST manual icon rather than just re-using the Supermatter book cover sprite
 	item_state = "book15"
-	author = "Cindy Crawfish"
+	author = "Central Engineering Division"
 	title = "R-UST Operating Manual"
-
-//R-UST guide Re-Writen by Gozulio to reflect how the R-UST actually operates.
-/obj/item/weapon/book/manual/rust_engine/New()
-	..()
+	//R-UST guide Re-Writen by Gozulio to reflect how the R-UST actually operates. (CHOMPedit, re-written again :3 By Foxglove)
 	dat = {"<html>
 				<head>
 				<style>
@@ -252,60 +224,71 @@
 				</style>
 				</head>
 				<body>
-				<br><br>
+				<h1>OPERATING MANUAL FOR R-UST MK 8 FUSION CORE 'TOKAMAK'</h1>
+				<br>
+				<h2>OPERATING PRINCIPLES</h2>
+				<br>
+				<li>The Tokamak is a system built that generates power off of two systems. The fusion core, AKA, the MK 8 R-UST. And the TEGs located <mark>north</mark> of the reactor shroud. </li>
+				<br>
+				<li> Using a projected field within the shroud, fuel and reactors can be kept stable and produce heat and radiation relatively safely in a controlled environment. </li>
+				<br>
+				<li> Using a gyrotron as a sort of catalyst, fuel can be ignited in carefully calculated methods, this reaction takes place in the <i>aforementioned</i> projected field. </li>
+				<br>
+				<li> While ensuring radiation is kept within the reactor chamber, and the reactor shroud, heat is allowed to be pumped and cycled to power a TEG <mark>north</mark> of the shroud, as well as a cycling coolant pipe using the temperatures of the space, or in your case, Sif's atmospheric temperatures. </li>
+				<br>
+				<li> Using the TEG to produce a small amount of energy, the R-UST can be initiated, causing a reaction that can create energy to then allow the TEG to create more energy, as well as have the R-UST produce energy on its own. These two methods together ensure the SMES and outpost both remained powered. </li>
+				<br>
+				<h2>REACTOR HANDLING</h2>
+				<li> Ensure you are wearing all required protective equipment when within the reactor chamber at all times. It is advised to also wear this suit in the engine control room. The minimum requires is a full radiation suit equipped with a sealed hood. Mesons are <em>not</em> required to be worn. </li>
+				<li> When the R-UST is not powered, both the engine control room and the shroud may be opened. When the R-UST is powered, is it safe to leave the shroud open <b>only if the engine control room is sealed</b>. </li>
+				<li> Wearing insulated gloves over your radiation suit is also considered good practice, however it is <em>not</em> required to be worn. </li>
+				<li> In order to start the R-UST and TEG system, you must be equipped with at minimum a wrench, basic knowledge of piping, the ability to follow instructions, and preferably, the ability to read or be read this guide by someone else. </li>
+				<li> The reactor may in rare instances require a secondary power source to start it, if this is the case, see <ins>ADDITIONAL INFORMATION <strong>1.</strong></ins> below. </li>
+				<br>
+				<h2>TEG STANDARD STARTUP PROCEDURE</h2>
 				<ol>
-				<li>Go to engine gas storage to the south of the engine room and fetch two Canisters of Nitrogen. and two canisters of Phoron.</li>
-				<li>Secure the Phoron canister to the port that pumps into the Cold (Green/Cyan) loop, and the Nitrogen canister into the Hot(Yellow/Red) loop. long story short, The reactor doesn't like Phoron.</li>
-				<li><b>DO NOT OPEN THE VALVE ON THE GAS CANISTERS, OR SPACE GOD WILL HATE YOU.</b> Turn both pumps on to maximum input, Swap the canisters for full ones when necessary. Each loop only needs 2 canisters of gas.</li>
-				<li>Turn on the pump just to the West of the Pump Station and set it to maximum pressure.</li>
-				<li>Now Coolant is flowing, lets actually start the reactor.</li>
-				<li>Go into the Engine Monitoring room and close the Monitoring room Blast Doors.</li>
-				<li>Get the PACMAN from hard storage and Secure it in the Engine SMES room, and load it with Phoron.</li>
-				<li>Go into the Reactor Control room and open the reactor shroud.</li>
-				<li>Enable max input and output on the engine SMES and shut off the input off on the Station SMES. This is to make sure the Gyrotron gets as much power as it can during start up.</li>
-				<li>Turn the PACMAN on, setting it to power 4/5.</li>
-				<li>Go into the reactor Control Room (East of the reactor) and take the stack of Deuterium off the table, and click it on the compressor twice, this should make two Deuterium Fuel rods. Ignore the Tritium.</li>
-				<li>In the Control room go to the Core Control console, Access the field, and set its strength/size to 600, then bring the field on-line. This will give you a field of about 7x7 tiles. Make note of the field size, A bigger field can EMP machinery or doors around it, a smaller field may allow Gyrotron shots to miss, and punch holes in the back wall.</li>
-				<li>In the Control room go to the Gyrotron Control console and turn the Gyrotrons on, delay 3 power 3.</li>
-				<li>In the Control room go to the Fuel Injector console and start injecting fuel.</li>
-				<li>Go back to the Core Control Console, and now wait for the temperature to spike from 296 Kelvin up to 3,000 to 10,000 Kelvin. When the temperature spikes it means you have achieved fusion</li>
-				<li>Now turn the Gyrotrons off, You can turn off one of the two fuel injectors as well if you wish to conserve fuel.</li>
-				<li>Now close the Reactor Shroud and the Control Room Shroud.</li>
-				<li>You should be producing power now, a lot of it. Now go turn on the Station SMES and turn off the PACMAN before it explodes.</li>
+				<li> <mark>North</mark> of the shroud lays the TEG. You will need to go there. The standard piping has a green cold loop set of pipes and a yellow hot loop set of pipes. <i>Remember that the reactor heats up the gas that is cycling through the hot loop, so it must be able to be cycle into and out of the reactor chamber freely, there is a cyan pipe that is directly connected to the reactor's core room to allow this to happen.</i> </li>
+				<li> The <mark>green</mark> cold loop is first as it takes longer to fill. <b>First</b> power and max the main cool-loop valve, this is located <ins>at the very north-west</ins> corner of the room. Remember that the red mark on a valve refers to which direction the valve allows gas to flow. Now power and max the <mark>north</mark> most valve that connects the cold-loop to the intake, and wrench a phoron canister to the intake. If you would like, skip to step four and return to step three after completing it.  </li>
+				<li> Once the phoron canister is empty, unwrench it and replace it with a second canister and wrench it down in the original canister's place. The cold-loop requires two canisters of phoron gas to remain stable and safe. <i>Once the cold-loop is set up, you may power down the <b>intake</b> pipe, located adjacent <ins>south-west</ins> of the intake connector port</i>. </li>
+				<li> Next you will look to the hot-loop, due to contamination this loop has two ports for canisters. The <i>left</i> port is the intake. The <i>right</i> port is the outlet. For the purposes of simplicity, <b>ignore the right outlet port and valve</b> Wrench a CO<sup>2</sup> canister to the intake port and open and max the intake valve.  </li>
+				<li> Once the CO<sup>2</sup> canister is empty, unwrench it and replace it with a second canister and wrench it down in the original canister's place. The hot-loop requires two canisters of CO<sup>2</sup> to remain stable and safe. <i>Once the hot-loop is set up, you may power down the <b>intake</b> pipe, located directly <ins>south</ins> of the intake connector port</i>.</li>
+				<li> While not <i>required</i> there is an omni-filter you can set-up and power on <mark>just north</mark> of the reactor shroud. It can be used to filter gas out of reactor, it is not required, however, and can be safely ignored for standard basic set-up of TEG and R-UST alike. </li>
 				</ol>
 				<br>
-				<b>NOTES FOR NEWBIES</b>
+				<h2>R-UST STANDARD STARTUP PROCEDURE</h2>
+				<h1>The Engine Control Room and what to know.</h1>
+				<li> <b><ins>Gyrotron Controller</ins></b> <em>This is the terminal located on the far <mark>west</mark> and controls the gyrotron. This device can be viewed as the catalyst that causes the reaction within the core and must remain turned on <b>only during use</b></em>. </li>
+				<li> <b><ins>Fuel Injector Control</b></ins> <em>This is the terminal <mark>adjacent</mark> to the gyrotron controller, it controls the injectors that pump fuel into the reactor core chamber and must remained turned on <b>only when in use <ins>and</ins> with the projection field powered and active</b></em>. </li>
+				<li> <b><ins>R-UST Core Monitoring</ins></b> <em>This is the terminal in the <mark>middle</mark> of the room. It gives you information about the status of the reactor, the core chamber, and the reaction going on within the R-UST</em>.</li>
+				<li> <b><ins>Engine Cooling Control</ins></b> <em>This is the terminal directly <mark>in front of you</mark> when you walk into the engine control room. This terminal controls the cooling pumps and systems within the R-UST core</em>. </li>
+				<li> <b><ins>Shroud Controls</ins></b> <em>There are two buttons that control and cycle the monitoring room shroud and the reactor core shroud. These are located <mark>on the sides</mark> of the monitoring room. The reactor shroud should be left open during setup. And the monitoring room shroud should be left shut <b>after</b> setup is complete</em>. </li>
+				<li> <b><ins>Deuterium</ins></b> <em>The standard set-up for your R-UST reaction is Deuterium-Dueterium. Go to the fuel storage chamber <mark>east</mark> of the reactor shroud and ensure you have two rods on hand for set-up. You may safely grab <b>two</b> of these rods now and insert them into the two <mark>southern</mark> fuel injectors. If you do, skip the first step below</em>.</li>
 				<br>
-				Anything touching the field will mess with its stability and eventually cause it to rupture. Rupturing is bad. Use the gyrotron to keep instability down if you're running the engine on unstable fuel.
-				<br><br>
-				Likewise, no matter how sad the core seems, don't fucking hug it, you'll blow the field out and set the engine room on fire.
+				<ol>
+				<li> Collect two (2) deuterium fuel rods from the fuel storage chamber and socket them into any two fuel injectors. <i>It is adviced to use the two <mark>southern</mark> injectors to allow for easier visual checks from the engine control room.</i> </li>
+				<li> Assuming the room and controls are powered open both the reactor shroud and the control room shroud. If the room is not powered (which you can check by looking at the R-UST Core Monitor and seeing if the buttons are greyed out or not, if they are grey it does not have enough power). If it is unpowered or otherwise does not have sufficient power see <ins>ADDITIONAL INFORMATION <strong>1.</strong></ins> below.</li>
+				<li> Now, please ensure everyone in the engine control room is wearing full radiation protection gear, ensure the control room door will not be opened during set-up to prevent radiation leakage. </li>
+				<li> Using the R-UST Core Monitor, set <mark><b>Field Strength</b></mark> to fifty-one (51). <em>This is the minimum required to catch all injected fuel, anything lower will not be strong enough to be safe, too much higher and it could cause instability that will result in an EMP of your equipment. <i>If you read slowly, read the next steps before turning this online, as the field requires a lot of upkeep power. Once you have done so or are ready to move on, turn on the field and continue.</i></em></li>
+				<li> Using the Fuel Injector, turn on the two (2) injectors that have deuterium in them. <em>Understand that this alone will not cause a reaction, but using other fuel reagents, such as a tritium, the reactions would begin after this step.</em></li>
+				<li> Finally, using the gyrotron controller, step the fire delay to three (3) and the strength to one (1). Turn it on and close <b>the engine control room shroud</b> before leaving to reduce risks of radiation leakage.</li>
+				</ol>
+				<br>
+				<h2>OPERATION AND MAINTENANCE</h2>
+				<li> Past this point you do not need to actively maintain the field. So long as the injectors and shield projectors are powered, the system is self-sustaining, even using the excess heat to power the TEG system <mark>north</mark> of the reactor shroud.</li>
+				<li> From here-on, understand that the room is now flooded with radiation, you will need to wear a full radiation-suit when going into either the engine control room, or the reactor chamber or core.</li>
+				<li> You will notice a jump in temperature. The pattern should be easy to spot, as the R-UST heats up slowly until a reaction happens. When that reaction happens, that is when you will notice the spike. Ensuring the room is constantly flooded with cycling a CO<sup>2</sup> coolant to ensure safe temperatures.</li>
+				<li> The majority of power created by this standard set-up is from the TEG, and not the actual R-UST itself. This means the R-UST can be left with lower reactives inside of it, while still ensuring the outpost is powered. Knowing this, you can also safely leave the outpost and acknowledge that periodic temperature checks are recommended. </li>
+				</li>
+				<br>
+				<h2>ADDITIONAL INFORMATION</h2>
+				<ol>
+				<li> To the <mark>east</mark> of the shroud there are three doors, the north room is the equipment storage room, the central room is the fuel storage room, and south is the SMES room. Ensure you check that both SMES are turned on before reading further... <i> if the SMES are fully unpowered, go to the <mark>north</mark> door and find the standard PACMAN and phoron prepared for you in the storage room. You insulted gloves, wire coils, and the aforementioned PACMAN/phoron for this.</i> Once you are prepared, bring the PACMAN to the SMES room. That is the <mark>south</mark> room, wire it up to the TEG lines and power the PACMAN with phoron.  </li><br>
+				<li> Due to the TEG generating such a high amount of power, you can safely go into the SMES chamber and max out the INPUT and OUTPUT to both SMES units. One will ensure that even in the rare event of a TEG shutdown, the R-UST will have enough power to allow engineers to set up different reactions to ensure the outpost stays powered. The other SMES will ensure the outpost has some spare power until the TEG is repaired, or otherwise replaced. </li><br>
+				</ol>
 				</body>
-			</html>"}
+			</html>"}			// CHOMPedit END : Updating the R-UST manual
 
-/obj/item/weapon/book/manual/engineering_hacking
-	name = "Hacking"
-	icon_state ="bookHacking"
-	item_state = "book2"
-	author = "Engineering Encyclopedia"		 // Who wrote the thing, can be changed by pen or PC. It is not automatically assigned
-	title = "Hacking"
-
-/obj/item/weapon/book/manual/engineering_hacking/New()
-	..()
-	dat = {"
-
-		<html><head>
-		</head>
-
-		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Hacking&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
-		</body>
-
-		</html>
-
-		"}
-
-
-/obj/item/weapon/book/manual/engineering_singularity_safety
+/obj/item/book/manual/engineering_singularity_safety
 	name = "Singularity Safety in Special Circumstances"
 	icon_state ="bookEngineeringSingularitySafety"
 	item_state = "book15"
@@ -328,37 +311,37 @@
 
 				<h2>Power outage</h2>
 
-				A power problem has made the entire station lose power? Could be station-wide wiring problems or syndicate power sinks. In any case follow these steps:
+				A power problem has made the entire station lose power? Could be station-wide wiring problems or illegal power sinks. In any case follow these steps:
 
 				<ol>
-					<li><b><font color='red'>PANIC!</font></b></li>
-					<li>Get your ass over to engineering! <b>QUICKLY!!!</b></li>
-					<li>Get to the <b>Area Power Controller</b> which controls the power to the emitters.</li>
-					<li>Swipe it with your <b>ID card</b> - if it doesn't unlock, continue with step 15.</li>
+					<li>"} + span_bold(span_red("PANIC!")) + {"</li>
+					<li>Get your ass over to engineering! "} + span_bold("QUICKLY!!!") + {"</li>
+					<li>Get to the "} + span_bold("Area Power Controller") + {" which controls the power to the emitters.</li>
+					<li>Swipe it with your "} + span_bold("ID card") + {" - if it doesn't unlock, continue with step 15.</li>
 					<li>Open the console and disengage the cover lock.</li>
-					<li>Pry open the APC with a <b>Crowbar.</b></li>
-					<li>Take out the empty <b>power cell.</b></li>
-					<li>Put in the new, <b>full power cell</b> - if you don't have one, continue with step 15.</li>
-					<li>Quickly put on a <b>Radiation suit.</b></li>
-					<li>Check if the <b>singularity field generators</b> withstood the down-time - if they didn't, continue with step 15.</li>
+					<li>Pry open the APC with a "} + span_bold("Crowbar.") + {"</li>
+					<li>Take out the empty "} + span_bold("power cell.") + {"</li>
+					<li>Put in the new, "} + span_bold("full power cell") + {" - if you don't have one, continue with step 15.</li>
+					<li>Quickly put on a "} + span_bold("Radiation suit.") + {"</li>
+					<li>Check if the "} + span_bold("singularity field generators") + {" withstood the down-time - if they didn't, continue with step 15.</li>
 					<li>Since disaster was averted you now have to ensure it doesn't repeat. If it was a powersink which caused it and if the engineering APC is wired to the same powernet, which the powersink is on, you have to remove the piece of wire which links the APC to the powernet. If it wasn't a powersink which caused it, then skip to step 14.</li>
 					<li>Grab your crowbar and pry away the tile closest to the APC.</li>
 					<li>Use the wirecutters to cut the wire which is connecting the grid to the terminal. </li>
 					<li>Go to the bar and tell the guys how you saved them all. Stop reading this guide here.</li>
-					<li><b>GET THE FUCK OUT OF THERE!!!</b></li>
+					<li>"} + span_bold("GET THE FUCK OUT OF THERE!!!") + {"</li>
 				</ol>
 
 				<h2>Shields get damaged</h2>
 
 				<ol>
-					<li><b>GET THE FUCK OUT OF THERE!!! FORGET THE WOMEN AND CHILDREN, SAVE YOURSELF!!!</b></li>
+					<li>"} + span_bold("GET THE FUCK OUT OF THERE!!! FORGET THE WOMEN AND CHILDREN, SAVE YOURSELF!!!") + {"</li>
 				</ol>
 				</body>
 			</html>
 			"}
 
 
-/obj/item/weapon/book/manual/hydroponics_pod_people
+/obj/item/book/manual/hydroponics_pod_people
 	name = "The Diona Harvest - From Seed to Market"
 	icon_state ="bookHydroponicsPodPeople"
 	item_state = "book5"
@@ -397,7 +380,7 @@
 				"}
 
 
-/obj/item/weapon/book/manual/medical_cloning
+/obj/item/book/manual/medical_cloning
 	name = "Cloning Techniques of the 26th Century"
 	icon_state ="bookCloning"
 	item_state = "book9"
@@ -491,7 +474,7 @@
 				"}
 
 
-/obj/item/weapon/book/manual/ripley_build_and_repair
+/obj/item/book/manual/ripley_build_and_repair
 	name = "APLU \"Ripley\" Construction and Operation Manual"
 	icon_state ="book"
 	item_state = "book"
@@ -513,27 +496,27 @@
 				<body>
 				<center>
 				<br>
-				<span style='font-size: 12px;'><b>Weyland-Yutani - Building Better Worlds</b></span>
+				<span style='font-size: 12px;'>"} + span_bold("Weyland-Yutani - Building Better Worlds") + {"</span>
 				<h1>Autonomous Power Loader Unit \"Ripley\"</h1>
 				</center>
 				<h2>Specifications:</h2>
 				<ul class="a">
-				<li><b>Class:</b> Autonomous Power Loader</li>
-				<li><b>Scope:</b> Logistics and Construction</li>
-				<li><b>Weight:</b> 820kg (without operator and with empty cargo compartment)</li>
-				<li><b>Height:</b> 2.5m</li>
-				<li><b>Width:</b> 1.8m</li>
-				<li><b>Top speed:</b> 5km/hour</li>
-				<li><b>Operation in vacuum/hostile environment: Possible</b>
-				<li><b>Airtank volume:</b> 500 liters</li>
-				<li><b>Devices:</b>
+				<li>"} + span_bold("Class:") + {" Autonomous Power Loader</li>
+				<li>"} + span_bold("Scope:") + {" Logistics and Construction</li>
+				<li>"} + span_bold("Weight:") + {" 820kg (without operator and with empty cargo compartment)</li>
+				<li>"} + span_bold("Height:") + {" 2.5m</li>
+				<li>"} + span_bold("Width:") + {" 1.8m</li>
+				<li>"} + span_bold("Top speed:") + {" 5km/hour</li>
+				<li>"} + span_bold("Operation in vacuum/hostile environment: Possible") + {"
+				<li>"} + span_bold("Airtank volume:") + {" 500 liters</li>
+				<li>"} + span_bold("Devices:") + {"
 					<ul class="a">
 					<li>Hydraulic clamp</li>
 					<li>High-speed drill</li>
 					</ul>
 				</li>
-				<li><b>Propulsion device:</b> Powercell-powered electro-hydraulic system</li>
-				<li><b>Powercell capacity:</b> Varies</li>
+				<li>"} + span_bold("Propulsion device:") + {" Powercell-powered electro-hydraulic system</li>
+				<li>"} + span_bold("Powercell capacity:") + {" Varies</li>
 				</ul>
 
 				<h2>Construction:</h2>
@@ -569,7 +552,7 @@
 			"}
 
 
-/obj/item/weapon/book/manual/research_and_development
+/obj/item/book/manual/research_and_development
 	name = "Research and Development 101"
 	icon_state = "rdbook"
 	item_state = "book7"
@@ -593,9 +576,9 @@
 				<h1>Science For Dummies</h1>
 				So you want to further SCIENCE? Good man/woman/thing! However, SCIENCE is a complicated process even though it's quite easy. For the most part, it's a three step process:
 				<ol>
-					<li><b>Deconstruct</b> items in the Destructive Analyzer to advance technology or improve the design.</li>
-					<li><b>Build</b> unlocked designs in the Protolathe and Circuit Imprinter.</li>
-					<li><b>Repeat</b>!</li>
+					<li>"} + span_bold("Deconstruct") + {" items in the Destructive Analyzer to advance technology or improve the design.</li>
+					<li>"} + span_bold("Build") + {" unlocked designs in the Protolathe and Circuit Imprinter.</li>
+					<li>"} + span_bold("Repeat") + {"!</li>
 				</ol>
 
 				Those are the basic steps to furthering science. What do you do science with, however? Well, you have four major tools: R&D Console, the Destructive Analyzer, the Protolathe, and the Circuit Imprinter.
@@ -608,7 +591,7 @@
 				It also has a settings menu that lets you re-sync with nearby R&D devices (if they've become disconnected), lock the console from the unworthy,
 				upload the data to all other R&D consoles in the network (all R&D consoles are networked by default), connect/disconnect from the network, and purge all data from the database.<br><br>
 
-				<b>NOTE:</b> The technology list screen, circuit imprinter, and protolathe menus are accessible by non-scientists. This is intended to allow 'public' systems for the plebians to utilize some new devices.
+				"} + span_bold("NOTE:") + {" The technology list screen, circuit imprinter, and protolathe menus are accessible by non-scientists. This is intended to allow 'public' systems for the plebians to utilize some new devices.
 
 				<h2>Destructive Analyzer</h2>
 				This is the source of all technology. Whenever you put a handheld object in it, it analyzes it and determines what sort of technological advancements you can discover from it. If the technology of the object is equal or higher then your current knowledge,
@@ -638,13 +621,12 @@
 			</html>
 			"}
 
-
-/obj/item/weapon/book/manual/robotics_cyborgs
-	name = "Cyborgs for Dummies"
+/obj/item/book/manual/robotics_cyborgs
+	name = JOB_CYBORG + "s for Dummies"
 	icon_state = "borgbook"
 	item_state = "book1"
 	author = "XISC"
-	title = "Cyborgs for Dummies"
+	title = JOB_CYBORG + "s for Dummies"
 
 	dat = {"<html>
 				<head>
@@ -844,109 +826,12 @@
 			</html>
 		"}
 
-
-/obj/item/weapon/book/manual/security_space_law
-	name = "Corporate Regulations"
-	desc = "A set of corporate guidelines for keeping law and order on privately-owned space stations."
-	icon_state = "bookSpaceLaw"
-	item_state = "book13"
-	author = "The Company"
-	title = "Corporate Regulations"
-
-/obj/item/weapon/book/manual/security_space_law/New()
-	..()
-	dat = {"
-
-		<html><head>
-		</head>
-
-		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Corporate_Regulations&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
-		</body>
-
-		</html>
-
-		"}
-
-
-
-/obj/item/weapon/book/manual/medical_diagnostics_manual
-	name = "Medical Diagnostics Manual"
-	desc = "First, do no harm. A detailed medical practitioner's guide."
-	icon_state = "bookMedical"
-	item_state = "book12"
-	author = "Medical Department"
-	title = "Medical Diagnostics Manual"
-
-/obj/item/weapon/book/manual/medical_diagnostics_manual/New()
-	..()
-	dat = {"<html>
-				<head>
-				<style>
-				h1 {font-size: 18px; margin: 15px 0px 5px;}
-				h2 {font-size: 15px; margin: 15px 0px 5px;}
-				li {margin: 2px 0px 2px 15px;}
-				ul {margin: 5px; padding: 0px;}
-				ol {margin: 5px; padding: 0px 15px;}
-				body {font-size: 13px; font-family: Verdana;}
-				</style>
-				</head>
-				<body>
-				<br>
-				<h1>The Oath</h1>
-
-				<i>The Medical Oath sworn by recognised medical practitioners in the employ of [using_map.company_name]</i><br>
-
-				<ol>
-					<li>Now, as a new doctor, I solemnly promise that I will, to the best of my ability, serve humanity-caring for the sick, promoting good health, and alleviating pain and suffering.</li>
-					<li>I recognise that the practice of medicine is a privilege with which comes considerable responsibility and I will not abuse my position.</li>
-					<li>I will practise medicine with integrity, humility, honesty, and compassion-working with my fellow doctors and other colleagues to meet the needs of my patients.</li>
-					<li>I shall never intentionally do or administer anything to the overall harm of my patients.</li>
-					<li>I will not permit considerations of gender, race, religion, political affiliation, sexual orientation, nationality, or social standing to influence my duty of care.</li>
-					<li>I will oppose policies in breach of human rights and will not participate in them. I will strive to change laws that are contrary to my profession's ethics and will work towards a fairer distribution of health resources.</li>
-					<li>I will assist my patients to make informed decisions that coincide with their own values and beliefs and will uphold patient confidentiality.</li>
-					<li>I will recognise the limits of my knowledge and seek to maintain and increase my understanding and skills throughout my professional life. I will acknowledge and try to remedy my own mistakes and honestly assess and respond to those of others.</li>
-					<li>I will seek to promote the advancement of medical knowledge through teaching and research.</li>
-					<li>I make this declaration solemnly, freely, and upon my honour.</li>
-				</ol><br>
-
-				<HR COLOR="steelblue" WIDTH="60%" ALIGN="LEFT">
-
-				<iframe width='100%' height='100%' src="[config.wikiurl]Guide_to_Medicine&printable=yes&removelinks=1" frameborder="0" id="main_frame"></iframe>
-				</body>
-			</html>
-
-		"}
-
-
-/obj/item/weapon/book/manual/engineering_guide
-	name = "Engineering Textbook"
-	icon_state ="bookEngineering2"
-	item_state = "book3"
-	author = "Engineering Encyclopedia"
-	title = "Engineering Textbook"
-
-/obj/item/weapon/book/manual/engineering_guide/New()
-	..()
-	dat = {"
-
-		<html><head>
-		</head>
-
-		<body>
-		<iframe width='100%' height='100%' src="[config.wikiurl]Guide_to_Engineering&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>		</body>
-
-		</html>
-
-		"}
-
-
-/obj/item/weapon/book/manual/chef_recipes
-	name = "Chef Recipes"
+/obj/item/book/manual/chef_recipes
+	name = JOB_CHEF + " Recipes"
 	icon_state = "cooked_book"
 	item_state = "book16"
 	author = "Victoria Ponsonby"
-	title = "Chef Recipes"
+	title = JOB_CHEF + " Recipes"
 
 	dat = {"<html>
 				<head>
@@ -964,6 +849,9 @@
 
 				<h1>Food for Dummies</h1>
 				Here is a guide on basic food recipes and also how to not poison your customers accidentally.
+
+				<h2>((OOC link for updated working recipes here))</h2>
+				vore-station.net/infodump/recipes_food.html
 
 				<h3>Basics:</h3>
 				Knead an egg and some flour to make dough. Bake that to make a bun or flatten and cut it.
@@ -1001,7 +889,7 @@
 			"}
 
 
-/obj/item/weapon/book/manual/barman_recipes
+/obj/item/book/manual/barman_recipes
 	name = "Barman Recipes"
 	desc = "For the enterprising drink server."
 	icon_state = "barbook"
@@ -1058,7 +946,7 @@
 			"}
 
 
-/obj/item/weapon/book/manual/detective
+/obj/item/book/manual/detective
 	name = "The Film Noir: Proper Procedures for Investigations"
 	icon_state ="bookDetective"
 	item_state = "book8"
@@ -1102,11 +990,11 @@
 				</body>
 			</html>"}
 
-/obj/item/weapon/book/manual/nuclear
+/obj/item/book/manual/nuclear
 	name = "Fission Mailed: Nuclear Sabotage 101"
 	icon_state ="bookNuclear"
 	item_state = "book8"
-	author = "Syndicate"
+	author = "Stealth Assault Enterprises"
 	title = "Fission Mailed: Nuclear Sabotage 101"
 
 	dat = {"<html>
@@ -1122,7 +1010,7 @@
 				</head>
 				<body>
 				<h1>Nuclear Explosives 101</h1>
-				Hello and thank you for choosing the Syndicate for your nuclear information needs. Today's crash course will deal with the operation of a Nuclear Fission Device.<br><br>
+				Hello and thank you for choosing Stealth Assault Enterprises for your nuclear information needs. Today's crash course will deal with the operation of a Nuclear Fission Device.<br><br>
 
 				First and foremost, DO NOT TOUCH ANYTHING UNTIL THE BOMB IS IN PLACE. Pressing any button on the compacted bomb will cause it to extend and bolt itself into place. If this is done, to unbolt it, one must completely log in, which at this time may not be possible.<br>
 
@@ -1132,21 +1020,21 @@
 					<li>Extend and anchor the nuclear device from its interface.</li>
 					<li>Insert the nuclear authorisation disk into the slot.</li>
 					<li>Type the numeric authorisation code into the keypad. This should have been provided.<br>
-					<b>Note</b>: If you make a mistake, press R to reset the device.
+					"} + span_bold("Note") + {": If you make a mistake, press R to reset the device.
 					<li>Press the E button to log on to the device.</li>
 				</ul><br>
 
 				You now have activated the device. To deactivate the buttons at anytime, for example when you've already prepped the bomb for detonation, remove the authentication disk OR press R on the keypad.<br><br>
 				Now the bomb CAN ONLY be detonated using the timer. Manual detonation is not an option. Toggle off the SAFETY.<br>
-				<b>Note</b>: You wouldn't believe how many Syndicate Operatives with doctorates have forgotten this step.<br><br>
+				"} + span_bold("Note") + {": You wouldn't believe how many SAARE Operatives with doctorates have forgotten this step.<br><br>
 
 				So use the - - and + + to set a detonation time between 5 seconds and 10 minutes. Then press the timer toggle button to start the countdown. Now remove the authentication disk so that the buttons deactivate.<br>
-				<b>Note</b>: THE BOMB IS STILL SET AND WILL DETONATE<br><br>
+				"} + span_bold("Note") + {": THE BOMB IS STILL SET AND WILL DETONATE<br><br>
 
 				Now before you remove the disk, if you need to move the bomb, you can toggle off the anchor, move it, and re-anchor.<br><br>
 
 				Remember the order:<br>
-				<b>Disk, Code, Safety, Timer, Disk, RUN!</b><br><br>
+				"} + span_bold("Disk, Code, Safety, Timer, Disk, RUN!") + {"<br><br>
 				Intelligence Analysts believe that normal corporate procedure is for the Site Manager to secure the nuclear authentication disk.<br><br>
 
 				Good luck!
@@ -1154,7 +1042,7 @@
 			</html>
 			"}
 
-/obj/item/weapon/book/manual/atmospipes
+/obj/item/book/manual/atmospipes
 	name = "Pipes and You: Getting To Know Your Scary Tools"
 	icon_state = "pipingbook"
 	item_state = "book3"
@@ -1183,8 +1071,8 @@
 					<li><a href="#Final">Final Checks</a></li>
 				</ol><br>
 
-				<h1><a name="Foreword"><U><B>HOW TO NOT SUCK QUITE SO HARD AT ATMOSPHERICS</B></U></a></h1><BR>
-				<I>Or: What the fuck does a "pressure regulator" do?</I><BR><BR>
+				<h1><a name="Foreword">"} + span_underline(span_bold("HOW TO NOT SUCK QUITE SO HARD AT ATMOSPHERICS")) + {"</a></h1><BR>
+				"} + span_italics("Or: What the fuck does a \"pressure regulator\" do?") + {"<BR><BR>
 
 				Alright. It has come to my attention that a variety of people are unsure of what a "pipe" is and what it does.
 				Apparently, there is an unnatural fear of these arcane devices and their "gases." Spooky, spooky. So,
@@ -1193,67 +1081,67 @@
 				or something like that. Just what stuff does.<BR><BR>
 
 
-				<h1><a name="Basic"><B>Basic Pipes</B></a></h1>
-				<I>The boring ones.</I><BR>
+				<h1><a name="Basic">"} + span_bold("Basic Pipes") + {"</a></h1>
+				"} + span_italics("The boring ones.") + {"<BR>
 				Most ordinary pipes are pretty straightforward. They hold gas. If gas is moving in a direction for some reason, gas will flow in that direction.
 				That's about it. Even so, here's all of your wonderful pipe options.<BR>
 
 				<ul>
-				<li><b>Straight pipes:</b> They're pipes. One-meter sections. Straight line. Pretty simple. Just about every pipe and device is based around this
+				<li>"} + span_bold("Straight pipes:") + {" They're pipes. One-meter sections. Straight line. Pretty simple. Just about every pipe and device is based around this
 				standard one-meter size, so most things will take up as much space as one of these.</li>
-				<li><b>Bent pipes:</b> Pipes with a 90 degree bend at the half-meter mark. My goodness.</li>
-				<li><b>Pipe manifolds:</b> Pipes that are essentially a "T" shape, allowing you to connect three things at one point.</li>
-				<li><b>4-way manifold:</b> A four-way junction.</li>
-				<li><b>Pipe cap:</b> Caps off the end of a pipe. Open ends don't actually vent air, because of the way the pipes are assembled, so, uh, use them to decorate your house or something.</li>
-				<li><b>Manual valve:</b> A valve that will block off airflow when turned. Can't be used by the AI or cyborgs, because they don't have hands.</li>
-				<li><b>Manual T-valve:</b> Like a manual valve, but at the center of a manifold instead of a straight pipe.</li><BR><BR>
+				<li>"} + span_bold("Bent pipes:") + {" Pipes with a 90 degree bend at the half-meter mark. My goodness.</li>
+				<li>"} + span_bold("Pipe manifolds:") + {" Pipes that are essentially a "T" shape, allowing you to connect three things at one point.</li>
+				<li>"} + span_bold("4-way manifold:") + {" A four-way junction.</li>
+				<li>"} + span_bold("Pipe cap:") + {" Caps off the end of a pipe. Open ends don't actually vent air, because of the way the pipes are assembled, so, uh, use them to decorate your house or something.</li>
+				<li>"} + span_bold("Manual valve:") + {" A valve that will block off airflow when turned. Can't be used by the AI or cyborgs, because they don't have hands.</li>
+				<li>"} + span_bold("Manual T-valve:") + {" Like a manual valve, but at the center of a manifold instead of a straight pipe.</li><BR><BR>
 				</ul>
 
 				An important note here is that pipes are now done in three distinct lines - general, supply, and scrubber. You can move gases between these with a universal adapter. Use the correct position for the correct location.
 				Connecting scrubbers to a supply position pipe makes you an idiot who gives everyone a difficult job. Insulated and HE pipes don't go through these positions.
 
-				<h1><a name="Insulated"><B>Insulated Pipes</B></a></h1>
-				<li><I>Bent pipes:</I> Pipes with a 90 degree bend at the half-meter mark. My goodness.</li>
-				<li><I>Pipe manifolds:</I> Pipes that are essentially a "T" shape, allowing you to connect three things at one point.</li>
-				<li><I>4-way manifold:</I> A four-way junction.</li>
-				<li><I>Pipe cap:</I> Caps off the end of a pipe. Open ends don't actually vent air, because of the way the pipes are assembled, so, uh. Use them to decorate your house or something.</li>
-				<li><I>Manual Valve:</I> A valve that will block off airflow when turned. Can't be used by the AI or cyborgs, because they don't have hands.</li>
-				<li><I>Manual T-Valve:</I> Like a manual valve, but at the center of a manifold instead of a straight pipe.</li><BR><BR>
+				<h1><a name="Insulated">"} + span_bold("Insulated Pipes") + {"</a></h1>
+				<li>"} + span_italics("Bent pipes:") + {" Pipes with a 90 degree bend at the half-meter mark. My goodness.</li>
+				<li>"} + span_italics("Pipe manifolds:") + {" Pipes that are essentially a "T" shape, allowing you to connect three things at one point.</li>
+				<li>"} + span_italics("4-way manifold:") + {" A four-way junction.</li>
+				<li>"} + span_italics("Pipe cap:") + {" Caps off the end of a pipe. Open ends don't actually vent air, because of the way the pipes are assembled, so, uh. Use them to decorate your house or something.</li>
+				<li>"} + span_italics("Manual Valve:") + {" A valve that will block off airflow when turned. Can't be used by the AI or cyborgs, because they don't have hands.</li>
+				<li>"} + span_italics("Manual T-Valve:") + {" Like a manual valve, but at the center of a manifold instead of a straight pipe.</li><BR><BR>
 
-				<h1><a name="Insulated"><B>Insulated Pipes</B></a></h1><BR>
-				<I>Special Public Service Announcement.</I><BR>
+				<h1><a name="Insulated">"} + span_bold("Insulated Pipes") + {"</a></h1><BR>
+				"} + span_italics("Special Public Service Announcement.") + {"<BR>
 				Our regular pipes are already insulated. These are completely worthless. Punch anyone who uses them.<BR><BR>
 
-				<h1><a name="Devices"><B>Devices: </B></a></h1>
-				<I>They actually do something.</I><BR>
+				<h1><a name="Devices">"} + span_bold("Devices: ") + {"</a></h1>
+				"} + span_italics("They actually do something.") + {"<BR>
 				This is usually where people get frightened, afraid, and start calling on their gods and/or cowering in fear. Yes, I can see you doing that right now.
 				Stop it. It's unbecoming. Most of these are fairly straightforward.<BR>
 
 				<ul>
-				<li><b>Gas pump:</b> Take a wild guess. It moves gas in the direction it's pointing (marked by the red line on one end). It moves it based on pressure, the maximum output being 15000 kPa (kilopascals).
+				<li>"} + span_bold("Gas pump:") + {" Take a wild guess. It moves gas in the direction it's pointing (marked by the red line on one end). It moves it based on pressure, the maximum output being 15000 kPa (kilopascals).
 				Ordinary atmospheric pressure, for comparison, is 101.3 kPa, and the minimum pressure of room-temperature pure oxygen needed to not suffocate in a matter of minutes is 16 kPa
 				(though 18 kPa is preferred when using internals with pure oxygen, for various reasons). A high-powered variant will move gas more quickly at the expense of consuming more power. Do not turn the distribution loop up to 15000 kPa.
 				You will make engiborgs cry and the Chief Engineer will beat you.</li>
-				<li><b>Pressure regulator:</b> These replaced the old passive gates. You can choose to regulate pressure by input or output, and regulate flow rate. Regulating by input means that when input pressure is above the limit, gas will flow.
+				<li>"} + span_bold("Pressure regulator:") + {" These replaced the old passive gates. You can choose to regulate pressure by input or output, and regulate flow rate. Regulating by input means that when input pressure is above the limit, gas will flow.
 				Regulating by output means that when pressure is below the limit, gas will flow. Flow rate can be controlled.</li>
-				<li><b>Unary vent:</b> The basic vent used in rooms. It pumps gas into the room, but can't suck it back out. Controlled by the room's air alarm system.</li>
-				<li><b>Scrubber:</b> The other half of room equipment. Filters air, and can suck it in entirely in what's called a "panic siphon." Activating a panic siphon without very good reason will kill someone. Don't do it.</li>
-				<li><b>Meter:</b> A little box with some gauges and numbers. Fasten it to any pipe or manifold and it'll read you the pressure in it. Very useful.</li>
-				<li><b>Gas mixer:</b> Two sides are input, one side is output. Mixes the gases pumped into it at the ratio defined. The side perpendicular to the other two is "node 2," for reference, on non-mirrored mixers..
+				<li>"} + span_bold("Unary vent:") + {" The basic vent used in rooms. It pumps gas into the room, but can't suck it back out. Controlled by the room's air alarm system.</li>
+				<li>"} + span_bold("Scrubber:") + {" The other half of room equipment. Filters air, and can suck it in entirely in what's called a "panic siphon." Activating a panic siphon without very good reason will kill someone. Don't do it.</li>
+				<li>"} + span_bold("Meter:") + {" A little box with some gauges and numbers. Fasten it to any pipe or manifold and it'll read you the pressure in it. Very useful.</li>
+				<li>"} + span_bold("Gas mixer:") + {" Two sides are input, one side is output. Mixes the gases pumped into it at the ratio defined. The side perpendicular to the other two is "node 2," for reference, on non-mirrored mixers..
 				Output is controlled by flow rate. There is also an "omni" variant that allows you to set input and output sections freely..</li>
-				<li><b>Gas filter:</b> Essentially the opposite of a gas mixer. One side is input. The other two sides are output. One gas type will be filtered into the perpendicular output pipe,
+				<li>"} + span_bold("Gas filter:") + {" Essentially the opposite of a gas mixer. One side is input. The other two sides are output. One gas type will be filtered into the perpendicular output pipe,
 				the rest will continue out the other side. Can also output from 0-4500 kPa. The "omni" vairant allows you to set input and output sections freely.</li>
 				</ul>
 
-				<h1><a name="HES"><B>Heat Exchange Systems</B></a></h1>
-				<I>Will not set you on fire.</I><BR>
+				<h1><a name="HES">"} + span_bold("Heat Exchange Systems") + {"</a></h1>
+				"} + span_italics("Will not set you on fire.") + {"<BR>
 				These systems are used to only transfer heat between two pipes. They will not move gases or any other element, but will equalize the temperature (eventually). Note that because of how gases work (remember: pv=nRt),
 				a higher temperature will raise pressure, and a lower one will lower temperature.<BR>
 
-				<li><I>Pipe:</I> This is a pipe that will exchange heat with the surrounding atmosphere. Place in fire for superheating. Place in space for supercooling.</li>
-				<li><I>Bent pipe:</I> Take a wild guess.</li>
-				<li><I>Junction:</I> The point where you connect your normal pipes to heat exchange pipes. Not necessary for heat exchangers, but necessary for H/E pipes/bent pipes.</li>
-				<li><I>Heat exchanger:</I> These funky-looking bits attach to an open pipe end. Put another heat exchanger directly across from it, and you can transfer heat across two pipes without having to have the gases touch.
+				<li>"} + span_italics("Pipe:") + {" This is a pipe that will exchange heat with the surrounding atmosphere. Place in fire for superheating. Place in space for supercooling.</li>
+				<li>"} + span_italics("Bent pipe:") + {" Take a wild guess.</li>
+				<li>"} + span_italics("Junction:") + {" The point where you connect your normal pipes to heat exchange pipes. Not necessary for heat exchangers, but necessary for H/E pipes/bent pipes.</li>
+				<li>"} + span_italics("Heat exchanger:") + {" These funky-looking bits attach to an open pipe end. Put another heat exchanger directly across from it, and you can transfer heat across two pipes without having to have the gases touch.
 				This normally shouldn't exchange with the ambient air, despite being totally exposed. Just don't ask questions.</li><BR>
 
 				That's about it for pipes. Go forth, armed with this knowledge, and try not to break, burn down, or kill anything. Please.
@@ -1263,7 +1151,7 @@
 			</html>
 			"}
 
-/obj/item/weapon/book/manual/evaguide
+/obj/item/book/manual/evaguide
 	name = "EVA Gear and You: Not Spending All Day Inside, 2nd Edition"
 	icon_state = "evabook"
 	item_state = "book14"
@@ -1283,7 +1171,7 @@
 				<body>
 
 				<h1><a name="Foreword">EVA Gear and You: Not Spending All Day Inside, 2nd Edition</a></h1>
-				<I>Or: How not to suffocate because there's a hole in your shoes</I><BR>
+				"} + span_italics("Or: How not to suffocate because there's a hole in your shoes") + {"<BR>
 
 				<h2><a name="Contents">Contents</a></h2>
 				<ol>
@@ -1305,7 +1193,7 @@
 				Rather than oxygen, use a suit cooling unit. Many emergency equipment stores don't hold them, unfortunately, but dedicated EVA stores will. Be aware of your heat tolerances.<BR><BR>
 
 				<h2><a name="Softsuits">Softsuits and Emergency Equipment</a></h2>
-				<I>The bulkiest things this side of Alpha Centauri</I><BR>
+				"} + span_italics("The bulkiest things this side of Alpha Centauri") + {"<BR>
 				These suits are the both grey ones that are stored in EVA and orange emergency suits in emergency lockers. They're the more simple to get on, but are also a lot bulkier, and provide less protection from environmental hazards such as radiation or physical impact.
 				As Medical, Engineering, Security, and Mining all have voidsuits of their own, these don't see much use outside of emergencies. In an emergency, knowing how to put one on can save your life.<BR><BR>
 
@@ -1323,7 +1211,7 @@
 				These suits tend to be wearable by most species. They're large and flexible. They might be pretty uncomfortable for some, though, so keep that in mind.<BR><BR>
 
 				<h2><a name="Voidsuits">Voidsuits</a></h2>
-				<I>Heavy, uncomfortable, still the best option.</I><BR>
+				"} + span_italics("Heavy, uncomfortable, still the best option.") + {"<BR>
 				These suits come in many specialized varieties. The most common are engineering, atmospherics, security, medical, and mining varieties.
 				These provide a lot more protection than the standard suits, and depending on the specialization, can offer different protections.
 				For example, security suits have armor plating, engineering suits have radiation protection, and atmospherics suits are rated for extremely high temperatures.<BR><BR>
@@ -1339,7 +1227,7 @@
 				If a helmet is installed, you can skip it while putting the suit on, obviously. When deployed, it will deploy from the back of your neck, covering the head and sealing at the front.<BR><BR>
 
 				<h2><a name="Hardsuits">Hardsuits/Rigs</a></h2>
-				<I>The fancy stuff.</I><BR>
+				"} + span_italics("The fancy stuff.") + {"<BR>
 				Proper hardsuits are the most complex sort of EVA equipment available, and blur the line between spacesuits and smaller exosuits. They're sometimes known as 'rigs' or 'powered armor'.
 				These are the suits with the widest variety of uses, owing to the wide variety of equipment that can be installed on them. Like voidsuits, they come in different, specialized varieties, each one offering different protections and different equipment.
 				Equipment that can be installed includes weapons, power tools, mining equipment, medical equipment, AI assistants, and more.<BR><BR>
@@ -1352,7 +1240,7 @@
 				The potential of a suit breach is always there, and the use of powered equipment raises it significantly.<BR><BR>
 
 				<h2><a name="Advice">Miscellaneous Advice</a></h2>
-				<I>Pro tip: Safety first.</I><BR>
+				"} + span_italics("Pro tip: Safety first.") + {"<BR>
 				There's a lot of general advice that can be helpful for people who haven't taken a long-form instruction course. Much of this is going to be fairly obvious safety advice, but it's never bad to remind yourself of that.<BR><BR>
 
 				<ul>
@@ -1364,7 +1252,7 @@
 				</ul>
 
 				<h2><a name="Equipment">Modification Equipment</a></h2>
-				<I>How to actually make voidsuits fit you.</I><BR>
+				"} + span_italics("How to actually make voidsuits fit you.") + {"<BR>
 				There's a variety of equipment that can modify hardsuits to fit species that can't fit into them, making life quite a bit easier.<BR><BR>
 
 				The first piece of equipment is a suit cycler. This is a large machine resembling the storage pods that are in place in some places. These are machines that will automatically tailor a suit to certain specifications.
@@ -1385,6 +1273,527 @@
 
 				If you don't have any further issues, go out and do whatever is necessary.
 
+				</body>
+			</html>
+			"}
+
+/obj/item/book/manual/virology
+	name = "Sneezes and Coughs: A Guide To Virology, 1st Edition"
+	icon_state = "bookvirology"
+	item_state = "book5"
+	author = "James Simpson, Chief " + JOB_ALT_VIROLOGIST
+	title = "Sneezes and Coughs: A Guide To Virology, 1st Edition"
+	dat = {"<html>
+				<head>
+				<style>
+				h1 {font-size: 21px; margin: 15px 0px 5px;}
+				h2 {font-size: 15px; margin: 15px 0px 5px;}
+				li {margin: 2px 0px 2px 15px;}
+				ul {margin: 5px; padding: 0px;}
+				ol {margin: 5px; padding: 0px 15px;}
+				b {font-size: 12px}
+				body {font-size: 13px; font-family: Verdana;}
+				table {font-family: arial, sans-serif;
+						border-collapse: collapse;
+						width: 50%;
+						font-size: 13px;}
+				td, th {border: 1px solid #000000;
+						text-align: left;
+						padding: 8px;}
+				tr:nth-child(even) {background-color: #dddddd;}
+				padding {padding-bottom: 50px;}
+				</style>
+				</head>
+				<body>
+				<h1>A Guide to Virology, 1st Edition</h1>
+				Welcome to virology! <br><br>
+
+				A virologist spends much of their time isolated in the virology department fiddling with deadly and annoying plagues. This guide will get you on the right path to properly<br>
+				creating and curing the worst of the worst.<br><br>
+
+				<h2>Anatomy of a Virus</h2>
+				Before you jump in to making the next Black Death, you need to understand what's what. When you pop a tray into the disease analyzer you'll get a paper listing quite a few<br>
+				things about that virus!<br><br>
+
+				"} + span_bold("Antigens") + {"<br>
+				The first thing you might notice on this analysis is the listed antigens of a virus. This, essentially, is what you need for cures. When a patient develops an antibody that<br>
+				matches a disease's antigen, they'll be immune to the virus.<br><br>
+
+				"} + span_bold("Transmission") + {"<br>
+				This will list one of three methods of transmission: airborne, contact, or blood. Airborne viruses will spread through the air, meaning if a patient is coughing or sneezing<br>
+				it will spread quicker. Contactviruses need some sort of, well, contact. Blood on the floor, mucus, and vomit should all be cleaned up. Blood-transmission viruses will only<br>
+				spread through actual blood contact, meaning an injection of the virus would be necessary to spread it.<br><br>
+
+				"} + span_bold("Species") + {"<br>
+				Not all viruses are compatible with all species! This will list off what can be infected by a particular virus. This can be changed through splicing. In rare cases you will<br>
+				get a virus that has infected crewmembers but cannot infect your lab monkeys. In these cases, you will likely have to splice different species data to safely make a cure.<br><br>
+
+				"} + span_bold("Symptoms") + {"<br>
+				This lists what all the virus does, along with the strength of the symptoms and their aggressiveness. A full list of symptoms and their stages can be found below.<br><br>
+
+				<h2>Protection</h2>
+				First off, any good virologist needs to gear up!<br><br>
+				Your virology lab should have the following:
+				<ul>
+					<li>Two (2) Level-3 Bio Hoods</li>
+					<li>Two (2) Level-3 Bio Suits</li>
+					<li>Two (2) sets of sealed internals</li>
+					<li>One (1) box of sterile masks</li>
+					<li>One (1) box of latex gloves</li>
+				</ul><br>
+				"} + span_bold("Make sure to gear up appropriately and take precautions to not bring the virus out of the lab!") + {"<br><br>
+				What needs to be worn varies from race to race, as some species cannot be affected by a virus, but<br>
+				precautions should always be taken to prevent accidentally carrying the virus out of containment.<br><br>
+
+				<h2>Machinery</h2>
+				These are the types of machines that you will be expected to use in this department. Study them, know them, and make sure you use them correctly!<br><br>
+
+				"} + span_bold("Antibody Scanner") + {"<br>
+				A device similar to a health analyzer, when scanned over a patient it will tell you any present antibodies in their bloodstream.<br><br>
+
+				"} + span_bold("Pathogenic Isolator") + {"<br>
+				This device can be loaded with blood samples via a syringe. It will tell you if there is a present viral pathogen, and if so it can isolate the pathogen,<br>
+				producing a virus dish for further research. This is the primary means of creating virus dishes.<br><br>
+
+				"} + span_bold("Pathogenic Incubator") + {"<br>
+				One of the most important machines, you'll be sitting here a lot. Virus trays you produce will start small, and you will need to grow them to get anywhere.<br>
+				Load it with virus food (diluted milk, found in a wall mounted dispenser nearby) as well as a virus dish and turn it on. It will slowly grow the virus<br>
+				for analysis, splicing, or whatever other use you might find for it. It can also inject the virus into other chemicals (i.e. blood) which will allow you<br>
+				to artificially infect a blood sample to infect test subjects.<br><br>
+
+				Additionally, it can irradiate a virus dish to cause mutation. This randomly alters the syndromes, allowing you to collect new data.<br><br>
+
+				"} + span_bold("Disease Analyser") + {"<br>
+				Virus dishes may be placed into this machine after it has been incubated sufficiently. It will create a reading of the virus' symptoms, species targeted,<br>
+				associated antibodies, and so on. It will also update the disease into the digital database, allowing it to be detected via Medical HUD or health analyzer.<br><br>
+
+				"} + span_bold("Isolation Centrifuge") + {"<br>
+				Inserting a vial of blood into this machine will allow it to take a present pathogen or antibody, turning it into a pure virus or pure cure for your use.<br>
+				It will automatically detect if either are in the blood sample, so it is useful for determining if a sample is infected. The sample will be reusable if creating<br>
+				more of the virus, but will be expended upon creating antibodies.<br><br>
+
+				"} + span_bold("Disease Splicer") + {"<br>
+				As it's name implied, this machine is for splicing the disease symptoms and creating new viruses. Insert an analyzed virus sample to take a symptom which can<br>
+				then be saved on a GNA disk (created by the machine), or use an existing disk on the machine to load up a symptom and splice it in.<br><br>
+
+				<h2>Syndromes</h2>
+				While curing patients is the obvious side to virology, there's more you can do! For a variety of reasons you may wish to engineer your own virus through mutations<br>
+				and splicing. Keep in mind that infecting the whole station with a deadly virus is generally frowned upon in most societies, and even in an antagonistic role simply<br>
+				infecting everyone with a very deadly virus is not ideal.<br><br>
+
+				"} + span_bold("Obtaining a Sample") + {"<br>
+				The first step to making your own virus is to find a virus to start tinkering with. There are two ways of doing this: grabbing the pre-spawned virus dish from the<br>
+				freezer create in your laboratory, or taking a blood sample from an infected patient that you haven't cured yet and running it through the Pathogenic Isolator to<br>
+				produce a virus dish.<br><br>
+
+				In either case, you'll then need to incubate the virus in the Pathogenic Incubator until it is of sufficient size for you to work with, and ideally also run it<br>
+				through the Disease Analyzer to get an idea of what it does. This will also keep the rest of Medical from getting on your case about not giving them the ability to<br>
+				detect viral outbreaks without you, and will help prevent public lynchings if someone sneezes.<br><br>
+
+				Once that's all done, you're ready to start the real work.<br><br>
+
+				"} + span_bold("Obtaining a Sample") + {"<br>
+				Sometimes you just need to infect somebody. Usually, this is because you're doing some splicing work and want to make sure that you'll have some copies of a virus<br>
+				in reserve for future study. Fortunately, the process of deliberately infecting patients, as well as creating backups of your viruses, is actually very simple.<br><br>
+
+				If you have a virus dish and wish to infect a patient, place the dish into the "} + span_bold("Pathogenic Incubator") + {" along with a beaker full of blood. Ideally, this is the<br>
+				patient's (or test monkey's) blood, though anyone's will do in a pinch - just be aware of the possibility of blood rejection, and be ready to deal with it accordingly.<br>
+				The incubator can inject a sample of the virus into the blood, which you can then inject into the patient to infect them. Alternatively, once a blood sample is infected<br>
+				you may place it in either the "} + span_bold("Pathogenic Isolator") + {" or "} + span_bold("Isolation Centrifuge") + {" to make as many samples of that virus you need without destroying the sample.<br>
+				No infections necessary!<br><br>
+
+				"} + span_bold("Splicing") + {"<br>
+				To understand splicing, you must know that every virus has 4 GNA strands, each of which is tied to one of the syndromes that it can manifest. Each syndrome, and thus each<br>
+				strand, is ranked in order of its appearance when symptoms begin to manifest in a patient, and higher-ranked (and thus slower to appear) syndromes are likely to be more<br>
+				powerful than lower-ranked ones. (1) is the lowest, first symptom to manifest, and (4) is the highest, final symptom to manifest.<br><br>
+
+				The Disease Splicer will allow you to examine and manipulate a virus' GNA strands to create a virus with any syndromes that you want.<br><br>
+
+				The splicer has main three functions which allow you to modify viruses and define which GNA strands they contain. The first of these functions is the splicing function,<br>
+				which copies a GNA strand from an inserted virus tray to the disease splicer buffer. This is done by selecting the desired GNA strand under "Reverse Engineering".<br>
+				Doing so will destroy the virus tray in the process, so be sure that you have more samples of the virus on hand if you want to preserve it.<br><br>
+
+				The disease splicer’s second function is to copy whatever strand it has stored in its buffer to a disk the machine creates. These disks can be re-inserted into<br>
+				the disease splicer later, making their stored GNA strand immediately available for use. Unlike virus trays, disks can be reused without destroying them.<br><br>
+
+				The final function of the disease splicer is to copy over a GNA strand of its loaded virus dish with the corresponding GNA strand that is currently stored in<br>
+				its buffer. This effectively allows you to give a virus any set of symptoms you want, so long as it follows the rules of the ranking. A rank (1) symptom can fill<br>
+				any slot, while a (3) can only fill 3 and up, and a (4) can only be in the fourth slot.<br><br>
+
+				"} + span_bold("Mutating") + {"<br>
+				Sometimes you just don't have any of the symptoms you want. Fortunately, mutating a virus dish is very simple. Simply place a dish in the "} + span_bold("Pathogenic Incubator") + {"<br>
+				to get started and click 'add radiation'. This will fill up the radiation bar with each press. When the machine is on, this bar will slowly tick down as the radiation<br>
+				is applied to the sample. For any significant mutation the radiation should be over 500k, meaning at least half the bar. When a mutation occurs -- and multiple<br>
+				mutations can occur in a single sample -- there will be a ping from the machine. Once it's done growing and mutating, throw it into the analyzer and see what you got!<br><br>
+
+				With these functions in mind, the process in order for you to develop your own virus is as follows:
+				<ol>
+					<li>Create lots of virus sample dishes.</li>
+					<li>If the virus dishes you have already created don't contain the syndromes that you want in<br>
+					your custom virus, irradiate them in the Pathogenic Incubator until they do.</li>
+					<li>Create backup dishes of your new viruses.</li>
+					<li>Strip the GNA strands that you want from your virus dishes, saving each one onto a disk.</li>
+					<li>Load a new virus dish into the Disease Splicer.</li>
+					<li>Copy over the virus dish's GNA strands with your disks.</li>
+					<li>Once you have your final product, you can use the Pathogenic Incubator to create a beaker<br>
+					of blood containing the virus. Congratulations! You are now officially a bioweapon<br>
+					manufacturer.</li>
+				</ol>
+
+				<h2>Curing</h2>
+				Curing a virus is relatively simple, but the below will leave you without a sample to work with. If this is a concern, see 'obtaining a sample' above. Alternatively to<br>
+				the below, spacecillin can be used in a pinch to attempt to treat a virus if no virologist is present and someone decided to roll around in mucus. However this is not<br>
+				guaranteed to work, and can in fact simply make the virus more resistant to spacecillin.<br><br>
+
+				"} + span_bold("Quarantine") + {"<br>
+				If you or a crew member becomes infected by a virus, your first concern should be to isolate them as quickly as possible to prevent the disease from spreading. Ideally,<br>
+				this means getting the patient back to Virology and into a holding cell, but failing that, it's important to get them into an isolated room, shut the door, and keep anyone<br>
+				else from entering. It is also important to clean up any blood, vomit, or mucus left behind by the patient, as it may spread the virus as well.<br><br>
+
+				"} + span_bold("Antibodies") + {"<br>
+				Now that your patient is safely hidden away where they can't infect people without your permission, you want to cure them. The basic idea behind that is to get them to start<br>
+				synthesizing antibodies.<br><br>
+
+				Antibodies are produced by living organisms that have started to fight off a virus in their bloodstream. An organism that has produced antibodies is effectively<br>
+				immune to any virus that is weak to those antibodies, which are generally denoted by a short string of letters (say, "KM" or similar) to let you know which viruses they<br>
+				are effective against. Even better, once an organism has synthesized antibodies for itself, you can take a blood sample and use that to create more antibodies, which you<br>
+				can then inject into other people to cure the virus in them, or even to prevent them from catching it in the first place. And you can take blood samples from those people<br>
+				to make even more antibodies.<br><br>
+
+				The issue is that, most of the time, a patient's immune system is not powerful enough to create antibodies on its own (space plagues are nasty things), so you have to do that<br>
+				for them. You do that by injecting them with Radium.<br><br>
+
+				Since Radium is radioactive, this is obviously not something that you want to do to your actual patients. It'll cause major toxin damage when an antibody is<br>
+				made and quickly lead to organ failure. You get around this by using monkeys, which you can get from the box of monkey cubes very handily left on the desk in Virology for<br>
+				this very purpose.<br><br>
+
+				So the process of curing diseases is, really, quite simple. Find an infected patient. Make a monkey (ideally, strap this monkey to a bed in an isolation cell to make the<br>
+				rest of this process easier). Take a blood sample from the infected patient, then inject it into the monkey to infect the monkey. Inject the monkey with Radium. Use the antibody<br>
+				scanner on the monkey every few seconds until it says that the monkey has begun producing antibodies, then take a blood sample (or two or three or four) from the<br>
+				monkey. Put the blood sample(s) into a vial, then put the vial into the isolation centrifuge and isolate the antibodies. Voila: a bottle of virus cure. Inject it into as many<br>
+				people as you like, then throw the (likely dead) monkey into the disposals chute to eject its disease-ridden body into space and clean the isolation cell. Or, if you're on<br>
+				the ball and wish to be conservative with your limited monkey cubes, save the monkey, too.<br><br>
+
+				Congratulations! You have now cured a disease.<br><br>
+
+				The important thing to remember is that anyone injected with antibodies becomes a source of those antibodies for the future. You can take a sample of their blood<br>
+				and put it into the isolation centrifuge just like you did with the monkey's to produce more antibodies if you ever run out. For this reason, and because you might have<br>
+				gotten infected yourself in the process of synthesizing a cure, most Virologists will inject themselves with any antibodies they produce.<br><br>
+
+				<h2>Syndromes</h2>
+				Below are the possible syndromes of a virus and the stages they can appear at. A stage covers that stage and higher, so a stage 1 syndrome can appear at stage 4.<br>
+				A stage 4 syndrome, however, cannot appear any earlier than stage 4.<br><br>
+
+				<table>
+				<caption> "} + span_bold("Syndromes") + {" </caption>
+				<tr>
+				<th scope="col"> Stage</th>
+				<th scope="col"> Name</th>
+				<th scope="col" class="unsortable"> Effects
+				</th></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Sneezing </td>
+				<td> Makes the patient sneeze. "} + span_bold("Spreads airborne disease!") + {"
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Mucus Buildup </td>
+				<td> Makes the patient's throat fill with mucus.
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Salivary Gland Stimulation </td>
+				<td> Makes the patient drool. "} + span_bold("Spreads the disease!") + {"
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Involuntary Twitching </td>
+				<td> Makes the patient twitch.
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Headache </td>
+				<td> Gives the patient a headache.
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Mlemington's Syndrome </td>
+				<td> Makes the patient 'mlem' uncontrollably.
+				</td></tr>
+				<tr>
+				<td> 1 </td>
+				<td> Spyndrome </td>
+				<td> Makes the patient spin uncontrollably.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Involuntary Vocalization </td>
+				<td> Makes the patient scream.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Vomiting </td>
+				<td> Makes the patient vomit. "} + span_bold("Spreads the disease!") + {"
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Excessive Sleepiness </td>
+				<td> Makes the patient drowsy.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Narcolepsy </td>
+				<td> Makes the patient pass out at random.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Vision Loss </td>
+				<td> Causes partial blindness.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Severe Cough </td>
+				<td> Causes coughing. "} + span_bold("Spreads airborne disease!") + {"
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Digestive Inefficiency </td>
+				<td> Makes the patient always hungry.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Reduced Circulation </td>
+				<td> Makes the patient shiver.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Hair Loss </td>
+				<td> Causes the patient's hair to fall out.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Overactive Adrenal Gland </td>
+				<td> Makes the patient jittery, but also faster.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Tinnitus </td>
+				<td> Causes ringing in the patient's ears.
+				</td></tr>
+				<tr>
+				<td> 2 </td>
+				<td> Lingual Dissocation </td>
+				<td> Scrambles the patients language center of their brain.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Hyperacidity </td>
+				<td> Causes small amounts of toxin damage.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Nervous Motor Instability </td>
+				<td> Makes the patient shaky.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Pineal Gland Decalcification </td>
+				<td> Gives the patient telepathy.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Neurodegeneration </td>
+				<td> Causes brain damage.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Hallucination </td>
+				<td> Causes hallucinations.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Hearing Loss </td>
+				<td> A less severe hearing damage.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Topographical Cretinism </td>
+				<td> Makes the patient incapable of walking straight.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Uncontrolled Laughter </td>
+				<td> Causes the patient to laugh uncontrollably.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> DNA Degradation </td>
+				<td> Causes genetic damage.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Phantom Aches </td>
+				<td> Causes groaning.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Chemical Synthesis </td>
+				<td> Causes the synthesis of a certain chemical in the patient's bloodstream.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Genetic Chameleonism </td>
+				<td> Prevents the patient from experiencing organ rejection.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Mass Revectoring </td>
+				<td> Causes the patient to suddenly change size.
+				</td></tr>
+				<tr>
+				<td> 3 </td>
+				<td> Flipponov's Disease </td>
+				<td> Causes the patient to uncontrollably do a flip.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Gibbingtons </td>
+				<td> Gibs the patients slowly.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Radian's Syndrome </td>
+				<td> Irradiates the patient from the inside.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Deafness </td>
+				<td> Causes complete deafness.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Genome Regression </td>
+				<td> Turns the patient into the primitive form of their species.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Windpipe Contraction </td>
+				<td> Causes the patient to involuntarily hold their breath.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Autoimmune Response </td>
+				<td> Adds toxins to the patient's bloodstream.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Catastrophic DNA Degeneration </td>
+				<td> Causes genetic damage and scrambles the patient's genes.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Limb Paralysis </td>
+				<td> Temporary loss of use in the patient's individual arms and legs.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Organ Shutdown </td>
+				<td> Slowly causes internal organ damage at random.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Hyperaccelerated Aging </td>
+				<td> Ages the patient, causing external damage.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Brittle Bones </td>
+				<td> Causes bones to break more easily.
+				</td></tr>
+				<tr>
+				<td> 4 </td>
+				<td> Organic Ignition </td>
+				<td> Slowly causes the patient to burst into flames.
+				</td></tr></table>
+				<br>
+				</body>
+			</html>
+				"}
+
+
+// Chemical Refinery
+/obj/item/book/manual/chem_refinery
+	name = "Chemical Refinery Basic Operations"
+	icon_state ="bookrefinery"
+	item_state = "book15"
+	author = "Engineering Encyclopedia"
+	title = "Chemical Refinery Basic Operations"
+
+	dat = {"<html>
+				<head>
+					<style>
+					h1 {font-size: 18px; margin: 15px 0px 5px;}
+					h2 {font-size: 15px; margin: 15px 0px 5px;}
+					li {margin: 2px 0px 2px 15px;}
+					ul {margin: 5px; padding: 0px;}
+					ol {margin: 5px; padding: 0px 15px;}
+					body {font-size: 13px; font-family: Verdana;}
+					</style>
+				</head>
+				<body>
+					<h1>OPERATING MANUAL FOR MK 1 INDUSTRIAL REAGENT REFINERY EQUIPMENT</h1>
+					<br>
+					<h2>OPERATING PRINCIPLES</h2>
+					<p>The chemical refinery is not a single machine, but instead many machines connected together to perform the complex, multi-step, reactions needed for production of high value industrial reagents for export from the station.</p>
+					<p>Unlike a traditional chemistry department where reagents are created at small scales for local use; A chemical refinery is often dedicated to one or two types of reagents, produced at massive quantities. Each cargo train tanker will need to be filled full of a single reagent to be properly sold by cargo.</p>
+					<p>To achieve this, the refinery has many unique machines, each with a role to play. Multiple of the same type of machine will often be needed. As reagents often need many steps to filter and react them to their final forms.</p>
+					<br>
+					<h2>MACHINERY OVERVIEW</h2>
+					<p>In order of importance in refinery operations:</p>
+					<h3>Pipes:</h3>
+					<p>Pipes form the inexpensive backbone of reagent transfer in a refinery, and connect more complex modules of a refinery together. Pipes do not require power to transport reagents, but do so only in one direction. The red pipe marks an input connection from another machine. Arrows are also pressed into the hull of the pipe to indicate flow.</p>
+
+					<h3>Filters:</h3>
+					<p>Similar to pipes, a filter allows reagents to flow from one machine to the next. With a red pipe as input. Once reagents are present in a filter, one of them may be chosen. Once chosen the reagent will be filtered to the purple marked outlet on the filter's side. The filter will not move any reagents if no filtered reagent is selected. It can also be configured to filter out nothing, or everything, if the filter is being used as a way divert flow or purge upstream machinery.</p>
+
+					<h3>Hubs:</h3>
+					<p>Hubs are an automatic quick connect solution to pumping reagents from the refinery into cargo train tankers. Once a tanker is moved onto a hub's pad, it will begin filling or draining after a small delay. A hub's mode of operation depends entirely on if a machine's output points into it, or not. If a machine's output points into a hub, it will fill cargo tankers on the pad. If the hub connects to a machine's input instead, it will drain cargo tankers into that machine.</p>
+
+					<h3>Grinders:</h3>
+					<p>Solid materials such as metal sheets, ores, and plants may be ground down for use in the refinery. Though this method of reagent production is generally slower, and requires manual input. The grinder only has a single output.</p>
+
+					<h3>Vats:</h3>
+					<p>Vats are your primary reagent storage tanks. They hold large volumes of reagents. Like any part of the refinery, once reagents are flowing inside them, they can react with other reagents. Separation, filtering, and careful mixing is critical for the construction of a seamlessly operating refinery. Vats only have a single output, all other sides are considered inputs.</p>
+
+					<h3>Reactors:</h3>
+					<p>Reactors are the most complex machine in the refinery. It is capable of distilling reagents that require complex atmospheric conditions. A reactor only has a single output, all other sides are considered inputs. Reagents inside a reactor are separated into internal pressurized tanks, and only react during the machine's distillation cycle. The reactor will automatically shift between pumping and distilling once it detects chemical input. The results will often require filtering and reprocessing, as the input reagents are used to flush the reaction chamber each cycle.</p>
+					<p>Reactors are compatible with portable atmospherics pads, and may be anchored on top of one to automatically connect it to a gas network. The gas network will provide the specific pressure and temperature required for the reaction within the machine. Many reactions require specific conditions to progress, and some input reagents may have different reactions depending on temperature and gas composition. Consult a trained chemist for insights on enhancing your refinery layout.</p>
+
+					<h3>Sintering Furnaces:</h3>
+					<p>Sintering is the process of heating a material under high pressure, causing it to weld together into a cohesive form. Unfortunately, this can only be done with pure materials, as the correctly mixed ratios required for proper alloy production are not possible. Only base materials such as iron, gold, or silver may be formed. Though some reagents may produce other results. It is inadvisable to attempt sintering on flammable or explosive reagents.</p>
+
+					<h3>Pumps:</h3>
+					<p>Pumps allow for the high volume exchange of reagents from one machine to another, but they are also useful for their multiple hose connectors. Allowing you to pump reagents from any other hose connector equipped tool. With this feature, they can serve as the input connection for long distance fracking networks.</p>
+
+					<h3>Mixers:</h3>
+					<p>While not required for reagents to react together, a mixing vat will allow you to easily control the portion of reagents mixed. Mixers will take input from three directions, and output in the last direction. The mixing arm will stop at each input, and will not proceed until it has recieved the reagents.</p>
+					<p>Using a pump, the amount of reagents transfered can be configured much more finely compared to handling reactions in vats. A mixer will refuse to take inputs if it cannot fully empty itself on a complete rotation. The rotation direction may be swapped at any time.</p>
+
+					<h3>Fluid Pumps:</h3>
+					<p>While not directly a refinery machine, they serve a core function outside of the refinery. Fluid pumps will extract eroded ores from bodies of water near mineral rich deposits. Discussion of high value ores with an experienced miner is recommended. Ores must remain intact near a body of water to be collected by the pump.</p>
+					<p>Fluid pumps operate on an internal power cell, protected behind a water proof panel. A crowbar is handy for opening it. Hoses can be connected to a fluid pump, allowing it to connect to long distance tube networks.</p>
+					<p>Rarely, large cracks can be found underground, these complex networks of micro fractures can be pumped and drained repeatedly to expand them, and extract the dissolved ores deep within the ground. This process is described as fracking.</p>
+
+					<h3>Pump Relay:</h3>
+					<p>The location of external fluid pumps are often very far away from the chemical refinery they are destined for. Pump relays allow two input hoses, and one output hose. Active as a passive, no power required pump. Using the pressure of the other pumps at the head of the network. Pump relays may be spaced far apart, unlike refinery piping, saving crews time and expensive parts.</p>
+
+					<h3>Waste Processors:</h3>
+					<p>Many reagents have little use in huge quantities, such as water from a pumped river. This waste reagent may be disposed of quickly in a waste processor. Shredding it to an atomic level and dispersing it through nearby bluespace. Similar to what happens to opens dropped out of a shuttles bluespace shielding during flight.</p>
+
+					<br>
+					<h2>OPERATIONAL GOALS</h2>
+					<p>With the provided knowledge, anything is possible with the right reagents and machines. Reagents produced by the refinery are intended for sale from the station's cargo department. Reagents must be sold pure, and in a full cargo tanker. Each reagent has a different value and purpose on the market. For methods of reagent production, consult a trained chemist, or one of our trusted exonet partners; Such as BINGLE.</p>
 				</body>
 			</html>
 			"}

@@ -1,5 +1,5 @@
 /obj/item/clothing/shoes/leg_guard
-	name = "leg guards"
+	name = DEVELOPER_WARNING_NAME // "leg guards"
 	desc = "These will protect your legs and feet."
 	body_parts_covered = LEGS|FEET
 	slowdown = SHOES_SLOWDOWN+0.5
@@ -9,18 +9,19 @@
 	can_hold_knife = TRUE
 	drop_sound = 'sound/items/drop/boots.ogg'
 	pickup_sound = 'sound/items/pickup/boots.ogg'
+	resistance_flags = FIRE_PROOF
 
-/obj/item/clothing/shoes/leg_guard/mob_can_equip(var/mob/living/carbon/human/H, slot, disable_warning = FALSE)
+/obj/item/clothing/shoes/leg_guard/mob_can_equip(mob/living/carbon/human/H, slot, disable_warning = FALSE, ignore_obstruction, go_over_slot = TRUE)
 	if(..()) //This will only run if no other problems occured when equiping.
 		if(H.wear_suit)
 			if(H.wear_suit.body_parts_covered & LEGS)
-				to_chat(H, "<span class='warning'>You can't wear \the [src] with \the [H.wear_suit], it's in the way.</span>")
-				return 0
+				to_chat(H, span_warning("You can't wear \the [src] with \the [H.wear_suit], it's in the way."))
+				return FALSE
 			for(var/obj/item/clothing/accessory/A in H.wear_suit)
 				if(A.body_parts_covered & LEGS)
-					to_chat(H, "<span class='warning'>You can't wear \the [src] with \the [H.wear_suit]'s [A], it's in the way.</span>")
-					return 0
-		return 1
+					to_chat(H, span_warning("You can't wear \the [src] with \the [H.wear_suit]'s [A], it's in the way."))
+					return FALSE
+		return TRUE
 
 /obj/item/clothing/shoes/leg_guard/laserproof
 	name = "ablative leg guards"
@@ -60,7 +61,7 @@
 	icon_state = "leg_guards_flexitac"
 	item_state_slots = list(slot_r_hand_str = "jackboots", slot_l_hand_str = "jackboots")
 	siemens_coefficient = 0.6
-	slowdown = SHOES_SLOWDOWN+0.2
+	slowdown = SHOES_SLOWDOWN+0.5
 	armor = list(melee = 40, bullet = 40, laser = 60, energy = 35, bomb = 30, bio = 0, rad = 0)
 	min_cold_protection_temperature = T0C - 20
 	cold_protection = LEGS

@@ -10,20 +10,35 @@
 	light_range = 2
 	light_power = 0.75
 	light_color = LIGHT_COLOR_LAVA
+	light_on = TRUE
 	movement_cost = 2
 	can_build_into_floor = TRUE
+	can_be_plated = FALSE
 	can_dirty = FALSE
-	initial_flooring = /decl/flooring/lava // Defining this in case someone DOES step on lava and survive. Somehow.
+	initial_flooring = /datum/decl/flooring/lava // Defining this in case someone DOES step on lava and survive. Somehow.
+	flags = TURF_ACID_IMMUNE
+	var/datum/looping_sound/lava/soundloop //CHOMPADD
 
 /turf/simulated/floor/lava/outdoors
-	outdoors = TRUE
+	outdoors = OUTDOORS_YES
 
 // For maximum pedantry.
-/turf/simulated/floor/lava/Initialize()
-	if(!outdoors)
+/turf/simulated/floor/lava/Initialize(mapload)
+	if(!is_outdoors())
 		name = "magma"
 	update_icon()
+	update_light()
+	soundloop = new(list(src), FALSE) //CHOMPADD
+	soundloop.start() //CHOMPADD
 	return ..()
+
+/turf/simulated/floor/lava/Destroy()
+	soundloop.stop() //CHOMPADD
+	QDEL_NULL(soundloop) //CHOMPADD
+
+	if(datum_flags & DF_ISPROCESSING)
+		STOP_PROCESSING(SSturfs, src)
+	. = ..()
 
 /turf/simulated/floor/lava/make_outdoors()
 	..()
@@ -36,7 +51,10 @@
 /turf/simulated/floor/lava/make_plating(place_product, defer_icon_update)
 	return
 
-/turf/simulated/floor/lava/set_flooring(decl/flooring/newflooring, initializing)
+/turf/simulated/floor/lava/MakeSlippery(wet_setting, min_wet_time, wet_time_to_add, max_wet_time, permanent)
+	return
+
+/turf/simulated/floor/lava/set_flooring(datum/decl/flooring/newflooring, initializing)
 	if(newflooring?.type == initial_flooring)
 		return ..()
 	return
@@ -47,9 +65,10 @@
 /turf/simulated/floor/lava/Entered(atom/movable/AM)
 	if(burn_stuff(AM))
 		START_PROCESSING(SSturfs, src)
+	. = ..()
 
-/turf/simulated/floor/lava/hitby(atom/movable/AM)
-	if(burn_stuff(AM))
+/turf/simulated/floor/lava/hitby(atom/movable/source, datum/thrownthing/throwingdatum)
+	if(burn_stuff(source))
 		START_PROCESSING(SSturfs, src)
 
 /turf/simulated/floor/lava/process()
@@ -68,24 +87,26 @@
 	if(is_safe())
 		return FALSE
 
+	// If argument is set, we're only burning JUST that thing. Otherwise this burns all turf contents.
 	var/thing_to_check = src
 	if(AM)
 		thing_to_check = list(AM)
 
-	for(var/thing in thing_to_check)
+	for(var/atom/movable/thing in thing_to_check)
+		if(thing.throwing || thing.is_incorporeal())
+			continue
 		if(isobj(thing))
 			var/obj/O = thing
-			if(O.throwing)
-				continue
 			. = TRUE
 			O.lava_act()
-
-		else if(isliving(thing))
+			continue
+		if(isliving(thing))
 			var/mob/living/L = thing
-			if(L.hovering || L.throwing) // Flying over the lava. We're just gonna pretend convection doesn't exist.
+			if(L.hovering || L.flying) // Flying over the lava. We're just gonna pretend convection doesn't exist.
 				continue
 			. = TRUE
 			L.lava_act()
+			continue
 
 // Lava that does nothing at all.
 /turf/simulated/floor/lava/harmless/burn_stuff(atom/movable/AM)

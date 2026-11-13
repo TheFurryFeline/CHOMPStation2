@@ -9,7 +9,7 @@
 
 /obj/machinery/power/smes/batteryrack
 	name = "power cell rack PSU"
-	desc = "A rack of power cells working as a PSU."
+	desc = "A rack of power cells working as a PSU. Made from a recycled Breaker Box frame."
 	icon = 'icons/obj/cellrack.dmi'
 	icon_state = "rack"
 	capacity = 0
@@ -26,28 +26,20 @@
 	var/icon_update = 0									// Timer in ticks for icon update.
 	var/ui_tick = 0
 	should_be_mapped = TRUE
+	circuit = /obj/item/circuitboard/batteryrack
 
 
-/obj/machinery/power/smes/batteryrack/New()
-	..()
-	add_parts()
-	RefreshParts()
-
-/obj/machinery/power/smes/batteryrack/proc/add_parts()
-	component_parts = list()
-	component_parts += new /obj/item/weapon/circuitboard/batteryrack
-	component_parts += new /obj/item/weapon/stock_parts/capacitor/				// Capacitors: Maximal I/O
-	component_parts += new /obj/item/weapon/stock_parts/capacitor/
-	component_parts += new /obj/item/weapon/stock_parts/capacitor/
-	component_parts += new /obj/item/weapon/stock_parts/matter_bin/				// Matter Bin: Max. amount of cells.
+/obj/machinery/power/smes/batteryrack/Initialize(mapload)
+	. = ..()
+	default_apply_parts()
 
 /obj/machinery/power/smes/batteryrack/RefreshParts()
 	var/capacitor_efficiency = 0
 	var/maxcells = 0
-	for(var/obj/item/weapon/stock_parts/capacitor/CP in component_parts)
+	for(var/obj/item/stock_parts/capacitor/CP in component_parts)
 		capacitor_efficiency += CP.rating
 
-	for(var/obj/item/weapon/stock_parts/matter_bin/MB in component_parts)
+	for(var/obj/item/stock_parts/matter_bin/MB in component_parts)
 		maxcells += MB.rating * 3
 
 	max_transfer_rate = 10000 * capacitor_efficiency // 30kw - 90kw depending on used capacitors.
@@ -56,33 +48,36 @@
 	output_level = max_transfer_rate
 
 /obj/machinery/power/smes/batteryrack/Destroy()
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		qdel(C)
 	internal_cells = null
 	return ..()
 
+/obj/machinery/power/smes/batteryrack/check_terminals()
+	return TRUE // we don't necessarily need terminals
+
 /obj/machinery/power/smes/batteryrack/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	icon_update = 0
 
 	var/cellcount = 0
 	var/charge_level = between(0, round(Percentage() / 12), 7)
 
 
-	overlays += "charge[charge_level]"
+	add_overlay("charge[charge_level]")
 
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		cellcount++
-		overlays += "cell[cellcount]"
+		add_overlay("cell[cellcount]")
 		if(C.fully_charged())
-			overlays += "cell[cellcount]f"
+			add_overlay("cell[cellcount]f")
 		else if(!C.charge)
-			overlays += "cell[cellcount]e"
+			add_overlay("cell[cellcount]e")
 
 // Recalculate maxcharge and similar variables.
 /obj/machinery/power/smes/batteryrack/proc/update_maxcharge()
 	var/newmaxcharge = 0
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		newmaxcharge += C.maxcharge
 
 	newmaxcharge /= CELLRATE		// Convert to Joules
@@ -92,7 +87,7 @@
 
 
 // Sets input/output depending on our "mode" var.
-/obj/machinery/power/smes/batteryrack/proc/update_io(var/newmode)
+/obj/machinery/power/smes/batteryrack/proc/update_io(newmode)
 	mode = newmode
 	switch(mode)
 		if(PSU_OFFLINE)
@@ -109,34 +104,34 @@
 			output_attempt = 1
 
 // Store charge in the power cells, instead of using the charge var. Amount is in joules.
-/obj/machinery/power/smes/batteryrack/add_charge(var/amount)
+/obj/machinery/power/smes/batteryrack/add_charge(amount)
 	amount *= CELLRATE // Convert to CELLRATE first.
 	if(equalise)
 		// Now try to get least charged cell and use the power from it.
-		var/obj/item/weapon/cell/CL = get_least_charged_cell()
+		var/obj/item/cell/CL = get_least_charged_cell()
 		if(!CL)
 			return
 		amount -= CL.give(amount)
 		if(!amount)
 			return
 	// We're still here, so it means the least charged cell was full OR we don't care about equalising the charge. Give power to other cells instead.
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		amount -= C.give(amount)
 		// No more power to input so return.
 		if(!amount)
 			return
 
 
-/obj/machinery/power/smes/batteryrack/remove_charge(var/amount)
+/obj/machinery/power/smes/batteryrack/remove_charge(amount)
 	amount *= CELLRATE // Convert to CELLRATE first.
 	if(equalise)
 		// Now try to get most charged cell and use the power from it.
-		var/obj/item/weapon/cell/CL = get_most_charged_cell()
+		var/obj/item/cell/CL = get_most_charged_cell()
 		amount -= CL.use(amount)
 		if(!amount)
 			return
 	// We're still here, so it means the most charged cell didn't have enough power OR we don't care about equalising the charge. Use power from other cells instead.
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		amount -= C.use(amount)
 		// No more power to output so return.
 		if(!amount)
@@ -144,23 +139,23 @@
 
 // Helper procs to get most/least charged cells.
 /obj/machinery/power/smes/batteryrack/proc/get_most_charged_cell()
-	var/obj/item/weapon/cell/CL = null
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	var/obj/item/cell/CL = null
+	for(var/obj/item/cell/C in internal_cells)
 		if(CL == null)
 			CL = C
 		else if(CL.percent() < C.percent())
 			CL = C
 	return CL
 /obj/machinery/power/smes/batteryrack/proc/get_least_charged_cell()
-	var/obj/item/weapon/cell/CL = null
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	var/obj/item/cell/CL = null
+	for(var/obj/item/cell/C in internal_cells)
 		if(CL == null)
 			CL = C
 		else if(CL.percent() > C.percent())
 			CL = C
 	return CL
 
-/obj/machinery/power/smes/batteryrack/proc/insert_cell(var/obj/item/weapon/cell/C, var/mob/user)
+/obj/machinery/power/smes/batteryrack/proc/insert_cell(obj/item/cell/C, mob/user)
 	if(!istype(C))
 		return 0
 
@@ -179,7 +174,7 @@
 
 /obj/machinery/power/smes/batteryrack/process()
 	charge = 0
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		charge += C.charge
 	charge /= CELLRATE		// Convert to Joules
 	charge *= SMESRATE		// And to SMES charge units (which are for some reason different than CELLRATE)
@@ -195,8 +190,8 @@
 	// Try to balance charge between stored cells. Capped at max_transfer_rate per tick.
 	// Take power from most charged cell, and give it to least charged cell.
 	if(equalise)
-		var/obj/item/weapon/cell/least = get_least_charged_cell()
-		var/obj/item/weapon/cell/most = get_most_charged_cell()
+		var/obj/item/cell/least = get_least_charged_cell()
+		var/obj/item/cell/most = get_most_charged_cell()
 		// Don't bother equalising charge between two same cells. Also ensure we don't get NULLs or wrong types. Don't bother equalising when difference between charges is tiny.
 		if(least == most || !istype(least) || !istype(most) || least.percent() == most.percent())
 			return
@@ -213,17 +208,17 @@
 		least.give(most.use(celldiff))
 
 /obj/machinery/power/smes/batteryrack/dismantle()
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		C.forceMove(get_turf(src))
 		internal_cells -= C
 	return ..()
 
-/obj/machinery/power/smes/batteryrack/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
-	if(istype(W, /obj/item/weapon/cell)) // ID Card, try to insert it.
+/obj/machinery/power/smes/batteryrack/attackby(obj/item/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/cell)) // ID Card, try to insert it.
 		if(insert_cell(W, user))
-			to_chat(user, "<span class='filter_notice'>You insert \the [W] into \the [src].</span>")
+			to_chat(user, span_filter_notice("You insert \the [W] into \the [src]."))
 		else
-			to_chat(user, "<span class='filter_notice'>\The [src] has no empty slot for \the [W]</span>")
+			to_chat(user, span_filter_notice("\The [src] has no empty slot for \the [W]"))
 	if(!..())
 		return 0
 	if(default_deconstruction_crowbar(user, W))
@@ -237,7 +232,7 @@
 /obj/machinery/power/smes/batteryrack/outputting()
 	return
 
-/obj/machinery/power/smes/batteryrack/attack_hand(var/mob/user)
+/obj/machinery/power/smes/batteryrack/attack_hand(mob/user)
 	tgui_interact(user)
 
 /obj/machinery/power/smes/batteryrack/tgui_interact(mob/user, datum/tgui/ui)
@@ -260,11 +255,12 @@
 	data["cells_cur"] = internal_cells.len
 	var/list/cells = list()
 	var/cell_index = 0
-	for(var/obj/item/weapon/cell/C in internal_cells)
+	for(var/obj/item/cell/C in internal_cells)
 		var/list/cell[0]
 		cell["slot"] = cell_index + 1
 		cell["used"] = 1
 		cell["percentage"] = round(C.percent(), 0.01)
+		cell["name"] = C.name
 		cell["id"] = C.c_uid
 		cell_index++
 		cells += list(cell)
@@ -302,8 +298,8 @@
 			equalise = 0
 			return TRUE
 		if("ejectcell")
-			var/obj/item/weapon/cell/C
-			for(var/obj/item/weapon/cell/CL in internal_cells)
+			var/obj/item/cell/C
+			for(var/obj/item/cell/CL in internal_cells)
 				if(CL.c_uid == text2num(params["ejectcell"]))
 					C = CL
 					break
@@ -317,3 +313,10 @@
 			RefreshParts()
 			update_maxcharge()
 			return TRUE
+
+#undef PSU_OFFLINE
+#undef PSU_OUTPUT
+#undef PSU_INPUT
+#undef PSU_AUTO
+
+#undef PSU_MAXCELLS

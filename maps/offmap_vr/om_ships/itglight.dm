@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "itglight.dmm"
 #endif
 
@@ -7,7 +7,7 @@
 /datum/map_template/om_ships/itglight
 	name = "OM Ship - ITG Dauntless (New Z)"
 	desc = "A small, well armed interstellar cargo ship!!"
-	mappath = 'itglight.dmm'
+	mappath = "maps/offmap_vr/om_ships/itglight.dmm"
 
 /area/itglight
 	requires_power = 1
@@ -85,14 +85,13 @@
 
 // The 'Dauntless'
 /obj/effect/overmap/visitable/ship/itglight
-	name = "spacecraft"
+	name = "ITG Dauntless"
+	icon_state = "serb_destroyer_g"
 	desc = "Spacefaring vessel. Friendly IFF detected."
-	scanner_name = "ITG Dauntless"
 	scanner_desc = @{"[i]Registration[/i]: ITG Dauntless
 [i]Class[/i]: Small Cargo Frigate (Low Displacement)
 [i]Transponder[/i]: Transmitting (CIV), non-hostile"
 [b]Notice[/b]: May carry passengers"}
-	color = "#d98c1a" //orng
 	vessel_mass = 8000
 	vessel_size = SHIP_SIZE_SMALL
 	initial_generic_waypoints = list("itglight_fore", "itglight_aft", "itglight_port", "itglight_starboard", "itglight_port_dock", "itglight_starboard_dock")
@@ -137,9 +136,9 @@
 	department = "ITG Dauntless"
 	desc = "The ship's fax machine! It's a safe assumption that most of the departments listed aren't on your ship, since the ship only has one."
 
-/obj/item/weapon/paper/Dauntless
+/obj/item/paper/Dauntless
 	name = "Notes about Dauntless"
-	info = {"<font size=1>Welcome to the Ironcrest Transport Group</font><br><br>
+	info = span_small("Welcome to the Ironcrest Transport Group") + {"<br><br>
 	<h4>ITG Dauntless</h4>
 	Welcome to the Dauntless, there are a few things you should know.<br><br>
 	WRITE DOWN THE DOCKING CODES<br>

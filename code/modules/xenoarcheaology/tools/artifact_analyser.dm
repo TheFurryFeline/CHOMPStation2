@@ -1,10 +1,11 @@
 /obj/machinery/artifact_analyser
 	name = "Anomaly Analyser"
 	desc = "Studies the emissions of anomalous materials to discover their uses."
-	icon = 'icons/obj/virology_vr.dmi' //VOREStation Edit
+	icon = 'icons/obj/virology.dmi'
 	icon_state = "isolator"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
+	bubble_icon = "science"
 	var/scan_in_progress = 0
 	var/scan_num = 0
 	var/obj/scanned_obj
@@ -13,8 +14,17 @@
 	var/scan_duration = 50
 	var/obj/scanned_object
 	var/report_num = 0
+	var/list/priority_objects = list(/obj/machinery/artifact,
+										/obj/machinery/auto_cloner,
+										/obj/machinery/power/supermatter,
+										/obj/structure/constructshell,
+										/obj/machinery/giga_drill,
+										/obj/structure/cult/pylon,
+										/obj/machinery/replicator,
+										/obj/structure/crystal
+									)
 
-/obj/machinery/artifact_analyser/Initialize()
+/obj/machinery/artifact_analyser/Initialize(mapload)
 	. = ..()
 	reconnect_scanner()
 
@@ -49,9 +59,9 @@
 /obj/machinery/artifact_analyser/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
 	if(..())
 		return TRUE
-	
-	add_fingerprint(usr)
-	
+
+	add_fingerprint(ui.user)
+
 	switch(action)
 		if("scan")
 			if(scan_in_progress)
@@ -62,6 +72,7 @@
 				reconnect_scanner()
 			if(owned_scanner)
 				var/artifact_in_use = 0
+				var/obj/secondary_priority
 				for(var/obj/O in owned_scanner.loc)
 					if(O == owned_scanner)
 						continue
@@ -69,28 +80,36 @@
 						continue
 					if(istype(O, /obj/machinery/artifact))
 						var/obj/machinery/artifact/A = O
-						if(A.being_used)
+						if(A.in_use)
 							artifact_in_use = 1
 						else
-							A.anchored = 1
-							A.being_used = 1
+							A.anchored = TRUE
+							A.in_use = 1
 
 					if(artifact_in_use)
 						atom_say("Cannot scan. Too much interference.")
 					else
-						scanned_object = O
-						scan_in_progress = 1
-						scan_completion_time = world.time + scan_duration
-						atom_say("Scanning begun.")
-					break
+						for(var/otype in priority_objects)
+							if(istype(O, otype))
+								scanned_object = O
+								break
+						if(scanned_object)
+							break
+						else
+							secondary_priority = O
+				if(secondary_priority && !scanned_object)
+					scanned_object = secondary_priority
 				if(!scanned_object)
 					atom_say("Unable to isolate scan target.")
+				else
+					scan_in_progress = 1
+					scan_completion_time = world.time + scan_duration
+					atom_say("Scanning begun.")
 			return TRUE
 
 /obj/machinery/artifact_analyser/process()
 	if(scan_in_progress && world.time > scan_completion_time)
 		scan_in_progress = 0
-		updateDialog()
 
 		var/results = ""
 		if(!owned_scanner)
@@ -103,22 +122,22 @@
 			results = get_scan_info(scanned_object)
 
 		atom_say("Scanning complete.")
-		var/obj/item/weapon/paper/P = new(src.loc)
+		var/obj/item/paper/P = new(src.loc)
 		P.name = "[src] report #[++report_num]"
-		P.info = "<b>[src] analysis report #[report_num]</b><br>"
+		P.info = span_bold("[src] analysis report #[report_num]") + "<br>"
 		P.info += "<br>"
 		P.info += "[bicon(scanned_object)] [results]"
-		P.stamped = list(/obj/item/weapon/stamp)
-		P.overlays = list("paper_stamped")
+		P.stamped = list(/obj/item/stamp)
+		P.add_overlay("paper_stamped")
 
 		if(scanned_object && istype(scanned_object, /obj/machinery/artifact))
 			var/obj/machinery/artifact/A = scanned_object
-			A.anchored = 0
-			A.being_used = 0
-			scanned_object = null
+			A.anchored = FALSE
+			A.in_use = 0
+		scanned_object = null
 
 //hardcoded responses, oh well
-/obj/machinery/artifact_analyser/proc/get_scan_info(var/obj/scanned_obj)
+/obj/machinery/artifact_analyser/proc/get_scan_info(obj/scanned_obj)
 	switch(scanned_obj.type)
 		if(/obj/machinery/auto_cloner)
 			return "Automated cloning pod - appears to rely on an artificial ecosystem formed by semi-organic nanomachines and the contained liquid.<br>The liquid resembles protoplasmic residue supportive of unicellular organism developmental conditions.<br>The structure is composed of a titanium alloy."
@@ -138,13 +157,37 @@
 			var/obj/machinery/artifact/A = scanned_obj
 			var/out = "Anomalous alien device - composed of an unknown alloy.<br><br>"
 
-			if(A.my_effect)
-				out += A.my_effect.getDescription()
+			var/datum/component/artifact_master/AMast = A.artifact_master
+			var/datum/artifact_effect/AEff = AMast.get_primary()
 
-			if(A.secondary_effect && A.secondary_effect.activated)
+			out += AEff.getDescription()
+
+			if(AMast.my_effects.len > 1)
 				out += "<br><br>Internal scans indicate ongoing secondary activity operating independently from primary systems.<br><br>"
-				out += A.secondary_effect.getDescription()
+				for(var/datum/artifact_effect/my_effect in A.artifact_master.my_effects - AEff)
+
+					if(my_effect)
+						out += my_effect.getDescription()
 
 			return out
 		else
+
+			var/datum/component/artifact_master/ScannedMaster = scanned_obj.GetComponent(/datum/component/artifact_master)
+
+			if(istype(ScannedMaster))
+				var/out = "Anomalous reality warp - Object has been altered to disobey known laws of physics.<br><br>"
+
+				var/datum/artifact_effect/AEff = ScannedMaster.get_primary()
+
+				out += AEff.getDescription()
+
+				if(ScannedMaster.my_effects.len > 1)
+					out += "<br><br>Resonant scans indicate asynchronous reality modulation:<br><br>"
+					for(var/datum/artifact_effect/my_effect in ScannedMaster.my_effects - AEff)
+
+						if(my_effect)
+							out += my_effect.getDescription()
+
+				return out
+
 			return "[scanned_obj.name] - mundane application."

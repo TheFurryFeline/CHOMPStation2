@@ -1,29 +1,26 @@
-var/list/grass_types = list(
-
-)
-
 /turf/simulated/floor/outdoors/grass
 	name = "grass"
 	icon_state = "grass0"
 	edge_blending_priority = 4
-	initial_flooring = /decl/flooring/grass/outdoors // VOREStation Edit
-	turf_layers = list(
+	initial_flooring = /datum/decl/flooring/grass/outdoors // VOREStation Edit
+	flags = TURF_CAN_DIG_SHOVEL
+	/*turf_layers = list( CHOMP Removal Begin
 		/turf/simulated/floor/outdoors/rocks,
 		/turf/simulated/floor/outdoors/dirt
-		)
+		)CHOMP Removal End*/
 	var/grass_chance = 12
 
 	var/animal_chance = 1
 
 	// Weighted spawn list.
-	var/list/animal_types = list(
+	/*var/list/animal_types = list( CHOMP Removal begin
 		/mob/living/simple_mob/animal/passive/tindalos = 1
 		)
 
 	var/list/grass_types = list(
 		/obj/structure/flora/ausbushes/sparsegrass,
 		/obj/structure/flora/ausbushes/fullgrass
-		)
+		) CHOMP Removal End */
 
 /datum/category_item/catalogue/flora/sif_grass
 	name = "Sivian Flora - Moss"
@@ -37,14 +34,14 @@ var/list/grass_types = list(
 /turf/simulated/floor/outdoors/grass/sif
 	name = "growth"
 	icon_state = "grass_sif0"
-	initial_flooring = /decl/flooring/grass/sif
-	edge_blending_priority = 2
+	initial_flooring = /datum/decl/flooring/grass/sif
+	edge_blending_priority = 3 // CHOMPedit
 	grass_chance = 5
-	var/tree_chance = 0.7
+	var/tree_chance = 0.7 //CHOMPedit
 
 
-	animal_chance = 0.25
-
+	animal_chance = 0.25 //CHOMPedit
+	/* CHOMP Removal Begin
 	animal_types = list(
 		/mob/living/simple_mob/animal/sif/diyaab = 7,
 		/mob/living/simple_mob/animal/sif/glitterfly = 2,
@@ -58,23 +55,25 @@ var/list/grass_types = list(
 		/obj/structure/flora/sif/eyes = 1,
 		/obj/structure/flora/sif/tendrils = 10
 		)
-
+	CHOMP Removal End*/
 	catalogue_data = list(/datum/category_item/catalogue/flora/sif_grass)
 	catalogue_delay = 2 SECONDS
 
-/turf/simulated/floor/outdoors/grass/sif/Initialize()
+/turf/simulated/floor/outdoors/grass/sif/Initialize(mapload)
 	if(tree_chance && prob(tree_chance) && !check_density())
 		new /obj/structure/flora/tree/sif(src)
 	. = ..()
 
-/turf/simulated/floor/outdoors/grass/Initialize()
-	if(grass_chance && prob(grass_chance) && !check_density())
-		var/grass_type = pickweight(grass_types)
-		new grass_type(src)
+/turf/simulated/floor/outdoors/grass/Initialize(mapload)
+	if(grass && grass_chance && prob(grass_chance) && !check_density()) //CHOMPEdit
+		var/grass_type = pickweight(GLOB.grass_grass[grass]) //CHOMPEdit
+		if(grass_type) //ChompEDIT - runtime
+			new grass_type(src)
 
-	if(animal_chance && prob(animal_chance) && !check_density())
-		var/animal_type = pickweight(animal_types)
-		new animal_type(src)
+	if(animals && animal_chance && prob(animal_chance) && !check_density()) //CHOMPEdit
+		var/animal_type = pickweight(GLOB.grass_animals[animals]) //CHOMPEdit
+		if(animal_type) //ChompEDIT - runtime
+			new animal_type(src)
 
 	. = ..()
 
@@ -84,34 +83,37 @@ var/list/grass_types = list(
 	grass_chance = 50
 	//tree_chance = 20
 	edge_blending_priority = 5
-	initial_flooring = /decl/flooring/grass/outdoors/forest // VOREStation Edit
+	initial_flooring = /datum/decl/flooring/grass/outdoors/forest // VOREStation Edit
 
 /turf/simulated/floor/outdoors/grass/sif/forest
 	name = "thick growth"
 	icon_state = "grass_sif_dark0"
-	initial_flooring = /decl/flooring/grass/sif/forest
+	initial_flooring = /datum/decl/flooring/grass/sif/forest
 	edge_blending_priority = 5
 	tree_chance = 4
 	grass_chance = 1
 
-	grass_types = list(
-		/obj/structure/flora/sif/frostbelle = 1,
-		/obj/structure/flora/sif/eyes = 5,
-		/obj/structure/flora/sif/tendrils = 30
-		)
+	grass = "sifforest"
 
 //CHOMPedit: animal spawning for sif rocks. This probably doesn't belong in grass.dm but it's where there other Sif spawns are, sue me.
 /turf/simulated/floor/outdoors/rocks/sif
 	var/animal_chance = 0.3 //Should spawn around... 0-7 per round? Tweak as needed.
 
-	var/animal_types = list(
-		/mob/living/simple_mob/vore/slug = 1
-		)
-
-/turf/simulated/floor/outdoors/rocks/sif/Initialize()
+/turf/simulated/floor/outdoors/rocks/sif/Initialize(mapload)
 	if(animal_chance && prob(animal_chance) && !check_density())
-		var/animal_type = pickweight(animal_types)
-		new animal_type(src)
+		new /mob/living/simple_mob/vore/slug(src)
 
+	. = ..()
+//CHOMPedit end
+
+/turf/simulated/floor/outdoors/grass/sif/attackby(obj/item/C, mob/user)//CHOMPedit begin, other tiles have ways to build on them, sif grass doesnt. So I put this snowflake on just sif grass
+	if(istype(C, /obj/item/stack/tile/floor))
+		var/obj/item/stack/tile/floor/S = C
+		if (S.get_amount() < 1)
+			return
+		playsound(src, 'sound/weapons/Genhit.ogg', 50, 1)
+		ChangeTurf(/turf/simulated/floor)
+		S.use(1)
+		return
 	. = ..()
 //CHOMPedit end

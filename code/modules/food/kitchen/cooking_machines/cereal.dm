@@ -8,38 +8,38 @@
 	off_icon = "cereal_off"
 	appliancetype = CEREALMAKER
 	var/datum/looping_sound/cerealmaker/cerealmaker_loop
-	circuit = /obj/item/weapon/circuitboard/cerealmaker
+	circuit = /obj/item/circuitboard/cerealmaker
 
 	output_options = list(
-		"Cereal" = /obj/item/weapon/reagent_containers/food/snacks/variable/cereal
+		"Cereal" = /obj/item/reagent_containers/food/snacks/variable/cereal
 	)
 
-/obj/machinery/appliance/mixer/cereal/Initialize()
+/obj/machinery/appliance/mixer/cereal/Initialize(mapload)
 	. = ..()
-	
+
 	cerealmaker_loop = new(list(src), FALSE)
-	
+
 /obj/machinery/appliance/mixer/cereal/Destroy()
 	. = ..()
-	
+
 	QDEL_NULL(cerealmaker_loop)
 
 /*
-/obj/machinery/appliance/mixer/cereal/change_product_strings(var/obj/item/weapon/reagent_containers/food/snacks/product, var/datum/cooking_item/CI)
+/obj/machinery/appliance/mixer/cereal/change_product_strings(obj/item/reagent_containers/food/snacks/product, datum/cooking_item/CI)
 	. = ..()
 	product.name = "box of [CI.object.name] cereal"
 
-/obj/machinery/appliance/mixer/cereal/change_product_appearance(var/obj/item/weapon/reagent_containers/food/snacks/product)
+/obj/machinery/appliance/mixer/cereal/change_product_appearance(obj/item/reagent_containers/food/snacks/product)
 	product.icon = 'icons/obj/food.dmi'
 	product.icon_state = "cereal_box"
 	product.filling_color = CI.object.color
 
 	var/image/food_image = image(CI.object.icon, CI.object.icon_state)
 	food_image.color = CI.object.color
-	food_image.overlays += CI.object.overlays
+	food_image.add_overlay(CI.object.overlays)
 	food_image.transform *= 0.7
 
-	product.overlays += food_image
+	product.add_overlay(food_image)
 */
 
 /obj/machinery/appliance/mixer/cereal/update_icon()
@@ -54,12 +54,12 @@
 		if(cerealmaker_loop)
 			cerealmaker_loop.stop(src)
 
-/obj/machinery/appliance/mixer/cereal/combination_cook(var/datum/cooking_item/CI)
+/obj/machinery/appliance/mixer/cereal/combination_cook(datum/cooking_item/CI)
 
 	var/list/images = list()
 	var/num = 0
 	for(var/obj/item/I in CI.container)
-		if (istype(I, /obj/item/weapon/reagent_containers/food/snacks/variable/cereal))
+		if (istype(I, /obj/item/reagent_containers/food/snacks/variable/cereal))
 			//Images of cereal boxes on cereal boxes is dumb
 			continue
 
@@ -79,8 +79,18 @@
 			continue
 
 
-	var/obj/item/weapon/reagent_containers/food/snacks/result = ..()
+	var/obj/item/reagent_containers/food/snacks/result = ..()
 
 	result.color = result.filling_color
 	for (var/i in images)
 		result.overlays += images[i]
+
+
+/obj/machinery/appliance/mixer/cereal/attackby(obj/item/O as obj, mob/user as mob)
+	if(default_deconstruction_screwdriver(user, O)) //CHOMPedit - Allows for deconstruction
+		return
+	if(default_deconstruction_crowbar(user, O))
+		return
+	if(default_part_replacement(user, O))
+		return
+	..()

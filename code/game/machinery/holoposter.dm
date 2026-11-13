@@ -4,10 +4,11 @@ GLOBAL_LIST_EMPTY(holoposters)
 	desc = "A wall-mounted holographic projector displaying advertisements by all manner of factions. How much do they pay to advertise here?"
 	icon = 'icons/obj/holoposter_vr.dmi'
 	icon_state = "off"
-	anchored = 1
+	anchored = TRUE
 	use_power = 1
 	idle_power_usage = 80
 	power_channel = ENVIRON
+	vis_flags = VIS_HIDE // They have an emissive that looks bad in openspace due to their wall-mounted nature
 	var/icon_forced = FALSE
 	var/examine_addon = "It appears to be powered off."
 	var/mytimer
@@ -24,11 +25,11 @@ GLOBAL_LIST_EMPTY(holoposters)
 		"moebius" = list(LIGHT_COLOR_PURPLE, "Moebius. One of the few companies worth merit beyond their local bubble staffed completely by synthetics. 'For synths, by synths.'")
 	)
 
-/obj/machinery/holoposter/Initialize()
+/obj/machinery/holoposter/Initialize(mapload)
 	. = ..()
 	set_rand_sprite()
 	GLOB.holoposters += src
-	mytimer = addtimer(CALLBACK(src, .proc/set_rand_sprite), 30 MINUTES + rand(0, 5 MINUTES), TIMER_STOPPABLE | TIMER_LOOP)
+	mytimer = addtimer(CALLBACK(src, PROC_REF(set_rand_sprite)), 30 MINUTES + rand(0, 5 MINUTES), TIMER_STOPPABLE | TIMER_LOOP)
 
 /obj/machinery/holoposter/Destroy()
 	GLOB.holoposters -= src
@@ -53,12 +54,12 @@ GLOBAL_LIST_EMPTY(holoposters)
 		examine_addon = "It appears to be malfunctioning."
 		new_color = "#6A6C71"
 	else
-		if((z in using_map.station_levels) && global.security_level) // 0 is fine, everything higher is alert levels
+		if((z in using_map.station_levels) && GLOB.security_level) // 0 is fine, everything higher is alert levels
 			icon_state = "attention"
 			examine_addon = "It warns you to remain calm and contact your supervisor as soon as possible."
 			new_color =  "#AA7039"
 			alerting = TRUE
-		else if(alerting && !global.security_level) // coming out of alert
+		else if(alerting && !GLOB.security_level) // coming out of alert
 			alerting = FALSE
 			set_rand_sprite()
 			return
@@ -82,16 +83,16 @@ GLOBAL_LIST_EMPTY(holoposters)
 	src.add_fingerprint(user)
 	if(stat & (NOPOWER))
 		return
-	if (W.is_multitool())
+	if (W.has_tool_quality(TOOL_MULTITOOL))
 		playsound(src, 'sound/items/penclick.ogg', 60, 1)
-		icon_state = input("Available Posters", "Holographic Poster") as null|anything in postertypes + "random"
+		icon_state = tgui_input_list(user, "Available Posters", "Holographic Poster", postertypes + "random")
 		if(!Adjacent(user))
 			return
 		if(icon_state == "random")
 			stat &= ~BROKEN
 			icon_forced = FALSE
 			if(!mytimer)
-				mytimer = addtimer(CALLBACK(src, .proc/set_rand_sprite), 30 MINUTES + rand(0, 5 MINUTES), TIMER_STOPPABLE | TIMER_LOOP)
+				mytimer = addtimer(CALLBACK(src, PROC_REF(set_rand_sprite)), 30 MINUTES + rand(0, 5 MINUTES), TIMER_STOPPABLE | TIMER_LOOP)
 			set_rand_sprite()
 			return
 		icon_forced = TRUE
@@ -110,7 +111,9 @@ GLOBAL_LIST_EMPTY(holoposters)
 	if(wasUnpowered != (stat & NOPOWER))
 		update_icon()
 
-/obj/machinery/holoposter/emp_act()
+/obj/machinery/holoposter/emp_act(severity, recursive)
+	. = ..()
+	if (. & EMP_PROTECT_SELF || stat & BROKEN)
+		return
 	stat |= BROKEN
 	update_icon()
-

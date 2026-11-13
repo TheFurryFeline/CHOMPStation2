@@ -112,11 +112,10 @@ Variables you may want to make use of are:
 		)
 
 	var/use_bodyshape = SPECIES_HUMAN
-	var/waterbreathing = 0
 	var/overcome_gravity = 0
 	var/hover = 0
 
-/datum/species/event1/proc/set_limbset(var/setnum = 1) //Will require existing ones to be respawned for changes to take effect.
+/datum/species/event1/proc/set_limbset(setnum = 1) //Will require existing ones to be respawned for changes to take effect.
 	switch(setnum)
 		if(1) //Normal.
 			has_limbs = list(
@@ -178,7 +177,7 @@ Variables you may want to make use of are:
 
 /datum/species/event1/proc/choose_limbset()
 	var/list/limb_sets = list("Normal" = 1, "Unbreakable" = 2, "Unseverable" = 3, "Indestructible" = 4)
-	var/choice = input("Choose limb set to use for future spawns.", "Limb types.") as null|anything in limb_sets
+	var/choice = tgui_input_list(usr, "Choose limb set to use for future spawns.", "Limb types.", limb_sets)
 	set_limbset(limb_sets[choice])
 	return limb_sets[choice]
 
@@ -198,8 +197,11 @@ Variables you may want to make use of are:
 	flags ^= NO_SLIP
 
 /datum/species/event1/proc/toggle_cloning()
-	flags ^= NO_SCAN
-	
+	flags ^= NO_SLEEVE
+
+/datum/species/event1/proc/toggle_dna()
+	flags ^= NO_DNA
+
 /datum/species/event1/proc/toggle_defibbing()
 	flags ^= NO_DEFIB
 
@@ -212,16 +214,13 @@ Variables you may want to make use of are:
 /datum/species/event1/proc/toggle_plant() //Maybe it's a distant cousin of the Venus Fly Trap.
 	flags ^= IS_PLANT
 
-/datum/species/event1/get_bodytype(var/mob/living/carbon/human/H) //Default to human sprites, if they're based on another species, var edit use_bodyshape to the correct thing in _defines/mobs.dm of the species you want to use.
+/datum/species/event1/get_bodytype(mob/living/carbon/human/H) //Default to human sprites, if they're based on another species, var edit use_bodyshape to the correct thing in _defines/mobs.dm of the species you want to use.
 	return use_bodyshape
 
-/datum/species/event1/can_breathe_water()
-	return waterbreathing
-
-/datum/species/event1/can_overcome_gravity(var/mob/living/carbon/human/H)
+/datum/species/event1/can_overcome_gravity(mob/living/carbon/human/H)
 	return overcome_gravity
 
-/datum/species/event1/can_fall(var/mob/living/carbon/human/H)
+/datum/species/event1/can_fall(mob/living/carbon/human/H)
 	return hover
 
 /datum/species/event1/sub1

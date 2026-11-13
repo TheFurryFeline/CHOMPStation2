@@ -8,6 +8,8 @@
 	impact_effect_type = /obj/effect/temp_visual/impact_effect
 	hitsound_wall = 'sound/weapons/effects/searwall.ogg'
 	hitsound = 'sound/weapons/zapbang.ogg'
+	hud_state = "plasma"
+	hud_state_empty = "battery_empty"
 
 	var/flash_strength = 10
 
@@ -19,11 +21,12 @@
 	hitsound_wall = null
 	damage = 5
 	range = 15 //if the shell hasn't hit anything after travelling this far it just explodes.
-	var/flash_range = 0
+	var/flash_range = 1
 	var/brightness = 7
 	var/light_colour = "#ffffff"
+	hud_state = "grenade_dummy"
 
-/obj/item/projectile/energy/flash/on_impact(var/atom/A)
+/obj/item/projectile/energy/flash/on_impact(atom/A)
 	var/turf/T = flash_range? src.loc : get_turf(A)
 	if(!istype(T)) return
 
@@ -43,7 +46,7 @@
 
 	//snap pop
 	playsound(src, 'sound/effects/snap.ogg', 50, 1)
-	src.visible_message("<span class='warning'>\The [src] explodes in a bright flash!</span>")
+	src.visible_message(span_warning("\The [src] explodes in a bright flash!"))
 
 	var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
 	sparks.set_up(2, 1, T)
@@ -56,17 +59,18 @@
 /obj/item/projectile/energy/flash/flare
 	fire_sound = 'sound/weapons/grenade_launcher.ogg'
 	damage = 10
-	flash_range = 1
+	flash_range = 2
 	brightness = 15
 	flash_strength = 20
+	hud_state = "grenade_dummy"
 
-/obj/item/projectile/energy/flash/flare/on_impact(var/atom/A)
+/obj/item/projectile/energy/flash/flare/on_impact(atom/A)
 	light_colour = pick("#e58775", "#ffffff", "#90ff90", "#a09030")
 
 	..() //initial flash
 
 	//residual illumination
-	new /obj/effect/effect/smoke/illumination(src.loc, rand(190,240) SECONDS, range=8, power=3, color=light_colour) //same lighting power as flare
+	new /obj/effect/effect/smoke/illumination(loc, rand(190,240) SECONDS, 8, 3, light_colour) //same lighting power as flare
 
 /obj/item/projectile/energy/electrode
 	name = "electrode"
@@ -77,15 +81,22 @@
 	light_range = 2
 	light_power = 0.5
 	light_color = "#FFFFFF"
+	hud_state = "taser"
 	//Damage will be handled on the MOB side, to prevent window shattering.
-
-/obj/item/projectile/energy/electrode/strong
-	agony = 55
 
 /obj/item/projectile/energy/electrode/stunshot
 	name = "stunshot"
 	damage = 5
 	agony = 80
+	hud_state = "taser"
+
+/obj/item/projectile/energy/electrode/stunshot/strong
+	name = "stunshot"
+	icon_state = "bullet"
+	damage = 10
+	taser_effect = 1
+	agony = 100
+	hud_state = "taser"
 
 /obj/item/projectile/energy/declone
 	name = "declone"
@@ -100,6 +111,7 @@
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
 
 	combustion = FALSE
+	hud_state = "plasma_pistol"
 
 /obj/item/projectile/energy/excavate
 	name = "kinetic blast"
@@ -113,6 +125,11 @@
 
 	vacuum_traversal = 0
 	combustion = FALSE
+	hud_state = "plasma_blast"
+
+/obj/item/projectile/energy/excavate/weak
+	damage = 15
+	excavation_amount = 100
 
 /obj/item/projectile/energy/dart
 	name = "dart"
@@ -121,6 +138,7 @@
 	damage_type = TOX
 	agony = 120
 	check_armour = "energy"
+	hud_state = "pistol_tranq"
 
 	combustion = FALSE
 
@@ -131,10 +149,28 @@
 	damage_type = TOX
 	agony = 40
 	stutter = 10
+	hud_state = "electrothermal"
 
 /obj/item/projectile/energy/bolt/large
 	name = "largebolt"
 	damage = 20
+	hud_state = "electrothermal"
+
+/obj/item/projectile/energy/bow
+	name = "engergy bolt"
+	icon_state = "cbbolt"
+	damage = 20
+	hud_state = "electrothermal"
+
+/obj/item/projectile/energy/bow/heavy
+	damage = 30
+	icon_state = "cbbolt"
+	hud_state = "electrothermal"
+
+/obj/item/projectile/energy/bow/stun
+	name = "stun bolt"
+	agony = 30
+	hud_state = "electrothermal"
 
 /obj/item/projectile/energy/acid //Slightly up-gunned (Read: The thing does agony and checks bio resist) variant of the simple alien mob's projectile, for queens and sentinels.
 	name = "acidic spit"
@@ -144,17 +180,23 @@
 	agony = 10
 	check_armour = "bio"
 	armor_penetration = 25	// It's acid
+	hitsound_wall = 'sound/weapons/effects/alien_spit_wall.ogg'
+	hitsound = 'sound/weapons/effects/alien_spit_wall.ogg'
+	hud_state = "electrothermal"
 
 	combustion = FALSE
 
 /obj/item/projectile/energy/neurotoxin
 	name = "neurotoxic spit"
 	icon_state = "neurotoxin"
-	damage = 5
+	damage = 0
 	damage_type = BIOACID
 	agony = 60 //CHOMPedit lowered agony damage
 	check_armour = "bio"
 	armor_penetration = 25	// It's acid-based
+	hitsound_wall = 'sound/weapons/effects/alien_spit_wall.ogg'
+	hitsound = 'sound/weapons/effects/alien_spit_wall.ogg'
+	hud_state = "electrothermal"
 
 	combustion = FALSE
 
@@ -164,6 +206,7 @@
 	damage = 20
 	damage_type = BIOACID
 	agony = 20
+	hud_state = "electrothermal"
 	check_armour = "bio"
 	armor_penetration = 25	// It's acid-based
 
@@ -178,6 +221,7 @@
 	light_power = 0.5
 	light_color = "#33CC00"
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
+	hud_state = "plasma_rifle"
 
 	combustion = FALSE
 
@@ -191,10 +235,11 @@
 	agony = 55
 	damage_type = BURN
 	vacuum_traversal = 0	//Projectile disappears in empty space
+	hud_state = "plasma_rifle_blast"
 
-/obj/item/projectile/energy/plasmastun/proc/bang(var/mob/living/carbon/M)
+/obj/item/projectile/energy/plasmastun/proc/bang(mob/living/carbon/M)
 
-	to_chat(M, "<span class='danger'>You hear a loud roar.</span>")
+	to_chat(M, span_danger("You hear a loud roar."))
 	playsound(src, 'sound/effects/bang.ogg', 50, 1)
 	var/ear_safety = 0
 	ear_safety = M.get_ear_protection()
@@ -207,24 +252,26 @@
 		M.Weaken(2)
 		M.ear_damage += rand(1, 10)
 		M.ear_deaf = max(M.ear_deaf,15)
+		M.deaf_loop.start() // CHOMPStation Add: Ear Ringing/Deafness
 	if (M.ear_damage >= 15)
-		to_chat(M, "<span class='danger'>Your ears start to ring badly!</span>")
+		to_chat(M, span_danger("Your ears start to ring badly!"))
 		if (prob(M.ear_damage - 5))
-			to_chat(M, "<span class='danger'>You can't hear anything!</span>")
+			to_chat(M, span_danger("You can't hear anything!"))
 			M.sdisabilities |= DEAF
+			M.deaf_loop.start() // CHOMPStation Add: Ear Ringing/Deafness
 	else
 		if (M.ear_damage >= 5)
-			to_chat(M, "<span class='danger'>Your ears start to ring!</span>")
+			to_chat(M, span_danger("Your ears start to ring!"))
 	M.update_icons() //Just to apply matrix transform for laying asap
 
-/obj/item/projectile/energy/plasmastun/on_hit(var/atom/target)
+/obj/item/projectile/energy/plasmastun/on_hit(atom/target)
 	bang(target)
 	. = ..()
 
 /obj/item/projectile/energy/blue_pellet
 	name = "suppressive pellet"
 	icon_state = "blue_pellet"
-	fire_sound = 'sound/weapons/Laser.ogg'
+	fire_sound = 'sound/weapons/laser5.ogg'
 	damage = 5
 	armor_penetration = 75
 	pass_flags = PASSTABLE | PASSGLASS | PASSGRILLE
@@ -235,24 +282,57 @@
 	embed_chance = 0
 	muzzle_type = /obj/effect/projectile/muzzle/pulse
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
+	hud_state = "plasma_sphere"
 
+/* ChompEdit, moving over to energy_ch.dm
 /obj/item/projectile/energy/phase
 	name = "phase wave"
 	icon_state = "phase"
-	range = 6
+	range = 13 //Chompedit This range was still awful
 	damage = 5
-	SA_bonus_damage = 45	// 50 total on animals
-	SA_vulnerability = SA_ANIMAL
+	mob_bonus_damage = 45
+	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/light
 	range = 4
-	SA_bonus_damage = 35	// 40 total on animals
+	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/heavy
 	range = 8
-	SA_bonus_damage = 55	// 60 total on animals
+	hud_state = "laser_heat"
 
 /obj/item/projectile/energy/phase/heavy/cannon
-	range = 10
+	range = 20 //Chompedit This range was mediocre, but not worth a cannon.
 	damage = 15
-	SA_bonus_damage = 60	// 75 total on animals
+	hud_state = "laser_heat"
+*/
+
+/obj/item/projectile/energy/electrode/strong
+	agony = 70
+	hud_state = "taser"
+
+/obj/item/projectile/energy
+	flash_strength = 10
+	hud_state = "taser"
+
+/obj/item/projectile/energy/flash/strong
+	name = "chemical shell"
+	icon_state = "bullet"
+	damage = 10
+	range = 15 //if the shell hasn't hit anything after travelling this far it just explodes.
+	flash_strength = 15
+	brightness = 15
+	hud_state = "grenade_dummy"
+
+/obj/item/projectile/energy/anomaly
+	name = "anomaly emitter projectile"
+	light_color = "#be008f"
+	icon_state = "purple_laser"
+	damage = 5
+	speed = 1.6
+	var/particle_type
+
+/obj/item/projectile/energy/anomaly/Initialize(mapload, particle)
+	. = ..()
+	if(particle)
+		particle_type = particle

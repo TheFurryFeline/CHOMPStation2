@@ -6,13 +6,13 @@
 	var/obj/item/assembly/shock_kit/part = null
 	var/last_time = 1.0
 
-/obj/structure/bed/chair/e_chair/New()
-	..()
-	overlays += image('icons/obj/objects.dmi', src, "echair_over", MOB_LAYER + 1, dir)
+/obj/structure/bed/chair/e_chair/Initialize(mapload)
+	. = ..()
+	add_overlay(image('icons/obj/objects.dmi', src, "echair_over", MOB_LAYER + 1, dir))
 	return
 
-/obj/structure/bed/chair/e_chair/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(W.is_wrench())
+/obj/structure/bed/chair/e_chair/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_WRENCH))
 		var/obj/structure/bed/chair/C = new /obj/structure/bed/chair(loc)
 		playsound(src, W.usesound, 50, 1)
 		C.set_dir(dir)
@@ -34,14 +34,14 @@
 	else
 		on = 1
 		icon_state = "echair1"
-	to_chat(usr, "<span class='notice'>You switch [on ? "on" : "off"] [src].</span>")
+	to_chat(usr, span_notice("You switch [on ? "on" : "off"] [src]."))
 	return
 
-/obj/structure/bed/chair/e_chair/rotate_clockwise()
-	..()
-	overlays.Cut()
-	overlays += image('icons/obj/objects.dmi', src, "echair_over", MOB_LAYER + 1, dir)	//there's probably a better way of handling this, but eh. -Pete
-	return
+/obj/structure/bed/chair/e_chair/set_dir()
+	. = ..()
+	if(.)
+		cut_overlays()
+		add_overlay(image('icons/obj/objects.dmi', src, "echair_over", MOB_LAYER + 1, dir))	//there's probably a better way of handling this, but eh. -Pete
 
 /obj/structure/bed/chair/e_chair/proc/shock()
 	if(!on)
@@ -58,22 +58,20 @@
 		return
 	A.use_power_oneoff(5000, EQUIP)
 	var/light = A.power_light
-	A.updateicon()
+	A.update_icon()
 
 	flick("echair1", src)
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(12, 1, src)
 	s.start()
 	if(has_buckled_mobs())
-		for(var/a in buckled_mobs)
-			var/mob/living/L = a
+		for(var/mob/living/L as anything in buckled_mobs)
 			L.burn_skin(85)
-			to_chat(L, "<span class='danger'>You feel a deep shock course through your body!</span>")
-			sleep(1)
+			to_chat(L, span_danger("You feel a deep shock course through your body!"))
 			L.burn_skin(85)
 			L.Stun(600)
-	visible_message("<span class='danger'>The electric chair went off!</span>", "<span class='danger'>You hear a deep sharp shock!</span>")
+	visible_message(span_danger("The electric chair went off!"), span_danger("You hear a deep sharp shock!"))
 
 	A.power_light = light
-	A.updateicon()
+	A.update_icon()
 	return

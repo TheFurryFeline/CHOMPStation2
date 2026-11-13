@@ -1,13 +1,13 @@
 //Advanced Exploration 	Suit
-/obj/item/weapon/rig/robotics
+/obj/item/rig/robotics
 	name = "advanced suit control belt"
 	suit_type = "advanced"
 	desc = "A lightweight suit combining the utility of a RIG with the wearability of a voidsuit."
 	icon_state = "void_explorer2"
 	slot_flags = SLOT_BELT
 	armor = list(melee = 40, bullet = 30, laser = 20, energy = 15, bomb = 30, bio = 100, rad = 50)
-	slowdown = 1
-	offline_slowdown = 2
+	slowdown = 0.5
+	offline_slowdown = 1
 	offline_vision_restriction = 0
 	emp_protection = -20
 	siemens_coefficient= 0.75
@@ -20,10 +20,7 @@
 	glove_type = null
 	cell_type =  null
 
-	allowed = list(
-		/obj/item/device/flashlight,
-		/obj/item/weapon/storage/box
-		)
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, /obj/item/storage/box, /obj/item/storage/belt, /obj/item/defib_kit/compact)
 
 	req_access = list()
 	req_one_access = list()
@@ -32,7 +29,7 @@
 	name = "suit helmet"
 
 /obj/item/clothing/suit/space/rig/advsuit
-	name = "voidsuit"
-	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS|HANDS|FEET
-	heat_protection =	 UPPER_TORSO|LOWER_TORSO|LEGS|ARMS|HANDS|FEET
-	cold_protection =	 UPPER_TORSO|LOWER_TORSO|LEGS|ARMS|HANDS|FEET
+	name = "Hardsuit" //CHOMPEDIT: Replcing Void with Hard to fit the naming convention. Specced down hardsuit for comfort
+	body_parts_covered = CHEST|LEGS|ARMS|HANDS|FEET
+	heat_protection =	 CHEST|LEGS|ARMS|HANDS|FEET
+	cold_protection =	 CHEST|LEGS|ARMS|HANDS|FEET

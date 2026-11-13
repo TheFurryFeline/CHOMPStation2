@@ -4,8 +4,8 @@
 /obj/item/clothing/under/solgov
 	name = "master solgov uniform"
 	desc = "You shouldn't be seeing this."
-	icon = 'icons/obj/clothing/uniforms_solgov.dmi'
-	item_icons = list(slot_w_uniform_str = 'icons/mob/uniform_solgov.dmi')
+	icon = 'icons/inventory/uniform/item.dmi'
+	item_icons = list(slot_w_uniform_str = 'icons/inventory/uniform/mob.dmi')
 	rolled_down = 0
 	rolled_sleeves = 0
 	armor = list(melee = 5, bullet = 0, laser = 5, energy = 5, bomb = 0, bio = 5, rad = 5)
@@ -19,7 +19,7 @@
 	worn_state = "miami"
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0)
 	siemens_coefficient = 0.9
-	body_parts_covered = UPPER_TORSO|LOWER_TORSO
+	body_parts_covered = CHEST
 
 /obj/item/clothing/under/solgov/pt/sifguard
 	name = "\improper SifGuard pt uniform"
@@ -63,6 +63,18 @@
 	icon_state = "greyutility"
 	worn_state = "greyutility"
 
+/obj/item/clothing/under/utility/tan
+	name = "utility uniform"
+	desc = "A comfortable tan utility jumpsuit."
+	icon_state = "tanutility"
+	worn_state = "tanutility"
+
+/obj/item/clothing/under/utility/green
+	name = "utility uniform"
+	desc = "A comfortable green utility jumpsuit."
+	icon_state = "greenutility"
+	worn_state = "greenutility"
+
 //Here's the real ones
 /obj/item/clothing/under/solgov/utility/sifguard
 	name = "\improper SifGuard uniform"
@@ -71,16 +83,24 @@
 	worn_state = "blackutility_crew"
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 10, rad = 10)
 
+/obj/item/clothing/under/sifcop
+	name = "\improper SifGuard law enforcement uniform"
+	desc = "A sturdy law enforcement uniform typical of Vir's civilian law enforcement officers."
+	icon_state = "sifcop"
+	worn_state = "sifcop"
+	armor = list(melee = 10, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0) //Equivalent to security officer's jumpsuit
+	rolled_sleeves = 0
+
 /obj/item/clothing/under/solgov/utility/sifguard_skirt
 	name = "\improper SifGuard skirt"
 	desc = "A black turtleneck and skirt, the elusive ladies' uniform of the Sif Defense Force."
-	icon_state = "blackservicefem"
+	icon_state = "blackservicef"
 	worn_state = "blackservicefem"
 
 /obj/item/clothing/under/solgov/utility/sifguard_skirt/officer
-	name = "\improper SifGuard officer skirt"
-	desc = "A black turtleneck and skirt, the elusive ladies' uniform of the Sif Defense Force. This one has gold trim."
-	icon_state = "blackservicefem_com"
+	name = "\improper NDF officer skirt"
+	desc = "A black turtleneck and skirt, the elusive ladies' uniform of the Nanotrasen Defense Force. This one has gold trim."
+	icon_state = "blackservicef_com"
 	worn_state = "blackservicefem_com"
 
 /obj/item/clothing/under/solgov/utility/sifguard/command
@@ -469,13 +489,13 @@
 	permeability_coefficient = 0.50
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 30, rad = 0)
 
-//Terrans
+//SAARE
 
 /obj/item/clothing/under/saare
 	name = "master SAARE uniform"
 	desc = "You shouldn't be seeing this."
-	icon = 'icons/obj/clothing/uniforms_solgov.dmi'
-	item_icons = list(slot_w_uniform_str = 'icons/mob/uniform_solgov.dmi')
+	icon = 'icons/inventory/uniform/item.dmi'
+	item_icons = list(slot_w_uniform_str = 'icons/inventory/uniform/mob.dmi')
 	armor = list(melee = 5, bullet = 0, laser = 5, energy = 5, bomb = 0, bio = 5, rad = 5)
 	siemens_coefficient = 0.8
 
@@ -498,3 +518,20 @@
 	desc = "The service uniform of Stealth Assault Enterprises, for high-ranking mercenaries."
 	icon_state = "terranservice_comm"
 	worn_state = "terranservice_comm"
+
+//Galactic Survey
+
+/obj/item/clothing/under/gsa
+	name = "\improper Galactic Survey utility uniform"
+	desc = "A jumpsuit belonging to the Galactic Survey Administration, SolGov's scientific exploration division."
+	icon_state = "gsa"
+	worn_state = "gsa"
+	rolled_sleeves = 0
+
+/obj/item/clothing/under/gsa_work
+	name = "\improper Galactic Survey worksuit"
+	desc = "A padded work suit belonging to the Galactic Survey Administration, SolGov's scientific exploration division. It has minor radiation shielding."
+	icon_state = "gsa_work"
+	worn_state = "gsa_work"
+	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 10)
+	rolled_sleeves = 0

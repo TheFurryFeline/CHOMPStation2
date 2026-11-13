@@ -4,8 +4,9 @@ GLOBAL_LIST_EMPTY(all_turbines)
 	name = "thermoelectric generator"
 	desc = "It's a high efficiency thermoelectric generator."
 	icon_state = "teg-unassembled"
-	density = 1
-	anchored = 0
+	density = TRUE
+	anchored = FALSE
+	unacidable = TRUE
 
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 100 //Watts, I hope.  Just enough to do the computer and display things.
@@ -26,10 +27,11 @@ GLOBAL_LIST_EMPTY(all_turbines)
 	var/lastgenlev = 0
 	var/datum/looping_sound/generator/soundloop
 
-/obj/machinery/power/generator/Initialize()
+/obj/machinery/power/generator/Initialize(mapload)
 	soundloop = new(list(src), FALSE)
 	desc = initial(desc) + " Rated for [round(max_power/1000)] kW."
 	GLOB.all_turbines += src
+	AddElement(/datum/element/rotatable)
 	..() //Not returned, because...
 	return INITIALIZE_HINT_LATELOAD
 
@@ -41,7 +43,7 @@ GLOBAL_LIST_EMPTY(all_turbines)
 	GLOB.all_turbines -= src
 	return ..()
 
-//generators connect in dir and reverse_dir(dir) directions
+//generators connect in dir and GLOB.reverse_dir(dir) directions
 //mnemonic to determine circulator/generator directions: the cirulators orbit clockwise around the generator
 //so a circulator to the NORTH of the generator connects first to the EAST, then to the WEST
 //and a circulator to the WEST of the generator connects first to the NORTH, then to the SOUTH
@@ -67,7 +69,7 @@ GLOBAL_LIST_EMPTY(all_turbines)
 				circ1 = null
 				circ2 = null
 
-/obj/machinery/power/generator/proc/updateicon()
+/obj/machinery/power/generator/update_icon()
 	icon_state = anchored ? "teg-assembled" : "teg-unassembled"
 	cut_overlays()
 	if (circ1)
@@ -93,8 +95,6 @@ GLOBAL_LIST_EMPTY(all_turbines)
 	if(!circ1 || !circ2 || !anchored || stat & (BROKEN|NOPOWER))
 		stored_energy = 0
 		return
-
-	updateDialog()
 
 	var/datum/gas_mixture/air1 = circ1.return_transfer_air()
 	var/datum/gas_mixture/air2 = circ2.return_transfer_air()
@@ -162,14 +162,14 @@ GLOBAL_LIST_EMPTY(all_turbines)
 		genlev = 1
 	if(genlev != lastgenlev)
 		lastgenlev = genlev
-		updateicon()
+		update_icon()
 	add_avail(effective_gen)
 
 /obj/machinery/power/generator/attack_ai(mob/user)
 	attack_hand(user)
 
-/obj/machinery/power/generator/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(W.is_wrench())
+/obj/machinery/power/generator/attackby(obj/item/W as obj, mob/user as mob)
+	if(W.has_tool_quality(TOOL_WRENCH))
 		playsound(src, W.usesound, 75, 1)
 		anchored = !anchored
 		user.visible_message("[user.name] [anchored ? "secures" : "unsecures"] the bolts holding [src.name] to the floor.", \
@@ -183,7 +183,7 @@ GLOBAL_LIST_EMPTY(all_turbines)
 		reconnect()
 		lastgenlev = 0
 		effective_gen = 0
-		updateicon()
+		update_icon()
 	else
 		..()
 
@@ -211,9 +211,10 @@ GLOBAL_LIST_EMPTY(all_turbines)
 	data["maxTotalOutput"] = max_power
 	data["thermalOutput"] = last_thermal_gen
 
-	data["primary"] = list()
+	data["primary"] = null
 	if(circ1)
 		//The one on the left (or top)
+		data["primary"] = list()
 		data["primary"]["dir"] = vertical ? "top" : "left"
 		data["primary"]["output"] = last_circ1_gen
 		data["primary"]["flowCapacity"] = circ1.volume_capacity_used*100
@@ -221,10 +222,12 @@ GLOBAL_LIST_EMPTY(all_turbines)
 		data["primary"]["inletTemperature"] = circ1.air1.temperature
 		data["primary"]["outletPressure"] = circ1.air2.return_pressure()
 		data["primary"]["outletTemperature"] = circ1.air2.temperature
+		data["primary"]["reversed"] = circ1.reverse_pipes
 
-	data["secondary"] = list()
+	data["secondary"] = null
 	if(circ2)
 		//Now for the one on the right (or bottom)
+		data["secondary"] = list()
 		data["secondary"]["dir"] = vertical ? "bottom" : "right"
 		data["secondary"]["output"] = last_circ2_gen
 		data["secondary"]["flowCapacity"] = circ2.volume_capacity_used*100
@@ -232,39 +235,34 @@ GLOBAL_LIST_EMPTY(all_turbines)
 		data["secondary"]["inletTemperature"] = circ2.air1.temperature
 		data["secondary"]["outletPressure"] = circ2.air2.return_pressure()
 		data["secondary"]["outletTemperature"] = circ2.air2.temperature
+		data["secondary"]["reversed"] = circ2.reverse_pipes
 
 	return data
 
+/obj/machinery/power/generator/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
+	if(..())
+		return TRUE
+
+	switch(action)
+		if("reverse_primary")
+			if(circ1)
+				circ1.reverse_circulator()
+			return TRUE
+		if("reverse_secondary")
+			if(circ2)
+				circ2.reverse_circulator()
+			return TRUE
+
 /obj/machinery/power/generator/power_change()
 	..()
-	updateicon()
+	update_icon()
 
 
-/obj/machinery/power/generator/verb/rotate_clockwise()
-	set category = "Object"
-	set name = "Rotate Generator Clockwise"
-	set src in view(1)
-
-	if (usr.stat || usr.restrained()  || anchored)
+/obj/machinery/power/generator/power_spike(announce_prob = 30)
+	if(!(effective_gen >= max_power / 2 && powernet)) // Don't make a spike if we're not making a whole lot of power.
 		return
 
-	src.set_dir(turn(src.dir, 270))
-
-/obj/machinery/power/generator/verb/rotate_counterclockwise()
-	set category = "Object"
-	set name = "Rotate Generator Counterclockwise"
-	set src in view(1)
-
-	if (usr.stat || usr.restrained()  || anchored)
-		return
-
-	src.set_dir(turn(src.dir, 90))
-
-/obj/machinery/power/generator/power_spike()
-//	if(!effective_gen >= max_power / 2 && powernet) // Don't make a spike if we're not making a whole lot of power.
-//		return
-
-	var/list/powernet_union = powernet.nodes
+	var/list/powernet_union = powernet.nodes.Copy()
 	for(var/obj/machinery/power/terminal/T in powernet.nodes)
 		if(T.master && istype(T.master, /obj/machinery/power/smes))
 			var/obj/machinery/power/smes/S = T.master
@@ -272,13 +270,14 @@ GLOBAL_LIST_EMPTY(all_turbines)
 
 	var/found_grid_checker = FALSE
 	for(var/obj/machinery/power/grid_checker/G in powernet_union)
-		G.power_failure(prob(30)) // If we found a grid checker, then all is well.
+		G.power_failure(announce_prob) // If we found a grid checker, then all is well.
 		found_grid_checker = TRUE
 	if(!found_grid_checker) // Otherwise lets break some stuff.
 		spawn(1)
-			command_announcement.Announce("Dangerous power spike detected in the power network.  Please check machinery \
+			GLOB.command_announcement.Announce("Dangerous power spike detected in the power network.  Please check machinery \
 			for electrical damage.",
-			"Critical Power Overload")
+			"Critical Power Overload",
+			ANNOUNCER_MSG_POWERSPIKE)
 			var/i = 0
 			var/limit = rand(30, 50)
 			for(var/obj/machinery/power/P in powernet_union)
@@ -288,4 +287,3 @@ GLOBAL_LIST_EMPTY(all_turbines)
 					sleep(1)
 				if(i >= limit)
 					break
-

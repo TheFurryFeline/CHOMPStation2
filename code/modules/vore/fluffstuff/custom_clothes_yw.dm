@@ -1,3 +1,5 @@
+//'icons/vore/custom_clothes_yw.dmi' was moved to archive.
+
 // **************
 // Unleashed_Mana
 // **************
@@ -11,26 +13,26 @@
 
 	var/unbuttoned = 0
 
-	verb/toggle()
-		set name = "Toggle coat buttons"
-		set category = "Object"
-		set src in usr
+/obj/item/clothing/suit/storage/labcoat/fluff/eioni_1/verb/toggle()
+	set name = "Toggle coat buttons"
+	set category = "Object"
+	set src in usr
 
-		if(!usr.canmove || usr.stat || usr.restrained())
-			return 0
+	if(!usr.canmove || usr.stat || usr.restrained())
+		return 0
 
-		switch(unbuttoned)
-			if(0)
-				icon_state = "[initial(icon_state)]_open"
-				item_state = "[initial(item_state)]_open"
-				unbuttoned = 1
-				usr << "You unbutton the coat."
-			if(1)
-				icon_state = "[initial(icon_state)]"
-				item_state = "[initial(item_state)]"
-				unbuttoned = 0
-				usr << "You button up the coat."
-		usr.update_inv_wear_suit()
+	switch(unbuttoned)
+		if(0)
+			icon_state = "[initial(icon_state)]_open"
+			item_state = "[initial(item_state)]_open"
+			unbuttoned = 1
+			to_chat(usr, span_notice("You unbutton the coat."))
+		if(1)
+			icon_state = "[initial(icon_state)]"
+			item_state = "[initial(item_state)]"
+			unbuttoned = 0
+			to_chat(usr, span_notice("You button up the coat."))
+	usr.update_inv_wear_suit()
 
 
 /obj/item/clothing/under/fluff/eioni_2
@@ -51,26 +53,26 @@
 	/////////////////////////////TODO//////////////////////
 	var/unbuttoned = 0
 
-	verb/toggle()
-		set name = "Toggle coat buttons"
-		set category = "Object"
-		set src in usr
+/obj/item/clothing/suit/storage/hoodie/fluff/redax_1/verb/toggle()
+	set name = "Toggle coat buttons"
+	set category = "Object"
+	set src in usr
 
-		if(!usr.canmove || usr.stat || usr.restrained())
-			return 0
+	if(!usr.canmove || usr.stat || usr.restrained())
+		return 0
 
-		switch(unbuttoned)
-			if(0)
-				icon_state = "[initial(icon_state)]_open"
-				item_state = "[initial(item_state)]_open"
-				unbuttoned = 1
-				usr << "You unbutton the coat."
-			if(1)
-				icon_state = "[initial(icon_state)]"
-				item_state = "[initial(item_state)]"
-				unbuttoned = 0
-				usr << "You button up the coat."
-		usr.update_inv_wear_suit()
+	switch(unbuttoned)
+		if(0)
+			icon_state = "[initial(icon_state)]_open"
+			item_state = "[initial(item_state)]_open"
+			unbuttoned = 1
+			to_chat(usr, span_notice("You unbutton the coat."))
+		if(1)
+			icon_state = "[initial(icon_state)]"
+			item_state = "[initial(item_state)]"
+			unbuttoned = 0
+			to_chat(usr, span_notice("You button up the coat."))
+	usr.update_inv_wear_suit()
 
 /obj/item/clothing/under/fluff/redax_2
 	name = "Alarming outfit"
@@ -172,26 +174,26 @@
 
 	var/unbuttoned = 0
 
-	verb/toggle()
-		set name = "Toggle coat buttons"
-		set category = "Object"
-		set src in usr
+/obj/item/clothing/suit/storage/labcoat/fluff/zeke_vincir_3/verb/toggle()
+	set name = "Toggle coat buttons"
+	set category = "Object"
+	set src in usr
 
-		if(!usr.canmove || usr.stat || usr.restrained())
-			return 0
+	if(!usr.canmove || usr.stat || usr.restrained())
+		return 0
 
-		switch(unbuttoned)
-			if(0)
-				icon_state = "[initial(icon_state)]_open"
-				item_state = "[initial(item_state)]_open"
-				unbuttoned = 1
-				usr << "You unbutton the coat."
-			if(1)
-				icon_state = "[initial(icon_state)]"
-				item_state = "[initial(item_state)]"
-				unbuttoned = 0
-				usr << "You button up the coat."
-		usr.update_inv_wear_suit()
+	switch(unbuttoned)
+		if(0)
+			icon_state = "[initial(icon_state)]_open"
+			item_state = "[initial(item_state)]_open"
+			unbuttoned = 1
+			to_chat(usr, span_notice("You unbutton the coat."))
+		if(1)
+			icon_state = "[initial(icon_state)]"
+			item_state = "[initial(item_state)]"
+			unbuttoned = 0
+			to_chat(usr, span_notice("You button up the coat."))
+	usr.update_inv_wear_suit()
 
 /obj/item/clothing/mask/fluff/lucerna_1 //Doesn't work for some reason
 	name =	"Mysterious mask"
@@ -349,7 +351,7 @@
 	icon_badge = "mercvest_badge"
 	icon_nobadge = "mercvest_nobadge"
 
-/obj/item/weapon/storage/belt/security/tactical/amara_belt
+/obj/item/storage/belt/security/tactical/amara_belt
 	name = "Mercenary belt"
 	desc = "A sturdy military belt with a shiny buckle and a bunch of pouches."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -377,14 +379,14 @@
 		set_slowdown(0)
 		force = 3
 		if(icon_base) icon_state = "[icon_base]0"
-		user << "You disable the mag-pulse traction system."
+		to_chat(user, span_notice("You disable the mag-pulse traction system."))
 	else
 		item_flags |= NOSLIP
 		magpulse = 1
 		set_slowdown(3)
 		force = 5
 		if(icon_base) icon_state = "[icon_base]1"
-		user << "You enable the mag-pulse traction system."
+		to_chat(user, span_notice("You enable the mag-pulse traction system."))
 	user.update_inv_shoes()	//so our mob-overlays update
 	user.update_action_buttons()
 
@@ -452,7 +454,7 @@
 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
 	item_state = "pilotboots_mob"
 
-/obj/item/weapon/storage/belt/utility/fluff/sam_belt
+/obj/item/storage/belt/utility/fluff/sam_belt
 	name = "Mech Pilot Belt"
 	desc = "A white-blue toolbelt with many slots to hold tools in, seems to be made to literally be attached onto a suit."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -515,7 +517,7 @@
 
 //Raja Bastet
 
-/obj/item/weapon/storage/belt/utility/fluff/raja_belt
+/obj/item/storage/belt/utility/fluff/raja_belt
 	name = "Mech Engineer Belt"
 	desc = "A black-golden toolbelt with many slots to hold tools in. Also comes with a blue buckle."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -639,14 +641,14 @@
 		set_slowdown(0)
 		force = 3
 		if(icon_base) icon_state = "[icon_base]0"
-		user << "You disable the mag-pulse traction system."
+		to_chat(user, span_notice("You disable the mag-pulse traction system."))
 	else
 		item_flags |= NOSLIP
 		magpulse = 1
 		set_slowdown(3)
 		force = 5
 		if(icon_base) icon_state = "[icon_base]1"
-		user << "You enable the mag-pulse traction system."
+		to_chat(user, span_notice("You enable the mag-pulse traction system."))
 	user.update_inv_shoes()	//so our mob-overlays update
 	user.update_action_buttons()
 
@@ -704,25 +706,25 @@
 //Aurora Goldtail
 
 /obj/item/clothing/glasses/omnihud/prescription/aurora
- 	name = "Round glasses"
- 	desc = "A pair of circular shaped prescription glasses. They seem fit for a avian head and will most likely make anyone wearing these look like a big nerd. It seems they are outfitted with a augmented reality module."
- 	icon = 'icons/vore/custom_clothes_yw.dmi'
- 	icon_state = "aurora_glasses"
- 	icon_override = 'icons/vore/custom_onmob_yw.dmi'
- 	item_state = "aurora_glasses"
+	name = "Round glasses"
+	desc = "A pair of circular shaped prescription glasses. They seem fit for a avian head and will most likely make anyone wearing these look like a big nerd. It seems they are outfitted with a augmented reality module."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "aurora_glasses"
+	icon_override = 'icons/vore/custom_onmob_yw.dmi'
+	item_state = "aurora_glasses"
 
- //Strix Hades
+//Strix Hades
 
 /obj/item/clothing/suit/storage/teshari/cloak/fluff/strix
- 	name = "Colony Director Coat"
- 	desc = "It drapes over a Avali's shoulders and closes at the neck with pockets convienently placed inside. It bears the Colony Director's colors. The name 'Strix Hades' is embroilled in gold lettering around a golden embroilled outline on the neck collar."
- 	icon = 'icons/vore/custom_clothes_yw.dmi'
- 	icon_state = "tesh_cloak_cd"
- 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
- 	item_state = "tesh_cloak_cd"
+	name = JOB_ALT_COLONY_DIRECTOR + " Coat"
+	desc = "It drapes over a Avali's shoulders and closes at the neck with pockets convienently placed inside. It bears the " + JOB_ALT_COLONY_DIRECTOR + "'s colors. The name 'Strix Hades' is embroilled in gold lettering around a golden embroilled outline on the neck collar."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "tesh_cloak_cd"
+	icon_override = 'icons/vore/custom_clothes_yw.dmi'
+	item_state = "tesh_cloak_cd"
 
 /obj/item/clothing/under/teshari/undercoat/fluff/strix
-	name = "Colony Director Undercoat"
+	name = JOB_ALT_COLONY_DIRECTOR + " Undercoat"
 	desc = "Made of carbon nanofiber, it is light and billowy, perfect for going fast and stylishly!"
 	icon = 'icons/vore/custom_clothes_yw.dmi'
 	icon_override = 'icons/vore/custom_onmob_yw.dmi'
@@ -733,12 +735,12 @@
 					)
 
 /obj/item/clothing/suit/storage/teshari/cloak/fluff/strix_cco
- 	name = "Central Command Cloak"
- 	desc = "It drapes over a Avali's shoulders and closes at the neck with pockets convienently placed inside. It bears the Central Command's colors. The name 'Strix Hades' is embroilled in gold lettering around a golden embroilled outline on the neck collar."
- 	icon = 'icons/vore/custom_clothes_yw.dmi'
- 	icon_state = "tesh_cloak_cco"
- 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
- 	item_state = "tesh_cloak_cco"
+	name = "Central Command Cloak"
+	desc = "It drapes over a Avali's shoulders and closes at the neck with pockets convienently placed inside. It bears the Central Command's colors. The name 'Strix Hades' is embroilled in gold lettering around a golden embroilled outline on the neck collar."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "tesh_cloak_cco"
+	icon_override = 'icons/vore/custom_clothes_yw.dmi'
+	item_state = "tesh_cloak_cco"
 
 /obj/item/clothing/under/teshari/undercoat/fluff/strix_cco
 	name = "Central Command Undercoat"
@@ -853,36 +855,36 @@
 	body_parts_covered = UPPER_TORSO
 	var/hoodup = 1
 
-	verb/toggle()
-		set name = "Toggle Hood"
-		set category = "Object"
-		set src in usr
+/obj/item/clothing/suit/storage/fluff/ivy/verb/toggle()
+	set name = "Toggle Hood"
+	set category = "Object"
+	set src in usr
 
-		if(!usr.canmove || usr.stat || usr.restrained())
-			return 0
+	if(!usr.canmove || usr.stat || usr.restrained())
+		return 0
 
-		switch(hoodup)
-			if(0)
-				icon_state = "[initial(icon_state)]"
-				item_state = "[initial(item_state)]"
-				hoodup = 1
-				usr << "You take off the hood."
-			if(1)
-				icon_state = "[initial(icon_state)]_up"
-				item_state = "[initial(item_state)]_up"
-				hoodup= 0
-				usr << "You put on the hood."
-		usr.update_inv_wear_suit()
+	switch(hoodup)
+		if(0)
+			icon_state = "[initial(icon_state)]"
+			item_state = "[initial(item_state)]"
+			hoodup = 1
+			to_chat(usr, span_notice("You take off the hood."))
+		if(1)
+			icon_state = "[initial(icon_state)]_up"
+			item_state = "[initial(item_state)]_up"
+			hoodup= 0
+			to_chat(usr, span_notice("You put on the hood."))
+	usr.update_inv_wear_suit()
 
 //Kita
 
 /obj/item/clothing/suit/storage/teshari/cloak/fluff/kita
- 	name = "Magical Cloak"
- 	desc = "It drapes over a Teshari's shoulders and closes at the neck with pockets convienently placed inside. It bears magical colors."
- 	icon = 'icons/vore/custom_clothes_yw.dmi'
- 	icon_state = "tesh_cloak_kita"
- 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
- 	item_state = "tesh_cloak_kita"
+	name = "Magical Cloak"
+	desc = "It drapes over a Teshari's shoulders and closes at the neck with pockets convienently placed inside. It bears magical colors."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "tesh_cloak_kita"
+	icon_override = 'icons/vore/custom_clothes_yw.dmi'
+	item_state = "tesh_cloak_kita"
 
 // ********
 // lukevale
@@ -893,74 +895,22 @@
 /obj/item/clothing/suit/storage/toggle/hoodiebuttoned
 	name = "labcoat"
 	desc = "A suit that protects against minor chemical spills."
-	icon_state = "labcoat"
+	icon_state = "jiao_labcoat"
 	item_state_slots = list(slot_r_hand_str = "labcoat", slot_l_hand_str = "labcoat")
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|ARMS
 	flags_inv = HIDEHOLSTER
-	allowed = list(/obj/item/device/analyzer,/obj/item/stack/medical,/obj/item/weapon/dnainjector,/obj/item/weapon/reagent_containers/dropper,/obj/item/weapon/reagent_containers/syringe,/obj/item/weapon/reagent_containers/hypospray,/obj/item/device/healthanalyzer,/obj/item/device/flashlight/pen,/obj/item/weapon/reagent_containers/glass/bottle,/obj/item/weapon/reagent_containers/glass/beaker,/obj/item/weapon/reagent_containers/pill,/obj/item/weapon/storage/pill_bottle,/obj/item/weapon/paper)
+	allowed = list(POCKET_GENERIC,POCKET_MEDICAL,POCKET_GENERIC)
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 50, rad = 0)
+	hoodtype = /obj/item/clothing/head/hood/hoodiebuttoned //Default hoodie.
 	icon = 'icons/vore/custom_clothes_yw.dmi'
 	icon_override = 'icons/vore/custom_onmob_yw.dmi'
 
-	var/obj/item/clothing/head/hood
-	var/hoodtype = null //so the chaplain hoodie or other hoodies can override this
 	var/suittoggled = 0
 	var/hooded = 0
-	action_button_name = "Toggle Hood"
+	actions_types = list(/datum/action/item_action/toggle_hood)
 	icon = 'icons/vore/custom_clothes_yw.dmi'
 	icon_override = 'icons/vore/custom_onmob_yw.dmi'
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/New()
-	MakeHood()
-	..()
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/Destroy()
-	qdel(hood)
-	return ..()
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/proc/MakeHood()
-	if(!hood)
-		var/obj/item/clothing/head/hood/hoodiebuttoned/W = new hoodtype(src)
-		hood = W
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/ui_action_click()
-	ToggleHood()
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/equipped(mob/user, slot)
-	if(slot != slot_wear_suit)
-		RemoveHood()
-	..()
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/proc/RemoveHood()
-	suittoggled = 0
-	hood.canremove = TRUE // This shouldn't matter anyways but just incase.
-	if(ishuman(hood.loc))
-		var/mob/living/carbon/H = hood.loc
-		H.unEquip(hood, 1)
-		H.update_inv_wear_suit()
-	hood.forceMove(src)
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/dropped()
-	RemoveHood()
-
-/obj/item/clothing/suit/storage/toggle/hoodiebuttoned/proc/ToggleHood()
-	if(!suittoggled)
-		if(ishuman(loc))
-			var/mob/living/carbon/human/H = src.loc
-			if(H.wear_suit != src)
-				to_chat(H, "<span class='warning'>You must be wearing [src] to put up the hood!</span>")
-				return
-			if(H.head)
-				to_chat(H, "<span class='warning'>You're already wearing something on your head!</span>")
-				return
-			else
-				H.equip_to_slot_if_possible(hood,slot_head,0,0,1)
-				suittoggled = 1
-				hood.canremove = FALSE
-				H.update_inv_wear_suit()
-	else
-		RemoveHood()
 
 /obj/item/clothing/head/hood/hoodiebuttoned
 	name = "winter hood"
@@ -1045,7 +995,7 @@
 	icon_state = "jiao_boots"
 	icon_override = 'icons/vore/custom_onmob_yw.dmi'
 
-/obj/item/weapon/storage/belt/medical/fluff/jiao_belt
+/obj/item/storage/belt/medical/fluff/jiao_belt
 	name = "Navy medical belt"
 	desc = "A customized medical belt to sport the navy colors of the Kanghu force."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -1093,18 +1043,13 @@
 /obj/item/clothing/under/explorer/utility/command/engineering/fluff/vasharr
 	name = "Cartographer Engineering Command Uniform"
 	desc = "A Engineering Command Uniform from the Galactic Cartographers Society, A group of intrepid explorers. This one has gold trim and organge blazes."
-
-/obj/item/clothing/suit/storage/explorer/engineering/command/fluff/vasharr
-	name = "Cartographer Engineering Command Jacket"
-	desc = "A Engineering Command Jacket from the Galactic Cartographers Society, A group of intrepid explorers. It has gold buttons and orange trim."
-
 // ********
 // Dwaggy90
 // ********
 
 //Saur Darastrix
 
-/obj/item/weapon/storage/backpack/dufflebag/fluff/saur_dufflebag
+/obj/item/storage/backpack/dufflebag/fluff/saur_dufflebag
 	name = "Saur's Dufflebag"
 	desc = "A large custom made dufflebag to fit snug between a pair of wings, fitted with custom purple straps and golden medical cross, with the name 'Saur Darastrix' written under it."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -1145,39 +1090,39 @@
 //Saroth
 
 /obj/item/clothing/suit/storage/teshari/cloak/fluff/Saroth
- 	name = "Research Director cloak"
- 	desc = "It drapes over a Teshari's shoulders and closes at the neck with pockets conveniently placed inside. This one bears the colors of the science department with additional trimming to designate it as the research director's. It has 'operty of Saroth' sewed in on the inside at the neck. The pockets seem slightly bigger on the inside than they appear on the outside."
- 	icon = 'icons/vore/custom_clothes_yw.dmi'
- 	icon_state = "tesh_cloak_saroth"
- 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
- 	item_state = "tesh_cloak_saroth"
+	name = "Research Director cloak"
+	desc = "It drapes over a Teshari's shoulders and closes at the neck with pockets conveniently placed inside. This one bears the colors of the science department with additional trimming to designate it as the research director's. It has 'operty of Saroth' sewed in on the inside at the neck. The pockets seem slightly bigger on the inside than they appear on the outside."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "tesh_cloak_saroth"
+	icon_override = 'icons/vore/custom_clothes_yw.dmi'
+	item_state = "tesh_cloak_saroth"
 
 /obj/item/clothing/accessory/poncho/cloak/fluff/Jaree
-    name = "plain cloak"
-    desc = "A plain cloak to be worn for warmth or comfort. Looks cozy."
-    icon = 'icons/vore/custom_clothes_yw.dmi'
-    icon_state = "jaree_cloak"
-    icon_override = 'icons/vore/custom_onmob_yw.dmi'
-    item_state = "jaree_cloak"
+	name = "plain cloak"
+	desc = "A plain cloak to be worn for warmth or comfort. Looks cozy."
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "jaree_cloak"
+	icon_override = 'icons/vore/custom_onmob_yw.dmi'
+	item_state = "jaree_cloak"
 
 /obj/item/clothing/head/ushanka/alt/fluff/Jaree
-    name = "ushanka"
-    desc = "Perfect for winter in Siberia, da?"
-    icon_state = "ushanka2down"
-    icon = 'icons/vore/custom_clothes_yw.dmi'
-    icon_override = 'icons/vore/custom_onmob_yw.dmi'
-    item_state = "ushanka2down"
-    flags_inv = HIDEEARS
+	name = "ushanka"
+	desc = "Perfect for winter in Siberia, da?"
+	icon_state = "ushanka2down"
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_override = 'icons/vore/custom_onmob_yw.dmi'
+	item_state = "ushanka2down"
+	flags_inv = HIDEEARS
 
 /obj/item/clothing/head/ushanka/alt/fluff/Jaree/attack_self(mob/user as mob)
-    if(src.icon_state == "ushanka2down")
-        src.icon_state = "ushanka2up"
-        src.item_state = "ushanka2up"
-        user << "You raise the ear flaps on the ushanka."
-    else
-        src.icon_state = "ushanka2down"
-        src.item_state = "ushanka2down"
-        user << "You lower the ear flaps on the ushanka."
+	if(src.icon_state == "ushanka2down")
+		src.icon_state = "ushanka2up"
+		src.item_state = "ushanka2up"
+		to_chat(user, span_notice("You raise the ear flaps on the ushanka."))
+	else
+		src.icon_state = "ushanka2down"
+		src.item_state = "ushanka2down"
+		to_chat(user, span_notice("You lower the ear flaps on the ushanka."))
 
 // ******
 // Benl8561
@@ -1240,13 +1185,13 @@
 	item_state = "noel_glasses"
 
 /obj/item/clothing/suit/storage/toggle/hoodie/fluff/noel_hoodie
-    name = "Noel's casual hoodie"
-    desc = "A blue faded black trimmed hoodie, it looks very simple and warm, there are the initials N.W. on the tag inside"
-    icon = 'icons/vore/custom_clothes_yw.dmi'
-    icon_state = "noel_hoodie"
-    // "noel_hoodie_open" will be the open state
-    icon_override = 'icons/vore/custom_onmob_yw.dmi'
-    item_state = null
+	name = "Noel's casual hoodie"
+	desc = "A blue faded black trimmed hoodie, it looks very simple and warm, there are the initials N.W. on the tag inside"
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "noel_hoodie"
+	// "noel_hoodie_open" will be the open state
+	icon_override = 'icons/vore/custom_onmob_yw.dmi'
+	item_state = null
 
 /obj/item/clothing/ears/earings/fluff/noel_earings
 	name = "Teardrop Earrings"
@@ -1268,11 +1213,11 @@
 	if(ring_on)
 		icon_state = "[base_icon]"
 		ring_on = 0
-		usr << "<span class='notice'>You remove the right earring.</span>"
+		to_chat(usr, span_notice("You remove the right earring."))
 	else
 		icon_state = "[base_icon]_on"
 		ring_on = 1
-		usr << "<span class='notice'>You put on the right earring.</span>"
+		to_chat(usr, span_notice("You put on the right earring."))
 
 	update_clothing_icon()
 
@@ -1289,7 +1234,7 @@
 
 //Basir Fahim
 
-/obj/item/clothing/gloves/ring/fluff/basir
+/obj/item/clothing/accessory/ring/fluff/basir
 	name = "Sundancer Engagement Ring"
 	desc = "This ring is stylized to have an ornate sun, with a sample of phoron swirling around inside. Keep away from Fire! Inscribed along the band is a sentence in Siik; \"Always yours, my little frost-fire. With love. -Sheri\""
 	icon = 'icons/vore/custom_clothes_yw.dmi'
@@ -1300,31 +1245,30 @@
 // ******
 
 //Harpsong
-
+/*
 /obj/item/clothing/suit/armor/vest/harpsong
 	name = "Kentauri Uniform (Tac)"
 	desc = "A typical Kentauri uniform worn by those in Command, Tactical and Security disciplines. It is crafted specifically to fit the typically overweight body of the average Kentauri, and its colours match up with those of station security."
 	species_restricted = null //Species restricted since all it cares about is a taur half
-	icon = 'icons/vore/rigs_taur_yw.dmi'
-	icon_override = 'icons/vore/rigs_taur_yw.dmi'
+	icon = 'icons/vore/rigs_taur_yw.dmi'  //Moved to archive\icons\vore
+	icon_override = 'icons/vore/rigs_taur_yw.dmi'  //Moved to archive\icons\vore
 	icon_state = "kentauri_uniform"
 	item_state = "kentauri_uniform"
 
-/obj/item/clothing/suit/armor/vest/harpsong
-	mob_can_equip(var/mob/living/carbon/human/H, slot, disable_warning = 0)
-		if(..())
-			if(istype(H) && istype(H.tail_style, /datum/sprite_accessory/tail/taur/horse/big))
-				return ..()
-			else
-				to_chat(H,"<span class='warning'>You need to have a kentauri half to wear this.</span>")
-				return 0
+/obj/item/clothing/suit/armor/vest/harpsong/mob_can_equip(mob/living/carbon/human/H, slot, disable_warning = 0)
+	if(..())
+		if(istype(H) && istype(H.tail_style, /datum/sprite_accessory/tail/taur/horse/big))
+			return ..()
+		else
+			to_chat(H,span_warning("You need to have a kentauri half to wear this."))
+			return 0
 
-/obj/item/clothing/suit/armor/vest/harpsong
-    make_worn_icon(var/body_type,var/slot_name,var/inhands,var/default_icon,var/default_layer = 0)
-        var/image/result = ..()
-        result.pixel_x = -16
-        result.layer = BODY_LAYER + 15
-        return result
+/obj/item/clothing/suit/armor/vest/harpsong/make_worn_icon(body_type,slot_name,inhands,default_icon,default_layer = 0, icon/clip_mask = null)
+	var/image/result = ..()
+	result.pixel_x = -16
+	result.layer = BODY_LAYER + 15
+	return result
+*/
 
 // *****
 // SASOperative
@@ -1379,10 +1323,10 @@
 	slot_flags = SLOT_TIE | SLOT_OCLOTHING
 	w_class = 2
 
-/obj/item/accessory/fluff/kettek_collar/New()
-	..()
+/obj/item/accessory/fluff/kettek_collar/Initialize(mapload)
+	. = ..()
 	verbs |= /obj/item/accessory/fluff/kettek_collar/proc/change_color
-	color = "#"+get_random_colour()
+	color = get_random_colour()
 	update_icon()
 
 /obj/item/accessory/fluff/kettek_collar/proc/change_color()
@@ -1394,7 +1338,7 @@
 	if(usr.stat || usr.incapacitated())
 		return
 
-	var/new_color = input(usr, "Pick a new colour", "Collar Colour", color) as color|null
+	var/new_color = tgui_color_picker(usr, "Pick a new colour", "Collar Colour", color)
 
 	if(new_color && (new_color != color))
 		color = new_color
@@ -1545,14 +1489,14 @@
 	siemens_coefficient = 0.9
 	armor = list(melee = 30, bullet = 20, laser = 20, energy = 20, bomb = 35, bio = 75, rad = 35) // Inferior to sec vests in bullet/laser but better for environmental protection.
 	allowed = list(
-		/obj/item/device/flashlight,
-		/obj/item/weapon/gun,
+		/obj/item/flashlight,
+		/obj/item/gun,
 		/obj/item/ammo_magazine,
-		/obj/item/weapon/melee,
-		/obj/item/weapon/material/knife,
-		/obj/item/weapon/tank,
-		/obj/item/device/radio,
-		/obj/item/weapon/pickaxe
+		/obj/item/melee,
+		/obj/item/material/knife,
+		/obj/item/tank,
+		/obj/item/radio,
+		/obj/item/pickaxe
 		)
 
 /obj/item/clothing/head/hood/mocha_hood
@@ -1568,13 +1512,13 @@
 	armor = list(melee = 30, bullet = 20, laser = 20, energy = 20, bomb = 35, bio = 75, rad = 35)
 
 /obj/item/clothing/accessory/poncho/cloak/fluff/mocha
-    name = "Elaborate Cloak"
-    desc = "A cloak denoting the rank of a warden, the name \"Mocha\" is embroidered along the collar in red lettering"
-    icon = 'icons/vore/custom_clothes_yw.dmi'
-    icon_state = "mocha_cloak"
-    icon_override = 'icons/vore/custom_clothes_yw.dmi'
-    item_state = "mocha_cloak_s"
-    overlay_state = "mocha_cloak_s"
+	name = "Elaborate Cloak"
+	desc = "A cloak denoting the rank of a warden, the name \"Mocha\" is embroidered along the collar in red lettering"
+	icon = 'icons/vore/custom_clothes_yw.dmi'
+	icon_state = "mocha_cloak"
+	icon_override = 'icons/vore/custom_clothes_yw.dmi'
+	item_state = "mocha_cloak_s"
+	overlay_state = "mocha_cloak_s"
 
 // ******
 // Lawst
@@ -1593,10 +1537,10 @@
 // ******
 // Foxicide
 // ******
-/obj/item/weapon/storage/backpack/fluff/kaith
+/obj/item/storage/backpack/fluff/kaith
 	name = "Light duffle bag"
 	desc = "A compact duffle bag, meant for long hikes."
-	icon = 'icons/obj/clothing/backpack.dmi'
+	icon = 'icons/inventory/back/item.dmi'
 	icon_state = "duffle"
 
 
@@ -1661,7 +1605,7 @@
 	icon_state = "avigoggles_i"
 	item_state = "avigoggles"
 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
-	action_button_name = "Flip Aviation Goggles"
+	actions_types = list(/datum/action/item_action/toggle_goggles)
 	item_flags = AIRTIGHT
 	var/up = 0
 
@@ -1689,7 +1633,7 @@
 		update_clothing_icon()
 		usr.update_action_buttons()
 
-/obj/item/clothing/glasses/fluff/avigoggles_yw/get_worn_icon_file(var/body_type,var/slot_name,var/default_icon,var/inhands)
+/obj/item/clothing/glasses/fluff/avigoggles_yw/get_worn_icon_file(body_type,slot_name,default_icon,inhands)
 	if(body_type == SPECIES_TESHARI)
 		if(!inhands)
 			return 'icons/vore/custom_clothes_yw_special.dmi'
@@ -1705,7 +1649,7 @@
 	item_state = "kbraid_outfit_s"
 	body_parts_covered = UPPER_TORSO|ARMS|FEET
 	hoodtype = /obj/item/clothing/head/hood/kbraid_hood
-	action_button_name = "Toggle Headphones"
+	actions_types = list(/datum/action/item_action/toggle_hood)
 
 /obj/item/clothing/head/hood/kbraid_hood
 	name = "Earphones"
@@ -1723,7 +1667,7 @@
 	name = "white gear harness"
 	desc = "How... minimalist."
 	icon = 'icons/vore/custom_clothes_yw.dmi'
-	icon_state = "gear_harness_white"
+	icon_state = "gear_harness_white_s"
 	icon_override = 'icons/vore/custom_clothes_yw.dmi'
-	item_state = "gear_harness_white"
+	item_state = "gear_harness_white_s"
 	body_parts_covered = 0

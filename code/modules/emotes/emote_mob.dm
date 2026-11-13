@@ -1,31 +1,54 @@
-/mob/proc/can_emote(var/emote_type)
-	//VOREStation Add
-	if(src.nextemote >= world.time)
-		return FALSE
-	src.nextemote = world.time + 12
-	//VOREStation Add End
+/mob
+	var/next_emote
+	var/next_emote_refresh
+	var/last_emote_summary
+
+/mob/proc/get_available_emotes()
+	return GLOB.default_mob_emotes.Copy()
+
+/mob/proc/can_emote(emote_type)
 	return (stat == CONSCIOUS)
 
-/mob/living/can_emote(var/emote_type)
+#define EMOTE_REFRESH_SPAM_COOLDOWN (5 SECONDS)
+/mob/living/can_emote(emote_type)
 	return (..() && !(silent && emote_type == AUDIBLE_MESSAGE))
 
-/mob/proc/emote(var/act, var/m_type, var/message)
+/mob/proc/emote(act, m_type, message)
 	set waitfor = FALSE
 	// s-s-snowflake
 	if(src.stat == DEAD && act != "deathgasp")
 		return
+	if(is_paralyzed())
+		return
 
 	if(usr == src) //client-called emote
 		if (client && (client.prefs.muted & MUTE_IC))
-			to_chat(src, "<span class='warning'>You cannot send IC messages (muted).</span>")
+			to_chat(src, span_warning("You cannot send IC messages (muted)."))
 			return
 
+		if(world.time < next_emote)
+			to_chat(src, span_warning("You cannot use another emote yet."))
+			return
+		if(forced_psay)
+			pme(message)
+			return
+		if(autowhisper)
+			return me_verb_subtle(message)
+
 		if(act == "help")
-			to_chat(src,"<b>Usable emotes:</b> [english_list(usable_emotes)].")
+			if(world.time >= next_emote_refresh)
+				var/list/usable_emotes = list()
+				next_emote_refresh = world.time + EMOTE_REFRESH_SPAM_COOLDOWN
+				for(var/emote in get_available_emotes())
+					var/datum/decl/emote/emote_datum = GLOB.decls_repository.get_decl(emote)
+					if(emote_datum.mob_can_use(src))
+						usable_emotes[emote_datum.key] = emote_datum
+				last_emote_summary = english_list(sortAssoc(usable_emotes))
+			to_chat(src,span_bold("Usable emotes:") + " [last_emote_summary].")
 			return
 
 		if(!can_emote(m_type))
-			to_chat(src, SPAN_WARNING("You cannot currently [m_type == AUDIBLE_MESSAGE ? "audibly" : "visually"] emote!"))
+			to_chat(src, span_warning("You cannot currently [m_type == AUDIBLE_MESSAGE ? "audibly" : "visually"] emote!"))
 			return
 
 		if(act == "me")
@@ -33,11 +56,11 @@
 
 		if(act == "custom")
 			if(!message)
-				message = sanitize_or_reflect(input(src,"Choose an emote to display.") as text|null, src) //VOREStation Edit - Reflect too long messages, within reason
+				message = sanitize_or_reflect(tgui_input_text(src,"Choose an emote to display.", encode = FALSE), src) //VOREStation Edit - Reflect too long messages, within reason
 			if(!message)
 				return
 			if (!m_type)
-				if(alert(src, "Is this an audible emote?", "Emote", "Yes", "No") == "No")
+				if(tgui_alert(src, "Is this an audible emote?", "Emote", list("Yes", "No")) != "Yes")
 					m_type = VISIBLE_MESSAGE
 				else
 					m_type = AUDIBLE_MESSAGE
@@ -57,25 +80,32 @@
 		return nme(message)
 	//VOREStation Add End
 
-	var/decl/emote/use_emote = usable_emotes[act]
-	if(!use_emote)
-		to_chat(src, SPAN_WARNING("Unknown emote '[act]'. Type <b>say *help</b> for a list of usable emotes."))
+	var/datum/decl/emote/use_emote = get_emote_by_key(act)
+	if(!istype(use_emote))
+		to_chat(src, span_warning("Unknown emote '[act]'. Type " + span_bold("say *help") + " for a list of usable emotes. ([act] [message])")) // Add full message in the event you used * instead of ! or something like that
+		return
+
+	if(!use_emote.mob_can_use(src))
+		to_chat(src, span_warning("You cannot use the emote '[act]'. Type <b>say *help</b> for a list of usable emotes."))
 		return
 
 	if(m_type != use_emote.message_type && use_emote.conscious && stat != CONSCIOUS)
 		return
 
+	next_emote = world.time + use_emote.emote_delay
 	if(use_emote.message_type == AUDIBLE_MESSAGE && is_muzzled())
-		audible_message("<b>\The [src]</b> [use_emote.emote_message_muffled || "makes a muffled sound."]")
+		var/muffle_message = use_emote.emote_message_muffled || "makes a muffled sound."
+		audible_message(span_bold("\The [src]") + " [muffle_message]", runemessage = "[muffle_message]")
 		return
-	else
-		use_emote.do_emote(src, message)
 
-	for (var/obj/item/weapon/implant/I in src)
+	use_emote.do_emote(src, message)
+	for (var/obj/item/implant/I in src)
 		if (I.implanted)
 			I.trigger(act, src)
 
-/mob/proc/format_emote(var/emoter = null, var/message = null)
+#undef EMOTE_REFRESH_SPAM_COOLDOWN
+
+/mob/proc/format_emote(emoter = null, message = null)
 	var/pretext
 	var/subtext
 	var/nametext
@@ -99,7 +129,8 @@
 	// Oh shit, we got this far! Let's see... did the user attempt to use more than one token?
 	if(findtext(subtext, "*"))
 		// abort abort!
-		to_chat(emoter, SPAN_WARNING("You may use only one \"["*"]\" symbol in your emote."))
+		to_chat(emoter, span_warning("You may use only one \"["*"]\" symbol in your emote."))
+		to_chat(emoter, span_warning(message))
 		return
 
 	if(pretext)
@@ -126,61 +157,11 @@
 	nametext = html_encode(nametext)
 	subtext = html_encode(subtext)
 	// Store the player's name in a nice bold, naturalement
-	nametext = "<B>[emoter]</B>"
-	return pretext + nametext + subtext
-
-/mob/proc/custom_emote(var/m_type = VISIBLE_MESSAGE, var/message, var/range = world.view)
-
-	if((usr && stat) || (!use_me && usr == src))
-		to_chat(src, "You are unable to emote.")
-		return
-
-	var/input
-	if(!message)
-		input = sanitize(input(src,"Choose an emote to display.") as text|null)
-	else
-		input = message
-
-	if(input)
-		message = format_emote(src, message)
-	else
-		return
-
-	if(input)
-		log_emote(message,src) //Log before we add junk
-		message = "<span class='emote'><B>[src]</B> [input]</span>"
-	else
-		return
-
-	if(message)
-		message = encode_html_emphasis(message)
-
-		// Hearing gasp and such every five seconds is not good emotes were not global for a reason.
-		// Maybe some people are okay with that.
-		var/turf/T = get_turf(src)
-		if(!T) return
-		var/list/in_range = get_mobs_and_objs_in_view_fast(T,range,2,remote_ghosts = client ? TRUE : FALSE)
-		var/list/m_viewers = in_range["mobs"]
-		var/list/o_viewers = in_range["objs"]
-
-		for(var/mob in m_viewers)
-			var/mob/M = mob
-			spawn(0) // It's possible that it could be deleted in the meantime, or that it runtimes.
-				if(M)
-					if(isobserver(M))
-						message = "<span class='emote'><B>[src]</B> ([ghost_follow_link(src, M)]) [input]</span>"
-					M.show_message(message, m_type)
-
-		for(var/obj in o_viewers)
-			var/obj/O = obj
-			spawn(0)
-				if(O)
-					O.see_emote(src, message, m_type)
-
-
+	nametext = span_bold("[emoter]")
+	return list("pretext" = pretext, "nametext" = nametext, "subtext" = subtext)
 
 // Specific mob type exceptions below.
-/mob/living/silicon/ai/emote(var/act, var/type, var/message)
+/mob/living/silicon/ai/emote(act, type, message)
 	var/obj/machinery/hologram/holopad/T = src.holo
 	if(T && T.masters[src]) //Is the AI using a holopad?
 		src.holopad_emote(message)

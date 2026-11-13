@@ -3,14 +3,6 @@
 /atom/var/pressure_resistance = ONE_ATMOSPHERE
 /atom/var/can_atmos_pass = ATMOS_PASS_YES
 
-// Purpose: Determines if the object can pass this atom.
-// Called by: Movement.
-// Inputs: The moving atom, target turf.
-// Outputs: Boolean if can pass.
-// Airflow and ZAS zones now uses CanZASPass() instead of this proc.
-/atom/proc/CanPass(atom/movable/mover, turf/target)
-	return !density
-
 // Purpose: Determines if airflow is allowed between T and loc.
 // Called by: Airflow.
 // Inputs: The turf the airflow is from, which may not be the same as loc. is_zone is for conditionally disallowing merging.
@@ -30,12 +22,6 @@
 		else
 			CRASH("Invalid can_atmos_pass = [can_atmos_pass] on [src] ([type])")
 
-/turf/CanPass(atom/movable/mover, turf/target)
-	if(!target) return FALSE
-
-	if(istype(mover)) // turf/Enter(...) will perform more advanced checks
-		return !density
-
 /turf/CanZASPass(turf/T, is_zone)
 	if(T.blocks_air || src.blocks_air)
 		return FALSE
@@ -50,11 +36,11 @@
 
 //Convenience function for atoms to update turfs they occupy
 /atom/movable/proc/update_nearby_tiles(need_rebuild)
-	if(!air_master)
+	if(!SSair)
 		return 0
 
 	for(var/turf/simulated/turf in locs)
-		air_master.mark_for_update(turf)
+		SSair.mark_for_update(turf)
 
 	return 1
 
@@ -64,13 +50,35 @@
 // AIR_BLOCKED - Blocked
 // ZONE_BLOCKED - Not blocked, but zone boundaries will not cross.
 // BLOCKED - Blocked, zone boundaries will not cross even if opened.
-atom/proc/c_airblock(turf/other)
+/atom/proc/c_airblock(turf/other)
 	#ifdef ZASDBG
 	ASSERT(isturf(other))
 	#endif
 	return (AIR_BLOCKED*!CanZASPass(other, FALSE))|(ZONE_BLOCKED*!CanZASPass(other, TRUE))
 
-turf/c_airblock(turf/other)
+/turf/proc/self_airblock()
+	if(blocks_air & AIR_BLOCKED)
+		return BLOCKED
+
+	if(blocks_air & ZONE_BLOCKED)
+		return ZONE_BLOCKED
+
+	var/result = 0
+	for(var/atom/movable/M as anything in contents)
+		switch(M.can_atmos_pass)
+			if(ATMOS_PASS_YES)
+				continue
+			if(ATMOS_PASS_NO)
+				return BLOCKED
+			if(ATMOS_PASS_DENSITY)
+				if(M.density)
+					return BLOCKED
+			if(ATMOS_PASS_PROC)
+				result |= M.c_airblock(src)
+		if(result == BLOCKED) return BLOCKED
+	return result
+
+/turf/c_airblock(turf/other)
 	#ifdef ZASDBG
 	ASSERT(isturf(other))
 	#endif
@@ -93,8 +101,7 @@ turf/c_airblock(turf/other)
 			return AIR_BLOCKED
 
 	var/result = 0
-	for(var/mm in contents)
-		var/atom/movable/M = mm
+	for(var/atom/movable/M as anything in contents)
 		switch(M.can_atmos_pass)
 			if(ATMOS_PASS_YES)
 				continue

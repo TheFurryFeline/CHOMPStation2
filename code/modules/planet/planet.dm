@@ -10,10 +10,10 @@
 	var/sun_last_process = null // world.time
 
 	var/datum/weather_holder/weather_holder
+	var/datum/sun_holder/sun_holder
 
 	var/sun_position = 0 // 0 means midnight, 1 means noon.
-	var/list/sun = list("range","brightness","color","lum_r","lum_g","lum_b")
-	var/list/datum/lighting_corner/sunlit_corners = list()
+	var/list/sun = list("brightness","color")
 	var/list/expected_z_levels = list()
 
 	var/turf/unsimulated/wall/planetary/planetary_wall_type = /turf/unsimulated/wall/planetary
@@ -28,9 +28,12 @@
 	var/moon_name = null // Purely for flavor. Null means no moon exists.
 	var/moon_phase = null // Set if above is defined.
 
+	var/cryogenic_temp_shift = FALSE // If true, ALL areas that are not AREA_CRYOPLANET_SHIELDED will be brought toward the current weather's temperature. Causing indoor station areas to slowly match the planet's environment.
+
 /datum/planet/New()
 	..()
 	weather_holder = new(src)
+	sun_holder = new(src)
 	current_time = current_time.make_random_time()
 	if(moon_name)
 		moon_phase = pick(list(
@@ -61,9 +64,11 @@
 	if(weather_holder)
 		weather_holder.process()
 
-/datum/planet/proc/update_sun_deferred(var/new_range, var/new_brightness, var/new_color)
-	sun["range"] = new_range
-	sun["brightness"] = new_brightness
+/datum/planet/proc/update_sun_deferred(new_brightness, new_color)
+	sun["brightness"] = CLAMP01(new_brightness)
 	sun["color"] = new_color
 	needs_work |= PLANET_PROCESS_SUN
 
+/// Override for unique sun angle handling for stuff like northern/southern hemisphere sun angles during the day cycle
+/datum/planet/proc/get_sun_solar_position()
+	return 220 - (sun_position * 80) // this base version doesn't know how long a planet's day is, so just goes back and forth facing south-eastish based on midnight to noon intensity

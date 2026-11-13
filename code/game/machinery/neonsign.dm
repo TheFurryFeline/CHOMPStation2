@@ -9,7 +9,7 @@
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 2
 	active_power_usage = 4
-	anchored = 1
+	anchored = TRUE
 	var/lit = 0
 	var/id = null
 	var/on_icon = "sign_on"
@@ -65,10 +65,6 @@
 	active = !active
 	icon_state = "light[active]"
 
-	for(var/obj/machinery/neonsign/M in machines)
+	for(var/obj/machinery/neonsign/M in GLOB.machines)
 		if(M.id == id)
-			spawn(0)
-				M.toggle()
-				return
-
-	return
+			M.toggle()

@@ -9,41 +9,41 @@
 	known = FALSE
 	color = "#ee3333" //Redish, so it stands out against the other debris-like icons
 	initial_generic_waypoints = list("debrisfield_se", "debrisfield_nw")
+	icon_state = "spacehulk_g"
+	possible_descriptors = list("default")
+	unique_identifier = "Debris Field"
 
 // -- Objs -- //
 
 
-/obj/effect/step_trigger/teleporter/debrisfield_loop/north/New()
-	..()
+/obj/effect/step_trigger/teleporter/debrisfield_loop/north/Initialize(mapload)
+	. = ..()
 	teleport_x = x
 	teleport_y = 2
 	teleport_z = z
 
-/obj/effect/step_trigger/teleporter/debrisfield_loop/south/New()
-	..()
+/obj/effect/step_trigger/teleporter/debrisfield_loop/south/Initialize(mapload)
+	. = ..()
 	teleport_x = x
 	teleport_y = world.maxy - 1
 	teleport_z = z
 
-/obj/effect/step_trigger/teleporter/debrisfield_loop/west/New()
-	..()
+/obj/effect/step_trigger/teleporter/debrisfield_loop/west/Initialize(mapload)
+	. = ..()
 	teleport_x = world.maxx - 1
 	teleport_y = y
 	teleport_z = z
 
-/obj/effect/step_trigger/teleporter/debrisfield_loop/east/New()
-	..()
+/obj/effect/step_trigger/teleporter/debrisfield_loop/east/Initialize(mapload)
+	. = ..()
 	teleport_x = 2
 	teleport_y = y
 	teleport_z = z
 
 //This does nothing right now, but is framework if we do POIs for this place
+
 /obj/away_mission_init/debrisfield
 	name = "away mission initializer - debrisfield"
-
-/obj/away_mission_init/debrisfield/Initialize()
-	initialized = TRUE
-	return INITIALIZE_HINT_QDEL
 
 /area/tether_away/debrisfield
 	name = "Away Mission - Debris Field"
@@ -93,6 +93,108 @@
 	name = "POI - Overrun Science Ship"
 	requires_power = 0
 
+/area/submap/debrisfield/phoron_tanker
+	name = "POI - Hijacked Phoron Tanker"
+	var/ic_name = ""
+	requires_power = 0
+	has_gravity = FALSE
+
+
+/area/submap/debrisfield/phoron_tanker/Initialize(mapload)
+	. = ..()
+	var/datum/lore/organization/O = GLOB.loremaster.organizations[/datum/lore/organization/tsc/nanotrasen]
+	ic_name = pick(O.ship_names)
+	name = "NTV [ic_name]"
+	if(!tag)
+		tag = "POI_NT_TANKER_BOAT" //Can't define at compile time, this ensures the area has this if empty
+	if(apc)
+		apc.name = "[name] APC"
+		air_vent_names = list()
+		air_scrub_names = list()
+		air_vent_info = list()
+		air_scrub_info = list()
+		for(var/obj/machinery/alarm/AA in src)
+			AA.name = "[name] Air Alarm"
+
+
+/area/submap/debrisfield/luxury_boat
+	flags = RAD_SHIELDED | AREA_FORBID_EVENTS
+
+/area/submap/debrisfield/luxury_boat/bridge
+	name = "Captain's Quarters"
+
+/area/submap/debrisfield/luxury_boat/crew
+	name = "Passenger Compartment"
+
+/area/submap/debrisfield/luxury_boat/engine
+	name = "Engineering"
+
+/area/submap/debrisfield/luxury_boat/cryo
+	name = "Emergency Cryopods" //Separated out based on comments on Pull Request
+	requires_power = 0 //Idea is to reinforce that this place SHOULD have its air retained.
+
+/datum/shuttle/autodock/overmap/luxury_boat
+	name = "Luxury Yacht"
+	warmup_time = 0
+	current_location = "debris_field_yacht_start"
+	docking_controller_tag = "debris_yacht_docker"
+	shuttle_area = list(/area/submap/debrisfield/luxury_boat/engine, /area/submap/debrisfield/luxury_boat/cryo, /area/submap/debrisfield/luxury_boat/crew, /area/submap/debrisfield/luxury_boat/bridge)
+	fuel_consumption = 6 //wasteful decadent thing
+	defer_initialisation = TRUE
+	move_direction = WEST
+
+/obj/effect/shuttle_landmark/shuttle_initializer/luxury_boat
+	name = "Debris Field"
+	base_area = /area/space
+	base_turf = /turf/space
+	landmark_tag = "debris_field_yacht_start"
+	shuttle_type = /datum/shuttle/autodock/overmap/luxury_boat
+
+/obj/effect/shuttle_landmark/shuttle_initializer/luxury_boat/Initialize(mapload)
+	var/obj/effect/overmap/visitable/O = get_overmap_sector(get_z(src)) //make this into general system some other time
+	LAZYINITLIST(O.initial_restricted_waypoints)
+	O.initial_restricted_waypoints["Luxury Yacht"] = list(landmark_tag)
+	. = ..()
+
+/obj/effect/overmap/visitable/ship/landable/luxury_boat
+	name = "TBD"
+	scanner_desc = "TBD"
+	vessel_mass = 20000 //10 000 is too low. It's incredibly speedy that way. This is supposed to be a crappy luxury yacht, not a racer!
+	vessel_size = SHIP_SIZE_SMALL
+	shuttle = "Luxury Yacht"
+
+/obj/effect/overmap/visitable/ship/landable/luxury_boat/Initialize(mapload)
+	. = ..()
+	var/datum/lore/organization/O = GLOB.loremaster.organizations[/datum/lore/organization/gov/elysia]
+	var/newname = "ECS-T [pick(O.ship_names)]"
+	name = newname
+	scanner_desc = {"\[i\]Registration\[/i\]: [newname]
+\[i\]Class\[/i\]: Private Pleasure Yacht
+\[i\]Transponder\[/i\]: Transmitting (CIV), Weak Signal
+\[b\]Notice\[/b\]: Reported missing."}
+	rename_areas(newname)
+
+/obj/effect/overmap/visitable/ship/landable/luxury_boat/proc/rename_areas(newname)
+	if(!SSshuttles.initialized)
+		spawn(300)
+			rename_areas(newname)
+		return
+	var/datum/shuttle/S = SSshuttles.shuttles[shuttle]
+	for(var/area/A in S.shuttle_area)
+		A.name = "[newname] [initial(A.name)]"
+		if(A.apc)
+			A.apc.name = "[A.name] APC"
+		A.air_vent_names = list()
+		A.air_scrub_names = list()
+		A.air_vent_info = list()
+		A.air_scrub_info = list()
+		for(var/obj/machinery/alarm/AA in A)
+			AA.name = "[A.name] Air Alarm"
+
+/obj/machinery/computer/shuttle_control/explore/luxury_boat
+	shuttle_tag = "Luxury Yacht"
+	req_one_access = list()
+
 /area/submap/debrisfield/old_sat
 	name = "POI - Old Satellite"
 
@@ -107,7 +209,7 @@
 	name = "POI - Destroyed Mining Outpost"
 
 /area/submap/debrisfield/tinyshuttle
-	secret_name = 0
+	flags = RAD_SHIELDED | AREA_FORBID_EVENTS
 
 /area/submap/debrisfield/tinyshuttle/crew
 	name = "Crew Bay"
@@ -139,24 +241,24 @@
 	landmark_tag = "debris_field_carrier_start"
 	shuttle_type = /datum/shuttle/autodock/overmap/tinycarrier
 
-/obj/effect/shuttle_landmark/shuttle_initializer/tinycarrier/Initialize()
+/obj/effect/shuttle_landmark/shuttle_initializer/tinycarrier/Initialize(mapload)
 	var/obj/effect/overmap/visitable/O = get_overmap_sector(get_z(src)) //make this into general system some other time
 	LAZYINITLIST(O.initial_restricted_waypoints)
 	O.initial_restricted_waypoints["Debris Carrier"] = list(landmark_tag)
 	. = ..()
 
 /obj/effect/overmap/visitable/ship/landable/tinycarrier
-	scanner_name = "TBD"
+	name = "TBD"
 	scanner_desc = "TBD"
 	vessel_mass = 12000
 	vessel_size = SHIP_SIZE_SMALL
 	shuttle = "Debris Carrier"
 
-/obj/effect/overmap/visitable/ship/landable/tinycarrier/Initialize()
+/obj/effect/overmap/visitable/ship/landable/tinycarrier/Initialize(mapload)
 	. = ..()
-	var/datum/lore/organization/O = loremaster.organizations[/datum/lore/organization/other/sysdef]
+	var/datum/lore/organization/O = GLOB.loremaster.organizations[/datum/lore/organization/other/sysdef]
 	var/newname = "SDV [pick(O.ship_names)]"
-	scanner_name = newname
+	name = newname
 	scanner_desc = {"\[i\]Registration\[/i\]: [newname]
 \[i\]Class\[/i\]: Light Escort Carrier
 \[i\]Transponder\[/i\]: Transmitting (MIL), Weak Signal
@@ -164,7 +266,7 @@
 	rename_areas(newname)
 
 /obj/effect/overmap/visitable/ship/landable/tinycarrier/proc/rename_areas(newname)
-	if(!SSshuttles.subsystem_initialized)
+	if(!SSshuttles.initialized)
 		spawn(300)
 			rename_areas(newname)
 		return
@@ -187,7 +289,7 @@
 /obj/mecha/combat/fighter/baron/busted
 	starting_components = list(/obj/item/mecha_parts/component/hull/lightweight,/obj/item/mecha_parts/component/actuator/hispeed,/obj/item/mecha_parts/component/armor,/obj/item/mecha_parts/component/gas,/obj/item/mecha_parts/component/electrical/high_current)
 
-/obj/mecha/combat/fighter/baron/busted/Initialize()
+/obj/mecha/combat/fighter/baron/busted/Initialize(mapload)
 	. = ..()
 	health = round(rand(50,120))
 	cell?.charge = 0
@@ -199,9 +301,9 @@
 
 	setInternalDamage(MECHA_INT_SHORT_CIRCUIT)
 
-/obj/structure/fuel_port/empty_tank/Initialize()
+/obj/structure/fuel_port/empty_tank/Initialize(mapload)
 	. = ..()
-	var/obj/item/weapon/tank/phoron/T = locate() in src
+	var/obj/item/tank/phoron/T = locate() in src
 	if(T)
 		T.air_contents.remove(T.air_contents.total_moles)
 

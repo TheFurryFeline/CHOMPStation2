@@ -35,8 +35,8 @@
 	var/list/map
 
 //Builds an empty map
-/datum/rogue/asteroid/New(var/core, var/tw, var/tu)
-	rm_controller.dbg("A(n): New asteroid, with: C:[core], TW:[tw], TU:[tu].")
+/datum/rogue/asteroid/New(core, tw, tu)
+	GLOB.rm_controller.dbg("A(n): New asteroid, with: C:[core], TW:[tw], TU:[tu].")
 
 	if(core)
 		coresize = core
@@ -46,23 +46,23 @@
 		type_under = tu
 
 	width = coresize*3
-	rm_controller.dbg("A(n): My width is [width].")
+	GLOB.rm_controller.dbg("A(n): My width is [width].")
 
 	map = new/list(width,width,0)
-	rm_controller.dbg("A(n): Created empty map lists. Map now has [map.len] X-lists.")
+	GLOB.rm_controller.dbg("A(n): Created empty map lists. Map now has [map.len] X-lists.")
 
 //Adds something to a spot in the asteroid map
-/datum/rogue/asteroid/proc/spot_add(var/x,var/y,var/thing)
+/datum/rogue/asteroid/proc/spot_add(x,y,thing)
 	if(!x || !y || !thing)
 		return
 
-	rm_controller.dbg("A(sa): Adding [thing] at [x],[y] in the map.")
+	GLOB.rm_controller.dbg("A(sa): Adding [thing] at [x],[y] in the map.")
 	var/list/work = map[x][y]
 	work.Add(thing)
-	rm_controller.dbg("A(n): [x],[y] now contains [work.len] items.")
+	GLOB.rm_controller.dbg("A(n): [x],[y] now contains [work.len] items.")
 
 //Removes something from a spot in the asteroid map
-/datum/rogue/asteroid/proc/spot_remove(var/x,var/y,var/thing)
+/datum/rogue/asteroid/proc/spot_remove(x,y,thing)
 	if(!x || !y || !thing)
 		return
 
@@ -70,7 +70,7 @@
 	work.Add(thing)
 
 //Just removes everything from a spot in the asteroid map
-/datum/rogue/asteroid/proc/spot_clear(var/x,var/y)
+/datum/rogue/asteroid/proc/spot_clear(x,y)
 	if(!x || !y)
 		return
 
@@ -84,7 +84,7 @@
 	width = 3 //Small 1-tile room by default.
 
 /datum/rogue/asteroid/predef/New() //Basically just ignore what we're told.
-	rm_controller.dbg("Ap(n): A predefined asteroid is created with width [width].")
+	GLOB.rm_controller.dbg("Ap(n): A predefined asteroid is created with width [width].")
 	map = new/list(width,width,0)
 
 //Abandoned 1-tile hollow cargo box (pressurized).
@@ -92,28 +92,28 @@
 	type_wall	= /turf/simulated/wall
 	type_under	= /turf/simulated/floor/plating
 
-	New()
-		..()
-		spot_add(1,1,type_wall) //Bottom left corner
-		spot_add(1,2,type_wall)
-		spot_add(1,3,type_wall)
-		spot_add(2,1,type_wall)
-		spot_add(2,2,type_under) //Center floor
-		spot_add(2,2,/obj/random/roguemineloot) //Loot!
-		spot_add(2,3,type_wall)
-		spot_add(3,1,type_wall)
-		spot_add(3,2,type_wall)
-		spot_add(3,3,type_wall) //Bottom right corner
+/datum/rogue/asteroid/predef/cargo/New()
+	..()
+	spot_add(1,1,type_wall) //Bottom left corner
+	spot_add(1,2,type_wall)
+	spot_add(1,3,type_wall)
+	spot_add(2,1,type_wall)
+	spot_add(2,2,type_under) //Center floor
+	spot_add(2,2,/obj/random/roguemineloot) //Loot!
+	spot_add(2,3,type_wall)
+	spot_add(3,1,type_wall)
+	spot_add(3,2,type_wall)
+	spot_add(3,3,type_wall) //Bottom right corner
 
 //Abandoned 1-tile hollow cargo box (ANGRY).
 /datum/rogue/asteroid/predef/cargo/angry
 	type_wall	= /turf/simulated/wall
 	type_under	= /turf/simulated/floor/plating
 
-	New()
-		..()
-		spot_add(2,2,/obj/random/roguemineloot) //EXTRA loot!
-		spot_add(2,2,/mob/living/simple_mob/animal/space/alien) //GRRR
+/datum/rogue/asteroid/predef/cargo/angry/New()
+	..()
+	spot_add(2,2,/obj/random/roguemineloot) //EXTRA loot!
+	spot_add(2,2,/mob/living/simple_mob/animal/space/alien) //GRRR
 
 //Longer cargo container for higher difficulties
 /datum/rogue/asteroid/predef/cargo_large
@@ -121,30 +121,30 @@
 	type_wall	= /turf/simulated/wall
 	type_under	= /turf/simulated/floor/plating
 
-	New()
-		..()
-		spot_add(1,2,type_wall) //--
-		spot_add(1,3,type_wall) //Left end of cargo container
-		spot_add(1,4,type_wall) //--
+/datum/rogue/asteroid/predef/cargo_large/New()
+	..()
+	spot_add(1,2,type_wall) //--
+	spot_add(1,3,type_wall) //Left end of cargo container
+	spot_add(1,4,type_wall) //--
 
-		spot_add(5,2,type_wall) //--
-		spot_add(5,3,type_wall) //Right end of cargo container
-		spot_add(5,4,type_wall) //--
+	spot_add(5,2,type_wall) //--
+	spot_add(5,3,type_wall) //Right end of cargo container
+	spot_add(5,4,type_wall) //--
 
-		spot_add(2,4,type_wall) //--
-		spot_add(3,4,type_wall) //Top and
-		spot_add(4,4,type_wall) //bottom of
-		spot_add(2,2,type_wall) //cargo
-		spot_add(3,2,type_wall) //container
-		spot_add(4,2,type_wall) //--
+	spot_add(2,4,type_wall) //--
+	spot_add(3,4,type_wall) //Top and
+	spot_add(4,4,type_wall) //bottom of
+	spot_add(2,2,type_wall) //cargo
+	spot_add(3,2,type_wall) //container
+	spot_add(4,2,type_wall) //--
 
-		spot_add(2,3,type_under) //Left floor
-		spot_add(3,3,type_under) //Mid floor
-		spot_add(4,3,type_under) //Right floor
+	spot_add(2,3,type_under) //Left floor
+	spot_add(3,3,type_under) //Mid floor
+	spot_add(4,3,type_under) //Right floor
 
-		spot_add(2,3,/obj/random/roguemineloot) //Left loot
-		spot_add(3,3,/obj/random/roguemineloot) //Mid loot
-		spot_add(4,3,/obj/random/roguemineloot) //Right loot
+	spot_add(2,3,/obj/random/roguemineloot) //Left loot
+	spot_add(3,3,/obj/random/roguemineloot) //Mid loot
+	spot_add(4,3,/obj/random/roguemineloot) //Right loot
 
-		if(prob(30))
-			spot_add(3,3,/mob/living/simple_mob/animal/space/alien/sentinel/praetorian) //And maybe a big friend for big loot.
+	if(prob(30))
+		spot_add(3,3,/mob/living/simple_mob/animal/space/alien/sentinel/praetorian) //And maybe a big friend for big loot.

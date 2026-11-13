@@ -1,7 +1,6 @@
-/**
- * tgui
- *
- * /tg/station user interface library
+/*!
+ * Copyright (c) 2020 Aleksej Komarov
+ * SPDX-License-Identifier: MIT
  */
 
 /**
@@ -12,7 +11,7 @@
 	var/mob/user
 	/// The object which owns the UI.
 	var/datum/src_object
-	/// The title of te UI.
+	/// The title of the UI.
 	var/title
 	/// The window_id for browse() and onclose().
 	var/datum/tgui_window/window
@@ -32,14 +31,25 @@
 	var/closing = FALSE
 	/// The status/visibility of the UI.
 	var/status = STATUS_INTERACTIVE
+	/// Timed refreshing state
+	var/refreshing = FALSE
 	/// Topic state used to determine status/interactability.
 	var/datum/tgui_state/state = null
+	/// Rate limit client refreshes to prevent DoS.
+	COOLDOWN_DECLARE(refresh_cooldown)
+	/// The id of any ByondUi elements that we have opened
+	var/list/open_byondui_elements
 	/// The map z-level to display.
 	var/map_z_level = 1
 	/// The Parent UI
 	var/datum/tgui/parent_ui
 	/// Children of this UI
 	var/list/children = list()
+	/// Any partial packets that we have received from TGUI, waiting to be sent
+	var/partial_packets
+	/// If the window should be closed with other windows when requested
+	var/closeable = TRUE
+
 
 /**
  * public
@@ -53,13 +63,13 @@
  * optional parent_ui datum/tgui The parent of this UI.
  * optional ui_x int Deprecated: Window width.
  * optional ui_y int Deprecated: Window height.
+ * optional window datum/tgui_window: The window to display this TGUI within
  *
  * return datum/tgui The requested UI.
  */
-/datum/tgui/New(mob/user, datum/src_object, interface, title, datum/tgui/parent_ui, ui_x, ui_y)
+/datum/tgui/New(mob/user, datum/src_object, interface, title, datum/tgui/parent_ui, ui_x, ui_y, datum/tgui_window/window)
 	src.user = user
 	src.src_object = src_object
-	src.window_key = "[REF(src_object)]-main"
 	src.interface = interface
 	if(title)
 		src.title = title
@@ -71,42 +81,79 @@
 	if(ui_x && ui_y)
 		src.window_size = list(ui_x, ui_y)
 
+	if(window)
+		src.window = window
+		src.window_key = window.id
+	else
+		src.window_key = "[REF(src_object)]-main"
+
+/datum/tgui/Destroy()
+	user = null
+	src_object = null
+	return ..()
+
 /**
  * public
  *
  * Open this UI (and initialize it with data).
+ *
+ * Args:
+ * preinitialized: bool - if TRUE, we will not attempt to force strict mode on the tgui's window datum
+ *
+ * return bool - TRUE if a new pooled window is opened, FALSE in all other situations including if a new pooled window didn't open because one already exists.
  */
-/datum/tgui/proc/open()
-	if(!user.client)
-		return null
-	if(window)
-		return null
+/datum/tgui/proc/open(preinitialized = FALSE)
+	if(!user?.client)
+		return FALSE
+	if(window && window.status > TGUI_WINDOW_LOADING)
+		return FALSE
 	process_status()
 	if(status < STATUS_UPDATE)
-		return null
-	window = SStgui.request_pooled_window(user)
+		return FALSE
 	if(!window)
-		return null
+		window = SStgui.request_pooled_window(user)
+	if(!window)
+		return FALSE
 	opened_at = world.time
 	window.acquire_lock(src)
-	if(!window.is_ready())
-		window.initialize(inline_assets = list(
-			get_asset_datum(/datum/asset/simple/tgui)
-		))
+	if(!window.is_ready() && !preinitialized)
+		window.initialize(
+			strict_mode = TRUE,
+			fancy = user.read_preference(/datum/preference/toggle/tgui_fancy),
+			assets = list(
+				get_asset_datum(/datum/asset/simple/tgui),
+				))
 	else
 		window.send_message("ping")
-	window.send_asset(get_asset_datum(/datum/asset/simple/fontawesome))
-	for(var/datum/asset/asset in src_object.ui_assets(user))
-		window.send_asset(asset)
+	send_assets()
 	window.send_message("update", get_payload(
 		with_data = TRUE,
 		with_static_data = TRUE))
 	SStgui.on_open(src)
 
+	return TRUE
+
+
+/datum/tgui/proc/send_assets()
+	var/flush_queue = window.send_asset(get_asset_datum(
+		/datum/asset/simple/namespaced/fontawesome))
+	flush_queue |= window.send_asset(get_asset_datum(
+		/datum/asset/simple/namespaced/tgfont))
+	flush_queue |= window.send_asset(get_asset_datum(
+		/datum/asset/simple/namespaced/tgui_extra_fonts))
+	flush_queue |= window.send_asset(get_asset_datum(
+		/datum/asset/json/icon_ref_map))
+	for(var/datum/asset/asset in src_object.ui_assets(user))
+		flush_queue |= window.send_asset(asset)
+	if (flush_queue)
+		user.client.browse_queue_flush()
+
 /**
  * public
  *
- * Close the UI, and all its children.
+ * Close the UI.
+ *
+ * optional can_be_suspended bool
  */
 /datum/tgui/proc/close(can_be_suspended = TRUE, logout = FALSE)
 	if(closing)
@@ -124,6 +171,13 @@
 		window.close(can_be_suspended, logout)
 		src_object.tgui_close(user)
 		SStgui.on_close(src)
+
+		if(user.client)
+			terminate_byondui_elements()
+
+	// Unset machine just to be sure.
+	user.unset_machine()
+
 	state = null
 	if(parent_ui)
 		parent_ui.children -= src
@@ -133,9 +187,22 @@
 /**
  * public
  *
+ * Closes all ByondUI elements, left dangling by a forceful TGUI exit,
+ * such as via Alt+F4, closing in non-fancy mode, or terminating the process
+ *
+ */
+/datum/tgui/proc/terminate_byondui_elements()
+	set waitfor = FALSE
+
+	for(var/byondui_element in open_byondui_elements)
+		winset(user.client, byondui_element, list("parent" = ""))
+
+/**
+ * public
+ *
  * Enable/disable auto-updating of the UI.
  *
- * required autoupdate bool Enable/disable auto-updating.
+ * required value bool Enable/disable auto-updating.
  */
 /datum/tgui/proc/set_autoupdate(autoupdate)
 	src.autoupdate = autoupdate
@@ -156,11 +223,13 @@
  * Makes an asset available to use in tgui.
  *
  * required asset datum/asset
+ *
+ * return bool - true if an asset was actually sent
  */
 /datum/tgui/proc/send_asset(datum/asset/asset)
 	if(!window)
-		CRASH("send_asset() can only be called after open().")
-	window.send_asset(asset)
+		CRASH("send_asset() was called either without calling open() first or when open() did not return TRUE.")
+	return window.send_asset(asset)
 
 /**
  * public
@@ -171,13 +240,19 @@
  * optional force bool Send an update even if UI is not interactive.
  */
 /datum/tgui/proc/send_full_update(custom_data, force)
-	if(!user.client || !initialized || closing)
+	if(!user?.client || !initialized || closing)
 		return
+	//if(!COOLDOWN_FINISHED(src, refresh_cooldown))
+		//refreshing = TRUE
+		//addtimer(CALLBACK(src, PROC_REF(send_full_update)), TGUI_REFRESH_FULL_UPDATE_COOLDOWN, TIMER_UNIQUE)
+		//return
+	//refreshing = FALSE
 	var/should_update_data = force || status >= STATUS_UPDATE
 	window.send_message("update", get_payload(
 		custom_data,
 		with_data = should_update_data,
 		with_static_data = TRUE))
+	//COOLDOWN_START(src, refresh_cooldown, TGUI_REFRESH_FULL_UPDATE_COOLDOWN)
 
 /**
  * public
@@ -188,7 +263,7 @@
  * optional force bool Send an update even if UI is not interactive.
  */
 /datum/tgui/proc/send_update(custom_data, force)
-	if(!user.client || !initialized || closing)
+	if(!user?.client || !initialized || closing)
 		return
 	var/should_update_data = force || status >= STATUS_UPDATE
 	window.send_message("update", get_payload(
@@ -207,18 +282,31 @@
 	json_data["config"] = list(
 		"title" = title,
 		"status" = status,
-		"interface" = interface,
-		"map" = (using_map && using_map.path) ? using_map.path : "Unknown",
+		"interface" = list(
+			"name" = interface,
+			"layout" = user.read_preference(/datum/preference/choiced/tgui_layout),
+		),
+		//"refreshing" = refreshing,
+		"refreshing" = FALSE,
 		"mapZLevel" = map_z_level,
+		"mapInfo" = list(
+			"maxx" = world.maxx,
+			"maxy" = world.maxy,
+		),
 		"window" = list(
 			"key" = window_key,
 			"size" = window_size,
-			"fancy" = user.client.prefs.tgui_fancy,
-			"locked" = user.client.prefs.tgui_lock,
+			"fancy" = user.read_preference(/datum/preference/toggle/tgui_fancy),
+			"locked" = user.read_preference(/datum/preference/toggle/tgui_lock),
+			"scale" = user.read_preference(/datum/preference/toggle/ui_scale),
+		),
+		"client" = list(
+			"ckey" = user.client.ckey,
+			"address" = user.client.address,
+			"computer_id" = user.client.computer_id,
 		),
 		"user" = list(
 			"name" = "[user]",
-			"ckey" = "[user.ckey]",
 			"observer" = isobserver(user),
 		),
 	)
@@ -243,7 +331,7 @@
 		return
 	var/datum/host = src_object.tgui_host(user)
 	// If the object or user died (or something else), abort.
-	if(!src_object || !host || !user || !window)
+	if(QDELETED(src_object) || QDELETED(host) || QDELETED(user) || QDELETED(window))
 		close(can_be_suspended = FALSE)
 		return
 	// Validate ping
@@ -274,13 +362,11 @@
  */
 /datum/tgui/proc/process_status()
 	var/prev_status = status
-	status = src_object.tgui_status(user, state)
+	if(src_object)
+		status = src_object.tgui_status(user, state)
 	if(parent_ui)
 		status = min(status, parent_ui.status)
 	return prev_status != status
-
-/datum/tgui/proc/log_message(message)
-	log_tgui("[user] ([user.ckey]) using \"[title]\":\n[message]")
 
 /datum/tgui/proc/set_map_z_level(nz)
 	map_z_level = nz
@@ -288,21 +374,25 @@
 /**
  * private
  *
- * Handle clicks from the UI.
- * Call the src_object's ui_act() if status is UI_INTERACTIVE.
- * If the src_object's ui_act() returns 1, update all UIs attacked to it.
+ * Callback for handling incoming tgui messages.
  */
 /datum/tgui/proc/on_message(type, list/payload, list/href_list)
 	// Pass act type messages to tgui_act
 	if(type && copytext(type, 1, 5) == "act/")
+		var/act_type = copytext(type, 5)
+		#ifdef TGUI_DEBUGGING
+		log_tgui(user, "Action: [act_type] [href_list["payload"]], Window: [window.id], Source: [src_object]")
+		#endif
 		process_status()
-		if(src_object.tgui_act(copytext(type, 5), payload, src, state))
-			SStgui.update_uis(src_object)
+		DEFAULT_QUEUE_OR_CALL_VERB(VERB_CALLBACK(src, PROC_REF(on_act_message), act_type, payload, state))
 		return FALSE
 	switch(type)
 		if("ready")
+			// Send a full update when the user manually refreshes the UI
+			if(initialized)
+				send_full_update()
 			initialized = TRUE
-		if("pingReply")
+		if("ping/reply")
 			initialized = TRUE
 		if("suspend")
 			close(can_be_suspended = TRUE)
@@ -317,3 +407,27 @@
 			LAZYINITLIST(src_object.tgui_shared_states)
 			src_object.tgui_shared_states[href_list["key"]] = href_list["value"]
 			SStgui.update_uis(src_object)
+		if("fallback")
+			#ifdef TGUI_DEBUGGING
+			log_tgui(user, "Fallback Triggered: [href_list["payload"]], Window: [window.id], Source: [src_object]")
+			#endif
+			src_object.tgui_fallback(payload, user)
+		if(TGUI_MANAGED_BYONDUI_TYPE_RENDER)
+			var/byond_ui_id = payload[TGUI_MANAGED_BYONDUI_PAYLOAD_ID]
+			if(!byond_ui_id || LAZYLEN(open_byondui_elements) > TGUI_MANAGED_BYONDUI_LIMIT)
+				return
+
+			LAZYOR(open_byondui_elements, byond_ui_id)
+		if(TGUI_MANAGED_BYONDUI_TYPE_UNMOUNT)
+			var/byond_ui_id = payload[TGUI_MANAGED_BYONDUI_PAYLOAD_ID]
+			if(!byond_ui_id)
+				return
+
+			LAZYREMOVE(open_byondui_elements, byond_ui_id)
+
+/// Wrapper for behavior to potentially wait until the next tick if the server is overloaded
+/datum/tgui/proc/on_act_message(act_type, payload, state)
+	if(QDELETED(src) || QDELETED(src_object))
+		return
+	if(src_object.tgui_act(act_type, payload, src, state))
+		SStgui.update_uis(src_object)

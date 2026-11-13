@@ -1,7 +1,5 @@
-var/global/defer_powernet_rebuild = 0      // True if net rebuild will be called manually after an event.
-
 #define CELLRATE 0.002 // Multiplier for watts per tick <> cell storage (e.g., 0.02 means if there is a load of 1000 watts, 20 units will be taken from a cell per second)
-                       // It's a conversion constant. power_used*CELLRATE = charge_provided, or charge_used/CELLRATE = power_provided
+					// It's a conversion constant. power_used*CELLRATE = charge_provided, or charge_used/CELLRATE = power_provided
 #define SMESRATE 0.03333 // Same for SMESes. A different number for some reason.
 
 #define KILOWATTS *1000
@@ -46,6 +44,7 @@ var/global/defer_powernet_rebuild = 0      // True if net rebuild will be called
 #define NETWORK_CRESCENT "Spaceport"
 // #define NETWORK_CAFE_DOCK "Cafe Dock"
 #define NETWORK_CARGO "Cargo"
+#define NETWORK_SUPPLY "Supply"
 #define NETWORK_CIRCUITS "Circuits"
 #define NETWORK_CIVILIAN "Civilian"
 // #define NETWORK_CIVILIAN_EAST "Civilian East"
@@ -66,21 +65,32 @@ var/global/defer_powernet_rebuild = 0      // True if net rebuild will be called
 #define NETWORK_PRISON "Prison"
 #define NETWORK_SECURITY "Security"
 #define NETWORK_INTERROGATION "Interrogation"
-#define NETWORK_TELECOM "Tcomms"
+#define NETWORK_TELECOM "Telecomms"
 #define NETWORK_TCOMMS "Telecommunications"	//YW ADD: needs to be defined here or it freaks out
-#define NETWORK_OUTSIDE "Outside"		//YW ADD: ditto
 #define NETWORK_SUBSTATIONS "Substations"	//YW ADD: and again
+#define NETWORK_EXPLORATION "Exploration"
+#define NETWORK_XENOBIO "Xenobiology"
 #define NETWORK_THUNDER "Entertainment"		//VOREStation Edit: broader definition
+#define NETWORK_BODYCAM "Body Cameras" // CHOMPStation Edit
 #define NETWORK_COMMUNICATORS "Communicators"
 #define NETWORK_ALARM_ATMOS "Atmosphere Alarms"
 #define NETWORK_ALARM_POWER "Power Alarms"
 #define NETWORK_ALARM_FIRE "Fire Alarms"
 #define NETWORK_TALON_HELMETS "TalonHelmets" //VOREStation Add
 #define NETWORK_TALON_SHIP "TalonShip" //VOREStation Add
-#define NETWORK_EXPLORATION "Exploration"
 
-// Those networks can only be accessed by pre-existing terminals. AIs and new terminals can't use them.
-var/list/restricted_camera_networks = list(NETWORK_ERT,NETWORK_MERCENARY,"Secret", NETWORK_COMMUNICATORS, NETWORK_EXPLORATION)
+//Camera networks
+#define NETWORK_TETHER "Tether"
+#define NETWORK_OUTSIDE "Outside"
+#define NETWORK_HALLS "Halls"
+
+// SC Networks
+#define NETWORK_FIRST_DECK  "First Deck"
+#define NETWORK_SECOND_DECK "Second Deck"
+#define NETWORK_THIRD_DECK  "Third Deck"
+#define NETWORK_MAIN_OUTPOST "Main Outpost"
+#define NETWORK_CARRIER "Exploration Carrier"
+#define NETWORK_MAINT_DECK "Maintenance Deck"
 
 #define TRANSMISSION_WIRE		0 //Is this ever used? I don't think it is.
 #define TRANSMISSION_RADIO		1 //Radio transmissions (like airlock controller to pump)
@@ -156,19 +166,33 @@ if (!(DATUM.datum_flags & DF_ISPROCESSING)) {\
 #define STOP_PROCESSING_IN_LIST(DATUM, LIST) LIST.Remove(DATUM);DATUM.datum_flags &= ~DF_ISPROCESSING
 
 // Note - I would prefer these be defined machines.dm, but some are used prior in file order. ~Leshana
-#define START_MACHINE_PROCESSING(Datum) START_PROCESSING_IN_LIST(Datum, global.processing_machines)
-#define STOP_MACHINE_PROCESSING(Datum) STOP_PROCESSING_IN_LIST(Datum, global.processing_machines)
+#define START_MACHINE_PROCESSING(Datum) START_PROCESSING_IN_LIST(Datum, SSmachines.processing_machines)
+#define STOP_MACHINE_PROCESSING(Datum) STOP_PROCESSING_IN_LIST(Datum, SSmachines.processing_machines)
 
-#define START_PROCESSING_PIPENET(Datum) START_PROCESSING_IN_LIST(Datum, global.pipe_networks)
-#define STOP_PROCESSING_PIPENET(Datum) STOP_PROCESSING_IN_LIST(Datum, global.pipe_networks)
+#define START_PROCESSING_PIPENET(Datum) START_PROCESSING_IN_LIST(Datum, SSmachines.networks)
+#define STOP_PROCESSING_PIPENET(Datum) STOP_PROCESSING_IN_LIST(Datum, SSmachines.networks)
 
-#define START_PROCESSING_POWERNET(Datum) START_PROCESSING_IN_LIST(Datum, global.powernets)
-#define STOP_PROCESSING_POWERNET(Datum) STOP_PROCESSING_IN_LIST(Datum, global.powernets)
+#define START_PROCESSING_POWERNET(Datum) START_PROCESSING_IN_LIST(Datum, SSmachines.powernets)
+#define STOP_PROCESSING_POWERNET(Datum) STOP_PROCESSING_IN_LIST(Datum, SSmachines.powernets)
 
-#define START_PROCESSING_POWER_OBJECT(Datum) START_PROCESSING_IN_LIST(Datum, global.processing_power_items)
-#define STOP_PROCESSING_POWER_OBJECT(Datum) STOP_PROCESSING_IN_LIST(Datum, global.processing_power_items)
+#define START_PROCESSING_POWER_OBJECT(Datum) START_PROCESSING_IN_LIST(Datum, SSmachines.powerobjs)
+#define STOP_PROCESSING_POWER_OBJECT(Datum) STOP_PROCESSING_IN_LIST(Datum, SSmachines.powerobjs)
 
 // Computer login types
 #define LOGIN_TYPE_NORMAL 1
 #define LOGIN_TYPE_AI 2
 #define LOGIN_TYPE_ROBOT 3
+
+// Computer Hardware
+#define  PART_CPU  		/obj/item/computer_hardware/processor_unit				// CPU. Without it the computer won't run. Better CPUs can run more programs at once.
+#define  PART_NETWORK  	/obj/item/computer_hardware/network_card					// Network Card component of this computer. Allows connection to NTNet
+#define  PART_HDD 		/obj/item/computer_hardware/hard_drive					// Hard Drive component of this computer. Stores programs and files.
+
+// Optional hardware (improves functionality, but is not critical for computer to work in most cases)
+#define  PART_BATTERY  	/obj/item/computer_hardware/battery_module				// An internal power source for this computer. Can be recharged.
+#define  PART_CARD  	/obj/item/computer_hardware/card_slot				// ID Card slot component of this computer. Mostly for HoP modification console that needs ID slot for modification.
+#define  PART_PRINTER  	/obj/item/computer_hardware/nano_printer					// Nano Printer component of this computer, for your everyday paperwork needs.
+//#define  PART_DRIVE  	/obj/item/computer_hardware/hard_drive/portable			// Portable data storage
+//#define  PART_AI  		/obj/item/computer_hardware/ai_slot						// AI slot, an intellicard housing that allows modifications of AIs.
+#define  PART_TESLA  	/obj/item/computer_hardware/tesla_link					// Tesla Link, Allows remote charging from nearest APC.
+//#define  PART_SCANNER  	/obj/item/computer_hardware/scanner						// One of several optional scanner attachments.

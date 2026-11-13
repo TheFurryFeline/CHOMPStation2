@@ -9,6 +9,8 @@
 	light_range = 2
 	light_power = 0.5
 	light_color = "#55AAFF"
+	hud_state = "plasma_blast"
+	hud_state_empty = "battery_empty"
 
 	combustion = FALSE
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/ion
@@ -20,7 +22,7 @@
 	var/sev3_range = 1
 	var/sev4_range = 1
 
-/obj/item/projectile/ion/on_impact(var/atom/target)
+/obj/item/projectile/ion/on_impact(atom/target)
 	empulse(target, sev1_range, sev2_range, sev3_range, sev4_range)
 	..()
 
@@ -41,11 +43,12 @@
 	icon_state= "bolter"
 	damage = 50
 	check_armour = "bullet"
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
+	hud_state = "rocket_fire"
 
-/obj/item/projectile/bullet/gyro/on_hit(var/atom/target, var/blocked = 0)
-	explosion(target, -1, 0, 2)
+/obj/item/projectile/bullet/gyro/on_hit(atom/target, blocked = 0)
+	explosion(target, -1, 0, 2, 0, 0) //CHOMPEdit - Don't spam admins
 	..()
 
 /obj/item/projectile/temp
@@ -62,6 +65,7 @@
 	light_power = 0.5
 	light_color = "#55AAFF"
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
+	hud_state = "water"
 
 	combustion = FALSE
 
@@ -87,30 +91,35 @@
 
 		new_temperature = round(new_temperature * temp_factor)
 		L.bodytemperature = new_temperature
-
+	//VOREStation Add Start - The last metroid has escaped from captivity, the galaxy is no longer safe.
+		if(istype(L, /mob/living/simple_mob/vore/alienanimals/space_jellyfish) && target_temperature <= T0C)
+			var/mob/living/simple_mob/vore/alienanimals/space_jellyfish/J = L
+			J.adjustFireLoss(75)
+			J.movement_cooldown *= 2
+	//VOREStation Add End
 	return 1
 
 /obj/item/projectile/temp/hot
 	name = "heat beam"
 	target_temperature = 1000
+	hud_state = "flame"
 
 	combustion = TRUE
 
 /obj/item/projectile/meteor
 	name = "meteor"
 	icon = 'icons/obj/meteor.dmi'
-	icon_state = "smallf"
+	icon_state = "small"
 	damage = 0
 	damage_type = BRUTE
 	nodamage = 1
 	check_armour = "bullet"
+	hud_state = "monkey"
 
 /obj/item/projectile/meteor/Bump(atom/A as mob|obj|turf|area)
 	if(A == firer)
 		loc = A.loc
 		return
-
-	sleep(-1) //Might not be important enough for a sleep(-1) but the sleep/spawn itself is necessary thanks to explosions and metoerhits
 
 	if(src)//Do not add to this if() statement, otherwise the meteor won't delete them
 		if(A)
@@ -119,7 +128,7 @@
 			playsound(src, 'sound/effects/meteorimpact.ogg', 40, 1)
 
 			for(var/mob/M in range(10, src))
-				if(!M.stat && !istype(M, /mob/living/silicon/ai))\
+				if(!M.stat && !isAI(M))\
 					shake_camera(M, 3, 1)
 			qdel(src)
 			return 1
@@ -138,10 +147,11 @@
 	light_power = 0.5
 	light_color = "#33CC00"
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
-
+	var/lasermod = 0
 	combustion = FALSE
+	hud_state = "electrothermal"
 
-/obj/item/projectile/energy/floramut/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/energy/floramut/on_hit(atom/target, blocked = 0)
 	var/mob/living/M = target
 	if(ishuman(target))
 		var/mob/living/carbon/human/H = M
@@ -149,27 +159,27 @@
 			if(prob(15))
 				M.apply_effect((rand(30,80)),IRRADIATE)
 				M.Weaken(5)
-				var/datum/gender/TM = gender_datums[M.get_visible_gender()]
 				for (var/mob/V in viewers(src))
-					V.show_message("<font color='red'>[M] writhes in pain as [TM.his] vacuoles boil.</font>", 3, "<font color='red'>You hear the crunching of leaves.</font>", 2)
+					V.show_message(span_red("[M] writhes in pain as [M.p_their()] vacuoles boil."), 3, span_red("You hear the crunching of leaves."), 2)
 			if(prob(35))
 			//	for (var/mob/V in viewers(src)) //Public messages commented out to prevent possible metaish genetics experimentation and stuff. - Cheridan
-			//		V.show_message("<font color='red'>[M] is mutated by the radiation beam.</font>", 3, "<font color='red'> You hear the snapping of twigs.</font>", 2)
+			//		V.show_message(span_red("[M] is mutated by the radiation beam."), 3, span_red(" You hear the snapping of twigs."), 2)
 				if(prob(80))
 					randmutb(M)
 					domutcheck(M,null)
 				else
 					randmutg(M)
 					domutcheck(M,null)
+				M.UpdateAppearance()
 			else
 				M.adjustFireLoss(rand(5,15))
-				M.show_message("<font color='red'>The radiation beam singes you!</font>")
+				M.show_message(span_red("The radiation beam singes you!"))
 			//	for (var/mob/V in viewers(src))
-			//		V.show_message("<font color='red'>[M] is singed by the radiation beam.</font>", 3, "<font color='red'> You hear the crackle of burning leaves.</font>", 2)
+			//		V.show_message(span_red("[M] is singed by the radiation beam."), 3, span_red(" You hear the crackle of burning leaves."), 2)
 	else if(istype(target, /mob/living/carbon/))
 	//	for (var/mob/V in viewers(src))
 	//		V.show_message("The radiation beam dissipates harmlessly through [M]", 3)
-		M.show_message("<font color='blue'>The radiation beam dissipates harmlessly through your body.</font>")
+		M.show_message(span_blue("The radiation beam dissipates harmlessly through your body."))
 	else
 		return 1
 
@@ -181,7 +191,8 @@
 	damage_type = TOX
 	nodamage = 1
 	check_armour = "energy"
-	var/decl/plantgene/gene = null
+	var/datum/decl/plantgene/gene = null
+	hud_state = "electrothermal"
 
 /obj/item/projectile/energy/florayield
 	name = "beta somatoray"
@@ -195,15 +206,43 @@
 	light_power = 0.5
 	light_color = "#FFFFFF"
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
+	var/lasermod = 0
+	hud_state = "electrothermal"
 
-/obj/item/projectile/energy/florayield/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/energy/florayield/on_hit(atom/target, blocked = 0)
 	var/mob/living/M = target
 	if(ishuman(target)) //These rays make plantmen fat.
 		var/mob/living/carbon/human/H = M
 		if((H.species.flags & IS_PLANT) && (M.nutrition < 500))
 			M.adjust_nutrition(30)
 	else if (istype(target, /mob/living/carbon/))
-		M.show_message("<font color='blue'>The radiation beam dissipates harmlessly through your body.</font>")
+		M.show_message(span_blue("The radiation beam dissipates harmlessly through your body."))
+	else
+		return 1
+
+/obj/item/projectile/energy/floraprune
+	name = "delta somatoray"
+	icon_state = "energy2"
+	fire_sound = 'sound/effects/stealthoff.ogg'
+	damage = 0
+	damage_type = TOX
+	nodamage = 1
+	check_armour = "energy"
+	light_range = 2
+	light_power = 0.5
+	light_color = "#FFFFFF"
+	impact_effect_type = /obj/effect/temp_visual/impact_effect/monochrome_laser
+	var/lasermod = 0
+	hud_state = "electrothermal"
+
+/obj/item/projectile/energy/floraprune/on_hit(atom/target, blocked = 0)
+	var/mob/living/M = target
+	if(ishuman(target)) //Make plantpeople thin, seeing as we're removing reagents from actual plants
+		var/mob/living/carbon/human/H = M
+		if((H.species.flags & IS_PLANT) && (M.nutrition > 30))
+			M.adjust_nutrition(-30)
+	else if (istype(target, /mob/living/carbon/))
+		M.show_message(span_blue("The radiation beam dissipates harmlessly through your body."))
 	else
 		return 1
 
@@ -212,8 +251,9 @@
 	name = "flayer ray"
 
 	combustion = FALSE
+	hud_state = "electrothermal"
 
-/obj/item/projectile/beam/mindflayer/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/beam/mindflayer/on_hit(atom/target, blocked = 0)
 	if(ishuman(target))
 		var/mob/living/carbon/human/M = target
 		M.Confuse(rand(5,8))
@@ -227,6 +267,7 @@
 	nodamage = 1
 	damage_type = HALLOSS
 	muzzle_type = /obj/effect/projectile/muzzle/bullet
+	hud_state = "monkey"
 
 /obj/item/projectile/bola
 	name = "bola"
@@ -235,17 +276,27 @@
 	embed_chance = 0 //Nada.
 	damage_type = HALLOSS
 	muzzle_type = null
+	hud_state = "monkey"
 
 	combustion = FALSE
 
-/obj/item/projectile/bola/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/bola/on_hit(atom/target, blocked = 0)
 	if(ishuman(target))
-		var/mob/living/carbon/human/M = target
-		var/obj/item/weapon/handcuffs/legcuffs/bola/B = new(src.loc)
-		if(!B.place_legcuffs(M,firer))
+		var/mob/living/carbon/human/human_target = target
+		var/obj/item/handcuffs/legcuffs/bola/B = new(src.loc)
+		for(var/obj/item/clothing/cloth in list(human_target.wear_suit, human_target.w_uniform, human_target.shoes)) //Check if we have a thick material covering our feet.
+			if((cloth.body_parts_covered & FEET) && (cloth.item_flags & THICKMATERIAL))
+				..()
+				return
+		if(!B.place_legcuffs(human_target,firer))
 			if(B)
 				qdel(B)
 	..()
+
+/obj/item/projectile/bola/energy
+	name = "energy_bola"
+	icon_state = "bola_energy"
+	damage = 0
 
 /obj/item/projectile/webball
 	name = "ball of web"
@@ -254,14 +305,14 @@
 	embed_chance = 0 //Nada.
 	damage_type = BRUTE
 	muzzle_type = null
-
+	hud_state = "monkey"
 	combustion = FALSE
 
-/obj/item/projectile/webball/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/webball/on_hit(atom/target, blocked = 0)
 	if(isturf(target.loc))
 		var/obj/effect/spider/stickyweb/W = locate() in get_turf(target)
 		if(!W && prob(75))
-			visible_message("<span class='danger'>\The [src] splatters a layer of web on \the [target]!</span>")
+			visible_message(span_danger("\The [src] splatters a layer of web on \the [target]!"))
 			new /obj/effect/spider/stickyweb(target.loc)
 	..()
 
@@ -276,12 +327,13 @@
 	light_range = 4
 	light_power = 3
 	light_color = "#3300ff"
+	hud_state = "alloy_spike"
 
 	muzzle_type = /obj/effect/projectile/muzzle/tungsten
 	tracer_type = /obj/effect/projectile/tracer/tungsten
 	impact_type = /obj/effect/projectile/impact/tungsten
 
-/obj/item/projectile/beam/tungsten/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/beam/tungsten/on_hit(atom/target, blocked = 0)
 	if(isliving(target))
 		var/mob/living/L = target
 		L.add_modifier(/datum/modifier/grievous_wounds, 30 SECONDS)
@@ -294,7 +346,7 @@
 			var/armor_special = 0
 
 			if(target_armor >= 60)
-				var/turf/T = get_step(H, pick(alldirs - src.dir))
+				var/turf/T = get_step(H, pick(GLOB.alldirs - src.dir))
 				H.throw_at(T, 1, 1, src)
 				H.apply_damage(20, BURN, def_zone)
 				if(target_limb)
@@ -320,17 +372,17 @@
 					target_limb.dislocate()
 
 			if(armor_special > 1)
-				target.visible_message("<span class='cult'>\The [src] slams into \the [target]'s [target_limb], reverberating loudly!</span>")
+				target.visible_message(span_cult("\The [src] slams into \the [target]'s [target_limb], reverberating loudly!"))
 
 			else if(armor_special)
-				target.visible_message("<span class='cult'>\The [src] slams into \the [target]'s [target_limb] with a low rumble!</span>")
+				target.visible_message(span_cult("\The [src] slams into \the [target]'s [target_limb] with a low rumble!"))
 
 	..()
 
-/obj/item/projectile/beam/tungsten/on_impact(var/atom/A)
-	if(istype(A,/turf/simulated/shuttle/wall) || istype(A,/turf/simulated/wall) || (istype(A,/turf/simulated/mineral) && A.density) || istype(A,/obj/mecha) || istype(A,/obj/machinery/door))
+/obj/item/projectile/beam/tungsten/on_impact(atom/A)
+	if(istype(A,/turf/simulated/shuttle/wall) || istype(A,/turf/simulated/wall) || (ismineralturf(A) && A.density) || istype(A,/obj/mecha) || istype(A,/obj/machinery/door))
 		var/blast_dir = src.dir
-		A.visible_message("<span class='danger'>\The [A] begins to glow!</span>")
+		A.visible_message(span_danger("\The [A] begins to glow!"))
 		spawn(2 SECONDS)
 			var/blastloc = get_step(A, blast_dir)
 			if(blastloc)

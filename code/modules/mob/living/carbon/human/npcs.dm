@@ -6,9 +6,10 @@
 	has_sensor = 0
 	species_restricted = list("Monkey")
 
-/mob/living/carbon/human/monkey/punpun/Initialize()
+/mob/living/carbon/human/monkey/punpun/Initialize(mapload)
 	. = ..()
 	name = "Pun Pun"
 	real_name = name
 	w_uniform = new /obj/item/clothing/under/punpun(src)
 	regenerate_icons()
+	can_be_drop_prey = TRUE //CHOMP Add

@@ -1,25 +1,26 @@
-/obj/item/weapon/dnainjector
+/obj/item/dnainjector
 	name = "\improper DNA injector"
 	desc = "This injects the person with DNA."
 	icon = 'icons/obj/items.dmi'
 	icon_state = "dnainjector"
 	var/block=0
 	var/datum/dna2/record/buf=null
-	var/s_time = 10.0
 	throw_speed = 1
 	throw_range = 5
 	w_class = ITEMSIZE_TINY
 	slot_flags = SLOT_EARS
 	var/uses = 1
 	var/nofail
-	var/is_bullet = 0
-	var/inuse = 0
 
 	// USE ONLY IN PREMADE SYRINGES.  WILL NOT WORK OTHERWISE.
 	var/datatype=0
 	var/value=0
 
-/obj/item/weapon/dnainjector/New()
+	// Traitgenes edit begin - Removed subtype, replaced with flag. Allows for safe injectors. Mostly for admin usage.
+	var/has_radiation = TRUE
+	// Traitgenes edit end
+
+/obj/item/dnainjector/Initialize(mapload) // Traitgenes edit - Moved to init
 	if(datatype && block)
 		buf=new
 		buf.dna=new
@@ -28,573 +29,326 @@
 		//testing("[name]: DNA2 SE blocks prior to SetValue: [english_list(buf.dna.SE)]")
 		SetValue(src.value)
 		//testing("[name]: DNA2 SE blocks after SetValue: [english_list(buf.dna.SE)]")
+	. = ..() // Traitgenes edit - Moved to init
 
-/obj/item/weapon/dnainjector/proc/GetRealBlock(var/selblock)
+/obj/item/dnainjector/proc/GetRealBlock(selblock)
 	if(selblock==0)
 		return block
 	else
 		return selblock
 
-/obj/item/weapon/dnainjector/proc/GetState(var/selblock=0)
+/obj/item/dnainjector/proc/GetState(selblock=0)
 	var/real_block=GetRealBlock(selblock)
 	if(buf.types&DNA2_BUF_SE)
 		return buf.dna.GetSEState(real_block)
 	else
 		return buf.dna.GetUIState(real_block)
 
-/obj/item/weapon/dnainjector/proc/SetState(var/on, var/selblock=0)
+/obj/item/dnainjector/proc/SetState(on, selblock=0)
 	var/real_block=GetRealBlock(selblock)
 	if(buf.types&DNA2_BUF_SE)
 		return buf.dna.SetSEState(real_block,on)
 	else
 		return buf.dna.SetUIState(real_block,on)
 
-/obj/item/weapon/dnainjector/proc/GetValue(var/selblock=0)
+/obj/item/dnainjector/proc/GetValue(selblock=0)
 	var/real_block=GetRealBlock(selblock)
 	if(buf.types&DNA2_BUF_SE)
 		return buf.dna.GetSEValue(real_block)
 	else
 		return buf.dna.GetUIValue(real_block)
 
-/obj/item/weapon/dnainjector/proc/SetValue(var/val,var/selblock=0)
+/obj/item/dnainjector/proc/SetValue(val,selblock=0)
 	var/real_block=GetRealBlock(selblock)
 	if(buf.types&DNA2_BUF_SE)
 		return buf.dna.SetSEValue(real_block,val)
 	else
 		return buf.dna.SetUIValue(real_block,val)
 
-/obj/item/weapon/dnainjector/proc/inject(mob/M as mob, mob/user as mob)
-	if(istype(M,/mob/living))
+/obj/item/dnainjector/proc/inject(mob/M as mob, mob/user as mob)
+	if(isliving(M) && has_radiation)
 		var/mob/living/L = M
 		L.apply_effect(rand(5,20), IRRADIATE, check_protection = 0)
 		L.apply_damage(max(2,L.getCloneLoss()), CLONE)
 
-	if (!(NOCLONE in M.mutations)) // prevents drained people from having their DNA changed
-		if (buf.types & DNA2_BUF_UI)
-			if (!block) //isolated block?
-				M.UpdateAppearance(buf.dna.UI.Copy())
-				if (buf.types & DNA2_BUF_UE) //unique enzymes? yes
-					M.real_name = buf.dna.real_name
-					M.name = buf.dna.real_name
+	// Traitgenes edit begin - NO_DNA and Synthetics cannot be mutated
+	var/allow = TRUE
+	if(M.isSynthetic())
+		allow = FALSE
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		if(!H.species || H.species.flags & NO_DNA)
+			allow = FALSE
+	// Traitgenes edit end
+	if (!(NOCLONE in M.mutations) && allow) // prevents drained people from having their DNA changed, Traitgenes edit - NO_DNA and Synthetics cannot be mutated
+		if(buf)
+			if (buf.types & DNA2_BUF_UI)
+				if (!block) //isolated block?
+					M.UpdateAppearance(buf.dna.UI.Copy())
+					if (buf.types & DNA2_BUF_UE) //unique enzymes? yes
+						M.real_name = buf.dna.real_name
+						M.name = buf.dna.real_name
+					uses--
+				else
+					M.dna.SetUIValue(block,src.GetValue())
+					M.UpdateAppearance()
+					uses--
+			if (buf.types & DNA2_BUF_SE)
+				if (!block) //isolated block?
+					M.dna.SE = buf.dna.SE.Copy()
+					M.dna.UpdateSE()
+				else
+					M.dna.SetSEValue(block,src.GetValue())
 				uses--
-			else
-				M.dna.SetUIValue(block,src.GetValue())
-				M.UpdateAppearance()
-				uses--
-		if (buf.types & DNA2_BUF_SE)
-			if (!block) //isolated block?
-				M.dna.SE = buf.dna.SE.Copy()
-				M.dna.UpdateSE()
-			else
-				M.dna.SetSEValue(block,src.GetValue())
-			domutcheck(M, null, block!=null)
-			uses--
-			if(prob(5))
-				trigger_side_effect(M)
+				// Traitgenes edit - Moved gene checks to after side effects
+				if(prob(5))
+					trigger_side_effect(M)
+			// Traitgenes edit begin - Do gene updates here, and more comprehensively
+			if(ishuman(M))
+				var/mob/living/carbon/human/H = M
+				H.sync_dna_traits(FALSE,FALSE)
+				H.sync_organ_dna()
+			M.regenerate_icons()
+			// Traitgenes edit end
 
-	spawn(0)//this prevents the collapse of space-time continuum
-		if (user)
-			user.drop_from_inventory(src)
-		qdel(src)
+	if (user)
+		user.drop_from_inventory(src)
+	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(qdel), src)
 	return uses
 
-/obj/item/weapon/dnainjector/attack(mob/M as mob, mob/user as mob)
-	if (!istype(M, /mob))
-		return
-	if (!usr.IsAdvancedToolUser())
-		return
-	if(inuse)
-		return 0
+/obj/item/dnainjector/attack(mob/living/M, mob/living/user, target_zone, attack_modifier)
+	if (!user.IsAdvancedToolUser())
+		return ITEM_INTERACT_FAILURE
+	if (in_use)
+		return ITEM_INTERACT_FAILURE
 
-	user.visible_message("<span class='danger'>\The [user] is trying to inject \the [M] with \the [src]!</span>")
-	inuse = 1
-	s_time = world.time
-	spawn(50)
-		inuse = 0
+	user.visible_message(span_danger("\The [user] is trying to inject \the [M] with \the [src]!"))
+	in_use = TRUE
 
-	if(!do_after(user,50))
-		return
+	//addtimer(VARSET_CALLBACK(src, in_use , FALSE), 5 SECONDS, TIMER_DELETE_ME) //Leaving this for reference of how to do the timer here if do_after wasn't present.
+
+	if(!do_after(user, 5 SECONDS, target = src))
+		in_use = FALSE
+		return ITEM_INTERACT_FAILURE
+
 
 	user.setClickCooldown(DEFAULT_QUICK_COOLDOWN)
 	user.do_attack_animation(M)
 
-	M.visible_message("<span class='danger'>\The [M] has been injected with \the [src] by \the [user].</span>")
+	M.visible_message(span_danger("\The [M] has been injected with \the [src] by \the [user]."))
 
 	var/mob/living/carbon/human/H = M
 	if(!istype(H))
-		to_chat(user, "<span class='warning'>Apparently it didn't work...</span>")
-		return
+		to_chat(user, span_warning("Apparently it didn't work..."))
+		return ITEM_INTERACT_FAILURE
 
-	// Used by admin log.
-	var/injected_with_monkey = ""
-	if((buf.types & DNA2_BUF_SE) && (block ? (GetState() && block == MONKEYBLOCK) : GetState(MONKEYBLOCK)))
-		injected_with_monkey = " <span class='danger'>(MONKEY)</span>"
-
-	add_attack_logs(user,M,"[injected_with_monkey] used the [name] on")
-
-	// Apply the DNA shit.
 	inject(M, user)
-	return
+	return ITEM_INTERACT_SUCCESS
 
-/obj/item/weapon/dnainjector/hulkmut
-	name = "\improper DNA injector (Hulk)"
-	desc = "This will make you big and strong, but give you a bad skin condition."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = HULKBLOCK
-		..()
 
-/obj/item/weapon/dnainjector/antihulk
-	name = "\improper DNA injector (Anti-Hulk)"
-	desc = "Cures green skin."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = HULKBLOCK
-		..()
+// Traitgenes Injectors are randomized now due to no hardcoded genes. Split into good or bad, and then versions that specify what they do on the label.
+// Otherwise scroll down further for how to make unique injectors
+/obj/item/dnainjector/proc/pick_block(datum/gene/trait/G, labeled, allow_disable, force_disable = FALSE)
+	if(G)
+		block = G.block
+		datatype = DNA2_BUF_SE
+		if(!force_disable)
+			value = 0xFFF
+		else
+			value = 0x000
+		if(allow_disable)
+			value = pick(0x000,0xFFF)
+		if(labeled)
+			name = initial(name) + " - [value == 0x000 ? "Removes" : ""] [G.get_name()]"
 
-/obj/item/weapon/dnainjector/xraymut
-	name = "\improper DNA injector (Xray)"
-	desc = "Finally you can see what the Site Manager does."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 8
-	New()
-		block = XRAYBLOCK
-		..()
+/obj/item/dnainjector/random
+	name = "\improper DNA injector"
+	desc = "This injects the person with DNA."
 
-/obj/item/weapon/dnainjector/antixray
-	name = "\improper DNA injector (Anti-Xray)"
-	desc = "It will make you see harder."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 8
-	New()
-		block = XRAYBLOCK
-		..()
+// Purely rando
+/obj/item/dnainjector/random/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good + GLOB.dna_genes_neutral + GLOB.dna_genes_bad), FALSE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/firemut
-	name = "\improper DNA injector (Fire)"
-	desc = "Gives you fire."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 10
-	New()
-		block = FIREBLOCK
-		..()
+/obj/item/dnainjector/random_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good + GLOB.dna_genes_neutral + GLOB.dna_genes_bad), TRUE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antifire
-	name = "\improper DNA injector (Anti-Fire)"
-	desc = "Cures fire."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 10
-	New()
-		block = FIREBLOCK
-		..()
+// Good/bad but also neutral genes mixed in, less OP selection of genes
+/obj/item/dnainjector/random_good/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good + GLOB.dna_genes_neutral ), FALSE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/telemut
-	name = "\improper DNA injector (Tele.)"
-	desc = "Super brain man!"
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 12
-	New()
-		block = TELEBLOCK
-		..()
+/obj/item/dnainjector/random_good_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good + GLOB.dna_genes_neutral ), TRUE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antitele
-	name = "\improper DNA injector (Anti-Tele.)"
-	desc = "Will make you not able to control your mind."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 12
-	New()
-		block = TELEBLOCK
-		..()
+/obj/item/dnainjector/random_bad/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_bad + GLOB.dna_genes_neutral ), FALSE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/nobreath
-	name = "\improper DNA injector (No Breath)"
-	desc = "Hold your breath and count to infinity."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = NOBREATHBLOCK
-		..()
+/obj/item/dnainjector/random_bad_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_bad + GLOB.dna_genes_neutral ), TRUE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antinobreath
-	name = "\improper DNA injector (Anti-No Breath)"
-	desc = "Hold your breath and count to 100."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = NOBREATHBLOCK
-		..()
+// Purely good/bad genes, intended to be usually good rewards or punishments
+/obj/item/dnainjector/random_verygood/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good), FALSE, FALSE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/remoteview
-	name = "\improper DNA injector (Remote View)"
-	desc = "Stare into the distance for a reason."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = REMOTEVIEWBLOCK
-		..()
+/obj/item/dnainjector/random_verygood_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_good), TRUE, FALSE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antiremoteview
-	name = "\improper DNA injector (Anti-Remote View)"
-	desc = "Cures green skin."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = REMOTEVIEWBLOCK
-		..()
+/obj/item/dnainjector/random_verybad/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_bad), FALSE, FALSE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/regenerate
-	name = "\improper DNA injector (Regeneration)"
-	desc = "Healthy but hungry."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = REGENERATEBLOCK
-		..()
+/obj/item/dnainjector/random_verybad_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_bad), TRUE, FALSE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antiregenerate
-	name = "\improper DNA injector (Anti-Regeneration)"
-	desc = "Sickly but sated."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = REGENERATEBLOCK
-		..()
+// Random neutral traits
+/obj/item/dnainjector/random_neutral/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_neutral ), FALSE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/runfast
-	name = "\improper DNA injector (Increase Run)"
-	desc = "Running Man."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = INCREASERUNBLOCK
-		..()
+/obj/item/dnainjector/random_neutral_labeled/Initialize(mapload)
+	pick_block( pick(GLOB.dna_genes_neutral ), TRUE, TRUE)
+	. = ..()
 
-/obj/item/weapon/dnainjector/antirunfast
-	name = "\improper DNA injector (Anti-Increase Run)"
-	desc = "Walking Man."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = INCREASERUNBLOCK
-		..()
+// If you want a unique injector, use a subtype of these
+/obj/item/dnainjector/set_trait
+	var/trait_path
+	var/disabling = FALSE
 
-/obj/item/weapon/dnainjector/morph
-	name = "\improper DNA injector (Morph)"
-	desc = "A total makeover."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = MORPHBLOCK
-		..()
+/obj/item/dnainjector/set_trait/Initialize(mapload)
+	var/G = get_gene_from_trait(trait_path)
+	if(trait_path && G)
+		pick_block( G, TRUE, FALSE, disabling)
+	else
+		qdel(src)
+		return
+	. = ..()
 
-/obj/item/weapon/dnainjector/antimorph
-	name = "\improper DNA injector (Anti-Morph)"
-	desc = "Cures identity crisis."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = MORPHBLOCK
-		..()
+	disabling = TRUE
 
-/* No COLDBLOCK on bay
-/obj/item/weapon/dnainjector/cold
-	name = "\improper DNA injector (Cold)"
-	desc = "Feels a bit chilly."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = COLDBLOCK
-		..()
+// Injectors for all original genes and some new ones
+/obj/item/dnainjector/set_trait/anxiety	// stutter
+	trait_path = /datum/trait/negative/disability_nervousness //CHOMPStation Edit: neutral -> negative
+/obj/item/dnainjector/set_trait/anxiety/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/anticold
-	name = "\improper DNA injector (Anti-Cold)"
-	desc = "Feels room-temperature."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = COLDBLOCK
-		..()
-*/
+/obj/item/dnainjector/set_trait/noprints // noprints
+	trait_path = /datum/trait/positive/superpower_noprints
+/obj/item/dnainjector/set_trait/noprints/disable
+	disabling = TRUE
+//VOREStation Note: TRAITGENETICS - tourettes Disabled on VS //CHOMPStation Edit - Enable
+/obj/item/dnainjector/set_trait/tourettes // tour
+	trait_path = /datum/trait/neutral/disability_tourettes
+/obj/item/dnainjector/set_trait/tourettes/disable
+	disabling = TRUE
+//VOREStation Note: TRAITGENETICS - tourettes Disabled on VS //CHOMPStation Edit - Enable
+/obj/item/dnainjector/set_trait/cough // cough
+	trait_path = /datum/trait/negative/disability_cough
+/obj/item/dnainjector/set_trait/cough/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/noprints
-	name = "\improper DNA injector (No Prints)"
-	desc = "Better than a pair of budget insulated gloves."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = NOPRINTSBLOCK
-		..()
+/obj/item/dnainjector/set_trait/nearsighted // glasses
+	trait_path = /datum/trait/negative/disability_nearsighted
+/obj/item/dnainjector/set_trait/nearsighted/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/antinoprints
-	name = "\improper DNA injector (Anti-No Prints)"
-	desc = "Not quite as good as a pair of budget insulated gloves."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = NOPRINTSBLOCK
-		..()
+/obj/item/dnainjector/set_trait/heatadapt // fire
+	trait_path = /datum/trait/neutral/hotadapt
+/obj/item/dnainjector/set_trait/heatadapt/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/insulation
-	name = "\improper DNA injector (Shock Immunity)"
-	desc = "Better than a pair of real insulated gloves."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = SHOCKIMMUNITYBLOCK
-		..()
+/obj/item/dnainjector/set_trait/epilepsy // epi
+	trait_path = /datum/trait/negative/disability_epilepsy
+/obj/item/dnainjector/set_trait/epilepsy/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/antiinsulation
-	name = "\improper DNA injector (Anti-Shock Immunity)"
-	desc = "Not quite as good as a pair of real insulated gloves."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = SHOCKIMMUNITYBLOCK
-		..()
+/obj/item/dnainjector/set_trait/morph // morph
+	trait_path = /datum/trait/positive/superpower_morph
+/obj/item/dnainjector/set_trait/morph/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/midgit
-	name = "\improper DNA injector (Small Size)"
-	desc = "Makes you shrink."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = SMALLSIZEBLOCK
-		..()
+/obj/item/dnainjector/set_trait/regenerate // regenerate
+	trait_path = /datum/trait/positive/superpower_regenerate
+/obj/item/dnainjector/set_trait/regenerate/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/antimidgit
-	name = "\improper DNA injector (Anti-Small Size)"
-	desc = "Makes you grow. But not too much."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = SMALLSIZEBLOCK
-		..()
+/obj/item/dnainjector/set_trait/clumsy // clumsy
+	trait_path = /datum/trait/negative/disability_clumsy
+/obj/item/dnainjector/set_trait/clumsy/disable
+	disabling = TRUE
 
-/////////////////////////////////////
-/obj/item/weapon/dnainjector/antiglasses
-	name = "\improper DNA injector (Anti-Glasses)"
-	desc = "Toss away those glasses!"
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 1
-	New()
-		block = GLASSESBLOCK
-		..()
+/obj/item/dnainjector/set_trait/coldadapt // insulated
+	trait_path = /datum/trait/neutral/coldadapt
+/obj/item/dnainjector/set_trait/coldadapt/disable
+	disabling = TRUE
+//VOREStation Note: TRAITGENETICS - Disabled on VS //CHOMPStation Edit - Enable
+/obj/item/dnainjector/set_trait/xray // xraymut
+	trait_path = /datum/trait/positive/superpower_xray
+/obj/item/dnainjector/set_trait/xray/disable
+	disabling = TRUE
+//VOREStation Note: TRAITGENETICS - Disabled on VS //CHOMPStation Edit - Enable
+/obj/item/dnainjector/set_trait/deaf // deafmut
+	trait_path = /datum/trait/negative/disability_deaf
+/obj/item/dnainjector/set_trait/deaf/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/glassesmut
-	name = "\improper DNA injector (Glasses)"
-	desc = "Will make you need dorkish glasses."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 1
-	New()
-		block = GLASSESBLOCK
-		..()
+/obj/item/dnainjector/set_trait/tk // telemut
+	trait_path = /datum/trait/positive/superpower_tk
+/obj/item/dnainjector/set_trait/tk/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/epimut
-	name = "\improper DNA injector (Epi.)"
-	desc = "Shake shake shake the room!"
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 3
-	New()
-		block = HEADACHEBLOCK
-		..()
+/obj/item/dnainjector/set_trait/haste // runfast
+	trait_path = /datum/trait/positive/speed_fast
+/obj/item/dnainjector/set_trait/haste/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/antiepi
-	name = "\improper DNA injector (Anti-Epi.)"
-	desc = "Will fix you up from shaking the room."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 3
-	New()
-		block = HEADACHEBLOCK
-		..()
+/obj/item/dnainjector/set_trait/blind // blindmut
+	trait_path = /datum/trait/negative/blindness
+/obj/item/dnainjector/set_trait/blind/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/anticough
-	name = "\improper DNA injector (Anti-Cough)"
-	desc = "Will stop that awful noise."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 5
-	New()
-		block = COUGHBLOCK
-		..()
+/obj/item/dnainjector/set_trait/nobreathe // nobreath
+	trait_path = /datum/trait/positive/superpower_nobreathe
+/obj/item/dnainjector/set_trait/nobreathe/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/coughmut
-	name = "\improper DNA injector (Cough)"
-	desc = "Will bring forth a sound of horror from your throat."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 5
-	New()
-		block = COUGHBLOCK
-		..()
+/obj/item/dnainjector/set_trait/remoteview // remoteview
+	trait_path = /datum/trait/positive/superpower_remoteview
+/obj/item/dnainjector/set_trait/remoteview/disable
+	disabling = TRUE
+/obj/item/dnainjector/set_trait/flashproof // flashproof
+	trait_path = /datum/trait/positive/superpower_flashproof
+/obj/item/dnainjector/set_trait/flashproof/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/clumsymut
-	name = "\improper DNA injector (Clumsy)"
-	desc = "Makes clumsy minions."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 6
-	New()
-		block = CLUMSYBLOCK
-		..()
+/obj/item/dnainjector/set_trait/hulk // hulk
+	trait_path = /datum/trait/positive/superpower_hulk
+/obj/item/dnainjector/set_trait/hulk/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/anticlumsy
-	name = "\improper DNA injector (Anti-Clumy)"
-	desc = "Cleans up confusion."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 6
-	New()
-		block = CLUMSYBLOCK
-		..()
+/obj/item/dnainjector/set_trait/table_passer // midgit
+	trait_path = /datum/trait/positive/table_passer
+/obj/item/dnainjector/set_trait/table_passer/disable
+	disabling = TRUE
 
-/obj/item/weapon/dnainjector/antitour
-	name = "\improper DNA injector (Anti-Tour.)"
-	desc = "Will cure tourrets."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 7
-	New()
-		block = TWITCHBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/tourmut
-	name = "\improper DNA injector (Tour.)"
-	desc = "Gives you a nasty case off tourrets."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 7
-	New()
-		block = TWITCHBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/stuttmut
-	name = "\improper DNA injector (Stutt.)"
-	desc = "Makes you s-s-stuttterrr"
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 9
-	New()
-		block = NERVOUSBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/antistutt
-	name = "\improper DNA injector (Anti-Stutt.)"
-	desc = "Fixes that speaking impairment."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 9
-	New()
-		block = NERVOUSBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/blindmut
-	name = "\improper DNA injector (Blind)"
-	desc = "Makes you not see anything."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 11
-	New()
-		block = BLINDBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/antiblind
-	name = "\improper DNA injector (Anti-Blind)"
-	desc = "ITS A MIRACLE!!!"
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 11
-	New()
-		block = BLINDBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/deafmut
-	name = "\improper DNA injector (Deaf)"
-	desc = "Sorry, what did you say?"
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 13
-	New()
-		block = DEAFBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/antideaf
-	name = "\improper DNA injector (Anti-Deaf)"
-	desc = "Will make you hear once more."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 13
-	New()
-		block = DEAFBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/hallucination
-	name = "\improper DNA injector (Halluctination)"
-	desc = "What you see isn't always what you get."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 2
-	New()
-		block = HALLUCINATIONBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/antihallucination
-	name = "\improper DNA injector (Anti-Hallucination)"
-	desc = "What you see is what you get."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 2
-	New()
-		block = HALLUCINATIONBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/h2m
-	name = "\improper DNA injector (Human > Monkey)"
-	desc = "Will make you a flea bag."
-	datatype = DNA2_BUF_SE
-	value = 0xFFF
-	//block = 14
-	New()
-		block = MONKEYBLOCK
-		..()
-
-/obj/item/weapon/dnainjector/m2h
-	name = "\improper DNA injector (Monkey > Human)"
-	desc = "Will make you...less hairy."
-	datatype = DNA2_BUF_SE
-	value = 0x001
-	//block = 14
-	New()
-		block = MONKEYBLOCK
-		..()
+/obj/item/dnainjector/set_trait/remotetalk // remotetalk
+	trait_path = /datum/trait/positive/superpower_remotetalk
+/obj/item/dnainjector/set_trait/remotetalk/disable
+	disabling = TRUE
+/obj/item/dnainjector/set_trait/damagedspine // brokenspine
+	trait_path = /datum/trait/negative/disability_damagedspine
+/obj/item/dnainjector/set_trait/damagedspine/disable
+	disabling = TRUE
+// CHOMPEnable Start
+/obj/item/dnainjector/set_trait/nonconduct // shock
+	trait_path = /datum/trait/positive/nonconductive_plus
+/obj/item/dnainjector/set_trait/nonconduct/disable
+	disabling = TRUE
+// CHOMPEnable End

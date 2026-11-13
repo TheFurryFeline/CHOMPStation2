@@ -1,6 +1,6 @@
-var/global/vs_control/vsc = new
+GLOBAL_DATUM_INIT(vsc, /datum/vs_control, new)
 
-/vs_control
+/datum/vs_control
 	var/fire_consuption_rate = 0.25
 	var/fire_consuption_rate_NAME = "Fire - Air Consumption Ratio"
 	var/fire_consuption_rate_DESC = "Ratio of air removed and combusted per tick."
@@ -75,11 +75,11 @@ var/global/vs_control/vsc = new
 	var/connection_temperature_delta_DESC = "The smallest temperature difference which will cause heat to travel through doors."
 
 
-/vs_control/var/list/settings = list()
-/vs_control/var/list/bitflags = list("1","2","4","8","16","32","64","128","256","512","1024")
-/vs_control/var/pl_control/plc = new()
+/datum/vs_control/var/list/settings = list()
+/datum/vs_control/var/list/bitflags = list("1","2","4","8","16","32","64","128","256","512","1024")
+/datum/vs_control/var/datum/pl_control/plc = new()
 
-/vs_control/New()
+/datum/vs_control/New()
 	. = ..()
 	settings = vars.Copy()
 
@@ -95,8 +95,7 @@ var/global/vs_control/vsc = new
 	settings -= "bitflags"
 	settings -= "plc"
 
-/vs_control/proc/ChangeSettingsDialog(mob/user,list/L)
-	//var/which = input(user,"Choose a setting:") in L
+/datum/vs_control/proc/ChangeSettingsDialog(mob/user,list/L)
 	var/dat = ""
 	for(var/ch in L)
 		if(findtextEx(ch,"_RANDOM") || findtextEx(ch,"_DESC") || findtextEx(ch,"_METHOD") || findtextEx(ch,"_NAME")) continue
@@ -111,15 +110,17 @@ var/global/vs_control/vsc = new
 			vw = vars[ch]
 			if("[ch]_DESC" in vars) vw_desc = vars["[ch]_DESC"]
 			if("[ch]_NAME" in vars) vw_name = vars["[ch]_NAME"]
-		dat += "<b>[vw_name] = [vw]</b> <A href='?src=\ref[src];changevar=[ch]'>\[Change\]</A><br>"
+		dat += span_bold("[vw_name] = [vw]") + " <A href='byond://?src=\ref[src];[HrefToken()];changevar=[ch]'>\[Change\]</A><br>"
 		dat += "<i>[vw_desc]</i><br><br>"
-	user << browse(dat,"window=settings")
+	var/datum/browser/popup = new(user, "settings", "Settings")
+	popup.set_content(dat)
+	popup.open()
 
-/vs_control/Topic(href,href_list)
+/datum/vs_control/Topic(href,href_list)
 	if("changevar" in href_list)
 		ChangeSetting(usr,href_list["changevar"])
 
-/vs_control/proc/ChangeSetting(mob/user,ch)
+/datum/vs_control/proc/ChangeSetting(mob/user,ch)
 	var/vw
 	var/how = "Text"
 	var/display_description = ch
@@ -148,9 +149,9 @@ var/global/vs_control/vsc = new
 	var/newvar = vw
 	switch(how)
 		if("Numeric")
-			newvar = input(user,"Enter a number:","Settings",newvar) as num
+			newvar = tgui_input_number(user,"Enter a number:","Settings",newvar)
 		if("Bit Flag")
-			var/flag = input(user,"Toggle which bit?","Settings") in bitflags
+			var/flag = tgui_input_list(user,"Toggle which bit?","Settings", bitflags)
 			flag = text2num(flag)
 			if(newvar & flag)
 				newvar &= ~flag
@@ -159,9 +160,9 @@ var/global/vs_control/vsc = new
 		if("Toggle")
 			newvar = !newvar
 		if("Text")
-			newvar = input(user,"Enter a string:","Settings",newvar) as text
+			newvar = tgui_input_text(user,"Enter a string:","Settings",newvar)
 		if("Long Text")
-			newvar = input(user,"Enter text:","Settings",newvar) as message
+			newvar = tgui_input_text(user,"Enter text:","Settings",newvar, multiline = TRUE)
 	vw = newvar
 	if(ch in plc.settings)
 		plc.vars[ch] = vw
@@ -169,13 +170,13 @@ var/global/vs_control/vsc = new
 		vars[ch] = vw
 	if(how == "Toggle")
 		newvar = (newvar?"ON":"OFF")
-	to_world("<span class='notice'><b>[key_name(user)] changed the setting [display_description] to [newvar].</b></span>")
+	to_chat(world, span_world(span_blue("[key_name(user)] changed the setting [display_description] to [newvar].")))
 	if(ch in plc.settings)
 		ChangeSettingsDialog(user,plc.settings)
 	else
 		ChangeSettingsDialog(user,settings)
 
-/vs_control/proc/RandomizeWithProbability()
+/datum/vs_control/proc/RandomizeWithProbability()
 	for(var/V in settings)
 		var/newvalue
 		if("[V]_RANDOM" in vars)
@@ -187,14 +188,14 @@ var/global/vs_control/vsc = new
 				newvalue = vars[V]
 		V = newvalue
 
-/vs_control/proc/ChangePhoron()
+/datum/vs_control/proc/ChangePhoron()
 	for(var/V in plc.settings)
 		plc.Randomize(V)
 
-/vs_control/proc/SetDefault(var/mob/user)
+/datum/vs_control/proc/SetDefault(mob/user)
 	var/list/setting_choices = list("Phoron - Standard", "Phoron - Low Hazard", "Phoron - High Hazard", "Phoron - Oh Shit!",\
 	"ZAS - Normal", "ZAS - Forgiving", "ZAS - Dangerous", "ZAS - Hellish", "ZAS/Phoron - Initial")
-	var/def = input(user, "Which of these presets should be used?") as null|anything in setting_choices
+	var/def = tgui_input_list(user, "Which of these presets should be used?", "Setting Choice", setting_choices)
 	if(!def)
 		return
 	switch(def)
@@ -322,11 +323,11 @@ var/global/vs_control/vsc = new
 			plc.N2O_HALLUCINATION 			= initial(plc.N2O_HALLUCINATION)
 
 
-	to_world("<span class='notice'><b>[key_name(user)] changed the global phoron/ZAS settings to \"[def]\"</b></span>")
+	to_chat(world, span_world(span_blue("[key_name(user)] changed the global phoron/ZAS settings to \"[def]\"")))
 
-/pl_control/var/list/settings = list()
+/datum/pl_control/var/list/settings = list()
 
-/pl_control/New()
+/datum/pl_control/New()
 	. = ..()
 	settings = vars.Copy()
 
@@ -340,7 +341,7 @@ var/global/vs_control/vsc = new
 
 	settings -= "settings"
 
-/pl_control/proc/Randomize(V)
+/datum/pl_control/proc/Randomize(V)
 	var/newvalue
 	if("[V]_RANDOM" in vars)
 		if(isnum(vars["[V]_RANDOM"]))

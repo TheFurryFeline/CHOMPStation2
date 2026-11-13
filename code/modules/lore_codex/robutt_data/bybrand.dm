@@ -1,6 +1,7 @@
 /datum/lore/codex/category/pros_by_brand
 	name = "Prosthetics By Brand"
 	data = "Here you'll find our analysis of the most popular and noteworthy brands of prosthetics. These analyses are performed by industry experts unconnected to the corporations and other entities responsible for the following designs."
+	//Chompedit- adding YR3 chassis to brand list
 	children = list(
 		/datum/lore/codex/page/robo_unbranded,
 		/datum/lore/codex/page/robo_cyber,
@@ -13,6 +14,7 @@
 		/datum/lore/codex/page/robo_bishop,
 		/datum/lore/codex/page/robo_zh,
 		/datum/lore/codex/page/robo_veymed,
+		/datum/lore/codex/page/robo_yr3
 		)
 
 /datum/lore/codex/page/robo_unbranded
@@ -81,5 +83,4 @@
 	The main downside to Vey-Med is its incredibly high pricetag-- easily comparable with that of a large house. Every Vey-Med piece is custom-sculpted for its individual owner, usually based on scans of the owner's previous body or the owner's family. Vey-Med also requires regular maintenance, lest the partially-organic synthskin that coats each piece begin to rot.\
 	Many nouveau riche and lottery winners have splurged on a Vey-Med chassis, only to discover that they couldn't keep it maintained. Such individuals contribute to the large and semi-legal market of second, third, and fourth-hand Vey-Med chasses, which are cheaper than a store-bought one, but not by very much. Vey-Medical forbids resale of its prosthetics line, and works hard to shut down illicit sales. Potential buyers of a pre-owned Vey-Medical chassis should avoid deals that seem too good to be true, lest they discover that their new body is a Zeng-Hu with a layer of epoxy.\
 	<br><br>\
-	Vey-Med bodies are only accessible to the extremely wealthy, almost exclusively humans. Positronics find them unsettling in much the same way humans do Morpheus, and the idea of putting a drone in a Vey-Med body, if not a crude joke, is utterly ridiculous to anyone with any sort of sense. They are absolutely inappropriate for manual labor or combat, being fragile and usually fairly weak compared to other prosthetics."
-
+	Vey-Med bodies are only accessible to the extremely wealthy, almost exclusively humans. Positronics find them unsettling in much the same way humans do Morpheus, and the idea of putting a non-sapient drone in a Vey-Med body, if not a crude joke, is utterly ridiculous to anyone with any sort of sense. They are absolutely inappropriate for manual labor or combat, being fragile and usually fairly weak compared to other prosthetics."

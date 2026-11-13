@@ -10,11 +10,11 @@
 	Note that in all cases the neighbor is handled simply; this is usually the user's mob, in which case it is up to you
 	to check that the mob is not inside of something
 */
-/atom/proc/Adjacent(var/atom/neighbor) // basic inheritance, unused
+/atom/proc/Adjacent(atom/neighbor) // basic inheritance, unused
 	return 0
 
 // Not a sane use of the function and (for now) indicative of an error elsewhere
-/area/Adjacent(var/atom/neighbor)
+/area/Adjacent(atom/neighbor)
 	CRASH("Call to /area/Adjacent(), unimplemented proc")
 
 
@@ -25,7 +25,7 @@
 	* If you are diagonally adjacent, ensure you can pass through at least one of the mutually adjacent square.
 		* Passing through in this case ignores anything with the throwpass flag, such as tables, racks, and morgue trays.
 */
-/turf/Adjacent(var/atom/neighbor, var/atom/target = null)
+/turf/Adjacent(atom/neighbor, atom/target = null)
 	var/turf/T0 = get_turf(neighbor)
 	if(T0 == src)
 		return 1
@@ -60,7 +60,7 @@ Quick adjacency (to turf):
 * If you are in the same turf, always true
 * If you are not adjacent, then false
 */
-/turf/proc/AdjacentQuick(var/atom/neighbor, var/atom/target = null)
+/turf/proc/AdjacentQuick(atom/neighbor, atom/target = null)
 	var/turf/T0 = get_turf(neighbor)
 	if(T0 == src)
 		return 1
@@ -78,7 +78,7 @@ Quick adjacency (to turf):
 	Note: Multiple-tile objects are created when the bound_width and bound_height are creater than the tile size.
 	This is not used in stock /tg/station currently.
 */
-/atom/movable/Adjacent(var/atom/neighbor)
+/atom/movable/Adjacent(atom/neighbor)
 	if(neighbor == loc) return 1
 	if(!isturf(loc)) return 0
 	for(var/turf/T in locs)
@@ -87,7 +87,7 @@ Quick adjacency (to turf):
 	return 0
 
 // This is necessary for storage items not on your person.
-/obj/item/Adjacent(var/atom/neighbor, var/recurse = 1)
+/obj/item/Adjacent(atom/neighbor, recurse = 1)
 	if(neighbor == loc) return 1
 	if(istype(loc,/obj/item))
 		if(recurse > 0)
@@ -102,7 +102,7 @@ Quick adjacency (to turf):
 	This can be safely removed if border firedoors are ever moved to be on top of doors
 	so they can be interacted with without opening the door.
 */
-/obj/machinery/door/Adjacent(var/atom/neighbor)
+/obj/machinery/door/Adjacent(atom/neighbor)
 	var/obj/machinery/door/firedoor/border_only/BOD = locate() in loc
 	if(BOD)
 		BOD.throwpass = 1 // allow click to pass
@@ -117,7 +117,7 @@ Quick adjacency (to turf):
 	This is defined as any dense ON_BORDER object, or any dense object without throwpass.
 	The border_only flag allows you to not objects (for source and destination squares)
 */
-/turf/proc/ClickCross(var/target_dir, var/border_only, var/target_atom = null)
+/turf/proc/ClickCross(target_dir, border_only, target_atom = null)
 	for(var/obj/O in src)
 		if( !O.density || O == target_atom || O.throwpass) continue // throwpass is used for anything you can click through
 
@@ -142,3 +142,56 @@ Quick adjacency (to turf):
 
 	Since I don't want to complicate the click code rework by messing with unrelated systems it won't be changed here.
 */
+//CHOMPEdit Begin
+///True if the dir is north or south, false therwise
+#define NSCOMPONENT(d)   (d&(NORTH|SOUTH))
+///True if the dir is east/west, false otherwise
+#define EWCOMPONENT(d)   (d&(EAST|WEST))
+/**
+ * Turf adjacency
+ *
+ * - Always true if you're in the same turf
+ * - If you're vertically/horizontally adjacent, ensure there's no border obects
+ * - If you're diagonally adjacent, ensure you can pass to it with mutually adjacent squares
+ */
+/turf/proc/TurfAdjacency(turf/neighbor_turf, atom/target, atom/movable/mover)
+	if(neighbor_turf == src)
+		return TRUE
+	if(get_dist(src, neighbor_turf) > 1 || z != neighbor_turf.z)
+		return FALSE
+	// non diagonal
+	if(neighbor_turf.x == x || neighbor_turf.y == y)
+		return ClickCross(get_dir(src, neighbor_turf), TRUE, target, mover) && neighbor_turf.ClickCross(get_dir(neighbor_turf, src), TRUE, target, mover)
+
+	// diagonal
+	var/reverse_dir = get_dir(neighbor_turf, src)
+	var/d1 = NSCOMPONENT(reverse_dir)
+	var/d2 = EWCOMPONENT(reverse_dir)
+	var/turf/checking
+
+	// because byond's parser is awful and doesn't let us skip lines on ifs with comments after '\'s,
+	// we're going to comment above:
+	// criteria in order for both are:
+	// - not dense
+	// - could leave target
+	// - could go from diagonal to self
+	// - could go from diagonal to target
+	// - could leave self
+	checking = get_step(neighbor_turf, d1)
+	if(!checking.density &&	\
+		neighbor_turf.ClickCross(d1, TRUE, target, mover) && \
+		checking.ClickCross(d2, FALSE, target, mover) && \
+		checking.ClickCross(turn(d1, 180), FALSE, target, mover) && \
+		ClickCross(turn(d2, 180), TRUE, target, mover))
+		return TRUE
+	checking = get_step(neighbor_turf, d2)
+	if(!checking.density && \
+		neighbor_turf.ClickCross(d2, TRUE, target, mover) && \
+		checking.ClickCross(d1, FALSE, target, mover) && \
+		checking.ClickCross(turn(d2, 180), FALSE, target, mover) && \
+		ClickCross(turn(d1, 180), TRUE, target, mover))
+		return TRUE
+	return FALSE
+#undef NSCOMPONENT
+#undef EWCOMPONENT
+//CHOMPEdit End

@@ -7,7 +7,7 @@ No command report on the common version of this event.
 The "dust" will damage the hull of the station causin minor hull breaches.
 */
 
-/proc/dust_swarm(var/strength = "weak", var/list/affecting_z)
+/proc/dust_swarm(strength = "weak", list/affecting_z)
 	var/numbers = 1
 	var/dust_type = /obj/effect/space_dust
 	switch(strength)
@@ -24,7 +24,7 @@ The "dust" will damage the hull of the station causin minor hull breaches.
 			numbers = rand(15,25)
 			dust_type = /obj/effect/space_dust/super
 
-	var/startside = pick(cardinal)
+	var/startside = pick(GLOB.cardinal)
 	for(var/i = 0 to numbers)
 		var/startx = 0
 		var/starty = 0
@@ -52,6 +52,8 @@ The "dust" will damage the hull of the station causin minor hull breaches.
 				endy = rand(TRANSITIONEDGE, world.maxy-TRANSITIONEDGE)
 				endx = world.maxx-TRANSITIONEDGE
 
+		if(!affecting_z.len)
+			return
 		var/randomz = pick(affecting_z)
 		var/turf/startloc = locate(startx, starty, randomz)
 		var/turf/endloc = locate(endx, endy, randomz)
@@ -64,8 +66,8 @@ The "dust" will damage the hull of the station causin minor hull breaches.
 	desc = "Dust in space."
 	icon = 'icons/obj/meteor.dmi'
 	icon_state = "space_dust"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	var/strength = 2 //ex_act severity number
 	var/life = 2 //how many things we hit before qdel(src)
 
@@ -89,24 +91,23 @@ The "dust" will damage the hull of the station causin minor hull breaches.
 	qdel(src)
 
 /obj/effect/space_dust/Bump(atom/A)
-	spawn(0)
-		if(prob(50))
-			for(var/mob/M in range(10, src))
-				if(!M.stat && !istype(M, /mob/living/silicon/ai))
-					shake_camera(M, 3, 1)
-		if (A)
-			playsound(src, 'sound/effects/meteorimpact.ogg', 40, 1)
+	if(prob(50))
+		for(var/mob/M in range(10, src))
+			if(!M.stat && !isAI(M))
+				shake_camera(M, 3, 1)
+	if (A)
+		playsound(src, 'sound/effects/meteorimpact.ogg', 40, 1)
 
-			if(ismob(A))
-				A.ex_act(strength)//This should work for now I guess
-			else if(!istype(A,/obj/machinery/power/emitter) && !istype(A,/obj/machinery/field_generator)) //Protect the singularity from getting released every round!
-				A.ex_act(strength) //Changing emitter/field gen ex_act would make it immune to bombs and C4
+		if(ismob(A))
+			A.ex_act(strength)//This should work for now I guess
+		else if(!istype(A,/obj/machinery/power/emitter) && !istype(A,/obj/machinery/field_generator)) //Protect the singularity from getting released every round!
+			A.ex_act(strength) //Changing emitter/field gen ex_act would make it immune to bombs and C4
 
-			life--
-			if(life <= 0)
-				walk(src,0)
-				qdel(src)
-				return 0
+		life--
+		if(life <= 0)
+			walk(src,0)
+			qdel(src)
+			return
 	return
 
 

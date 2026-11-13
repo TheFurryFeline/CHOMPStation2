@@ -23,8 +23,7 @@
 "ae" = (
 /obj/structure/window/plastitanium/full,
 /obj/structure/window/plastitanium{
-	dir = 1;
-	icon_state = "window"
+	dir = 1
 	},
 /obj/machinery/door/firedoor,
 /obj/machinery/door/blast/regular{
@@ -41,8 +40,7 @@
 "af" = (
 /obj/structure/window/plastitanium/full,
 /obj/structure/window/plastitanium{
-	dir = 1;
-	icon_state = "window"
+	dir = 1
 	},
 /obj/machinery/door/firedoor,
 /obj/machinery/door/blast/regular{
@@ -97,36 +95,31 @@
 /area/shuttle/curabitur/curashuttle/cockpit)
 "an" = (
 /obj/machinery/computer/shuttle_control/explore/curashuttle{
-	dir = 4;
-	icon_state = "computer"
+	dir = 4
 	},
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "ao" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "ap" = (
 /obj/structure/cable{
-	d2 = 8;
 	icon_state = "0-8"
 	},
 /obj/machinery/power/apc{
 	dir = 4;
 	name = "east bump";
-	pixel_x = 24;
-	pixel_y = 0
+	pixel_x = 24
 	},
 /obj/structure/table/darkglass,
-/obj/item/weapon/paper_bin{
+/obj/item/paper_bin{
 	pixel_x = 8;
 	pixel_y = -2
 	},
-/obj/item/weapon/pen/fountain,
+/obj/item/pen/fountain,
 /obj/machinery/photocopier/faxmachine{
 	department = "Curabitur Rescue Service";
 	name = "curabitur fax machine";
@@ -139,10 +132,10 @@
 /turf/simulated/wall/rdshull,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "ar" = (
-/obj/item/weapon/storage/firstaid/surgery,
-/obj/item/weapon/surgical/scalpel/manager,
-/obj/item/weapon/surgical/scalpel/ripper,
-/obj/item/weapon/surgical/circular_saw/manager,
+/obj/item/storage/firstaid/surgery,
+/obj/item/surgical/scalpel/manager,
+/obj/item/surgical/scalpel/ripper,
+/obj/item/surgical/circular_saw/manager,
 /obj/item/stack/nanopaste/advanced,
 /obj/item/stack/nanopaste/advanced,
 /obj/structure/table/standard,
@@ -153,8 +146,8 @@
 /area/shuttle/curabitur/curashuttle/med)
 "at" = (
 /obj/structure/closet/crate/large,
-/obj/item/weapon/gun/projectile/multi_cannon,
-/obj/item/weapon/gun/projectile/multi_cannon,
+/obj/item/gun/projectile/multi_cannon,
+/obj/item/gun/projectile/multi_cannon,
 /obj/item/ammo_casing/macrobattery/buff,
 /obj/item/ammo_casing/macrobattery/buff,
 /obj/item/ammo_casing/macrobattery/detox,
@@ -189,24 +182,21 @@
 	icon_state = "1-2"
 	},
 /obj/structure/bed/chair/bay/comfy{
-	dir = 1;
-	icon_state = "bay_comfychair_preview"
+	dir = 1
 	},
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "ax" = (
 /obj/machinery/computer/ship/engines{
-	dir = 8;
-	icon_state = "computer"
+	dir = 8
 	},
 /obj/structure/window/plastitanium{
-	dir = 4;
-	icon_state = "window"
+	dir = 4
 	},
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "ay" = (
-/obj/item/weapon/bedsheet/bluedouble,
+/obj/item/bedsheet/bluedouble,
 /obj/structure/bed/double/padded,
 /obj/structure/curtain/open/bed,
 /turf/simulated/floor/carpet/bcarpet,
@@ -215,26 +205,26 @@
 /turf/simulated/wall/rpshull,
 /area/shuttle/curabitur/curashuttle/med)
 "aA" = (
-/obj/item/weapon/storage/firstaid/adv,
-/obj/item/weapon/storage/firstaid/fire,
-/obj/item/weapon/storage/firstaid/o2,
-/obj/item/weapon/storage/firstaid/regular,
-/obj/item/weapon/storage/firstaid/toxin,
-/obj/item/weapon/storage/pill_bottle/spaceacillin,
+/obj/item/storage/firstaid/adv,
+/obj/item/storage/firstaid/fire,
+/obj/item/storage/firstaid/o2,
+/obj/item/storage/firstaid/regular,
+/obj/item/storage/firstaid/toxin,
+/obj/item/storage/pill_bottle/spaceacillin,
 /obj/structure/table/standard,
-/obj/item/device/healthanalyzer/advanced,
-/obj/item/device/healthanalyzer/advanced,
-/obj/item/weapon/reagent_containers/spray/cleaner,
+/obj/item/healthanalyzer/advanced,
+/obj/item/healthanalyzer/advanced,
+/obj/item/reagent_containers/spray/cleaner,
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "aB" = (
-/obj/item/weapon/surgical/scalpel/alien,
-/obj/item/weapon/surgical/retractor/alien,
-/obj/item/weapon/surgical/hemostat/alien,
-/obj/item/weapon/surgical/circular_saw/alien,
-/obj/item/weapon/surgical/cautery/alien,
-/obj/item/weapon/surgical/FixOVein/alien,
-/obj/item/weapon/surgical/surgicaldrill/alien,
+/obj/item/surgical/scalpel/alien,
+/obj/item/surgical/retractor/alien,
+/obj/item/surgical/hemostat/alien,
+/obj/item/surgical/circular_saw/alien,
+/obj/item/surgical/cautery/alien,
+/obj/item/surgical/FixOVein/alien,
+/obj/item/surgical/surgicaldrill/alien,
 /obj/structure/table/standard,
 /obj/machinery/recharger{
 	pixel_x = -8;
@@ -251,28 +241,24 @@
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "aD" = (
-/obj/item/weapon/storage/backpack/dufflebag/syndie/med,
-/obj/item/weapon/storage/belt/medical,
-/obj/item/weapon/storage/belt/medical,
-/obj/item/weapon/storage/belt/medical,
+/obj/item/storage/backpack/dufflebag/syndie/med,
+/obj/item/storage/belt/medical,
+/obj/item/storage/belt/medical,
+/obj/item/storage/belt/medical,
 /obj/structure/table/rack,
-/obj/item/weapon/storage/backpack/dufflebag/syndie/med,
+/obj/item/storage/backpack/dufflebag/syndie/med,
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "aE" = (
 /obj/machinery/computer/ship/sensors{
-	dir = 4;
-	icon_state = "computer"
+	dir = 4
 	},
 /obj/machinery/firealarm{
 	dir = 8;
-	pixel_x = -29;
-	pixel_y = 0
+	pixel_x = -29
 	},
 /obj/machinery/light{
-	dir = 8;
-	icon_state = "tube1";
-	pixel_x = 0
+	dir = 8
 	},
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
@@ -299,8 +285,7 @@
 	},
 /obj/machinery/atmospherics/pipe/vent,
 /obj/structure/window/plastitanium{
-	dir = 4;
-	icon_state = "window"
+	dir = 4
 	},
 /obj/machinery/button/remote/airlock/survival_pod{
 	id = "curadocking";
@@ -310,36 +295,34 @@
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "aH" = (
-/obj/item/weapon/storage/secure/safe{
+/obj/item/storage/secure/safe{
 	pixel_x = 31
 	},
-/obj/item/weapon/gun/projectile/automatic/mini_uzi,
-/obj/item/weapon/card/id/syndicate{
+/obj/item/gun/projectile/automatic/mini_uzi,
+/obj/item/card/id/syndicate{
 	access = list(616);
-	assignment = "Curabitur Contractor";
-	origin_tech = newlist()
+	assignment = "Curabitur Contractor"
 	},
-/obj/item/weapon/card/id/syndicate{
+/obj/item/card/id/syndicate{
 	access = list(616);
-	assignment = "Curabitur Contractor";
-	origin_tech = newlist()
+	assignment = "Curabitur Contractor"
 	},
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
-/obj/item/weapon/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
+/obj/item/spacecash/c1000,
 /turf/simulated/floor/carpet/bcarpet,
 /area/shuttle/curabitur/curashuttle/cockpit)
 "aI" = (
@@ -348,13 +331,10 @@
 "aJ" = (
 /obj/machinery/sleep_console{
 	dir = 2;
-	icon_state = "sleeperconsole";
 	pixel_x = -1
 	},
 /obj/machinery/light{
-	dir = 8;
-	icon_state = "tube1";
-	pixel_x = 0
+	dir = 8
 	},
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
@@ -364,33 +344,31 @@
 /obj/item/stack/cable_coil,
 /obj/item/stack/cable_coil,
 /obj/item/stack/cable_coil,
-/obj/item/device/robotanalyzer,
-/obj/item/device/robotanalyzer,
-/obj/item/weapon/reagent_containers/spray/cleaner,
-/obj/item/weapon/reagent_containers/dropper,
+/obj/item/robotanalyzer,
+/obj/item/robotanalyzer,
+/obj/item/reagent_containers/spray/cleaner,
+/obj/item/reagent_containers/dropper,
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "aL" = (
 /obj/machinery/embedded_controller/radio/simple_docking_controller{
 	dir = 8;
-	frequency = 1480;
+	frequency = 1481;
 	id_tag = "curadocking";
-	pixel_x = 28;
-	pixel_y = 0
+	pixel_x = 28
 	},
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "aM" = (
 /obj/structure/table/rack,
-/obj/item/device/defib_kit/jumper_kit/loaded,
-/obj/item/device/defib_kit/compact/combat/loaded,
-/obj/item/device/defib_kit/compact/combat/loaded,
-/obj/item/device/mmi/radio_enabled{
+/obj/item/defib_kit/jumper_kit/loaded,
+/obj/item/defib_kit/compact/combat/loaded,
+/obj/item/defib_kit/compact/combat/loaded,
+/obj/item/mmi/radio_enabled{
 	req_access = newlist()
 	},
 /obj/machinery/light{
-	dir = 4;
-	icon_state = "tube1"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
@@ -410,7 +388,7 @@
 /obj/item/clothing/accessory/storage/white_drop_pouches,
 /obj/item/clothing/accessory/holster/machete,
 /obj/item/clothing/accessory/holster/hip,
-/obj/item/weapon/material/knife/machete,
+/obj/item/material/knife/machete,
 /obj/item/clothing/accessory/storage/white_drop_pouches,
 /obj/item/clothing/accessory/storage/white_drop_pouches,
 /turf/simulated/floor/carpet/bcarpet,
@@ -466,16 +444,15 @@
 /obj/structure/table/rack,
 /obj/item/wheelchair,
 /obj/item/wheelchair,
-/obj/item/weapon/cane/crutch,
-/obj/item/weapon/cane/crutch,
-/obj/item/weapon/cane/white/collapsible,
+/obj/item/cane/crutch,
+/obj/item/cane/crutch,
+/obj/item/cane/white/collapsible,
 /obj/item/clothing/accessory/stethoscope,
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "aU" = (
 /obj/structure/window/plastitanium{
-	dir = 8;
-	icon_state = "window"
+	dir = 8
 	},
 /obj/structure/cable{
 	icon_state = "0-4"
@@ -489,8 +466,6 @@
 /area/shuttle/curabitur/curashuttle/cockpit)
 "aV" = (
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/carpet/bcarpet,
@@ -516,21 +491,23 @@
 /area/shuttle/curabitur/curashuttle/cockpit)
 "aY" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 6;
-	icon_state = "intact"
+	dir = 6
 	},
 /obj/structure/table/standard,
 /obj/fiftyspawner/steel,
-/obj/item/weapon/storage/toolbox/syndicate/powertools,
+/obj/item/storage/toolbox/syndicate/powertools,
 /obj/item/stack/nanopaste/advanced,
 /obj/item/stack/cable_coil,
 /obj/item/stack/cable_coil,
 /obj/item/stack/cable_coil,
-/obj/item/device/multitool,
-/obj/item/weapon/storage/box/metalfoam,
+/obj/item/multitool,
+/obj/item/storage/box/metalfoam,
 /obj/item/bodybag/cryobag/robobag,
 /obj/item/bodybag/cryobag/robobag,
-/obj/item/weapon/storage/belt/utility,
+/obj/item/storage/belt/utility,
+/obj/structure/panic_button{
+	pixel_y = 32
+	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/eng)
 "aZ" = (
@@ -544,9 +521,7 @@
 "ba" = (
 /obj/structure/sink{
 	dir = 4;
-	icon_state = "sink";
-	pixel_x = 12;
-	pixel_y = 0
+	pixel_x = 12
 	},
 /obj/machinery/recharger/wallcharger{
 	pixel_x = 31;
@@ -557,8 +532,7 @@
 "bb" = (
 /obj/structure/window/plastitanium,
 /obj/structure/window/plastitanium{
-	dir = 1;
-	icon_state = "window"
+	dir = 1
 	},
 /obj/structure/window/reinforced/full,
 /turf/simulated/floor/tiled,
@@ -593,7 +567,7 @@
 	pixel_x = 2;
 	pixel_y = 8
 	},
-/obj/item/device/gps/medical,
+/obj/item/gps/medical,
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "bg" = (
@@ -605,9 +579,9 @@
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "bh" = (
-/obj/item/device/suit_cooling_unit,
-/obj/item/device/suit_cooling_unit,
-/obj/item/device/suit_cooling_unit,
+/obj/item/suit_cooling_unit,
+/obj/item/suit_cooling_unit,
+/obj/item/suit_cooling_unit,
 /obj/structure/table/rack,
 /obj/item/clothing/head/helmet/space/void/medical,
 /obj/item/clothing/head/helmet/space/void/medical,
@@ -615,23 +589,23 @@
 /obj/item/clothing/suit/space/void/medical,
 /obj/item/clothing/suit/space/void/medical,
 /obj/item/clothing/suit/space/void/medical,
-/obj/item/weapon/tank/air,
-/obj/item/weapon/tank/air,
-/obj/item/weapon/tank/air,
-/obj/item/weapon/tank/jetpack/carbondioxide,
-/obj/item/weapon/tank/jetpack/carbondioxide,
-/obj/item/weapon/tank/jetpack/carbondioxide,
-/obj/item/weapon/tank/emergency/oxygen/engi,
-/obj/item/weapon/tank/emergency/oxygen/engi,
+/obj/item/tank/air,
+/obj/item/tank/air,
+/obj/item/tank/air,
+/obj/item/tank/jetpack/carbondioxide,
+/obj/item/tank/jetpack/carbondioxide,
+/obj/item/tank/jetpack/carbondioxide,
+/obj/item/tank/emergency/oxygen/engi,
+/obj/item/tank/emergency/oxygen/engi,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/mask/breath,
 /obj/item/clothing/shoes/magboots,
 /obj/item/clothing/shoes/magboots,
 /obj/item/clothing/shoes/magboots,
-/obj/item/device/gps/medical,
-/obj/item/device/gps/medical,
-/obj/item/device/gps/medical,
+/obj/item/gps/medical,
+/obj/item/gps/medical,
+/obj/item/gps/medical,
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "bi" = (
@@ -652,8 +626,7 @@
 "bj" = (
 /obj/structure/window/plastitanium/full,
 /obj/structure/window/plastitanium{
-	dir = 8;
-	icon_state = "window"
+	dir = 8
 	},
 /obj/machinery/door/firedoor,
 /obj/machinery/door/blast/regular{
@@ -684,8 +657,7 @@
 "bn" = (
 /obj/structure/window/plastitanium/full,
 /obj/structure/window/plastitanium{
-	dir = 4;
-	icon_state = "window"
+	dir = 4
 	},
 /obj/machinery/door/firedoor,
 /obj/machinery/door/blast/regular{
@@ -715,8 +687,7 @@
 /area/shuttle/curabitur/curashuttle/med)
 "bs" = (
 /obj/structure/bed/chair/bay/comfy{
-	dir = 8;
-	icon_state = "bay_comfychair_preview"
+	dir = 8
 	},
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
@@ -730,21 +701,21 @@
 "bu" = (
 /obj/structure/table/darkglass,
 /obj/machinery/atmospherics/pipe/vent,
-/obj/item/weapon/reagent_containers/food/snacks/bagelsunflower,
-/obj/item/weapon/reagent_containers/food/snacks/applepie,
-/obj/item/weapon/reagent_containers/food/snacks/carrotfries,
-/obj/item/weapon/reagent_containers/food/snacks/cube/nutriment,
-/obj/item/weapon/reagent_containers/food/snacks/cube/protein,
-/obj/item/weapon/reagent_containers/food/snacks/cube/protein,
-/obj/item/weapon/reagent_containers/food/snacks/cube/protein,
-/obj/item/weapon/reagent_containers/food/snacks/cracker,
+/obj/item/reagent_containers/food/snacks/bagelsunflower,
+/obj/item/reagent_containers/food/snacks/applepie,
+/obj/item/reagent_containers/food/snacks/carrotfries,
+/obj/item/reagent_containers/food/snacks/cube/nutriment,
+/obj/item/reagent_containers/food/snacks/cube/protein,
+/obj/item/reagent_containers/food/snacks/cube/protein,
+/obj/item/reagent_containers/food/snacks/cube/protein,
+/obj/item/reagent_containers/food/snacks/cracker,
 /turf/simulated/floor/carpet/sblucarpet,
 /area/shuttle/curabitur/curashuttle/med)
 "bv" = (
 /obj/structure/table/darkglass,
-/obj/item/weapon/reagent_containers/food/snacks/bangersandmash,
-/obj/item/weapon/reagent_containers/food/snacks/candiedapple,
-/obj/item/weapon/reagent_containers/food/snacks/chickenwing,
+/obj/item/reagent_containers/food/snacks/bangersandmash,
+/obj/item/reagent_containers/food/snacks/candiedapple,
+/obj/item/reagent_containers/food/snacks/chickenwing,
 /turf/simulated/floor/carpet/sblucarpet,
 /area/shuttle/curabitur/curashuttle/med)
 "bw" = (
@@ -778,47 +749,40 @@
 /area/shuttle/curabitur/curashuttle/med)
 "bB" = (
 /obj/structure/table/standard,
-/obj/item/weapon/storage/bag/chemistry,
-/obj/item/weapon/storage/box/pillbottles,
-/obj/item/weapon/reagent_containers/dropper,
-/obj/item/weapon/reagent_containers/dropper,
+/obj/item/storage/bag/chemistry,
+/obj/item/storage/box/pillbottles,
+/obj/item/reagent_containers/dropper,
+/obj/item/reagent_containers/dropper,
 /obj/structure/cable{
 	icon_state = "0-4"
 	},
 /obj/machinery/power/apc{
 	dir = 8;
 	name = "west bump";
-	pixel_x = -28;
-	pixel_y = 0
+	pixel_x = -28
 	},
 /obj/machinery/power/terminal{
-	dir = 8;
-	icon_state = "term"
+	dir = 8
 	},
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "bC" = (
 /obj/structure/sign/department/eng{
-	pixel_x = 0;
 	pixel_y = -31
 	},
 /obj/structure/table/standard,
-/obj/item/weapon/reagent_containers/glass/beaker/bluespace,
-/obj/item/weapon/reagent_containers/glass/beaker/bluespace,
+/obj/item/reagent_containers/glass/beaker/bluespace,
+/obj/item/reagent_containers/glass/beaker/bluespace,
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 4
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/white,
 /area/shuttle/curabitur/curashuttle/med)
 "bD" = (
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 4;
 	icon_state = "2-4"
 	},
 /obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers{
@@ -828,8 +792,6 @@
 	dir = 6
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/yellow{
@@ -838,15 +800,11 @@
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "bE" = (
-/obj/structure/bed/chair/sofa/teal/left{
-	dir = 1;
-	icon_state = "sofaend_left"
+/obj/structure/bed/chair/sofa/left/teal{
+	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -866,18 +824,13 @@
 "bF" = (
 /obj/machinery/vending/wallmed1/public{
 	dir = 1;
-	icon_state = "wallmed";
 	pixel_y = -28
 	},
 /obj/structure/bed/chair/sofa/teal{
-	dir = 1;
-	icon_state = "sofamiddle"
+	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -895,14 +848,10 @@
 	pixel_y = -32
 	},
 /obj/structure/bed/chair/sofa/teal{
-	dir = 1;
-	icon_state = "sofamiddle"
+	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -918,18 +867,13 @@
 "bH" = (
 /obj/machinery/vending/wallmed1/public{
 	dir = 1;
-	icon_state = "wallmed";
 	pixel_y = -29
 	},
-/obj/structure/bed/chair/sofa/teal/right{
-	dir = 1;
-	icon_state = "sofaend_right"
+/obj/structure/bed/chair/sofa/right/teal{
+	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -953,8 +897,7 @@
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers{
-	dir = 4;
-	icon_state = "map-scrubbers"
+	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/yellow{
 	dir = 4
@@ -973,10 +916,7 @@
 	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/universal{
 	dir = 4
@@ -989,14 +929,10 @@
 	},
 /obj/machinery/light,
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/binary/pump/fuel{
-	dir = 8;
-	icon_state = "map_off-fuel"
+	dir = 8
 	},
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
@@ -1007,32 +943,24 @@
 	dir = 1
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/fuel{
-	dir = 8;
-	icon_state = "intact-fuel"
+	dir = 8
 	},
 /turf/simulated/floor/tiled,
 /area/shuttle/curabitur/curashuttle/med)
 "bM" = (
 /obj/structure/fans/hardlight,
-/obj/machinery/door/airlock/external/glass/bolted{
-	frequency = 1480;
+/obj/machinery/door/airlock/external/bolted{
+	frequency = 1481;
 	id_tag = "curadocking"
 	},
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_y = 0
+	icon_state = "4-8"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/fuel{
-	dir = 8;
-	icon_state = "intact-fuel"
+	dir = 8
 	},
 /turf/simulated/floor/plating,
 /area/shuttle/curabitur/curashuttle/med)
@@ -1076,7 +1004,6 @@
 /obj/machinery/power/apc{
 	dir = 1;
 	name = "north bump";
-	pixel_x = 0;
 	pixel_y = 28
 	},
 /obj/structure/cable{
@@ -1100,13 +1027,10 @@
 "bV" = (
 /obj/machinery/atmospherics/pipe/simple/visible/scrubbers,
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 4;
 	icon_state = "1-4"
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/supply{
-	dir = 9;
-	icon_state = "intact-supply"
+	dir = 9
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/yellow{
 	dir = 5
@@ -1120,26 +1044,23 @@
 /obj/machinery/portable_atmospherics/canister/phoron{
 	start_pressure = 8000.25
 	},
-/turf/simulated/floor/tiled/monofloor{
-	dir = 8
+/obj/effect/floor_decal/steeldecal/monofloor{
+	dir = 1
 	},
+/turf/simulated/floor/tiled/monotile,
 /area/shuttle/curabitur/curashuttle/eng)
 "bY" = (
 /obj/structure/window/plastitanium{
-	dir = 8;
-	icon_state = "window"
+	dir = 8
 	},
 /obj/structure/window/plastitanium{
-	dir = 4;
-	icon_state = "window"
+	dir = 4
 	},
 /obj/structure/curtain/black,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/eng)
 "bZ" = (
 /obj/structure/cable{
-	d1 = 1;
-	d2 = 4;
 	icon_state = "1-4"
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
@@ -1148,8 +1069,8 @@
 /area/shuttle/curabitur/curashuttle/hangar)
 "ca" = (
 /obj/structure/table/standard,
-/obj/item/device/survivalcapsule,
-/obj/item/device/survivalcapsule,
+/obj/item/survivalcapsule,
+/obj/item/survivalcapsule,
 /obj/item/clothing/gloves/sterile/nitrile,
 /obj/item/clothing/gloves/sterile/nitrile,
 /obj/item/clothing/suit/surgicalapron,
@@ -1157,19 +1078,19 @@
 /area/shuttle/curabitur/curashuttle/med)
 "cb" = (
 /obj/structure/closet/crate/medical,
-/obj/item/weapon/surgical/scalpel/manager,
-/obj/item/weapon/surgical/scalpel/manager,
-/obj/item/weapon/surgical/circular_saw/manager,
-/obj/item/weapon/surgical/circular_saw/manager,
+/obj/item/surgical/scalpel/manager,
+/obj/item/surgical/scalpel/manager,
+/obj/item/surgical/circular_saw/manager,
+/obj/item/surgical/circular_saw/manager,
 /obj/item/stack/nanopaste/advanced,
 /obj/item/stack/nanopaste/advanced,
-/obj/item/device/defib_kit/compact/combat/loaded,
-/obj/item/device/defib_kit/compact/combat/loaded,
-/obj/item/device/healthanalyzer/advanced,
-/obj/item/weapon/storage/backpack/dufflebag/syndie/med,
-/obj/item/weapon/surgical/bone_clamp,
-/obj/item/weapon/surgical/bone_clamp,
-/obj/item/weapon/surgical/scalpel/ripper,
+/obj/item/defib_kit/compact/combat/loaded,
+/obj/item/defib_kit/compact/combat/loaded,
+/obj/item/healthanalyzer/advanced,
+/obj/item/storage/backpack/dufflebag/syndie/med,
+/obj/item/surgical/bone_clamp,
+/obj/item/surgical/bone_clamp,
+/obj/item/surgical/scalpel/ripper,
 /obj/machinery/firealarm{
 	pixel_y = 24
 	},
@@ -1208,8 +1129,7 @@
 /area/shuttle/curabitur/curashuttle/eng)
 "cf" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/scrubbers{
-	dir = 4;
-	icon_state = "map-scrubbers"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/eng)
@@ -1229,12 +1149,10 @@
 "cj" = (
 /obj/machinery/mech_recharger,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
-	dir = 5;
-	icon_state = "intact-supply"
+	dir = 5
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
-	dir = 5;
-	icon_state = "intact-scrubbers"
+	dir = 5
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/hangar)
@@ -1276,15 +1194,11 @@
 	dir = 1
 	},
 /obj/machinery/portable_atmospherics/canister/air,
-/turf/simulated/floor/tiled/monofloor{
-	dir = 1
-	},
+/turf/simulated/floor/tiled/monotile,
 /area/shuttle/curabitur/curashuttle/eng)
 "co" = (
 /obj/structure/fuel_port,
-/turf/simulated/floor/tiled/monofloor{
-	dir = 1
-	},
+/turf/simulated/floor/tiled/monotile,
 /area/shuttle/curabitur/curashuttle/eng)
 "cp" = (
 /obj/machinery/atmospherics/pipe/simple/visible/universal,
@@ -1319,12 +1233,9 @@
 	},
 /obj/machinery/portable_atmospherics/canister/empty,
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_x = 0
+	icon_state = "4-8"
 	},
-/turf/simulated/floor/tiled/monofloor,
+/turf/simulated/floor/tiled/monotile,
 /area/shuttle/curabitur/curashuttle/eng)
 "cv" = (
 /obj/machinery/atmospherics/binary/pump{
@@ -1332,10 +1243,7 @@
 	},
 /obj/machinery/light/small,
 /obj/structure/cable{
-	d1 = 4;
-	d2 = 8;
-	icon_state = "4-8";
-	pixel_x = 0
+	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/eng)
@@ -1348,8 +1256,7 @@
 /area/shuttle/curabitur/curashuttle/eng)
 "cx" = (
 /obj/machinery/computer/ship/engines{
-	dir = 1;
-	icon_state = "computer"
+	dir = 1
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/eng)
@@ -1368,9 +1275,7 @@
 "cA" = (
 /obj/structure/cable,
 /obj/machinery/power/apc{
-	dir = 2;
 	name = "south bump";
-	pixel_x = 0;
 	pixel_y = -28
 	},
 /obj/structure/handrail{
@@ -1382,7 +1287,6 @@
 /obj/machinery/light,
 /obj/machinery/alarm{
 	dir = 1;
-	icon_state = "alarm0";
 	pixel_y = -32
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -1411,22 +1315,20 @@
 	pixel_y = 24
 	},
 /obj/structure/cable{
-	d1 = 2;
-	d2 = 8;
 	icon_state = "2-8"
 	},
 /obj/structure/table/standard,
-/obj/item/device/flashlight/flare,
-/obj/item/device/flashlight/flare,
-/obj/item/device/flashlight/flare,
+/obj/item/flashlight/flare,
+/obj/item/flashlight/flare,
+/obj/item/flashlight/flare,
 /obj/machinery/cell_charger{
 	pixel_x = -3;
 	pixel_y = 13
 	},
-/obj/item/weapon/cell/high,
-/obj/item/weapon/cell/high,
-/obj/item/weapon/storage/briefcase/inflatable,
-/obj/item/weapon/storage/briefcase/inflatable,
+/obj/item/cell/high,
+/obj/item/cell/high,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/hangar)
 "cG" = (
@@ -1455,7 +1357,6 @@
 	health = 200;
 	max_equip = 1;
 	max_hull_equip = 2;
-	max_special_equip = 1;
 	max_universal_equip = 2;
 	max_utility_equip = 3;
 	maxhealth = 200;
@@ -1476,19 +1377,11 @@
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/shuttle/curabitur/curashuttle/hangar)
-"cO" = (
-/obj/machinery/atmospherics/unary/engine{
-	dir = 1
-	},
-/turf/space,
-/turf/simulated/shuttle/plating/airless/carry,
-/area/shuttle/curabitur/curashuttle/eng)
 "cP" = (
 /obj/machinery/ion_engine{
 	dir = 1;
 	icon_state = "nozzle"
 	},
-/turf/space,
 /turf/simulated/shuttle/plating/airless/carry,
 /area/shuttle/curabitur/curashuttle/eng)
 "dF" = (
@@ -1540,9 +1433,8 @@
 /obj/machinery/portable_atmospherics/canister/phoron{
 	start_pressure = 8000.25
 	},
-/turf/simulated/floor/tiled/monofloor{
-	dir = 8
-	},
+/obj/effect/floor_decal/steeldecal/monofloor,
+/turf/simulated/floor/tiled/monotile,
 /area/shuttle/curabitur/curashuttle/eng)
 
 (1,1,1) = {"
@@ -1641,7 +1533,7 @@ ce
 co
 cv
 cD
-cO
+cM
 aa
 aa
 "}
@@ -1841,7 +1733,7 @@ cl
 cr
 cB
 cJ
-cO
+cM
 aa
 aa
 "}

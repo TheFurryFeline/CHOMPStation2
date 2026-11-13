@@ -11,11 +11,11 @@
 
 /datum/language/birdsong
 	name = LANGUAGE_BIRDSONG
-	desc = "A language primarily spoken by Narvians"
+	desc = "A tweety language primarily spoken by Nevreans."
 	speech_verb = "chirps"
 	colour = "birdsongc"
 	key = "G"
-	syllables = list ("cheep", "peep", "tweet")
+	syllables = list ("chee", "pee", "twee", "hoo", "ee", "oo", "ch", "ts", "sch", "twe", "too", "pha", "ewe", "shee", "shoo", "p", "tw", "aw", "caw", "c")
 
 /datum/language/sergal
 	name = LANGUAGE_SAGARU
@@ -89,8 +89,8 @@
 	colour = "bug"
 	key = "X"
 	syllables = list("vaur","uyek","uyit","avek","sc'theth","k'ztak","teth","wre'ge","lii","dra'","zo'","ra'","kax'","zz","vh","ik","ak",
-    "uhk","zir","sc'orth","sc'er","thc'yek","th'zirk","th'esk","k'ayek","ka'mil","sc'","ik'yir","yol","kig","k'zit","'","'","zrk","krg","isk'yet","na'k",
-    "sc'azz","th'sc","nil","n'ahk","sc'yeth","aur'sk","iy'it","azzg","a'","i'","o'","u'","a","i","o","u","zz","kr","ak","nrk","tzzk","bz","xic'","k'lax'","histh")
+	"uhk","zir","sc'orth","sc'er","thc'yek","th'zirk","th'esk","k'ayek","ka'mil","sc'","ik'yir","yol","kig","k'zit","'","'","zrk","krg","isk'yet","na'k",
+	"sc'azz","th'sc","nil","n'ahk","sc'yeth","aur'sk","iy'it","azzg","a'","i'","o'","u'","a","i","o","u","zz","kr","ak","nrk","tzzk","bz","xic'","k'lax'","histh")
 
 /datum/language/shadekin
 	name = LANGUAGE_SHADEKIN
@@ -98,10 +98,22 @@
 	speech_verb = "mars"
 	ask_verb = "mars"
 	exclaim_verb = "MARS"
-	colour = "changeling"
+	colour = "shadekin"
 	key = "M"
 	machine_understands = FALSE
 	flags = RESTRICTED | HIVEMIND //CHOMPstation Edit: Changining from WHITELISTED to RESTRICTED | Empathy should be shadekin exclusive. This probably breaks carbon shadekins ability to use emptathy, we dont use them and if it does it should be implemented like DIONA root talk. -shark
+
+//CHOMPAdd Start
+/datum/language/marish
+	name = LANGUAGE_MARISH
+	desc = "Where shadekin have a language rooted in empathy, there are still subtle tones and syllables that are as delicate as the emotions that shadekin normally communicate with."
+	speech_verb = "mars"
+	ask_verb = "mars"
+	exclaim_verb = "MARS"
+	key = "9"
+	colour = "marish"
+	syllables = list("mar", "mwrrr", "maaAr", "'aarrr", "wrurrl", "mmar")
+	machine_understands = FALSE
 
 /datum/language/slavic
 	name = LANGUAGE_SLAVIC
@@ -118,20 +130,7 @@
 		"ko", "ne", "en", "po", "tro", "ra", "li", "on", "byl", "cto", "eni", "ost", "ol", "ego",
 		"ver", "stv", "pro", "ski"
 	)
-
-/datum/language/clownish
-	name = LANGUAGE_CLOWNISH
-	desc = "A special elective language course for those studying at the Clown Planet Institute."
-	speech_verb = "honks"
-	ask_verb = "seins"
-	exclaim_verb = "crenks"
-	whisper_verb = "squeaks"
-	colour = "#F785F2" // Pink for the clown.
-	key = "<"
-	flags = WHITELISTED | CLOWN
-	syllables = list(
-		"honk", "knock", "salt", "slip", "lube", "banana", "flower", "pie", "did you hear", "🅱️", "haha", "bully", "going up",
-	)
+//CHOMPAdd End
 
 /datum/language/drudakar
 	name = LANGUAGE_DRUDAKAR
@@ -158,27 +157,77 @@
 	colour = "spacer"
 	machine_understands = TRUE
 
+/datum/language/tavan
+	name = LANGUAGE_TAVAN
+	desc = "A language native to the rat-like Altevians, it has been adopted by other rodent faring species over time."
+	key = "E"
+	speech_verb = "squeaks"
+	whisper_verb = "squiks"
+	exclaim_verb = "squeaks loudly"
+	syllables = list ("sque", "uik", "squeak", "squee", "eak", "eek", "uek", "squik",
+			"squeek", "sq", "squee", "ee", "ek", "ak", "ueak", "squea")
+	colour = "tavan"
+
+/datum/language/echosong
+	name = LANGUAGE_ECHOSONG
+	desc = "An ultrasound-based language, inaudible to those unable to understand it, spoken by few species capable of actually hearing it."
+	key = "U"
+	signlang_verb = list("opens their mouth soundlessly", "mouthes something silently")
+	signlang_verb_understood = list("squeaks")
+	colour = "echosong"
+	flags = INAUDIBLE
+	ignore_adverb = TRUE
+
+/datum/language/echosong/scramble(input, list/known_languages)
+	return stars(input)
+
+/datum/language/lleill
+	name = LANGUAGE_LLEILL
+	desc = "An ancient, gutteral language involving a lot of spitting."
+	speech_verb = "speaks"
+	ask_verb = "ponders"
+	exclaim_verb = "calls"
+	colour = "echosong"
+	key = "L"
+	syllables = list(
+		"llyn", "bren", "gwyn", "gwyr", "ddys", "dath", "llio", "cym", "ddrai", "ffyr", "lle", "dy", "eto", "uno", "dydno", "llego", "bryth", "ffair",
+		"ynys", "ed", "fore", "oe", "hen", "wladd", "ty", "nha", "dwy", "mae", "dros", "pob", "ia", "wyll", "gwdd", "fi"
+	)
+	machine_understands = FALSE
+	flags = WHITELISTED
+
+/datum/language/echosong/broadcast(mob/living/speaker, message, speaker_mask)
+	speaker.log_talk("(INAUDIBLE) [message]", LOG_SAY)
+	speaker.say_signlang(format_message(message), pick(signlang_verb), pick(signlang_verb_understood), src, 2)
+
 /datum/language/unathi
-	flags = 0
+	flags = NONE
 /datum/language/tajaran
-	flags = 0
+	flags = NONE
 /datum/language/skrell
-	flags = 0
+	flags = NONE
 /datum/language/teshari
-	flags = 0
+	flags = NONE
 /datum/language/zaddat
-	flags = 0
+	flags = NONE
 /datum/language/human
-	flags = 0
+	flags = NONE
 /datum/language/gutter
 	machine_understands = FALSE
 	desc = "A dialect of Tradeband not uncommon amongst traders in the Free Trade Union. The language is often difficult to translate due to changing frequently and being highly colloquial."
 	partial_understanding = list(LANGUAGE_TRADEBAND = 30, LANGUAGE_SOL_COMMON = 10)
-/datum/language/human/monkey
+/datum/language/human/animal
 	flags = RESTRICTED
-/datum/language/skrell/monkey
-	flags = RESTRICTED
-/datum/language/unathi/monkey
-	flags = RESTRICTED
-/datum/language/tajaran/monkey
-	flags = RESTRICTED
+
+/datum/language/sparkle
+	name = LANGUAGE_SPARKLE
+	desc = "Eeeeeeeeeeeeee."
+	speech_verb = "says"
+	ask_verb = "asks"
+	exclaim_verb = "squeals"
+	colour = "rainbow"
+	key = "Z"
+	syllables = list(
+		"lol", "lmao", "rofl", "rawr", "XD", "eeeee", "hehe", "lolz", "0_o", ":>", "l1k3", "mudk1pz", "l33t", "br00tal", "hXc", "wtf", "pwn"
+	)
+	flags = WHITELISTED

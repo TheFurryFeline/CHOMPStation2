@@ -1,6 +1,6 @@
 /client/proc/admin_teleport()
 	set name = "Admin teleport"
-	set category = "Admin"
+	set category = "Admin.Game"
 	set desc = "Teleports an atom to a set of coordinates or to the contents of another atom"
 
 	var/list/value = vv_get_value(VV_ATOM_REFERENCE)
@@ -16,20 +16,18 @@
 				if(content != null)
 					coords += content
 			if(coords.len>3)
-				alert("You entered too many coordinates! Only 3 are required.")
+				tgui_alert(src, "You entered too many coordinates! Only 3 are required.")
 				return
 			if(coords.len<3)
-				alert("You didn't enter enough coordinates! 3 are required.")
+				tgui_alert(src, "You didn't enter enough coordinates! 3 are required.")
 				return
 			destination = locate(coords[1],coords[2],coords[3])
 			if(!destination)
-				alert("Invalid coordinates!")
+				tgui_alert(src, "Invalid coordinates!")
 				return
 		if("atom")
 			value = vv_get_value(VV_ATOM_REFERENCE)
 			if(!value["class"] || !value["value"])
 				return
 			destination = value["value"]
-	new /datum/teleport/instant/admin(target,destination)
-/datum/teleport/instant/admin
-	local=FALSE
+	do_teleport(target, destination, channel = TELEPORT_CHANNEL_QUANTUM)

@@ -3,15 +3,14 @@
 #define BOOK_VERSION_MIN	1
 #define BOOK_VERSION_MAX	2
 #define BOOK_PATH			"data/books/"
-#define BOOKS_USE_SQL		0				// no guarentee for this branch to work right with sql
 
-var/global/datum/book_manager/book_mgr = new()
+GLOBAL_DATUM_INIT(book_mgr, /datum/book_manager, new)
 
-datum/book_manager/proc/path(id)
+/datum/book_manager/proc/path(id)
 	if(isnum(id)) // kill any path exploits
 		return "[BOOK_PATH][id].sav"
 
-datum/book_manager/proc/getall()
+/datum/book_manager/proc/getall()
 	var/list/paths = flist(BOOK_PATH)
 	var/list/books = new()
 
@@ -21,7 +20,7 @@ datum/book_manager/proc/getall()
 
 	return books
 
-datum/book_manager/proc/freeid()
+/datum/book_manager/proc/freeid()
 	var/list/paths = flist(BOOK_PATH)
 	var/id = paths.len + 101
 
@@ -35,34 +34,58 @@ datum/book_manager/proc/freeid()
 /client/proc/delbook()
 	set name = "Delete Book"
 	set desc = "Permamently deletes a book from the database."
-	set category = "Admin"
+	set category = "Admin.Moderation"
 	if(!src.holder)
 		to_chat(src, "Only administrators may use this command.")
 		return
+//VOREStation Edit Start
+	var/obj/machinery/librarycomp/our_comp
+	for(var/obj/machinery/librarycomp/l in world)
+		if(istype(l, /obj/machinery/librarycomp))
+			our_comp = l
+			break
 
-	var/isbn = input("ISBN number?", "Delete Book") as num | null
-	if(!isbn)
+	if(!our_comp)
+		to_chat(usr, span_warning("Unable to locate a library computer to use for book deleting."))
 		return
 
-	if(BOOKS_USE_SQL && config.sql_enabled)
-		var/DBConnection/dbcon = new()
-		dbcon.Connect("dbi:mysql:[sqldb]:[sqladdress]:[sqlport]","[sqllogin]","[sqlpass]")
-		if(!dbcon.IsConnected())
-			alert("Connection to Archive has been severed. Aborting.")
+	var/dat = "<HEAD><TITLE>Book Inventory Management</TITLE></HEAD><BODY>\n" // <META HTTP-EQUIV='Refresh' CONTENT='10'>
+		dat += "<h3>ADMINISTRATIVE MANAGEMENT</h3>"
+		establish_old_db_connection()
+
+		if(!SSdbcore.IsConnected())
+			dat += span_red(span_bold("ERROR") + ": Unable to contact External Archive. Please contact your system administrator for assistance.")
 		else
-			var/DBQuery/query = dbcon.NewQuery("DELETE FROM library WHERE id=[isbn]")
-			if(!query.Execute())
-				to_chat(usr,query.ErrorMsg())
-			dbcon.Disconnect()
-	else
-		book_mgr.remove(isbn)
-	log_admin("[usr.key] has deleted the book [isbn]")
+			dat += {"<A href='byond://?our_comp=\ref[our_comp];[HrefToken()];orderbyid=1'>(Order book by SS<sup>13</sup>BN)</A><BR><BR>
+			<table>
+			<tr><td><A href='byond://?our_comp=\ref[our_comp];[HrefToken()];sort=author>AUTHOR</A></td><td><A href='byond://?our_comp=\ref[our_comp];[HrefToken()];sort=title>TITLE</A></td><td><A href='byond://?our_comp=\ref[our_comp];[HrefToken()];sort=category>CATEGORY</A></td><td></td></tr>"}
+			var/datum/db_query/query = SSdbcore.NewQuery("SELECT id, author, title, category FROM library ORDER BY [sortby]")
+			query.Execute()
+
+			var/show_admin_options = check_rights(R_ADMIN, show_msg = FALSE)
+
+			while(query.NextRow())
+				var/id = query.item[1]
+				var/author = query.item[2]
+				var/title = query.item[3]
+				var/category = query.item[4]
+				dat += "<tr><td>[author]</td><td>[title]</td><td>[category]</td><td>"
+				if(show_admin_options) // This isn't the only check, since you can just href-spoof press this button. Just to tidy things up.
+					dat += "<A href='byond://?our_comp=\ref[our_comp];[HrefToken()];delid=[id]'>\[Del\]</A>"
+				dat += "</td></tr>"
+			dat += "</table>"
+			qdel(query)
+
+	var/datum/browser/popup = new(usr, "library", "Library")
+	popup.set_content(dat)
+	popup.open()
+//VOREStation Edit End
 
 // delete a book
-datum/book_manager/proc/remove(var/id)
+/datum/book_manager/proc/remove(id)
 	fdel(path(id))
 
-datum/archived_book
+/datum/archived_book
 	var/author		 // Who wrote the thing, can be changed by pen or PC. It is not automatically assigned
 	var/title		 // The real name of the book.
 	var/category	 // The category/genre of the book
@@ -74,7 +97,7 @@ datum/archived_book
 	var/list/icon/photos	 // in-game photos used
 
 // loads the book corresponding by the specified id
-datum/archived_book/New(var/path)
+/datum/archived_book/New(path)
 	if(isnull(path))
 		return
 
@@ -107,8 +130,8 @@ datum/archived_book/New(var/path)
 			return
 
 
-datum/archived_book/proc/save()
-	var/savefile/F = new(book_mgr.path(id))
+/datum/archived_book/proc/save()
+	var/savefile/F = new(GLOB.book_mgr.path(id))
 
 	F["version"] << BOOK_VERSION_MAX
 	F["author"] << author

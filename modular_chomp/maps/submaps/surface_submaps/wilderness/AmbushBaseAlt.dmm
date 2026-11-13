@@ -1,0 +1,2347 @@
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"aa" = (
+/turf/simulated/floor/gorefloor/turfpack/sif,
+/area/submap/DugOutMercs)
+"ac" = (
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/gorefloor/turfpack/sif,
+/area/submap/DugOutMercs)
+"aB" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"aQ" = (
+/obj/structure/table/woodentable,
+/obj/item/oar,
+/obj/item/oar,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"bm" = (
+/obj/machinery/light,
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"bu" = (
+/turf/simulated/wall/r_wall,
+/area/submap/DugOutMercs)
+"bD" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron,
+/obj/item/stack/material/phoron,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"ce" = (
+/obj/structure/cable/cyan{
+	icon_state = "0-4"
+	},
+/obj/machinery/power/apc{
+	dir = 1;
+	name = "PAPC";
+	pixel_x = 0;
+	pixel_y = 24
+	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/gorefloor/turfpack/sif,
+/area/submap/DugOutMercs)
+"cp" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"cw" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 9
+	},
+/obj/random/material/refined,
+/obj/random/material,
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"cH" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 6
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"dm" = (
+/obj/structure/cliff/automatic{
+	dir = 8
+	},
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"et" = (
+/obj/structure/grille,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"eC" = (
+/obj/machinery/power/smes/buildable/point_of_interest,
+/obj/structure/cable/cyan{
+	icon_state = "0-8"
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"fS" = (
+/obj/effect/floor_decal/corner/blue/bordercorner{
+	dir = 1
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"fY" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"gg" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/material/fishing_net,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"gS" = (
+/obj/effect/floor_decal/corner/blue/border,
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"is" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"jL" = (
+/obj/effect/floor_decal/corner/blue/border,
+/obj/machinery/light,
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"jU" = (
+/obj/structure/cliff/automatic,
+/obj/structure/railing/grey{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"kR" = (
+/turf/template_noop,
+/area/template_noop)
+"ld" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 10
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"lg" = (
+/obj/random/landmine,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"lm" = (
+/obj/random/landmine,
+/turf/template_noop,
+/area/template_noop)
+"ma" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/radio,
+/obj/item/storage/mre/random,
+/obj/item/binoculars,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"me" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"mk" = (
+/obj/structure/cable,
+/obj/machinery/power/port_gen/pacman,
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"na" = (
+/obj/structure/bed/chair,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"ny" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"nD" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"oM" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 8
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"pg" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/carpmeat/sif/murkfish,
+/obj/item/reagent_containers/food/snacks/carpmeat/sif/murkfish,
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"rg" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"rE" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"sk" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 6
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"su" = (
+/obj/random/landmine,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"tt" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/radio,
+/obj/item/storage/mre/random,
+/obj/item/binoculars,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"ui" = (
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"uu" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"vc" = (
+/turf/simulated/floor/plating{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"ve" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 5
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"wt" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron{
+	amount = 10
+	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"wO" = (
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"yI" = (
+/obj/structure/barricade,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"yS" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Bh" = (
+/obj/structure/table/rack/shelf,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 5
+	},
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/tank/oxygen/welded,
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Bu" = (
+/obj/structure/bed/chair{
+	dir = 1
+	},
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"BA" = (
+/obj/machinery/door/airlock,
+/turf/simulated/floor/tiled,
+/area/submap/DugOutMercs)
+"Ct" = (
+/obj/random/landmine,
+/obj/random/landmine,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"CB" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/oar,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"CO" = (
+/obj/structure/railing/grey,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"Dk" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 9
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Dv" = (
+/obj/machinery/door/airlock/engineering{
+	locked = 1
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"DG" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/obj/structure/cliff/automatic{
+	dir = 10
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Eo" = (
+/obj/structure/ledge/ledge_stairs,
+/obj/structure/ledge/ledge_stairs,
+/obj/structure/barricade,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"EV" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"EY" = (
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"Hb" = (
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"HZ" = (
+/obj/structure/ledge/ledge_stairs,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Id" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"In" = (
+/obj/item/frame/noticeboard,
+/turf/simulated/wall/r_wall,
+/area/submap/DugOutMercs)
+"Ir" = (
+/obj/structure/cliff/automatic/corner,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"JO" = (
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Kx" = (
+/obj/structure/cliff/automatic/ramp,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Ly" = (
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"LY" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/material/fishing_rod/modern/built,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Mf" = (
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"ML" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/obj/structure/cliff/automatic{
+	dir = 6
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Np" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron,
+/obj/item/stack/material/phoron,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"NB" = (
+/obj/machinery/light,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"NN" = (
+/obj/machinery/power/terminal{
+	dir = 1;
+	icon_state = "term"
+	},
+/obj/structure/cable{
+	icon_state = "0-2"
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"Ot" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 4
+	},
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 4
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"PO" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 4
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Qu" = (
+/mob/living/simple_mob/mechanical/mecha/eclipse/occult,
+/turf/simulated/floor/gorefloor2/turfpack/sif,
+/area/submap/DugOutMercs)
+"Qx" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"Rd" = (
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"RE" = (
+/obj/structure/ledge/ledge_stairs,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Sr" = (
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/carpmeat/fish/sharkmeat,
+/obj/item/reagent_containers/food/snacks/carpmeat/fish/sharkmeat,
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Su" = (
+/obj/vehicle/boat/dragon,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"SG" = (
+/turf/simulated/floor/gorefloor2/turfpack/sif,
+/area/submap/DugOutMercs)
+"Ty" = (
+/obj/structure/railing/grey,
+/obj/vehicle/boat/dragon,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"UO" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"VR" = (
+/obj/structure/cliff/automatic{
+	dir = 4
+	},
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"WA" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"WV" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"Yo" = (
+/obj/structure/table/rack/shelf,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 9
+	},
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/tank/oxygen/welded,
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/simulated/floor/tiled{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Ys" = (
+/obj/structure/cliff/automatic/ramp{
+	dir = 9
+	},
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"YN" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"Zd" = (
+/obj/machinery/light,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"Zf" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/jellyfishcore,
+/obj/item/reagent_containers/food/snacks/monkfishfillet,
+/obj/item/reagent_containers/food/snacks/monkfishfillet,
+/turf/simulated/floor/tiled/hydro{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+
+(1,1,1) = {"
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+"}
+(2,1,1) = {"
+kR
+Ly
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+Ly
+lg
+Ly
+Ct
+Ly
+su
+JO
+su
+JO
+Ly
+lg
+Ly
+lg
+Ly
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+sk
+VR
+VR
+Ir
+kR
+"}
+(3,1,1) = {"
+kR
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+JO
+JO
+JO
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+Ly
+Ly
+Ly
+Ly
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Kx
+ML
+JO
+JO
+jU
+kR
+"}
+(4,1,1) = {"
+kR
+Ly
+Ly
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+JO
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+Ly
+Ly
+Ly
+aa
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+HZ
+RE
+Eo
+na
+tt
+jU
+kR
+"}
+(5,1,1) = {"
+kR
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+JO
+JO
+Mf
+Mf
+Mf
+Mf
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+vc
+Ly
+Ly
+aa
+aa
+Ly
+vc
+Ly
+Ly
+Ly
+Ly
+Ly
+Ys
+DG
+JO
+JO
+jU
+kR
+"}
+(6,1,1) = {"
+kR
+Ly
+Ly
+lg
+Ly
+Ly
+JO
+Mf
+Mf
+Mf
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+vc
+Ly
+Ly
+ld
+dm
+dm
+Dk
+kR
+"}
+(7,1,1) = {"
+kR
+Ly
+Ct
+Ly
+Ly
+su
+Mf
+Mf
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+YN
+JO
+rg
+ny
+rg
+rg
+SG
+aa
+aa
+bu
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(8,1,1) = {"
+kR
+Ly
+Ly
+Ly
+JO
+Mf
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+EY
+JO
+rg
+rg
+rg
+aa
+aa
+SG
+BA
+aa
+aa
+aa
+aa
+Ly
+Ly
+Ly
+kR
+"}
+(9,1,1) = {"
+kR
+Ly
+lg
+JO
+Mf
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+WA
+Mf
+Su
+Mf
+WA
+nD
+JO
+rg
+rg
+rg
+SG
+SG
+SG
+bu
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(10,1,1) = {"
+lm
+Ly
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+YN
+aQ
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+rg
+bm
+SG
+SG
+SG
+bu
+vc
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(11,1,1) = {"
+kR
+Ly
+Ly
+su
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+YN
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+rg
+rg
+aa
+aa
+SG
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+vc
+kR
+"}
+(12,1,1) = {"
+kR
+lg
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+YN
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+rg
+rg
+SG
+aa
+aa
+aa
+SG
+SG
+SG
+SG
+SG
+bu
+Ly
+kR
+"}
+(13,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+YN
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+Rd
+rg
+rg
+SG
+SG
+SG
+aa
+aa
+SG
+SG
+SG
+aa
+bu
+aa
+kR
+"}
+(14,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+WV
+WV
+WV
+WV
+WV
+uu
+JO
+rg
+rg
+rg
+aa
+SG
+SG
+SG
+aa
+aa
+aa
+aa
+aa
+bu
+aa
+kR
+"}
+(15,1,1) = {"
+kR
+lg
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+bu
+JO
+rg
+rg
+rg
+bm
+aa
+aa
+SG
+SG
+SG
+aa
+aa
+aa
+SG
+bu
+Ly
+kR
+"}
+(16,1,1) = {"
+kR
+Ly
+lg
+JO
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+Ly
+bu
+Sr
+rg
+rg
+rg
+SG
+SG
+aa
+SG
+SG
+SG
+SG
+SG
+aa
+SG
+bu
+Ly
+kR
+"}
+(17,1,1) = {"
+lm
+Ly
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+JO
+JO
+JO
+JO
+JO
+JO
+Ly
+Ly
+Ly
+In
+Zf
+rg
+rg
+rg
+SG
+SG
+SG
+aa
+SG
+SG
+SG
+aa
+SG
+SG
+bu
+vc
+kR
+"}
+(18,1,1) = {"
+kR
+Ly
+su
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+JO
+Qx
+Qx
+Qx
+Ly
+Ly
+Ly
+Ly
+Ly
+vc
+bu
+pg
+rg
+rg
+rg
+SG
+SG
+SG
+aa
+SG
+SG
+SG
+aa
+SG
+SG
+bu
+Ly
+kR
+"}
+(19,1,1) = {"
+lm
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Ty
+ma
+LY
+gg
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+SG
+SG
+aa
+SG
+SG
+bu
+Ly
+kR
+"}
+(20,1,1) = {"
+kR
+Ly
+lg
+JO
+Mf
+Mf
+Hb
+Hb
+Mf
+Mf
+Mf
+JO
+CO
+CB
+Bu
+NB
+bu
+wt
+Np
+bD
+ui
+ui
+bu
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+aa
+aa
+aa
+aa
+SG
+bu
+Ly
+kR
+"}
+(21,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Mf
+Hb
+Hb
+Mf
+Mf
+JO
+Ly
+Ly
+yI
+Rd
+Rd
+Dv
+ui
+ui
+ac
+ac
+ac
+bu
+aa
+aa
+SG
+SG
+SG
+SG
+Qu
+aa
+aa
+SG
+SG
+aa
+aa
+aa
+bu
+Ly
+kR
+"}
+(22,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+JO
+Ly
+Ly
+yI
+Rd
+Rd
+bu
+ce
+ac
+ac
+ui
+Zd
+bu
+SG
+aa
+aa
+SG
+SG
+SG
+SG
+aa
+SG
+SG
+SG
+SG
+SG
+aa
+bu
+Ly
+kR
+"}
+(23,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+JO
+Ly
+CO
+CB
+Bu
+NB
+bu
+eC
+NN
+mk
+ui
+ui
+bu
+SG
+SG
+aa
+aa
+aa
+aa
+aa
+aa
+SG
+SG
+SG
+SG
+aa
+aa
+bu
+vc
+kR
+"}
+(24,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+JO
+yS
+ma
+LY
+gg
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+aa
+aa
+SG
+SG
+aa
+aa
+SG
+bu
+Ly
+kR
+"}
+(25,1,1) = {"
+kR
+Ly
+lg
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+cp
+rE
+rE
+Ly
+Ly
+Ly
+Ly
+Ly
+vc
+bu
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+SG
+aa
+aa
+SG
+SG
+bu
+Ly
+kR
+"}
+(26,1,1) = {"
+kR
+lg
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+JO
+Ly
+Ly
+Ly
+Ly
+Ly
+bu
+cw
+SG
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+aa
+aa
+SG
+SG
+SG
+bu
+aa
+kR
+"}
+(27,1,1) = {"
+lm
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+JO
+Ly
+Ly
+bu
+EV
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+aa
+SG
+SG
+SG
+SG
+SG
+bu
+aa
+kR
+"}
+(28,1,1) = {"
+kR
+Ly
+su
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+JO
+bu
+Id
+SG
+SG
+SG
+SG
+SG
+SG
+aa
+SG
+SG
+SG
+SG
+SG
+SG
+bu
+Ly
+kR
+"}
+(29,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+bu
+ve
+SG
+SG
+SG
+SG
+SG
+aa
+aa
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+vc
+kR
+"}
+(30,1,1) = {"
+kR
+lg
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Hb
+Hb
+et
+me
+me
+is
+aB
+gS
+aa
+aa
+SG
+bu
+vc
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(31,1,1) = {"
+kR
+Ly
+JO
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+et
+Hb
+Hb
+UO
+aB
+gS
+SG
+SG
+SG
+bu
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(32,1,1) = {"
+kR
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+et
+fY
+Hb
+wO
+aB
+gS
+SG
+SG
+SG
+bu
+aa
+aa
+aa
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(33,1,1) = {"
+kR
+Ly
+su
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+bu
+Yo
+oM
+oM
+fS
+jL
+SG
+SG
+SG
+BA
+Ly
+Ly
+Ly
+aa
+Ly
+Ly
+Ly
+kR
+"}
+(34,1,1) = {"
+kR
+lg
+Ly
+JO
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+bu
+Bh
+PO
+PO
+Ot
+cH
+SG
+SG
+SG
+bu
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+kR
+"}
+(35,1,1) = {"
+kR
+Ly
+Ly
+su
+Mf
+Mf
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+bu
+vc
+Ly
+Ly
+sk
+VR
+VR
+Ir
+kR
+"}
+(36,1,1) = {"
+kR
+lg
+Ly
+Ly
+JO
+Mf
+Mf
+Mf
+Hb
+Hb
+Hb
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+JO
+lg
+vc
+Ly
+Ly
+aa
+Ly
+Ly
+vc
+Ly
+Ly
+Ly
+Ly
+Ly
+Kx
+ML
+JO
+JO
+jU
+kR
+"}
+(37,1,1) = {"
+kR
+Ly
+Ly
+lg
+Ly
+JO
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+su
+JO
+Mf
+Mf
+JO
+JO
+Ly
+Ly
+Ly
+Ly
+Ly
+aa
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+HZ
+RE
+Eo
+na
+tt
+jU
+kR
+"}
+(38,1,1) = {"
+kR
+Ly
+Ly
+Ly
+Ly
+Ly
+JO
+Mf
+Mf
+Mf
+Mf
+Mf
+Mf
+su
+Ly
+Ly
+JO
+su
+Ly
+lg
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+aa
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ys
+DG
+JO
+JO
+jU
+kR
+"}
+(39,1,1) = {"
+kR
+lg
+Ly
+Ly
+lg
+Ly
+lg
+JO
+JO
+su
+JO
+JO
+JO
+lg
+Ly
+lg
+Ly
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+Ly
+lg
+Ly
+Ly
+aa
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+Ly
+ld
+dm
+dm
+Dk
+kR
+"}
+(40,1,1) = {"
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+lm
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+kR
+"}

@@ -66,7 +66,7 @@
 		return FALSE // Turrets don't give a fuck so neither will we.
 	/*
 	// Find a nice way of doing this later.
-	if(istype(the_target, /mob/living/simple_mob) && istype(holder, /mob/living/simple_mob))
+	if(isanimal(the_target) && isanimal(holder))
 		var/mob/living/simple_mob/us = holder
 		var/mob/living/simple_mob/them = target
 
@@ -84,8 +84,7 @@
 	if(rand(0,200) < speak_chance)
 		// Check if anyone is around to 'appreciate' what we say.
 		var/alone = TRUE
-		for(var/m in viewers(holder))
-			var/mob/M = m
+		for(var/mob/M as anything in viewers(holder))
 			if(M.client)
 				alone = FALSE
 				break
@@ -124,7 +123,7 @@
 	return
 
 // This is to make responses feel a bit more natural and not instant.
-/datum/ai_holder/proc/delayed_say(var/message, var/mob/speak_to)
+/datum/ai_holder/proc/delayed_say(message, mob/speak_to)
 	spawn(rand(1 SECOND, 2 SECONDS))
 		if(!src || !holder || !can_act())  // We might've died/got deleted/etc in the meantime.
 			return

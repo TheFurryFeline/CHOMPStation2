@@ -1,7 +1,7 @@
-/obj/effect/overmap/visitable/sector/tether_gateway/snowoutpost
+/obj/effect/overmap/visitable/sector/common_gateway/snowoutpost
 	initial_generic_waypoints = list("tether_excursion_snow_outpost")
 	in_space = 0
-	scanner_name = "Snowy Outpost"
+	name = "Snowy Outpost"
 	scanner_desc = @{"[i]Stellar Body[/i]>: UNKNOWN
 [i]Class[/i]>: M-Class Planetoid
 [i]Habitability[/i]>: Moderate (Low Temperature)
@@ -23,7 +23,7 @@
 	dynamic_lighting = 0
 	mobcountmax = 50
 	floracountmax = 300
-	valid_mobs = list(/mob/living/simple_mob/animal/sif/savik, /mob/living/simple_mob/animal/wolf, /mob/living/simple_mob/animal/sif/shantak,
+	valid_mobs = list(/mob/living/simple_mob/animal/sif/savik, /mob/living/simple_mob/vore/wolf, /mob/living/simple_mob/animal/sif/shantak,
 					  /mob/living/simple_mob/animal/sif/kururak, /mob/living/simple_mob/animal/sif/frostfly)
 	valid_flora = list(/obj/structure/flora/tree/pine, /obj/structure/flora/tree/pine, /obj/structure/flora/tree/pine,
 					/obj/structure/flora/tree/dead, /obj/structure/flora/grass/brown, /obj/structure/flora/grass/green,

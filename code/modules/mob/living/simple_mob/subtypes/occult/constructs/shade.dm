@@ -6,7 +6,6 @@
 	name = "Shade"
 	real_name = "Shade"
 	desc = "A bound spirit"
-	icon = 'icons/mob/mob.dmi'
 	icon_state = "shade"
 	icon_living = "shade"
 	icon_dead = "shade_dead"
@@ -20,6 +19,8 @@
 	attack_armor_pen = 100	//It's a ghost/horror from beyond, I ain't gotta explain 100 AP
 	attacktext = list("drained the life from")
 
+	organ_names = /datum/decl/mob_organ_names/shade
+
 	minbodytemp = 0
 	maxbodytemp = 4000
 	min_oxy = 0
@@ -28,11 +29,11 @@
 
 	universal_speak = 1
 
-	loot_list = list(/obj/item/weapon/ectoplasm = 100)
+	loot_list = list(/obj/item/ectoplasm = 100)
 
-/mob/living/simple_mob/construct/shade/attackby(var/obj/item/O as obj, var/mob/user as mob)
-	if(istype(O, /obj/item/device/soulstone))
-		var/obj/item/device/soulstone/S = O;
+/mob/living/simple_mob/construct/shade/attackby(obj/item/O as obj, mob/user as mob)
+	if(istype(O, /obj/item/soulstone))
+		var/obj/item/soulstone/S = O;
 		S.transfer_soul("SHADE", src, user)
 		return
 	..()
@@ -41,8 +42,11 @@
 	..()
 	for(var/mob/M in viewers(src, null))
 		if((M.client && !( M.blinded )))
-			M.show_message("<font color='red'>[src] lets out a contented sigh as their form unwinds.</font>")
+			M.show_message(span_red("[src] lets out a contented sigh as their form unwinds."))
 
 	ghostize()
 	qdel(src)
 	return
+
+/datum/decl/mob_organ_names/shade
+	hit_zones = list("spectral robe", "featureless visage", "haunting glow")

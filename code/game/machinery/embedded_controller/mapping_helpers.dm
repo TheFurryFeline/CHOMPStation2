@@ -2,7 +2,7 @@
 
 Note that these have to be in the same /area that the controller is in for them to function.
 You still need to set the controller's "id_tag" to something unique.
-Any frequency works, it's self-setting, but it seems like people have decided 1380 for airlocks so maybe set that on the controller too.
+Any frequency works, it's self-setting, but it seems like people have decided AUTODOCK_FREQ for airlocks so maybe set that on the controller too.
 
 */
 
@@ -21,16 +21,19 @@ Any frequency works, it's self-setting, but it seems like people have decided 13
 	//Most things have a radio tag of some sort that needs adjusting
 	var/tag_addon
 
-/obj/effect/map_helper/airlock/Initialize()
+/obj/effect/map_helper/airlock/Initialize(mapload)
 	..()
 	my_controller = get_controller(get_area(src))
 	my_device = locate(my_device_type) in get_turf(src)
 	if(!my_device)
-		to_world("<b><font color='red'>WARNING:</font><font color='black'>Airlock helper '[name]' couldn't find what it wanted at: X:[x] Y:[y] Z:[z]</font></b>")
+		to_chat(world, span_world("[span_red("WARNING:")][span_black("Airlock helper '[name]' couldn't find what it wanted at: X:[x] Y:[y] Z:[z]")]"))
+		log_mapping("WARNING: Airlock helper '[name]' couldn't find what it wanted at: X:[x] Y:[y] Z:[z]")
 	else if(!my_controller)
-		to_world("<b><font color='red'>WARNING:</font><font color='black'>Airlock helper '[name]' couldn't find a controller at: X:[x] Y:[y] Z:[z]</font></b>")
+		to_chat(world, span_world("[span_red("WARNING:")][span_black("Airlock helper '[name]' couldn't find a controller at: X:[x] Y:[y] Z:[z]")]"))
+		log_mapping("WARNING: Airlock helper '[name]' couldn't find a controller at: X:[x] Y:[y] Z:[z]")
 	else if(!my_controller.id_tag)
-		to_world("<b><font color='red'>WARNING:</font><font color='black'>Airlock helper '[name]' found a controller without an 'id_tag' set: X:[x] Y:[y] Z:[z]</font></b>")
+		to_chat(world, span_world("[span_red("WARNING:")][span_black("Airlock helper '[name]' found a controller without an 'id_tag' set: X:[x] Y:[y] Z:[z]")]"))
+		log_mapping("WARNING: Airlock helper '[name]' found a controller without an 'id_tag' set: X:[x] Y:[y] Z:[z]")
 	else
 		setup()
 	return INITIALIZE_HINT_QDEL
@@ -40,7 +43,7 @@ Any frequency works, it's self-setting, but it seems like people have decided 13
 	my_device = null
 	return ..()
 
-/obj/effect/map_helper/airlock/proc/get_controller(var/area/A)
+/obj/effect/map_helper/airlock/proc/get_controller(area/A)
 	if(!A)
 		return null
 
@@ -48,15 +51,15 @@ Any frequency works, it's self-setting, but it seems like people have decided 13
 	for(var/obj/O in A)
 		if(istype(O, my_controller_type))
 			potentials += O
-	
+
 	//Couldn't find one
 	if(!potentials.len)
 		return null
-	
+
 	//Only found one
 	if(potentials.len == 1)
 		return potentials[1]
-	
+
 	//Gotta find closest
 	var/closest = potentials[potentials.len]
 	var/closest_dist = get_dist(src, closest)

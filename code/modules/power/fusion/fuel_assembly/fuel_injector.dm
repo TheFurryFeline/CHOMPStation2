@@ -4,24 +4,25 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 	name = "fuel injector"
 	icon = 'icons/obj/machines/power/fusion.dmi'
 	icon_state = "injector0"
-	density = 1
-	anchored = 0
-	req_access = list(access_engine)
+	density = TRUE
+	anchored = FALSE
+	req_access = list(ACCESS_ENGINE)
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 10
 	active_power_usage = 500
 
-	circuit = /obj/item/weapon/circuitboard/fusion_injector
+	circuit = /obj/item/circuitboard/fusion_injector
 
 	var/fuel_usage = 30
 	var/id_tag
 	var/injecting = 0
-	var/obj/item/weapon/fuel_assembly/cur_assembly
+	var/obj/item/fuel_assembly/cur_assembly
 
-/obj/machinery/fusion_fuel_injector/Initialize()
+/obj/machinery/fusion_fuel_injector/Initialize(mapload)
 	. = ..()
 	GLOB.fuel_injectors += src
 	default_apply_parts()
+	AddElement(/datum/element/rotatable)
 
 /obj/machinery/fusion_fuel_injector/Destroy()
 	if(cur_assembly)
@@ -31,7 +32,7 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 	return ..()
 
 /obj/machinery/fusion_fuel_injector/mapped
-	anchored = 1
+	anchored = TRUE
 
 /obj/machinery/fusion_fuel_injector/process()
 	if(injecting)
@@ -42,28 +43,28 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 
 /obj/machinery/fusion_fuel_injector/attackby(obj/item/W, mob/user)
 
-	if(istype(W, /obj/item/device/multitool))
-		var/new_ident = input("Enter a new ident tag.", "Fuel Injector", id_tag) as null|text
+	if(istype(W, /obj/item/multitool))
+		var/new_ident = tgui_input_text(user, "Enter a new ident tag.", "Fuel Injector", id_tag, MAX_NAME_LEN)
 		if(new_ident && user.Adjacent(src))
 			id_tag = new_ident
 		return
 
-	if(istype(W, /obj/item/weapon/fuel_assembly))
+	if(istype(W, /obj/item/fuel_assembly))
 
 		if(injecting)
-			to_chat(user, "<span class='warning'>Shut \the [src] off before playing with the fuel rod!</span>")
+			to_chat(user, span_warning("Shut \the [src] off before playing with the fuel rod!"))
 			return
 		//CHOMPEdit Begin
-		if(istype(W,/obj/item/weapon/fuel_assembly/blitz))
-			var/secondchance = alert("Are you sure you want to put the blitz rod in the fuel injector? This definitely wasn't meant to be used like this, and could only end badly.","Confirm","Yes","No")
-			if(secondchance=="No")
+		if(istype(W,/obj/item/fuel_assembly/blitz))
+			var/secondchance = tgui_alert(user, "Are you sure you want to put the blitz rod in the fuel injector? This definitely wasn't meant to be used like this, and could only end badly.","Confirm",list("Yes","No"))
+			if(!secondchance || secondchance=="No")
 				return
 		//CHOMPEdit End
 		if(cur_assembly)
 			cur_assembly.forceMove(get_turf(src))
-			visible_message("<span class='notice'>\The [user] swaps \the [src]'s [cur_assembly] for \a [W].</span>")
+			visible_message(span_infoplain(span_bold("\The [user]") + " swaps \the [src]'s [cur_assembly] for \a [W]."))
 		else
-			visible_message("<span class='notice'>\The [user] inserts \a [W] into \the [src].</span>")
+			visible_message(span_infoplain(span_bold("\The [user]") + " inserts \a [W] into \the [src]."))
 
 		user.drop_from_inventory(W)
 		W.forceMove(src)
@@ -72,17 +73,17 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 			user.put_in_hands(cur_assembly)
 		cur_assembly = W
 		//CHOMPEdit Begin
-		if(istype(W,/obj/item/weapon/fuel_assembly/blitz))
-			visible_message("<span class='warning'>The fuel injector begins to shake and whirr violently as it tries to accept the blitz rod!</span>")
+		if(istype(W,/obj/item/fuel_assembly/blitz))
+			visible_message(span_warning("The fuel injector begins to shake and whirr violently as it tries to accept the blitz rod!"))
 			spawn(30)
 				explosion(loc,2,3,4,8)
 				qdel(src)
 		//CHOMPEdit End
 		return
 
-	if(W.is_wrench() || W.is_screwdriver() || W.is_crowbar() || istype(W, /obj/item/weapon/storage/part_replacer))
+	if(W.has_tool_quality(TOOL_WRENCH) || W.has_tool_quality(TOOL_SCREWDRIVER) || W.has_tool_quality(TOOL_CROWBAR) || istype(W, /obj/item/storage/part_replacer))
 		if(injecting)
-			to_chat(user, "<span class='warning'>Shut \the [src] off first!</span>")
+			to_chat(user, span_warning("Shut \the [src] off first!"))
 			return
 		if(default_unfasten_wrench(user, W))
 			return
@@ -96,19 +97,23 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 	return ..()
 
 /obj/machinery/fusion_fuel_injector/attack_hand(mob/user)
+	if(..())
+		return TRUE
+	if(!Adjacent(user))
+		return TRUE
 
 	if(injecting)
-		to_chat(user, "<span class='warning'>Shut \the [src] off before playing with the fuel rod!</span>")
+		to_chat(user, span_warning("Shut \the [src] off before playing with the fuel rod!"))
 		return
 
 	if(cur_assembly)
 		cur_assembly.forceMove(get_turf(src))
 		user.put_in_hands(cur_assembly)
-		visible_message("<span class='notice'>\The [user] removes \the [cur_assembly] from \the [src].</span>")
+		visible_message(span_infoplain(span_bold("\The [user]") + " removes \the [cur_assembly] from \the [src]."))
 		cur_assembly = null
 		return
 	else
-		to_chat(user, "<span class='warning'>There is no fuel rod in \the [src].</span>")
+		to_chat(user, span_warning("There is no fuel rod in \the [src]."))
 		return
 
 /obj/machinery/fusion_fuel_injector/proc/BeginInjecting()
@@ -144,23 +149,3 @@ GLOBAL_LIST_EMPTY(fuel_injectors)
 		flick("injector-emitting",src)
 	else
 		StopInjecting()
-
-/obj/machinery/fusion_fuel_injector/verb/rotate_clockwise()
-	set category = "Object"
-	set name = "Rotate Generator Clockwise"
-	set src in view(1)
-
-	if (usr.incapacitated() || usr.restrained()  || anchored)
-		return
-
-	src.set_dir(turn(src.dir, 270))
-
-/obj/machinery/fusion_fuel_injector/verb/rotate_counterclockwise()
-	set category = "Object"
-	set name = "Rotate Generator Counterclockwise"
-	set src in view(1)
-
-	if (usr.incapacitated() || usr.restrained()  || anchored)
-		return
-
-	src.set_dir(turn(src.dir, 90))

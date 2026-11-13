@@ -21,7 +21,7 @@ SUBSYSTEM_DEF(game_master)
 
 	var/next_event = 0								// Minimum amount of time of nothingness until the GM can pick something again.
 
-	var/debug_messages = FALSE // If true, debug information is written to `log_debug()`.
+	var/debug_messages = FALSE // If true, debug information is written to `log_world()`.
 
 /datum/controller/subsystem/game_master/Initialize()
 	var/list/subtypes = subtypesof(/datum/event2/meta)
@@ -33,16 +33,16 @@ SUBSYSTEM_DEF(game_master)
 
 	GM = new game_master_type()
 
-	if(config && !config.enable_game_master)
+	if(config && !CONFIG_GET(flag/enable_game_master)) // CHOMPEdit
 		can_fire = FALSE
 
-	return ..()
+	return SS_INIT_SUCCESS
 
 /datum/controller/subsystem/game_master/fire(resumed)
 	adjust_staleness(1)
 	adjust_danger(-1)
 
-	var/global_afk = metric.assess_all_living_mobs()
+	var/global_afk = GLOB.metric.assess_all_living_mobs()
 	global_afk = abs(global_afk - 100)
 	global_afk = round(global_afk / 100, 0.1)
 	adjust_staleness(global_afk) // Staleness increases faster if more people are less active.
@@ -50,6 +50,8 @@ SUBSYSTEM_DEF(game_master)
 	if(GM.ignore_time_restrictions || next_event < world.time)
 		if(prob(staleness) && pre_event_checks())
 			do_event_decision()
+	if(REALTIMEOFDAY >= 386000 && REALTIMEOFDAY < 387000) //CHOMPEdit
+		to_world("<b>Automated router restart warning! Connection will be temporarily lost in a moment. Recommended to save any unfinished posts and avoid time-sensitive situations until router is back online.</b>") //CHOMPEdit
 
 
 /datum/controller/subsystem/game_master/proc/do_event_decision()
@@ -74,8 +76,7 @@ SUBSYSTEM_DEF(game_master)
 		chosen_event.enabled = FALSE
 		if(chosen_event.event_class)
 			// Disable similar events, too.
-			for(var/M in available_events)
-				var/datum/event2/meta/meta = M
+			for(var/datum/event2/meta/meta as anything in available_events)
 				if(meta.event_class == chosen_event.event_class)
 					meta.enabled = FALSE
 
@@ -97,9 +98,9 @@ SUBSYSTEM_DEF(game_master)
 // These are ran before committing to an event.
 // Returns TRUE if the system is allowed to procede, otherwise returns FALSE.
 /datum/controller/subsystem/game_master/proc/pre_event_checks(quiet = FALSE)
-	if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
+	if(!SSticker || SSticker.current_state != GAME_STATE_PLAYING)
 		if(!quiet)
-			log_game_master("Unable to start event: Ticker is nonexistant, or the game is not ongoing.")
+			log_game_master("Unable to start event: Ticker is nonexistent, or the game is not ongoing.")
 		return FALSE
 	if(GM.ignore_time_restrictions)
 		return TRUE
@@ -115,7 +116,7 @@ SUBSYSTEM_DEF(game_master)
 
 //	if(hours < 1 && mins <= 20) // Don't do anything for the first twenty minutes of the round.
 //		if(!quiet)
-//			log_debug("Game Master unable to start event: It is too early.")
+//			log_game_master("Game Master unable to start event: It is too early.")
 //		return FALSE
 	if(hours >= 2 && mins >= 40) // Don't do anything in the last twenty minutes of the round, as well.
 		if(!quiet)
@@ -125,14 +126,14 @@ SUBSYSTEM_DEF(game_master)
 
 /datum/controller/subsystem/game_master/proc/choose_game_master(mob/user)
 	var/list/subtypes = subtypesof(/datum/game_master)
-	var/new_gm_path = input(user, "What kind of Game Master do you want?", "New Game Master", /datum/game_master/default) as null|anything in subtypes
+	var/new_gm_path = tgui_input_list(user, "What kind of Game Master do you want?", "New Game Master", subtypes)
 	if(new_gm_path)
 		log_and_message_admins("has swapped the current GM ([GM.type]) for a new GM ([new_gm_path]).")
 		GM = new new_gm_path(src)
 
 /datum/controller/subsystem/game_master/proc/log_game_master(message)
 	if(debug_messages)
-		log_debug("GAME MASTER: [message]")
+		log_world("GAME MASTER: [message]")
 
 
 // This object makes the actual decisions.
@@ -149,17 +150,10 @@ SUBSYSTEM_DEF(game_master)
 	var/ignore_time_restrictions = FALSE 	// Useful for debugging without needing to wait 20 minutes each time.
 	var/ignore_round_chaos = FALSE			// If true, the system will happily choose back to back intense events like meteors and blobs, Dwarf Fortress style.
 
-/client/proc/show_gm_status()
-	set category = "Debug"
-	set name = "Show GM Status"
-	set desc = "Shows you what the GM is thinking.  If only that existed in real life..."
+ADMIN_VERB(show_gm_status, R_ADMIN|R_EVENT|R_DEBUG, "Show GM Status", "Shows you what the GM is thinking. If only that existed in real life...", ADMIN_CATEGORY_DEBUG_GAME)
+	SSgame_master.interact(user)
 
-	if(check_rights(R_ADMIN|R_EVENT|R_DEBUG))
-		SSgame_master.interact(usr)
-	else
-		to_chat(usr, span("warning", "You do not have sufficent rights to view the GM panel, sorry."))
-
-/datum/controller/subsystem/game_master/proc/interact(var/client/user)
+/datum/controller/subsystem/game_master/proc/interact(client/user)
 	if(!user)
 		return
 
@@ -213,33 +207,32 @@ SUBSYSTEM_DEF(game_master)
 
 	dat += "<tr>"
 	dat += "<td>All Living Mobs</td>"
-	dat += "<td>[metric.assess_all_living_mobs()]%</td>"
+	dat += "<td>[GLOB.metric.assess_all_living_mobs()]%</td>"
 	dat += "</tr>"
 
 	dat += "<tr>"
 	dat += "<td>All Ghosts</td>"
-	dat += "<td>[metric.assess_all_dead_mobs()]%</td>"
+	dat += "<td>[GLOB.metric.assess_all_dead_mobs()]%</td>"
 	dat += "</tr>"
 
 	dat += "<tr>"
 	dat += "<th colspan='2'>Departments</td>"
 	dat += "</tr>"
 
-	for(var/D in metric.departments)
+	for(var/D in GLOB.metric.departments)
 		dat += "<tr>"
 		dat += "<td>[D]</td>"
-		dat += "<td>[metric.assess_department(D)]%</td>"
+		dat += "<td>[GLOB.metric.assess_department(D)]%</td>"
 		dat += "</tr>"
 
 	dat += "<tr>"
 	dat += "<th colspan='2'>Players</td>"
 	dat += "</tr>"
 
-	for(var/P in player_list)
-		var/mob/M = P
+	for(var/mob/M as anything in GLOB.player_list)
 		dat += "<tr>"
 		dat += "<td>[M] ([M.ckey])</td>"
-		dat += "<td>[metric.assess_player_activity(M)]%</td>"
+		dat += "<td>[GLOB.metric.assess_player_activity(M)]%</td>"
 		dat += "</tr>"
 	dat += "</table>"
 
@@ -255,8 +248,7 @@ SUBSYSTEM_DEF(game_master)
 	dat += "<th>Buttons</th>"
 	dat += "</tr>"
 
-	for(var/E in available_events)
-		var/datum/event2/meta/event = E
+	for(var/datum/event2/meta/event as anything in available_events)
 		dat += "<tr>"
 		if(!event.enabled)
 			dat += "<td><strike>[event.name]</strike></td>"
@@ -285,8 +277,7 @@ SUBSYSTEM_DEF(game_master)
 	dat += "<th>Buttons</th>"
 	dat += "</tr>"
 
-	for(var/E in SSevent_ticker.active_events)
-		var/datum/event2/event/event = E
+	for(var/datum/event2/event/event as anything in SSevent_ticker.active_events)
 		dat += "<tr>"
 		dat += "<td>[event.type]</td>"
 		dat += "<td>[event.time_started]</td>"
@@ -309,8 +300,7 @@ SUBSYSTEM_DEF(game_master)
 	dat += "<th>Finish Time</th>"
 	dat += "</tr>"
 
-	for(var/E in SSevent_ticker.finished_events)
-		var/datum/event2/event/event = E
+	for(var/datum/event2/event/event as anything in SSevent_ticker.finished_events)
 		dat += "<tr>"
 		dat += "<td>[event.type]</td>"
 		dat += "<td>[event.time_started]</td>"
@@ -355,13 +345,13 @@ SUBSYSTEM_DEF(game_master)
 		choose_game_master(usr)
 
 	if(href_list["set_staleness"])
-		var/amount = input(usr, "How much staleness should there be?", "Game Master") as null|num
+		var/amount = tgui_input_number(usr, "How much staleness should there be?", "Game Master")
 		if(!isnull(amount))
 			staleness = amount
 			message_admins("GM staleness was set to [amount] by [usr.key].")
 
 	if(href_list["set_danger"])
-		var/amount = input(usr, "How much danger should there be?", "Game Master") as null|num
+		var/amount = tgui_input_number(usr, "How much danger should there be?", "Game Master")
 		if(!isnull(amount))
 			danger = amount
 			message_admins("GM danger was set to [amount] by [usr.key].")

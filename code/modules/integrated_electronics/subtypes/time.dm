@@ -25,7 +25,7 @@
 		var/new_delay = CLAMP(delay_input, 1, 1 HOUR)
 		delay = new_delay
 
-	addtimer(CALLBACK(src, .proc/activate_pin, 2), delay)
+	addtimer(CALLBACK(src, PROC_REF(activate_pin), 2), delay)
 
 /obj/item/integrated_circuit/time/ticker
 	name = "ticker circuit"
@@ -35,18 +35,19 @@
 	The power consumption will scale based on how fast this ticks. Also, note that most components have a short \
 	internal cooldown when activated."
 	icon_state = "tick-f"
-	complexity = 10
+	complexity = 1
 	inputs = list("enable ticking" = IC_PINTYPE_BOOLEAN, "delay time" = IC_PINTYPE_NUMBER)
 	activators = list("outgoing pulse" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
-	power_draw_per_use = 5
+	power_draw_per_use = 1
 	var/delay = 2 SECONDS
 	var/next_fire = 0
 	var/is_running = FALSE
 	// Power consumption scales based on how fast it ticks.
 	// This, plus the fact it ticks more often will increase consumption non-linearly,
 	// and the circuit cooldown and will hopefully discourage stupidly fast ticking machines.
-	var/max_power_draw = 500
+	// Modified due to this simlpe circuit being able to drain a cell in seconds.
+	var/max_power_draw = 250
 
 /obj/item/integrated_circuit/time/ticker/on_data_written()
 	var/delay_input = get_pin_data(IC_INPUT, 2)
@@ -65,7 +66,7 @@
 
 /obj/item/integrated_circuit/time/ticker/proc/tick()
 	if(is_running && check_power())
-		addtimer(CALLBACK(src, .proc/tick), delay)
+		addtimer(CALLBACK(src, PROC_REF(tick)), delay)
 		if(world.time > next_fire)
 			next_fire = world.time + delay
 			activate_pin(1)

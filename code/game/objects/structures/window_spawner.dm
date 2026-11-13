@@ -7,8 +7,9 @@
 	name = "window grille spawner"
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "wingrille"
-	density = 1
-	anchored = 1.0
+	layer = 1.9 // CHOMPedit: more visible for mappers
+	density = TRUE
+	anchored = TRUE
 	pressure_resistance = 4*ONE_ATMOSPHERE
 	can_atmos_pass = ATMOS_PASS_NO
 	var/win_path = /obj/structure/window/basic
@@ -26,8 +27,8 @@
 /obj/effect/wingrille_spawn/CanPass(atom/movable/mover, turf/target)
 	return FALSE
 
-/obj/effect/wingrille_spawn/Initialize()
-	if(win_path && ticker && ticker.current_state < GAME_STATE_PLAYING)
+/obj/effect/wingrille_spawn/Initialize(mapload)
+	if(win_path && SSticker && SSticker.current_state < GAME_STATE_FINISHED) // CHOMPedit: let's make these work after round start
 		activate()
 	..()
 	return INITIALIZE_HINT_QDEL
@@ -38,7 +39,7 @@
 		var/obj/structure/grille/G = new /obj/structure/grille(src.loc)
 		handle_grille_spawn(G)
 	var/list/neighbours = list()
-	for (var/dir in cardinal)
+	for (var/dir in GLOB.cardinal)
 		var/turf/T = get_step(src, dir)
 		var/obj/effect/wingrille_spawn/other = locate(/obj/effect/wingrille_spawn) in T
 		if(!other)
@@ -57,14 +58,14 @@
 	activated = 1
 	for(var/obj/effect/wingrille_spawn/other in neighbours)
 		if(!other.activated) other.activate()
-	if(initialized && !QDELETED(src))
+	if((flags & ATOM_INITIALIZED) && !QDELETED(src))
 		qdel(src)
 
-/obj/effect/wingrille_spawn/proc/handle_window_spawn(var/obj/structure/window/W)
+/obj/effect/wingrille_spawn/proc/handle_window_spawn(obj/structure/window/W)
 	return
 
 // Currently unused, could be useful for pre-wired electrified windows.
-/obj/effect/wingrille_spawn/proc/handle_grille_spawn(var/obj/structure/grille/G)
+/obj/effect/wingrille_spawn/proc/handle_grille_spawn(obj/structure/grille/G)
 	return
 
 /obj/effect/wingrille_spawn/reinforced
@@ -72,12 +73,22 @@
 	icon_state = "r-wingrille"
 	win_path = /obj/structure/window/reinforced
 
+/obj/effect/wingrille_spawn/reinforced/holiday
+	name = "holiday reinforced window grille spawner"
+	icon_state = "r-wingrille"
+	win_path = /obj/structure/window/reinforced/holiday
+
+/obj/effect/wingrille_spawn/reinforced/holiday/vertical
+	name = "vertical holiday reinforced window grille spawner"
+	icon_state = "r-wingrille"
+	win_path = /obj/structure/window/reinforced/holiday/vertical
+
 /obj/effect/wingrille_spawn/reinforced/crescent
 	name = "Crescent window grille spawner"
 	icon_state = "r-wingrille"
 	win_path = /obj/structure/window/reinforced
 
-/obj/effect/wingrille_spawn/reinforced/crescent/handle_window_spawn(var/obj/structure/window/W)
+/obj/effect/wingrille_spawn/reinforced/crescent/handle_window_spawn(obj/structure/window/W)
 	W.maxhealth = 1000000
 	W.health = 1000000
 
@@ -97,6 +108,6 @@
 	win_path = /obj/structure/window/reinforced/polarized
 	var/id
 
-/obj/effect/wingrille_spawn/reinforced/polarized/handle_window_spawn(var/obj/structure/window/reinforced/polarized/P)
+/obj/effect/wingrille_spawn/reinforced/polarized/handle_window_spawn(obj/structure/window/reinforced/polarized/P)
 	if(id)
 		P.id = id

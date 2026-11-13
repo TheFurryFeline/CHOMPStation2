@@ -4,8 +4,8 @@
 	name = "bluespace artillery control"
 	icon_state = "control_boxp1"
 	icon = 'icons/obj/machines/particle_accelerator2.dmi'
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 
 /obj/machinery/artillerycontrol/process()
 	if(src.reload<180)
@@ -14,35 +14,35 @@
 /obj/structure/artilleryplaceholder
 	name = "artillery"
 	icon = 'icons/obj/machines/artillery.dmi'
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 
 /obj/structure/artilleryplaceholder/decorative
-	density = 0
+	density = FALSE
 
 /obj/machinery/artillerycontrol/attack_hand(mob/user as mob)
 	user.set_machine(src)
-	var/dat = "<B>Bluespace Artillery Control:</B><BR>"
+	var/dat = span_bold("Bluespace Artillery Control:") + "<BR>"
 	dat += "Locked on<BR>"
-	dat += "<B>Charge progress: [reload]/180:</B><BR>"
+	dat += span_bold("Charge progress: [reload]/180:") + "<BR>"
 	dat += "<A href='byond://?src=\ref[src];fire=1'>Open Fire</A><BR>"
 	dat += "Deployment of weapon authorized by <br>[using_map.company_name] Naval Command<br><br>Remember, friendly fire is grounds for termination of your contract and life.<HR>"
-	user << browse(dat, "window=scroll")
-	onclose(user, "scroll")
-	return
+
+	var/datum/browser/popup = new(user, "artillery", "Artillery")
+	popup.set_content(dat)
+	popup.open()
 
 /obj/machinery/artillerycontrol/Topic(href, href_list)
 	..()
 	if (usr.stat || usr.restrained())
 		return
 	if ((usr.contents.Find(src) || (in_range(src, usr) && istype(src.loc, /turf))) || (istype(usr, /mob/living/silicon)))
-		var/A
-		A = input("Area to jump bombard", "Open Fire", A) in teleportlocs
-		var/area/thearea = teleportlocs[A]
+		var/A = tgui_input_list(usr, "Area to jump bombard", "Open Fire", GLOB.teleportlocs)
+		var/area/thearea = GLOB.teleportlocs[A]
 		if (usr.stat || usr.restrained()) return
 		if(src.reload < 180) return
 		if ((usr.contents.Find(src) || (in_range(src, usr) && istype(src.loc, /turf))) || (istype(usr, /mob/living/silicon)))
-			command_announcement.Announce("Bluespace artillery fire detected. Brace for impact.")
+			GLOB.command_announcement.Announce("Bluespace artillery fire detected. Brace for impact.", new_sound = ANNOUNCER_MSG_BSA_FIRED)
 			message_admins("[key_name_admin(usr)] has launched an artillery strike.", 1)
 			var/list/L = list()
 			for(var/turf/T in get_area_turfs(thearea.type))
@@ -50,16 +50,3 @@
 			var/loc = pick(L)
 			explosion(loc,2,5,11)
 			reload = 0
-
-/*mob/proc/openfire()
-	var/A
-	A = input("Area to jump bombard", "Open Fire", A) in teleportlocs
-	var/area/thearea = teleportlocs[A]
-	command_alert("Bluespace artillery fire detected. Brace for impact.")
-	spawn(30)
-	var/list/L = list()
-
-	for(var/turf/T in get_area_turfs(thearea.type))
-		L+=T
-	var/loc = pick(L)
-	explosion(loc,2,5,11)*/

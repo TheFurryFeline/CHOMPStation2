@@ -13,6 +13,14 @@
 	throw_range = 14
 	w_class = ITEMSIZE_SMALL
 
+/obj/item/toy/tennis/random
+
+/obj/item/toy/tennis/random/Initialize(mapload)
+	. = ..()
+	var/ball_to_pick = pick(subtypesof(/obj/item/toy/tennis) - /obj/item/toy/tennis/random)
+	new ball_to_pick(loc)
+	return INITIALIZE_HINT_QDEL
+
 /obj/item/toy/tennis/red
 	name = "red tennis ball"
 	desc = "A red tennis ball. It goes twice as fast!"
@@ -49,3 +57,22 @@
 	desc = "A purple tennis ball. Now you've seen everything. Purple, seriously?"
 	icon_state = "tennis_purple"
 	item_state = "tennis_purple"
+
+/obj/item/toy/baseball
+	name = "baseball"
+	desc = "A classic baseball; a rubber core surrounded by yarn and covered by faux leather. Getting hit with one is akin to getting punched."
+	icon = 'icons/obj/balls_vr.dmi'
+	icon_state = "baseball"
+	item_icons = list(
+		slot_l_hand_str = 'icons/mob/items/righthand_balls_vr.dmi',
+		slot_r_hand_str = 'icons/mob/items/lefthand_balls_vr.dmi',
+		slot_wear_mask_str = 'icons/mob/mouthball_vr.dmi',
+		)
+	item_state = "baseball"
+	slot_flags = SLOT_MASK
+	throw_range = 16
+	force = 2.0
+	throwforce = 5.0
+	throw_speed = 5
+	throw_range = 5
+	w_class = ITEMSIZE_SMALL

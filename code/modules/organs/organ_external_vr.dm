@@ -1,5 +1,5 @@
 //Sideways override for nanoform limbs (ugh)
-/obj/item/organ/external/robotize(var/company, var/skip_prosthetics = FALSE, var/keep_organs = FALSE)
+/obj/item/organ/external/robotize(company, skip_prosthetics = FALSE, keep_organs = FALSE)
 	var/original_robotic = robotic
 	if(original_robotic >= ORGAN_NANOFORM)
 		var/o_encased = encased
@@ -13,3 +13,6 @@
 		min_broken_damage = o_min_broken_damage
 	else
 		return ..()
+
+/obj/item/organ/external/digitize(company, skip_prosthetics = FALSE, keep_organs = FALSE)
+	robotize(company, skip_prosthetics, keep_organs)

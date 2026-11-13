@@ -7,7 +7,21 @@
 	async = 1
 
 /datum/unit_test/space_suffocation/start_test()
-	var/turf/space/T = locate()
+	// Get an empty space level instead of just picking a random space turf
+	var/empty_z = using_map.get_empty_zlevel()
+	if(!empty_z)
+		fail("Unable to get empty z-level for suffocation test!")
+		return 1
+
+	// Away from map edges so they don't transit while we're testing
+	var/mid_w = round(world.maxx*0.5)
+	var/mid_h = round(world.maxy*0.5)
+
+	var/turf/T = locate(mid_w, mid_h, empty_z)
+
+	if(!T)
+		fail("Unable to find middle turf for suffocation test!")
+		return 1
 
 	H = new(T)
 	startOxyloss = H.getOxyLoss()
@@ -127,20 +141,4 @@
 
 /datum/unit_test/modifier/percentage_armor/simple_mob
 	name = "MOB: simple mob percentage armor is calculated correctly"
-	subject_type = /mob/living/simple_mob
-
-
-/datum/unit_test/modifier/percentage_flat
-	name = "MOB: human mob flat armor is calculated correctly"
-	inputs = list(100, 75, 50, 25, 0)
-	expected_outputs = list(100, 75, 50, 25, 0)
-
-/datum/unit_test/modifier/percentage_flat/set_tested_variable(datum/modifier/M, new_value)
-	M.armor_flat = list("melee" = new_value)
-
-/datum/unit_test/modifier/percentage_flat/get_test_value(mob/living/L)
-	return L.getsoak(null, "melee")
-
-/datum/unit_test/modifier/percentage_flat/simple_mob
-	name = "MOB: simple mob flat armor is calculated correctly"
 	subject_type = /mob/living/simple_mob

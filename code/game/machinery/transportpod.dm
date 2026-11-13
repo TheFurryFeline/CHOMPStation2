@@ -4,8 +4,8 @@
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "borg_pod_opened"
 
-	density = 1 //thicc
-	anchored = 1
+	density = TRUE //thicc
+	anchored = TRUE
 	use_power = USE_POWER_OFF
 
 	var/in_transit = 0
@@ -47,10 +47,10 @@
 	else
 		icon_state = "borg_pod_opened"
 
-/obj/machinery/transportpod/Bumped(var/mob/living/O)
+/obj/machinery/transportpod/Bumped(mob/living/O)
 	go_in(O)
 
-/obj/machinery/transportpod/proc/go_in(var/mob/living/carbon/human/O)
+/obj/machinery/transportpod/proc/go_in(mob/living/carbon/human/O)
 	if(occupant)
 		return
 
@@ -58,11 +58,10 @@
 		return
 
 	add_fingerprint(O)
-	O.reset_view(src)
 	O.forceMove(src)
 	occupant = O
 	update_icon()
-	if(alert(O, "Are you sure you're ready to launch?", , "Yes", "No") == "Yes")
+	if(tgui_alert(O, "Are you sure you're ready to launch?", "Transport Pod", list("Yes", "No")) == "Yes")
 		in_transit = 1
 		playsound(src, HYPERSPACE_WARMUP)
 	else
@@ -72,9 +71,7 @@
 /obj/machinery/transportpod/proc/go_out()
 	if(!occupant)
 		return
-
 	occupant.forceMove(src.loc)
-	occupant.reset_view()
 	occupant = null
 	update_icon()
 

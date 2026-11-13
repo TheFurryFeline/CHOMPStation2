@@ -1,27 +1,21 @@
 // These are objects that destroy themselves and add themselves to the
 // decal list of the floor under them. Use them rather than distinct icon_states
 // when mapping in interesting floor designs.
-var/list/floor_decals = list()
+GLOBAL_LIST_EMPTY(floor_decals)
 
 /obj/effect/floor_decal
 	name = "floor decal"
 	icon = 'icons/turf/flooring/decals_vr.dmi' // VOREStation Edit
 	plane = DECAL_PLANE
-	layer = MAPPER_DECAL_LAYER
+	layer = DECAL_LAYER
 	var/supplied_dir
 
-/obj/effect/floor_decal/New(var/newloc, var/newdir, var/newcolour)
+/obj/effect/floor_decal/Initialize(mapload, newdir, newcolour)
 	supplied_dir = newdir
 	if(newcolour)
 		color = newcolour
-	..(newloc)
-
-// TODO: identify what is causing these atoms to be qdeleted in New()/Initialize() 
-// somewhere in this chain. Alternatively repath to /obj/floor_decal or some other 
-// abstract handler that explicitly doesn't invoke any obj behavior.
-/obj/effect/floor_decal/Initialize()
 	add_to_turf_decals()
-	initialized = TRUE
+	..()
 	return INITIALIZE_HINT_QDEL
 
 // This is a separate proc from initialize() to facilitiate its caching and other stuff.  Look into it someday.
@@ -30,22 +24,29 @@ var/list/floor_decals = list()
 		set_dir(supplied_dir) // TODO - Why can't this line be done in initialize/New()?
 	var/turf/T = get_turf(src)
 	if(istype(T, /turf/simulated/floor) || istype(T, /turf/unsimulated/floor) || istype(T, /turf/simulated/shuttle/floor))
-		var/cache_key = "[alpha]-[color]-[dir]-[icon_state]-[T.layer]"
-		var/image/I = floor_decals[cache_key]
+		var/cache_key = get_cache_key(T)
+		var/image/I = GLOB.floor_decals[cache_key]
 		if(!I)
-			I = image(icon = icon, icon_state = icon_state, dir = dir)
-			I.layer = MAPPER_DECAL_LAYER
-			I.color = color
-			I.alpha = alpha
-			floor_decals[cache_key] = I
+			I = make_decal_image()
+			GLOB.floor_decals[cache_key] = I
 		LAZYADD(T.decals, I) // Add to its decals list (so it remembers to re-apply after it cuts overlays)
 		T.add_overlay(I) // Add to its current overlays too.
 		return T
 
+/obj/effect/floor_decal/proc/make_decal_image()
+	var/image/I = image(icon = icon, icon_state = icon_state, dir = dir)
+	I.layer = MAPPER_DECAL_LAYER
+	I.color = color
+	I.alpha = alpha
+	return I
+
+/obj/effect/floor_decal/proc/get_cache_key(turf/T)
+	return "[alpha]-[color]-[dir]-[icon_state]-[T.layer]"
+
 /obj/effect/floor_decal/reset
 	name = "reset marker"
 
-/obj/effect/floor_decal/reset/Initialize()
+/obj/effect/floor_decal/reset/Initialize(mapload)
 	..()
 	var/turf/T = get_turf(src)
 	if(T.decals && T.decals.len)
@@ -511,23 +512,43 @@ var/list/floor_decals = list()
 /obj/effect/floor_decal/spline/plain
 	name = "spline - plain"
 	icon_state = "spline_plain"
+/obj/effect/floor_decal/spline/plain/corner
+	icon_state = "spline_plain_corner"
+/obj/effect/floor_decal/spline/plain/cee
+	icon_state = "spline_plain_cee"
+/obj/effect/floor_decal/spline/plain/three_quarters
+	icon_state = "spline_plain_full"
 
 /obj/effect/floor_decal/spline/fancy
 	name = "spline - fancy"
 	icon_state = "spline_fancy"
-
 /obj/effect/floor_decal/spline/fancy/wood
 	name = "spline - wood"
 	color = "#CB9E04"
-
 /obj/effect/floor_decal/spline/fancy/wood/corner
 	icon_state = "spline_fancy_corner"
-
 /obj/effect/floor_decal/spline/fancy/wood/cee
 	icon_state = "spline_fancy_cee"
-
 /obj/effect/floor_decal/spline/fancy/wood/three_quarters
 	icon_state = "spline_fancy_full"
+
+/obj/effect/floor_decal/spline/asteroid
+	icon = 'icons/turf/floors.dmi'
+	icon_state = "asteroid_edge_e"
+	name = "rocky edge"
+
+/obj/effect/floor_decal/spline/asteroid/west
+	icon_state = "asteroid_edge_w"
+
+/obj/effect/floor_decal/spline/asteroid/east
+	icon_state = "asteroid_edge_e"
+
+/obj/effect/floor_decal/spline/asteroid/south
+	icon_state = "asteroid_edge_s"
+
+/obj/effect/floor_decal/spline/asteroid/north
+	icon_state = "asteroid_edge_n"
+	name = "rocky edge"
 
 /obj/effect/floor_decal/industrial/warning
 	name = "hazard stripes"
@@ -586,6 +607,10 @@ var/list/floor_decals = list()
 	name = "grey outline"
 	color = "#808080"
 
+/obj/effect/floor_decal/industrial/outline/red
+	name = "red outline"
+	color = COLOR_RED
+
 /obj/effect/floor_decal/industrial/loading
 	name = "loading area"
 	icon_state = "loadingarea"
@@ -619,9 +644,9 @@ var/list/floor_decals = list()
 	name = "random asteroid rubble"
 	icon_state = "asteroid0"
 
-/obj/effect/floor_decal/asteroid/New()
+/obj/effect/floor_decal/asteroid/Initialize(mapload, newdir, newcolour)
 	icon_state = "asteroid[rand(0,9)]"
-	..()
+	. = ..()
 
 /obj/effect/floor_decal/chapel
 	name = "chapel"
@@ -1186,6 +1211,8 @@ var/list/floor_decals = list()
 /obj/effect/floor_decal/steeldecal/steel_decals_central7
 	icon_state = "steel_decals_central7"
 
+/obj/effect/floor_decal/steeldecal/monofloor //VOREStation Add
+	icon_state = "monofloor" //VOREStation Add
 
 /obj/effect/floor_decal/techfloor
 	name = "techfloor edges"
@@ -1242,3 +1269,89 @@ var/list/floor_decals = list()
 	icon_state = "gravsnow_edges"
 /obj/effect/floor_decal/snow/floor/surround
 	icon_state = "snow_surround"
+
+//Multi-part Floor Signs
+
+/obj/effect/floor_decal/arrivals
+	name = "arrivals sign"
+	icon_state = "arrivals_1"
+
+/obj/effect/floor_decal/arrivals/right
+	icon_state = "arrivals_2"
+
+/obj/effect/floor_decal/shuttles
+	name = "departures sign"
+	icon_state = "shuttle_1"
+
+/obj/effect/floor_decal/shuttles/right
+	icon_state = "shuttle_2"
+
+/obj/effect/floor_decal/arrow
+	name = "floor arrow"
+	icon_state = "arrow_single"
+
+/obj/effect/floor_decal/arrows
+	name = "floor arrows"
+	icon_state = "arrows"
+
+//cetus plaques
+
+/obj/effect/floor_decal/cetus/cetus1
+	name = "cetus1"
+	icon_state = "cetus1"
+
+/obj/effect/floor_decal/cetus/cetus2
+	name = "cetus2"
+	icon_state = "cetus2"
+
+/obj/effect/floor_decal/cetus/cetus3
+	name = "cetus3"
+	icon_state = "cetus3"
+
+/obj/effect/floor_decal/cetus/cetus4
+	name = "cetus4"
+	icon_state = "cetus4"
+
+/obj/effect/floor_decal/cetus/cetus5
+	name = "cetus5"
+	icon_state = "cetus5"
+
+/obj/effect/floor_decal/cetus/cetus6
+	name = "cetus6"
+	icon_state = "cetus6"
+
+/obj/effect/floor_decal/cetus/cetus7
+	name = "cetus7"
+	icon_state = "cetus7"
+
+/obj/effect/floor_decal/cetus/cetus8
+	name = "cetus8"
+	icon_state = "cetus8"
+
+/obj/effect/floor_decal/cetus/cetus9
+	name = "cetus9"
+	icon_state = "cetus9"
+
+/obj/effect/floor_decal/cetus/andromeda1
+	name = "andromeda1"
+	icon_state = "andromeda1"
+
+/obj/effect/floor_decal/cetus/andromeda2
+	name = "andromeda2"
+	icon_state = "andromeda2"
+
+/obj/effect/floor_decal/cetus/andromeda3
+	name = "andromeda3"
+	icon_state = "andromeda3"
+
+/obj/effect/floor_decal/cetus/andromeda4
+	name = "andromeda4"
+	icon_state = "andromeda4"
+
+/obj/effect/floor_decal/cetus/andromeda5
+	name = "andromeda5"
+	icon_state = "andromeda5"
+
+/obj/effect/floor_decal/cetus/andromeda6
+	name = "andromeda6"
+	icon_state = "andromeda6"

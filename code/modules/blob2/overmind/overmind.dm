@@ -1,4 +1,4 @@
-var/list/overminds = list()
+GLOBAL_LIST_EMPTY(overminds)
 
 /mob/observer/blob
 	name = "Blob Overmind"
@@ -10,7 +10,7 @@ var/list/overminds = list()
 	see_in_dark = 8
 	invisibility = INVISIBILITY_OBSERVER
 
-	faction = "blob"
+	faction = FACTION_BLOB
 	var/obj/structure/blob/core/blob_core = null // The blob overmind's core
 	var/blob_points = 0
 	var/max_blob_points = 200
@@ -25,18 +25,18 @@ var/list/overminds = list()
 
 	universal_understand = TRUE
 
-	var/list/has_langs = list(LANGUAGE_BLOB)
+	var/list/has_langs = list(LANGUAGE_ANIMAL)
 	var/datum/language/default_language = null
 
 /mob/observer/blob/get_default_language()
 	return default_language
 
-/mob/observer/blob/Initialize(newloc, pre_placed = 0, starting_points = 60, desired_blob_type = null)
+/mob/observer/blob/Initialize(mapload, pre_placed = 0, starting_points = 60, desired_blob_type = null)
 	blob_points = starting_points
 	if(pre_placed) //we already have a core!
 		placed = 1
 
-	overminds += src
+	GLOB.overminds += src
 	var/new_name = "[initial(name)] ([rand(1, 999)])"
 	name = new_name
 	real_name = new_name
@@ -54,33 +54,32 @@ var/list/overminds = list()
 	if(languages.len)
 		default_language = languages[1]
 
-	return ..(newloc)
+	return ..()
 
 /mob/observer/blob/Destroy()
-	for(var/BL in GLOB.all_blobs)
-		var/obj/structure/blob/B = BL
+	for(var/obj/structure/blob/B as anything in GLOB.all_blobs)
 		if(B && B.overmind == src)
 			B.overmind = null
 			B.update_icon() //reset anything that was ours
 
-	for(var/BLO in blob_mobs)
-		var/mob/living/simple_mob/blob/spore/BM = BLO
+	for(var/mob/living/simple_mob/blob/spore/BM as anything in blob_mobs)
 		if(BM)
 			BM.overmind = null
 			BM.update_icons()
 
-	overminds -= src
+	GLOB.overminds -= src
 	return ..()
 
-/mob/observer/blob/Stat()
-	..()
-	if(statpanel("Status"))
-		if(blob_core)
-			stat(null, "Core Health: [blob_core.integrity]")
-		stat(null, "Power Stored: [blob_points]/[max_blob_points]")
-		stat(null, "Total Blobs: [GLOB.all_blobs.len]")
+/mob/observer/blob/get_status_tab_items()
+	. = ..()
+	. += ""
+	. += "BLOB STATUS"
+	if(blob_core)
+		. += "Core Health: [blob_core.integrity]"
+	. += "Power Stored: [blob_points]/[max_blob_points]"
+	. += "Total Blobs: [GLOB.all_blobs.len]"
 
-/mob/observer/blob/Move(var/atom/NewLoc, Dir = 0)
+/mob/observer/blob/Move(atom/NewLoc, Dir = 0)
 	if(placed)
 		var/obj/structure/blob/B = (locate() in view("5x5", NewLoc))
 		if(B)
@@ -107,7 +106,7 @@ var/list/overminds = list()
 			if(!auto_factory() && !auto_resource())
 				auto_node()
 
-/mob/observer/blob/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
+/mob/observer/blob/say(message, datum/language/speaking = null, whispering = 0)
 	message = sanitize(message)
 
 	if(!message)
@@ -117,8 +116,8 @@ var/list/overminds = list()
 	if(client)
 		if(message)
 			client.handle_spam_prevention(MUTE_IC)
-			if((client.prefs.muted & MUTE_IC) || say_disabled)
-				to_chat(src, "<span class='warning'>You cannot speak in IC (Muted).</span>")
+			if((client.prefs.muted & MUTE_IC))
+				to_chat(src, span_warning("You cannot speak in IC (Muted)."))
 				return
 
 	//These will contain the main receivers of the message
@@ -147,7 +146,7 @@ var/list/overminds = list()
 	//Handle nonverbal languages here
 	for(var/datum/multilingual_say_piece/S in message_pieces)
 		if(S.speaking.flags & NONVERBAL)
-			custom_emote(1, "[pick(S.speaking.signlang_verb)].")
+			custom_emote(VISIBLE_MESSAGE, "[pick(S.speaking.signlang_verb)].")
 
 	for(var/mob/M in listening)
 		spawn()
@@ -163,5 +162,5 @@ var/list/overminds = list()
 				if(dst <= world.view)
 					O.hear_talk(src, message_pieces, "conveys")
 
-	log_say(message, src)
+	log_talk(message, LOG_SAY)
 	return 1

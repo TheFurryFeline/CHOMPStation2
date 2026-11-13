@@ -1,5 +1,5 @@
 // Compile in the map for CI testing if we're testing compileability of all the maps
-#if MAP_TEST
+#ifdef MAP_TEST
 #include "abductor.dmm"
 #endif
 
@@ -7,7 +7,7 @@
 /datum/map_template/om_ships/abductor
 	name = "OM Ship - Abductor Ship (New Z)"
 	desc = "A ship for spooky aliens to kidnap farmers and unfortunate spacemen."
-	mappath = 'abductor.dmm'
+	mappath = "maps/offmap_vr/om_ships/abductor.dmm"
 
 /area/abductor
 	requires_power = 0
@@ -26,22 +26,22 @@
 
 // The 'Abductor Ship'
 /obj/effect/overmap/visitable/ship/abductor
-	name = "spacecraft"
+	name = "strange spacecraft"
 	desc = "Spacefaring vessel."
-	icon_state = "shuttle"
-	moving_state = "shuttle"
-	scanner_name = "unknown vessel"
+	icon = 'icons/obj/overmap_vr.dmi'
+	icon_state = "abductor"
+	color = "#134956"
 	scanner_desc = @{"[i]Registration[/i]: Unknown
 [i]Class[/i]: Corvette
 [i]Transponder[/i]: No transponder detected."
 [b]Notice[/b]: Deep scans detect unknown power signatures, and onboard transporter technology."}
-	color = "#11414c" //STEALTH
 	vessel_mass = 8000
 	vessel_size = SHIP_SIZE_SMALL
 	initial_generic_waypoints = list("abductor_port", "abductor_starboard")
 	fore_dir = NORTH
+	known = FALSE
 
-/obj/item/weapon/paper/alien/abductor
+/obj/item/paper/alien/abductor
 	name = "Read Me"
 	info = {"<b>((Just to state the obvious here, but make sure you're reading OOC notes and all that. This role does not give you any special protections from the rules. Only abduct people who seem like they'd be cool with it.))</b><br><br>
 
@@ -71,7 +71,7 @@ You will find a dispenser within the room you started in which contains some bas
 
 /obj/machinery/porta_turret/alien/abductor
 	name = "anti-personnel turret"
-	installation = /obj/item/weapon/gun/energy/gun/taser
+	installation = /obj/item/gun/energy/gun/taser
 	lethal = FALSE
 	health = 500 // Sturdier turrets, non-lethal, for capturing people alive
 	maxhealth = 500
@@ -79,23 +79,9 @@ You will find a dispenser within the room you started in which contains some bas
 
 /obj/machinery/porta_turret/alien/abductor/ion
 	name = "anti-personnel turret"
-	installation = /obj/item/weapon/gun/energy/ionrifle/weak
+	installation = /obj/item/gun/energy/ionrifle/weak
 	lethal = TRUE
-
-/obj/item/device/perfect_tele/frontier/unknown/abductor/one
-	loc_network = "abd1"
-/obj/item/device/perfect_tele/frontier/unknown/abductor/two
-	loc_network = "abd2"
-/obj/item/device/perfect_tele/frontier/unknown/abductor/three
-	loc_network = "abd3"
-/obj/item/device/perfect_tele/frontier/unknown/abductor/four
-	loc_network = "abd4"
-/obj/item/device/perfect_tele/frontier/unknown/abductor/five
-	loc_network = "abd5"
-/obj/item/device/perfect_tele/frontier/unknown/abductor/six
-	loc_network = "abd6"
 
 /obj/machinery/power/rtg/abductor/built/abductor
 	name = "Void Core"
 	power_gen = 5000000
-

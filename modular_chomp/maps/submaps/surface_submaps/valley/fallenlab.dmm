@@ -1,0 +1,1280 @@
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"aH" = (
+/mob/living/simple_mob/mechanical/cyber_horror/plasma_cyber_horror,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"aZ" = (
+/obj/structure/table/darkglass,
+/obj/item/ammo_casing/microbattery/medical/burn3,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"bH" = (
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"bV" = (
+/obj/machinery/oxygen_pump/mobile/anesthetic,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"cQ" = (
+/obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/grey,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"dg" = (
+/obj/structure/table/standard,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"dx" = (
+/obj/effect/floor_decal/corner/red/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/grey{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/area/submap/fallenlab)
+"eq" = (
+/obj/structure/closet/toolcloset,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"es" = (
+/turf/simulated/wall/ironphoron,
+/area/submap/fallenlab)
+"fh" = (
+/mob/living/simple_mob/mechanical/cyber_horror/cat_cyber_horror,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"fl" = (
+/obj/structure/salvageable/implant_container,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"fL" = (
+/obj/machinery/door/airlock/multi_tile/metal/mait,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"fY" = (
+/obj/structure/table/standard,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"gy" = (
+/mob/living/simple_mob/mechanical/cyber_horror/corgi,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"gN" = (
+/obj/machinery/oxygen_pump/mobile/anesthetic,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"gP" = (
+/obj/structure/table/standard,
+/obj/item/ammo_casing/microbattery/medical/haste,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"hc" = (
+/obj/machinery/porta_turret/stationary/syndie/CIWS,
+/turf/simulated/floor/plating,
+/area/submap/fallenlab)
+"iw" = (
+/mob/living/simple_mob/mechanical/cyber_horror/vox,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"kh" = (
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"ki" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"kq" = (
+/obj/structure/table/darkglass,
+/obj/random/medical,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/medical,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"kZ" = (
+/obj/structure/salvageable/data,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"lh" = (
+/turf/simulated/floor/grass,
+/area/submap/fallenlab)
+"mf" = (
+/obj/machinery/door/airlock,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"mo" = (
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material/precious,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/obj/item/clothing/suit/armor/crusader,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"ny" = (
+/obj/structure/salvageable/data,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"qK" = (
+/obj/structure/table/darkglass,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/medical,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"rk" = (
+/obj/machinery/portable_atmospherics/canister/oxygen,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"rv" = (
+/obj/machinery/door/airlock/external,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"rL" = (
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"sf" = (
+/obj/machinery/optable,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/obj/random/maintenance/medical,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"sg" = (
+/obj/structure/table/standard,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"sM" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"sN" = (
+/obj/structure/dispenser/oxygen,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"sS" = (
+/obj/structure/table/standard,
+/obj/item/nif,
+/obj/random/maintenance/foodstuff,
+/obj/random/maintenance/foodstuff,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"tc" = (
+/obj/structure/table/standard,
+/obj/item/ammo_casing/microbattery/medical/brute3,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"tl" = (
+/obj/structure/table/darkglass,
+/obj/item/ammo_casing/microbattery/medical/brute3,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/medical,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"tI" = (
+/obj/structure/table/standard,
+/obj/random/maintenance/foodstuff,
+/obj/random/maintenance/foodstuff,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"vt" = (
+/obj/machinery/optable,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/obj/random/maintenance/medical,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"wi" = (
+/obj/structure/table/darkglass,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"xo" = (
+/obj/structure/table/darkglass,
+/obj/item/storage/toolbox/syndicate/powertools,
+/obj/random/maintenance/research,
+/obj/random/maintenance/research,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"xI" = (
+/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"ye" = (
+/obj/structure/salvageable/server,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"yC" = (
+/obj/machinery/door/airlock,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"zJ" = (
+/obj/structure/salvageable/computer,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Ay" = (
+/obj/structure/salvageable/console_broken_os,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"AE" = (
+/mob/living/simple_mob/mechanical/cyber_horror/cat_cyber_horror,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Bi" = (
+/obj/structure/table/darkglass,
+/obj/random/maintenance/morestuff,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Ck" = (
+/mob/living/simple_mob/mechanical/cyber_horror/vox,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Cw" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Cx" = (
+/obj/structure/salvageable/data,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"CW" = (
+/obj/structure/table/darkglass,
+/obj/random/maintenance/morestuff,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"DM" = (
+/obj/structure/table/rack,
+/obj/item/clothing/suit/space/void/syndicate_contract,
+/obj/item/clothing/head/helmet/space/void/syndicate_contract,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Et" = (
+/mob/living/simple_mob/mechanical/cyber_horror/cat_cyber_horror,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Gi" = (
+/turf/simulated/wall/iron,
+/area/submap/fallenlab)
+"HP" = (
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Iq" = (
+/obj/machinery/optable,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Iw" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Ix" = (
+/obj/effect/decal/cleanable/dirt,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"KF" = (
+/obj/machinery/oxygen_pump/mobile/anesthetic,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"KI" = (
+/obj/structure/table/darkglass,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"KR" = (
+/obj/structure/table/darkglass,
+/obj/random/maintenance/research,
+/obj/random/maintenance/research,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Ld" = (
+/obj/structure/table/darkglass,
+/obj/item/ammo_casing/microbattery/medical/burn3,
+/obj/random/toolbox,
+/obj/random/maintenance/research,
+/obj/random/maintenance/research,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Mp" = (
+/obj/structure/table/standard,
+/obj/item/ammo_magazine/cell_mag/medical/advanced,
+/obj/random/maintenance/medical,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Ni" = (
+/obj/structure/table/standard,
+/obj/item/ammo_casing/microbattery/medical/haste,
+/obj/random/maintenance/engineering,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"NT" = (
+/mob/living/simple_mob/mechanical/cyber_horror/vox{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"OG" = (
+/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"OO" = (
+/obj/structure/table/standard,
+/obj/item/clothing/mask/gas/syndicate,
+/obj/random/maintenance/foodstuff,
+/obj/random/maintenance/foodstuff,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"PB" = (
+/mob/living/simple_mob/mechanical/cyber_horror/ling_cyber_horror{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Qh" = (
+/obj/machinery/optable,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"QH" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Rg" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"RQ" = (
+/obj/machinery/clonepod,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"RS" = (
+/obj/structure/salvageable/computer,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"SK" = (
+/obj/item/clothing/suit/armor/reactive,
+/mob/living/simple_mob/mechanical/cyber_horror/corgi,
+/turf/simulated/floor/grass,
+/area/submap/fallenlab)
+"SL" = (
+/mob/living/simple_mob/mechanical/cyber_horror/corgi,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"SX" = (
+/turf/template_noop,
+/area/template_noop)
+"Ub" = (
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material/precious,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Uf" = (
+/obj/machinery/clonepod,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Uv" = (
+/obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/tajaran{
+	loot_list = list(/obj/item/gun/projectile/cell_loaded/medical = 5)
+	},
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"UG" = (
+/obj/machinery/oxygen_pump/mobile/anesthetic,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"UK" = (
+/obj/machinery/door/airlock/multi_tile/metal/mait,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Wd" = (
+/obj/structure/salvageable/console_broken_os,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"XG" = (
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/mob/living/simple_mob/mechanical/cyber_horror/corgi,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"XS" = (
+/obj/structure/salvageable/data,
+/obj/effect/decal/cleanable/dirt,
+/obj/effect/floor_decal/corner/orange/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"Yn" = (
+/mob/living/simple_mob/mechanical/cyber_horror/plasma_cyber_horror,
+/turf/simulated/floor/grass,
+/area/submap/fallenlab)
+"Yv" = (
+/obj/machinery/door/airlock/external/bolted,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+"ZC" = (
+/obj/machinery/door/airlock/external,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/dark,
+/area/submap/fallenlab)
+
+(1,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+"}
+(2,1,1) = {"
+SX
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+hc
+SX
+SX
+SX
+SX
+SX
+SX
+"}
+(3,1,1) = {"
+SX
+Gi
+KR
+cQ
+bH
+ki
+Gi
+Uv
+bH
+Cx
+bH
+ki
+sM
+ki
+bH
+kh
+ye
+Gi
+rk
+sN
+rk
+Gi
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+"}
+(4,1,1) = {"
+SX
+Gi
+xo
+bH
+ki
+sM
+yC
+bH
+ki
+sM
+ki
+sM
+ki
+sM
+XS
+Cw
+ki
+rv
+fh
+HP
+HP
+rv
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+"}
+(5,1,1) = {"
+SX
+Gi
+KR
+kh
+sM
+ki
+Gi
+ki
+sM
+ki
+kZ
+ki
+Et
+Ay
+bH
+kh
+sM
+Gi
+DM
+DM
+DM
+Gi
+hc
+SX
+SX
+SX
+SX
+SX
+SX
+"}
+(6,1,1) = {"
+SX
+Gi
+Uf
+bH
+ki
+Bi
+Gi
+Gi
+yC
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+SX
+SX
+SX
+SX
+SX
+"}
+(7,1,1) = {"
+SX
+Gi
+RQ
+ki
+sM
+sf
+Gi
+kh
+sM
+ki
+bH
+Iw
+sM
+ki
+fL
+ki
+sM
+kh
+sM
+ki
+bH
+XG
+gP
+Gi
+SX
+SX
+SX
+SX
+SX
+"}
+(8,1,1) = {"
+SX
+Gi
+Ay
+sM
+ki
+UG
+Gi
+sM
+ki
+sM
+ki
+sM
+ki
+sM
+kh
+sM
+ki
+sM
+ki
+OG
+ki
+sM
+RS
+Gi
+SX
+SX
+SX
+SX
+SX
+"}
+(9,1,1) = {"
+SX
+Gi
+Wd
+kh
+sM
+KF
+Gi
+iw
+sM
+ki
+bH
+eq
+Gi
+Gi
+Gi
+Gi
+Gi
+tI
+sM
+ki
+sM
+ki
+zJ
+Gi
+SX
+SX
+SX
+SX
+SX
+"}
+(10,1,1) = {"
+SX
+Gi
+Uf
+bH
+ki
+Iq
+Gi
+tc
+sg
+fY
+Mp
+Gi
+es
+lh
+Yn
+lh
+es
+Gi
+sS
+sM
+ki
+Ck
+mo
+Gi
+SX
+SX
+SX
+SX
+SX
+"}
+(11,1,1) = {"
+SX
+Gi
+RQ
+kh
+sM
+CW
+Gi
+Gi
+Gi
+Gi
+Gi
+es
+lh
+lh
+lh
+lh
+lh
+es
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+SX
+"}
+(12,1,1) = {"
+SX
+Gi
+qK
+aH
+ki
+sM
+Gi
+sM
+ki
+sM
+Gi
+lh
+lh
+lh
+lh
+lh
+lh
+lh
+Gi
+sM
+ki
+bH
+Gi
+sM
+Iw
+bH
+aZ
+Gi
+SX
+"}
+(13,1,1) = {"
+SX
+Gi
+kq
+kh
+SL
+ki
+rv
+kh
+xI
+ki
+Yv
+Yn
+lh
+lh
+SK
+lh
+lh
+Yn
+Yv
+ki
+xI
+ki
+ZC
+ki
+sM
+kh
+KI
+Gi
+SX
+"}
+(14,1,1) = {"
+SX
+Gi
+tl
+bH
+kh
+sM
+Gi
+bH
+kh
+sM
+Gi
+lh
+lh
+lh
+lh
+lh
+lh
+lh
+Gi
+bH
+ki
+bH
+Gi
+bH
+ki
+bH
+wi
+Gi
+SX
+"}
+(15,1,1) = {"
+SX
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+es
+lh
+lh
+lh
+lh
+lh
+es
+Gi
+Gi
+Gi
+Gi
+Gi
+CW
+sM
+ki
+RQ
+Gi
+SX
+"}
+(16,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+Gi
+Rg
+dx
+kh
+bH
+Rg
+Gi
+es
+lh
+Yn
+lh
+es
+Gi
+sg
+dg
+Ni
+fY
+Gi
+Qh
+ki
+sM
+Uf
+Gi
+SX
+"}
+(17,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+Gi
+zJ
+ki
+sM
+ki
+NT
+OO
+Gi
+Gi
+Gi
+Gi
+Gi
+eq
+bH
+kh
+sM
+PB
+Gi
+bV
+bH
+gy
+Wd
+Gi
+SX
+"}
+(18,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+Gi
+RS
+bH
+ki
+sM
+ki
+sM
+ki
+sM
+UK
+sM
+ki
+bH
+ki
+sM
+ki
+bH
+Gi
+gN
+ki
+sM
+Ay
+Gi
+SX
+"}
+(19,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+Gi
+Ub
+ki
+QH
+ki
+sM
+ki
+sM
+ki
+Ix
+ki
+sM
+rL
+bH
+ki
+sM
+kh
+Gi
+vt
+sM
+ki
+RQ
+Gi
+SX
+"}
+(20,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+mf
+Gi
+Gi
+Bi
+kh
+sM
+Uf
+Gi
+SX
+"}
+(21,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+hc
+Gi
+DM
+DM
+DM
+Gi
+bH
+kh
+Wd
+kh
+bH
+AE
+sM
+ki
+sM
+Cx
+Gi
+kh
+sM
+ki
+KR
+Gi
+SX
+"}
+(22,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+rv
+HP
+HP
+fh
+ZC
+kh
+bH
+ki
+sM
+fl
+sM
+ki
+Ck
+ki
+sM
+mf
+sM
+ki
+bH
+Ld
+Gi
+SX
+"}
+(23,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+Gi
+rk
+sN
+rk
+Gi
+bH
+XS
+sM
+ki
+sM
+ki
+ny
+kh
+sM
+ki
+Gi
+ki
+bH
+cQ
+KR
+Gi
+SX
+"}
+(24,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+hc
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+Gi
+SX
+"}
+(25,1,1) = {"
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+SX
+"}

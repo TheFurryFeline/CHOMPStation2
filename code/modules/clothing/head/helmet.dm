@@ -7,15 +7,14 @@
 	flags = THICKMATERIAL
 	armor = list(melee = 40, bullet = 30, laser = 30, energy = 10, bomb = 10, bio = 0, rad = 0)
 	flags_inv = HIDEEARS|BLOCKHEADHAIR
-	cold_protection = HEAD
 	min_cold_protection_temperature = HELMET_MIN_COLD_PROTECTION_TEMPERATURE
-	heat_protection = HEAD
 	max_heat_protection_temperature = HELMET_MAX_HEAT_PROTECTION_TEMPERATURE
 	siemens_coefficient = 0.7
 	w_class = ITEMSIZE_NORMAL
 	ear_protection = 1
 	drop_sound = 'sound/items/drop/helm.ogg'
 	pickup_sound = 'sound/items/pickup/helm.ogg'
+	resistance_flags = FIRE_PROOF
 
 /obj/item/clothing/head/helmet/solgov
 	name = "\improper Solar Confederate Government helmet"
@@ -66,15 +65,20 @@
 	armor = list(melee = 80, bullet = 10, laser = 10, energy = 10, bomb = 0, bio = 0, rad = 0)
 	siemens_coefficient = 0.7
 	valid_accessory_slots = null
-	action_button_name = "Toggle Visor"
+	actions_types = list(/datum/action/item_action/toggle_visor)
+	special_handling = TRUE
+	var/name_descriptor = "riot helmet" //CHOMPEdit for visor toggle messages
 
-/obj/item/clothing/head/helmet/riot/attack_self(mob/user as mob)
+/obj/item/clothing/head/helmet/riot/attack_self(mob/user)
+	. = ..(user)
+	if(.)
+		return TRUE
 	if(src.icon_state == initial(icon_state))
 		src.icon_state = "[icon_state]up"
-		to_chat(user, "You raise the visor on the riot helmet.")
+		to_chat(user, "You raise the visor on the [name_descriptor].") //CHOMPEdit  - Visor toggle messages
 	else
 		src.icon_state = initial(icon_state)
-		to_chat(user, "You lower the visor on the riot helmet.")
+		to_chat(user, "You lower the visor on the [name_descriptor].") //CHOMPEdit  - Visor toggle messages
 	update_clothing_icon()	//so our mob-overlays update
 
 /obj/item/clothing/head/helmet/laserproof
@@ -111,9 +115,9 @@
 	icon_state = "flexitac"
 	armor = list(melee = 40, bullet = 40, laser = 60, energy = 35, bomb = 30, bio = 0, rad = 0)
 	siemens_coefficient = 0.6
-	brightness_on = 6
+	light_range = 6
 	light_overlay = "helmet_light_dual_green"
-	action_button_name = "Toggle Head-light"
+	actions_types = list(/datum/action/item_action/toggle_head_light)
 	min_cold_protection_temperature = T0C - 20
 	cold_protection = HEAD
 
@@ -150,7 +154,7 @@
 
 /obj/item/clothing/head/helmet/thunderdome
 	name = "\improper Thunderdome helmet"
-	desc = "<i>'Let the battle commence!'</i>"
+	desc = span_italics("'Let the battle commence!'")
 	icon_state = "thunderdome"
 	armor = list(melee = 80, bullet = 60, laser = 50,energy = 10, bomb = 25, bio = 10, rad = 0)
 	cold_protection = HEAD
@@ -172,8 +176,8 @@
 	icon_state = "swathelm"
 	item_state_slots = list(slot_r_hand_str = "swat", slot_l_hand_str = "swat")
 	sprite_sheets = list(
-		SPECIES_TAJ = 'icons/mob/species/tajaran/helmet.dmi',
-		SPECIES_UNATHI = 'icons/mob/species/unathi/helmet.dmi',
+		SPECIES_TAJARAN = 'icons/inventory/head/mob_tajaran.dmi',
+		SPECIES_UNATHI = 'icons/inventory/head/mob_unathi.dmi',
 		)
 
 	armor = list(melee = 60, bullet = 60, laser = 60, energy = 40, bomb = 40, bio = 0, rad = 0)

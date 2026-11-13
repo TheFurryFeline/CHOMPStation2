@@ -1,14 +1,15 @@
 // **************
 // Unleashed_Mana
 // **************
-/obj/item/weapon/fluff/zekewatch
+/*
+/obj/item/fluff/zekewatch
 	name = "Zeke's pocketwatch"
 	desc = "Looks like it's broken... or is it?"
 	w_class = 1.0
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "zekewatch"
 
-/obj/item/weapon/fluff/zekewatch/attack_self(mob/living/user)
+/obj/item/fluff/zekewatch/attack_self(mob/living/user)
 	if(user.r_hand == src || user.l_hand == src)
 		var/time1 = rand(0,11)
 		var/time2 = rand(0,59)
@@ -18,24 +19,24 @@
 		if(time2 < 10)
 			time2 = "0[time2]"
 
-		user.visible_message("<span class='rose'>[src] displays [time1]:[time2]</span>")
+		user.visible_message(span_rose("[src] displays [time1]:[time2]"))
 	else
 		return ..()
 	return
 
-/obj/item/weapon/kitchenknife/tacknife/unathiknife/fluff/eravik_vessi_1
+/obj/item/kitchenknife/tacknife/unathiknife/fluff/eravik_vessi_1
 	name = "Noctis"
 	desc = "A strange blade made of some kind of black metal. It feels... incomplete."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "eravikblade"
 
-/obj/item/weapon/reagent_containers/food/drinks/flask/fluff/david_3
+/obj/item/reagent_containers/food/drinks/flask/fluff/david_3
 	name = "David's lucky bottle"
 	desc = "As long as there is something in it, nothing can go wrong."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "davidbottle"
 
-/obj/item/weapon/material/kitchen/utensil/fork/fluff/ragna_1
+/obj/item/material/kitchen/utensil/fork/fluff/ragna_1
 	name = "Ragna's fork"
 	desc = "\"FEAR RAGNA!\""
 	icon = 'icons/vore/custom_items_yw.dmi'
@@ -47,7 +48,7 @@
 // Capt_matt
 // *********
 //Payton Joghs
-/obj/item/weapon/material/hatchet/unathiknife/fluff/payton_joghs_1
+/obj/item/material/hatchet/unathiknife/fluff/payton_joghs_1
 	name = "Payton's Knife"
 	desc = "It appears to be a traditional unathi knife, though with 'Payton' written on the side and appearing to be made of steel."
 	icon = 'icons/vore/custom_items_yw.dmi'
@@ -56,7 +57,7 @@
 // **************
 // BlackAngelsAce
 // **************
-/obj/item/weapon/oldtwohanded/spear/fluff/madoka_koto_1
+/obj/item/oldtwohanded/spear/fluff/madoka_koto_1
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_override = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "madokaspear0"
@@ -87,11 +88,11 @@
 
 /obj/item/toy/bosunwhistle/fluff/strix/attack_self(mob/user as mob)
 	if(cooldown < world.time - 15)
-		user << "<span class='notice'>You blow on [src], creating an ear-splitting noise!</span>"
+		to_chat(user, span_notice("You blow on [src], creating an ear-splitting noise!"))
 		playsound(user, 'sound/misc/boatswain.ogg', 25, 1)
 		cooldown = world.time
 
-/obj/item/device/radio/headset/fluff/strix
+/obj/item/radio/headset/fluff/strix
 	name = "Strix\'s headset"
 	desc = "A headset that seems custom made for a avali skull shape, the sounds coming from it are very quiet."
 	icon_state = "strix_headset"
@@ -106,12 +107,12 @@
 
 //Amara Faell
 
-/obj/item/weapon/flame/lighter/zippo/fluff/amara
+/obj/item/flame/lighter/zippo/fluff/amara
 	desc = "A zippo that comes in a metallic blood red case. How the flame can be lime green is an enigma in itself."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "bloodredzippo"
 
-/obj/item/device/modkit_conversion/fluff/amara_hos_kit
+/obj/item/modkit_conversion/fluff/amara_hos_kit
 	name = "Amara's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a Head of security armored coat. It has a red wolf painted on it."
 	owner_ckey = "generalpantsu"
@@ -124,7 +125,7 @@
 
 //Nika Domashev
 
-/obj/item/device/modkit_conversion/fluff/nika_sec_kit
+/obj/item/modkit_conversion/fluff/nika_sec_kit
 	name = "Nika's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a Officer Armor Vest."
 	owner_ckey = "generalpantsu"
@@ -140,7 +141,7 @@
 // *******
 
 //Glitterpaws
-/obj/item/weapon/melee/goz_whitecane
+/obj/item/melee/goz_whitecane
 	name = "White Cane"
 	desc = "A telescoping white cane. They are commonly used by the blind or visually impaired as a mobility tool or as a courtesy to others."
 	icon = 'icons/vore/custom_items_yw.dmi'
@@ -154,21 +155,21 @@
 	force = 3
 	var/on = 0
 
-/obj/item/weapon/melee/goz_whitecane/attack_self(mob/user as mob)
+/obj/item/melee/goz_whitecane/attack_self(mob/user as mob)
 	on = !on
 	if(on)
-		user.visible_message("<span class='notice'>\The [user] extends the white cane.</span>",\
-		"<span class='warning'>You extend the white cane.</span>",\
-		"You hear an ominous click.")
+		user.visible_message(span_notice("\The [user] extends the white cane."),\
+		span_warning("You extend the white cane."),\
+		span_hear("You hear an ominous click."))
 		icon_state = "goz_whitecane_1"
 		item_state_slots = list(slot_r_hand_str = "goz_whitecane", slot_l_hand_str = "goz_whitecane")
 		w_class = ITEMSIZE_NORMAL
 		force = 5
 		attack_verb = list("smacked", "struck", "craked", "beaten")
 	else
-		user.visible_message("<span class='notice'>\The [user] collapses the white cane.</span>",\
-		"<span class='notice'>You collapse the white cane.</span>",\
-		"You hear a click.")
+		user.visible_message(span_notice("\The [user] collapses the white cane."),\
+		span_notice("You collapse the white cane."),\
+		span_hear("You hear a click."))
 		icon_state = "goz_whitecane_0"
 		item_state_slots = list(slot_r_hand_str = null, slot_l_hand_str = null)
 		w_class = ITEMSIZE_SMALL
@@ -185,9 +186,9 @@
 
 	return
 
-/obj/item/weapon/melee/goz_whitecane/attack(mob/M as mob, mob/user as mob)
+/obj/item/melee/goz_whitecane/attack(mob/M as mob, mob/user as mob)
 	if(user.a_intent == I_HELP)
-		user.visible_message("<span class='notice'>\The [user] has lightly tapped [M] on the ankle with their white cane!</span>")
+		user.visible_message(span_notice("\The [user] has lightly tapped [M] on the ankle with their white cane!"))
 		return
 	else
 		..()
@@ -195,13 +196,13 @@
 // *******
 // Dawidoe
 // *******
-/obj/item/weapon/flame/lighter/zippo/fluff/melissa
+/obj/item/flame/lighter/zippo/fluff/melissa
 	name = "Zippo"
 	desc = "A custom made zippo lighter with word 'Mel' engraved in white font on the bottom right corner. It's black, with red lines around the edges."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "melzippo"
 
-/obj/item/device/modkit_conversion/fluff/melissa_gun_kit
+/obj/item/modkit_conversion/fluff/melissa_gun_kit
 	name = "Melissa's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a 45 Pistol."
 	owner_ckey = "dawidoe"
@@ -209,8 +210,8 @@
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "modkit"
 
-	from_suit = /obj/item/weapon/gun/projectile/sec/flash
-	to_suit = /obj/item/weapon/gun/projectile/fluff/m1911
+	from_suit = /obj/item/gun/projectile/sec/flash
+	to_suit = /obj/item/gun/projectile/fluff/m1911
 
 // ************
 // championfire
@@ -218,10 +219,10 @@
 
 //Yuki Windroar
 
-/obj/item/weapon/implanter/reagent_generator/roiz/yuki
-	implant_type = /obj/item/weapon/implant/reagent_generator/roiz/yuki
+/obj/item/implanter/reagent_generator/roiz/yuki
+	implant_type = /obj/item/implant/reagent_generator/roiz/yuki
 
-/obj/item/weapon/implant/reagent_generator/roiz/yuki
+/obj/item/implant/reagent_generator/roiz/yuki
 	name = "egg laying implant"
 	desc = "This is an implant that allows the user to lay eggs."
 	usable_volume = 500
@@ -237,7 +238,7 @@
 
 //Jessica Mayer
 
-/obj/item/device/modkit_conversion/fluff/jessica_sec_kit
+/obj/item/modkit_conversion/fluff/jessica_sec_kit
 	name = "Jessica's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a Officer Armor Vest."
 	owner_ckey = "vitorhks"
@@ -254,7 +255,7 @@
 
 //Dillan McGraw
 
-//	/obj/item/weapon/storage/fluff/cane/dillan
+//	/obj/item/storage/fluff/cane/dillan
 //	var/max_w_class = 1
 //	var/max_storage_space = 4
 //	throwforce = 7
@@ -276,7 +277,7 @@
 
 //Mira Rezus
 
-/obj/item/weapon/implant/reagent_generator/tempest/mira
+/obj/item/implant/reagent_generator/tempest/mira
 	name = "lactation implant"
 	desc = "This is an implant that allows the user to lactate."
 	usable_volume = 1000
@@ -289,12 +290,12 @@
 	verb_name = "Milk"
 	verb_desc = "Grab Mira's breasts and milk her, storing her fresh, warm milk in a container. This will undoubtedly turn her on."
 
-/obj/item/weapon/implanter/reagent_generator/mira
-	implant_type = /obj/item/weapon/implant/reagent_generator/tempest/mira
+/obj/item/implanter/reagent_generator/mira
+	implant_type = /obj/item/implant/reagent_generator/tempest/mira
 
 //Natalya Vospit
 
-/obj/item/weapon/implant/reagent_generator/tempest/natalya
+/obj/item/implant/reagent_generator/tempest/natalya
 	name = "lactation implant"
 	desc = "This is an implant that allows the user to lactate."
 	usable_volume = 1000
@@ -307,12 +308,12 @@
 	verb_name = "Milk"
 	verb_desc = "Grab Natalya's breasts and milk her, storing her fresh, warm milk in a container. This will undoubtedly turn her on."
 
-/obj/item/weapon/implanter/reagent_generator/natalya
-	implant_type = /obj/item/weapon/implant/reagent_generator/tempest/natalya
+/obj/item/implanter/reagent_generator/natalya
+	implant_type = /obj/item/implant/reagent_generator/tempest/natalya
 
 //Eryn Wolfe
 
-/obj/item/weapon/fluff/chemset
+/obj/item/fluff/chemset
 	name = "Eryn's chemistry set"
 	desc = "A small box with a open compartment, some buttons, a disk drive, and flashing lights. On the back is a small metal plaque with the name 'Eryn Wofle' on it."
 	w_class = 1.0
@@ -321,7 +322,7 @@
 
 //Mitsuko Jiao
 
-/obj/item/device/modkit_conversion/fluff/jiao_anynlizer_kit/a
+/obj/item/modkit_conversion/fluff/jiao_anynlizer_kit/a
 	name = "Mitsuko's modkit Mk1"
 	desc = "A kit containing all the needed tools and parts to modify a heath analyzer. It has a Emblem painted on it."
 	owner_ckey = "lukevale"
@@ -329,10 +330,10 @@
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "modkit"
 
-	from_suit = /obj/item/device/healthanalyzer
-	to_suit = /obj/item/device/healthanalyzer/fluff/jiao_health
+	from_suit = /obj/item/healthanalyzer
+	to_suit = /obj/item/healthanalyzer/fluff/jiao_health
 
-/obj/item/device/modkit_conversion/fluff/jiao_anynlizer_kit/b
+/obj/item/modkit_conversion/fluff/jiao_anynlizer_kit/b
 	name = "Mitsuko's modkit Mk2"
 	desc = "A kit containing all the needed tools and parts to modify a heath analyzer. It has a Emblem painted on it."
 	owner_ckey = "lukevale"
@@ -340,10 +341,10 @@
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "modkit"
 
-	from_suit = /obj/item/device/healthanalyzer/improved
-	to_suit = /obj/item/device/healthanalyzer/improved/fluff/jiao_health
+	from_suit = /obj/item/healthanalyzer/improved
+	to_suit = /obj/item/healthanalyzer/improved/fluff/jiao_health
 
-/obj/item/device/modkit_conversion/fluff/jiao_anynlizer_kit/c
+/obj/item/modkit_conversion/fluff/jiao_anynlizer_kit/c
 	name = "Mitsuko's modkit Mk3"
 	desc = "A kit containing all the needed tools and parts to modify a heath analyzer. It has a Emblem painted on it."
 	owner_ckey = "lukevale"
@@ -351,22 +352,22 @@
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "modkit"
 
-	from_suit = /obj/item/device/healthanalyzer/advanced
-	to_suit = /obj/item/device/healthanalyzer/advanced/fluff/jiao_health
+	from_suit = /obj/item/healthanalyzer/advanced
+	to_suit = /obj/item/healthanalyzer/advanced/fluff/jiao_health
 
-/obj/item/device/healthanalyzer/fluff/jiao_health
+/obj/item/healthanalyzer/fluff/jiao_health
 	name = "Kanghu medical scanner MK1"
 	desc = "A Modified medical scanner, all the main components are compacted into the handle. This one is a basic unit."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "scanner_mk1"
 
-/obj/item/device/healthanalyzer/improved/fluff/jiao_health
+/obj/item/healthanalyzer/improved/fluff/jiao_health
 	name = "Kanghu medical scanner MK2"
 	desc = "A Modified medical scanner, all the main components are compacted into the handle. This one is an improved unit."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "scanner_mk2"
 
-/obj/item/device/healthanalyzer/advanced/fluff/jiao_health
+/obj/item/healthanalyzer/advanced/fluff/jiao_health
 	name = "Kanghu medical scanner MK3"
 	desc = "A Modified medical scanner, all the main components are compacted into the handle. This one is an advanced unit."
 	icon = 'icons/vore/custom_items_yw.dmi'
@@ -378,7 +379,7 @@
 
 //Ire
 
-/obj/item/weapon/bikehorn/fluff/chew_ire
+/obj/item/bikehorn/fluff/chew_ire
 	name = "Chew toy"
 	desc = "A toy normally used by dogs to play with or chew on"
 	slot_flags = SLOT_MASK
@@ -396,7 +397,7 @@
 
 //I'm going to fix this code later.
 
-/obj/item/weapon/implant/reagent_generator/belle/ysaline
+/obj/item/implant/reagent_generator/belle/ysaline
 	name = "lactation implant"
 	desc = "This is an implant that allows the user to lactate."
 	usable_volume = 1000
@@ -408,11 +409,11 @@
 	random_emote = list("supresses a moan", "gasps sharply", "bites her lower lip")
 	verb_name = "Milk"
 	verb_desc = "Grab Ysaline's breasts and milk her, storing her fresh, warm milk in a container. This will undoubtedly turn her on."
-
+*/
 // **************
 // Trash
 // **************
-/obj/item/weapon/fluff/fidgetspinner
+/obj/item/fluff/fidgetspinner
 	name = "Fidget spinner"
 	desc = "A spinning stress relief toy, upsetting family, friends, and employers for 500 years."
 	w_class = 1.0
@@ -420,7 +421,7 @@
 	icon_state = "fidgetspinner"
 	var/basestate = "fidgetspinner"
 
-/obj/item/weapon/fluff/fidgetspinner/red
+/obj/item/fluff/fidgetspinner/red
 	name = "Red fidget spinner"
 	desc = "A spinning stress relief toy, upsetting family, friends, and employers for 500 years. This one is red"
 	w_class = 1.0
@@ -428,7 +429,7 @@
 	icon_state = "fidgetspinnerr"
 	basestate = "fidgetspinnerr"
 
-/obj/item/weapon/fluff/fidgetspinner/yellow
+/obj/item/fluff/fidgetspinner/yellow
 	name = "Yellow fidget spinner"
 	desc = "A spinning stress relief toy, upsetting family, friends, and employers for 500 years. This one is yellow"
 	w_class = 1.0
@@ -436,36 +437,36 @@
 	icon_state = "fidgetspinnery"
 	basestate = "fidgetspinnery"
 
-/obj/item/weapon/fluff/fidgetspinner/attack_self(mob/living/user)
+/obj/item/fluff/fidgetspinner/attack_self(mob/living/user)
 	if(user.r_hand == src || user.l_hand == src)
 		if(icon_state != "[basestate]-s")
 			icon_state = "[basestate]-s"
-			user.visible_message("<span class='rose'>[user] spins the [src]!</span>")
+			user.visible_message(span_rose("[user] spins the [src]!"))
 			spawn(100)
 				icon_state = "[basestate]"
 	else
 		return ..()
 	return
 
-/obj/item/weapon/fluff/squeezetoy
+/obj/item/fluff/squeezetoy
 	name = "Stress relief squeeze toy"
 	desc = "A toy squeezed to relieve stress, it’s squeaker appears to be broken from over use."
 	w_class = 1.0
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "squeezetoy"
 
-/obj/item/weapon/fluff/squeezetoy/attack_self(mob/living/user)
+/obj/item/fluff/squeezetoy/attack_self(mob/living/user)
 	if(user.r_hand == src || user.l_hand == src)
 		if(icon_state != "squeezetoy-s")
 			icon_state = "squeezetoy-s"
-			user.visible_message("<span class='rose'>[user] squeezes the [src] a few times!</span>")
+			user.visible_message(span_rose("[user] squeezes the [src] a few times!"))
 			spawn(50)
 				icon_state = "squeezetoy"
 	else
 		return ..()
 	return
 
-/obj/item/weapon/fluff/dimensioncube
+/obj/item/fluff/dimensioncube
 	var/folded = 1
 	name = "Infinity cube"
 	desc = "All the fun of a puzzle cube without any of the challenge, a good way to relieve stress and delude yourself into a sense of accomplishment."
@@ -473,15 +474,15 @@
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "infinitycube0"
 
-/obj/item/weapon/fluff/dimensioncube/attack_self(mob/living/user)
+/obj/item/fluff/dimensioncube/attack_self(mob/living/user)
 	if(user.r_hand == src || user.l_hand == src)
 		if(folded == 0)
 			icon_state = "infinitycube0"
-			user.visible_message("<span class='rose'>[user] folds the [src]!</span>")
+			user.visible_message(span_rose("[user] folds the [src]!"))
 			folded = 1
 		else if(folded == 1)
 			icon_state = "infinitycube1"
-			user.visible_message("<span class='rose'>[user] unfolds the [src]!</span>")
+			user.visible_message(span_rose("[user] unfolds the [src]!"))
 			folded = 0
 	else
 		return ..()
@@ -490,9 +491,9 @@
 // **************
 // SASOperative
 // **************
-
+/*
 // These seem to have been deprecated from loadouts? -KK
-/obj/item/device/modkit_conversion/fluff/skinner/a
+/obj/item/modkit_conversion/fluff/skinner/a
 	name = "Joseph's modkit Mk1"
 	desc = "A kit containing all the needed tools and parts to modify a security jumpsuit."
 
@@ -502,7 +503,7 @@
 	from_suit = /obj/item/clothing/under/rank/security
 	to_suit = /obj/item/clothing/under/rank/security/fluff/skinner
 
-/obj/item/device/modkit_conversion/fluff/skinner/b
+/obj/item/modkit_conversion/fluff/skinner/b
 	name = "Joseph's modkit Mk2"
 	desc = "A kit containing all the needed tools and parts to modify a security armor."
 
@@ -512,7 +513,7 @@
 	from_suit = /obj/item/clothing/suit/armor/vest
 	to_suit = /obj/item/clothing/suit/armor/vest/fluff/skinner
 
-/obj/item/device/modkit_conversion/fluff/skinner/c
+/obj/item/modkit_conversion/fluff/skinner/c
 	name = "Joseph's modkit Mk3"
 	desc = "A kit containing all the needed tools and parts to modify a security helmet."
 
@@ -521,52 +522,53 @@
 
 	from_suit = /obj/item/clothing/head/helmet
 	to_suit = /obj/item/clothing/head/helmet/fluff/skinner
-
+*/
 // **************
 // DeepIndigo
 // **************
-
-/obj/item/weapon/storage/bible/fluff/amina
+/*
+/obj/item/storage/bible/fluff/amina
 	name = "New Space Pioneer's Bible"
 	desc = "This one says it was printed in 2492. The name \"Eric Hayvers\" is written on the inside of the cover, crossed out. Under it is written \"Kouri, Amina, Marine Unit 14, Fifth Echelon. Service number NTN-5528928522372\""
-
+*/
 // **************
 // DameonOwen
 // **************
-
-/obj/item/weapon/reagent_containers/food/snacks/cookie/mysterious
+/*CHOMP Remove this causes runtimes
+/obj/item/reagent_containers/food/snacks/cookie/mysterious
 	name = "a mysterious cookie"
 	desc = "DAS A BIG COOKIE!!!"
 	bitesize = 100
 
-/obj/item/weapon/reagent_containers/food/snacks/cookie/mysterious/Initialize()
+/obj/item/reagent_containers/food/snacks/cookie/mysterious/Initialize(mapload)
 	. = ..()
 
-/obj/item/weapon/reagent_containers/food/snacks/cookie/mysterious/attack(mob/living/M as mob, mob/user as mob, def_zone)
+/obj/item/reagent_containers/food/snacks/cookie/mysterious/attack(mob/living/M as mob, mob/user as mob, def_zone)
 	. = ..()
 	if (M == user)
 		M.resize(3)
 		M.drop_from_inventory(src)
 		qdel(src)
-
+//CHOMP Remove end
+*/
 
 // **************
 // NESgamer190
 // **************
-
+/*
 //Lucy Price
-/obj/item/weapon/reagent_containers/food/drinks/flask/vacuumflask/fluff/lucyprice
+/obj/item/reagent_containers/food/drinks/flask/vacuumflask/fluff/lucyprice
 	name = "Cryostasis Thermos"
 	desc = " A thermos that has been designed to look something akin to a mix between a cryostasis beaker and a thermos.  Does NOT keep the drinks cold, surprisingly enough."
 	icon_state = "cryothermos"
 	icon = 'icons/vore/custom_items_yw.dmi'
-
+*/
 // **************
 // Moca_The_Porg1
 // **************
-
+/*
 //Mocha
-/obj/item/device/modkit_conversion/fluff/mocha_suit_kit
+/obj/item/modkit_conversion/fluff/mocha_suit_kit
 	name = "Mocha's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a Explorer Suit"
 	owner_ckey = "mocatheporg1"
@@ -576,18 +578,18 @@
 
 	from_suit = /obj/item/clothing/suit/storage/hooded/explorer
 	to_suit = /obj/item/clothing/suit/storage/hooded/fluff/mocha_suit
-
+*/
 // *************
 // Foxicide
 // *************
-/obj/item/weapon/material/knife/tacknife/survival/fluff/kaith
+/obj/item/material/knife/tacknife/survival/fluff/kaith
 	name = "Trusty Survival Knife"
 	desc = "An old looking knife with an outdated wooden handle. Still looks robust, though."
 	icon = 'icons/vore/custom_items_yw.dmi'
 	icon_state = "kaithknife"
 	named_from_material = 0
 
-/obj/item/device/modkit_conversion/fluff/kaith_knife_kit
+/obj/item/modkit_conversion/fluff/kaith_knife_kit
 	name = "Kaith's modkit"
 	desc = "A kit containing all the needed tools and parts to modify a survival knife"
 	owner_ckey = "foxicide"
@@ -595,42 +597,43 @@
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "modkit"
 
-	from_suit = /obj/item/weapon/material/knife/tacknife/survival
-	to_suit = /obj/item/weapon/material/knife/tacknife/survival/fluff/kaith
+	from_suit = /obj/item/material/knife/tacknife/survival
+	to_suit = /obj/item/material/knife/tacknife/survival/fluff/kaith
 
 // *************
 // Coda_Vanistok
 // *************
-/obj/item/weapon/implanter/fluff/coda
-	imp = new /obj/item/weapon/implant/fluff/coda
+/*
+/obj/item/implanter/fluff/coda
+	imp = new /obj/item/implant/fluff/coda
 	icon_state = "implanter1_1"
 
-/obj/item/weapon/implanter/fluff/coda/remove_implant() //No way to remove this implant.
-	to_chat(usr, "<span class='notice'>It seems \the [imp] can't be removed from \the [src].</span>")
+/obj/item/implanter/fluff/coda/remove_implant() //No way to remove this implant.
+	to_chat(usr, span_notice("It seems \the [imp] can't be removed from \the [src]."))
 	return
 
-/obj/item/weapon/implanter/fluff/coda/attack()
+/obj/item/implanter/fluff/coda/attack()
 	..()
 	if(!imp) //After injection, the implanter poofs.
-		to_chat(usr, "<span class='notice'>\The [src] disentegrates after you use it!</span>")
+		to_chat(usr, span_notice("\The [src] disentegrates after you use it!"))
 		qdel(src)
 
-/obj/item/weapon/implant/fluff/coda
+/obj/item/implant/fluff/coda
 	name = "locked size-modification implant"
 	desc = "This is an implant that allows the user to change their size. It appears to be locked to two settings."
 	var/mob/living/implanted_in = null
 
-/obj/item/weapon/implant/fluff/coda/post_implant(mob/source)
+/obj/item/implant/fluff/coda/post_implant(mob/source)
 	..()
 	var/mob/living/H = source
-	H.verbs += /obj/item/weapon/implant/fluff/coda/proc/coda_implant_resize
+	add_verb(H,/obj/item/implant/fluff/coda/proc/coda_implant_resize)  //CHOMPEdit
 	implanted_in = source
 	START_PROCESSING(SSobj, src)
 
-/obj/item/weapon/implant/fluff/coda/process()
+/obj/item/implant/fluff/coda/process()
 	if(implanted_in && (src.imp_in != implanted_in)) //If the implant is removed.
 		implanted_in.setBrainLoss(200)
-		visible_message("<span class='notice'>\The [src] shorts and sparks during removal, frying itself!</span>")
+		visible_message(span_notice("\The [src] shorts and sparks during removal, frying itself!"))
 		playsound(src.loc, "sparks", 50, 1)
 		STOP_PROCESSING(SSobj, src)
 		name = "melted implant"
@@ -638,10 +641,10 @@
 		icon_state = "implant_melted"
 		malfunction = MALFUNCTION_PERMANENT
 
-/obj/item/weapon/implant/fluff/coda/proc/coda_implant_resize(var/mob/living/carbon/human/H)
+/obj/item/implant/fluff/coda/proc/coda_implant_resize(mob/living/carbon/human/H)
 	set name = "Resize (Implant)"
 	set desc = "Change your size between two different preset options."
-	set category = "IC"
+	set category = "IC.Game" //CHOMPEdit
 
 	if(H.stat == DEAD)
 		return
@@ -650,11 +653,11 @@
 			H.resize(1)
 		if("Large")
 			H.resize(1.22)
-
+*/
 // *************
 // Dopiotl
 // *************
-/obj/item/weapon/storage/secure/briefcase/fluff/jeans
+/obj/item/storage/secure/briefcase/fluff/jeans
 	name = "Sweet Ebony"
 	desc = "An ebony/wooden secure case lined with gold. It looks thick, heavy, expensive, and incredibly sturdy. The design is sleek and elegant, adorned in intricate markings on the side, with hand-crafted artwork of a constellation you can't quite seem to recollect. It is surprisingly cold to the touch."
 	icon = 'icons/vore/custom_items_yw.dmi'
@@ -665,21 +668,20 @@
 		slot_r_hand_str = 'icons/vore/custom_items_right_hand_yw.dmi',
 		)
 	var/list/has_items = list(
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-		/obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        /obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
-        )
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		/obj/item/reagent_containers/food/snacks/chocolatebar,
+		)
 
-/obj/item/weapon/storage/secure/briefcase/fluff/jeans/New() //this is entierly nessicary to spawn stuff. "FUN" -luke
+/obj/item/storage/secure/briefcase/fluff/jeans/Initialize(mapload) //this is entierly nessicary to spawn stuff. "FUN" -luke
 	storage_slots = has_items.len
 	allowed = list()
 	for(var/P in has_items)
 		allowed += P
 		new P(src)
-	..()
-	return
+	. = ..()

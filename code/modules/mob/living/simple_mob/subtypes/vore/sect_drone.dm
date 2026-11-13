@@ -14,7 +14,7 @@
 	yet to uncover. \
 	<br>\
 	The lack of chitin on the underside of its abdomen is very elastic and stretchable, \
-	allowing the drone to carry multiple large prey inside of its stomach with relative ease." //CHOMPedit
+	allowing the drone to carry multiple large prey inside of its stomach with relative ease."
 	value = CATALOGUER_REWARD_MEDIUM
 
 /mob/living/simple_mob/vore/sect_drone
@@ -30,13 +30,15 @@
 	icon = 'icons/mob/vore64x64.dmi'
 	vis_height = 64
 	has_eye_glow = TRUE
+	vore_eyes = TRUE
+	custom_eye_color = "#00FFFF"
 
-	faction = "insects"
+	faction = FACTION_INSECTS
 	maxHealth = 90
 	health = 90
 	see_in_dark = 8
 
-	movement_cooldown = 3
+	movement_cooldown = 0
 
 	melee_damage_lower = 6
 	melee_damage_upper = 12
@@ -46,6 +48,9 @@
 	vore_capacity = 1
 	vore_pounce_chance = 70 // v hongry buggo
 	vore_icons = SA_ICON_LIVING
+
+	meat_amount = 4
+	meat_type = /obj/item/reagent_containers/food/snacks/xenomeat/spidermeat
 
 	//Beeg bug don't give a fuck about atmos. Something something, phoron mutation.
 	min_oxy = 0
@@ -78,6 +83,23 @@
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee
 	say_list_type = /datum/say_list/sect_drone
+
+	allow_mind_transfer = TRUE
+
+/mob/living/simple_mob/vore/sect_drone/Login()
+	. = ..()
+	add_verb(src,  /mob/living/simple_mob/vore/sect_drone/proc/set_abdomen_color)
+
+/mob/living/simple_mob/vore/sect_drone/proc/set_abdomen_color()
+	set name = "Set Glow Color"
+	set desc = "Customize your eyes and abdomen glow color."
+	set category = "Abilities.Sect Drone"
+
+	var/new_color = tgui_color_picker(src, "Please select color.", "Glow Color", custom_eye_color)
+	if(new_color)
+		custom_eye_color = new_color
+		remove_eyes()
+		add_eyes()
 
 /datum/say_list/sect_drone
 	say_got_target = list("chitters threateningly!")

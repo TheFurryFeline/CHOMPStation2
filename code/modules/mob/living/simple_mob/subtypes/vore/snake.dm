@@ -12,7 +12,7 @@
 	this new species for any differences in behavior or biology beyond the increase in size. \
 	<br>\
 	This species of snake is nonvenomous and use their large bodies to primarily subdue their prey. \
-	Nonvenomous snakes either swallow prey alive or kill them by constriction - this is dependant on the prey. \
+	Nonvenomous snakes either swallow prey alive or kill them by constriction - this is dependent on the prey. \
 	<br>\
 	This snake is extremely hostile to all wildlife and living beings and should be avoided at all costs. \
 	People who spot these creatures are urged to inform the nearest militant entity so that they can be \
@@ -31,12 +31,15 @@
 	icon = 'icons/mob/vore64x64.dmi'
 	vis_height = 64
 
-	faction = "snake"
+	faction = FACTION_SNAKE
 	maxHealth = 200
 	health = 200
 
 	melee_damage_lower = 5
 	melee_damage_upper = 12
+
+	meat_amount = 6
+	meat_type = /obj/item/reagent_containers/food/snacks/meat
 
 	response_help = "pats"
 	response_disarm = "tries to shove"
@@ -51,6 +54,9 @@
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee
 
+	can_be_drop_prey = FALSE
+	allow_mind_transfer = TRUE
+
 // Activate Noms!
 /mob/living/simple_mob/vore/aggressive/giant_snake
 	vore_active = 1
@@ -58,10 +64,8 @@
 	vore_icons = SA_ICON_LIVING
 	swallowTime = 2 SECONDS // Hungry little bastards.
 
-/mob/living/simple_mob/vore/aggressive/giant_snake/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/vore/aggressive/giant_snake/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.name = "stomach"
 	B.desc = "As the giant snake's closed jaws seal you away from the outside world, you are immediately greeted with a seemingly endless passage of tightly squeezing flesh. Hot and coated in thick, body-clinging slime, the serpent's stomach walls immediately get to work at rhythmically pulsing and contracting against your figure, slowly tugging you deeper into its ravenous clutches."

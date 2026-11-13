@@ -5,19 +5,6 @@
 	var/list/owned_soul_links	// Soul links we are the owner of.
 	var/list/shared_soul_links	// Soul links we are a/the sharer of.
 
-/mob/living/Destroy()
-	for(var/s in owned_soul_links)
-		var/datum/soul_link/S = s
-		S.owner_died(FALSE)
-		qdel(s) // If the owner is destroy()'d, the soullink is destroy()'d.
-	owned_soul_links = null
-	for(var/s in shared_soul_links)
-		var/datum/soul_link/S = s
-		S.sharer_died(FALSE)
-		S.remove_soul_sharer(src) // If a sharer is destroy()'d, they are simply removed.
-	shared_soul_links = null
-	return ..()
-
 // Keeps track of a Mob->Mob (potentially Player->Player) connection.
 // Can be used to trigger actions on one party when events happen to another.
 // Eg: shared deaths.
@@ -82,8 +69,7 @@
 	soul_owner = owner
 	soul_sharers = sharers
 	LAZYADD(owner.owned_soul_links, src)
-	for(var/l in sharers)
-		var/mob/living/L = l
+	for(var/mob/living/L as anything in sharers)
 		LAZYADD(L.shared_soul_links, src)
 	return TRUE
 
@@ -144,8 +130,7 @@
 /datum/soul_link/multi_sharer/replacement_pool/owner_died(gibbed, mob/living/owner)
 	if(LAZYLEN(soul_sharers) && !gibbed) //let's not put them in some gibs
 		var/list/souls = shuffle(soul_sharers.Copy())
-		for(var/l in souls)
-			var/mob/living/L = l
+		for(var/mob/living/L as anything in souls)
 			if(L.stat != DEAD && L.mind)
 				L.mind.transfer_to(soul_owner)
 				soul_owner.revive(TRUE, TRUE)

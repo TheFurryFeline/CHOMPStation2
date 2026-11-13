@@ -8,13 +8,13 @@
 	name = "event"
 	icon = 'icons/obj/overmap.dmi'
 	icon_state = "event"
-	opacity = 1	
+	opacity = 1
 	var/list/events							// List of event datum paths
 	var/list/event_icon_states				// Randomly picked from
 	var/difficulty = EVENT_LEVEL_MODERATE
 	var/weaknesses //if the BSA can destroy them and with what
 
-/obj/effect/overmap/event/Initialize()
+/obj/effect/overmap/event/Initialize(mapload)
 	. = ..()
 	icon_state = pick(event_icon_states)
 	GLOB.overmap_event_handler.update_hazards(loc)

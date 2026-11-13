@@ -1,7 +1,7 @@
 /obj/machinery/power/am_engine
 	icon = 'icons/am_engine.dmi'
-	density = 1
-	anchored = 1.0
+	density = TRUE
+	anchored = TRUE
 	flags = ON_BORDER
 
 /obj/machinery/power/am_engine/bits
@@ -28,21 +28,17 @@
 
 //injector
 
-/obj/machinery/power/am_engine/injector/New()
-	..()
-	spawn( 13 )
-		var/loc = get_step(src, NORTH)
-		src.connected = locate(/obj/machinery/power/am_engine/engine, get_step(loc, NORTH))
-		return
-	return
+/obj/machinery/power/am_engine/injector/Initialize(mapload)
+	. = ..()
+	var/link_loc = get_step(src, NORTH)
+	src.connected = locate(/obj/machinery/power/am_engine/engine, get_step(link_loc, NORTH))
 
-
-/obj/machinery/power/am_engine/injector/attackby(obj/item/weapon/fuel/F, mob/user)
+/obj/machinery/power/am_engine/injector/attackby(obj/item/fuel/F, mob/user)
 	if( (stat & BROKEN) || !connected) return
 
-	if(istype(F, /obj/item/weapon/fuel/H))
+	if(istype(F, /obj/item/fuel/H))
 		if(injecting)
-			to_chat(user, "Theres already a fuel rod in the injector!")
+			to_chat(user, "There's already a fuel rod in the injector!")
 			return
 		to_chat(user, "You insert the rod into the injector")
 		injecting = 1
@@ -50,12 +46,12 @@
 		qdel(F)
 		spawn( 300 )
 			injecting = 0
-			new/obj/item/weapon/fuel(src.loc)
+			new/obj/item/fuel(src.loc)
 			connected.H_fuel += fuel
 
-	if(istype(F, /obj/item/weapon/fuel/antiH))
+	if(istype(F, /obj/item/fuel/antiH))
 		if(injecting)
-			to_chat(user, "Theres already a fuel rod in the injector!")
+			to_chat(user, "There's already a fuel rod in the injector!")
 			return
 		to_chat(user, "You insert the rod into the injector")
 		injecting = 1
@@ -63,7 +59,7 @@
 		qdel(F)
 		spawn( 300 )
 			injecting = 0
-			new /obj/item/weapon/fuel(src.loc)
+			new /obj/item/fuel(src.loc)
 			connected.antiH_fuel += fuel
 
 	return
@@ -72,13 +68,10 @@
 //engine
 
 
-/obj/machinery/power/am_engine/engine/New()
-	..()
-	spawn( 7 )
-		var/loc = get_step(src, SOUTH)
-		src.connected = locate(/obj/machinery/power/am_engine/injector, get_step(loc, SOUTH))
-		return
-	return
+/obj/machinery/power/am_engine/engine/Initialize(mapload)
+	. = ..()
+	var/link_loc = get_step(src, SOUTH)
+	src.connected = locate(/obj/machinery/power/am_engine/injector, get_step(link_loc, SOUTH))
 
 
 /obj/machinery/power/am_engine/engine/proc/engine_go()
@@ -98,7 +91,7 @@
 		H_fuel = 0
 		antiH_fuel = 0
 	else
-		var/residual_matter = modulus(H_fuel - antiH_fuel)
+		var/residual_matter = abs(H_fuel - antiH_fuel)
 		var/mass = antiH_fuel + H_fuel - residual_matter
 		energy = convert2energy(mass)
 		if( H_fuel > antiH_fuel )
@@ -109,7 +102,7 @@
 			antiH_fuel = residual_matter
 
 	for(var/mob/M in hearers(src, null))
-		M.show_message(text("<font color='red'>You hear a loud bang!</font>"))
+		M.show_message(span_red(text("You hear a loud bang!")))
 
 	//Q = k x (delta T)
 
@@ -149,7 +142,7 @@
 		else	//else if they're not equal determine which isn't equal
 				//and set it equal to either H or antiH so we don't lose anything
 
-			var/residual_matter = modulus(H_fuel - antiH_fuel)
+			var/residual_matter = abs(H_fuel - antiH_fuel)
 			mass = antiH_fuel + H_fuel - residual_matter
 			energy = convert2energy(mass)
 
@@ -161,7 +154,7 @@
 
 		if(energy > convert2energy(8e-12))	//TOO MUCH ENERGY
 			for(var/mob/M in hearers(src, null))
-				M.show_message(text("<font color='red'>You hear a loud whirring!</font>"))
+				M.show_message(span_red(text("You hear a loud whirring!")))
 			sleep(20)
 
 			//Q = k x (delta T)
@@ -180,7 +173,7 @@
 
 			if(energy > convert2energy(8e-12))	//FAR TOO MUCH ENERGY STILL
 				for(var/mob/M in hearers(src, null))
-					M.show_message(text("<font color='red'><big>BANG!</big></font>"))
+					M.show_message(span_red(text("<big>BANG!</big>")))
 				new /obj/effect/bhole(src.loc)
 
 		else	//this amount of energy is okay so it does the proper output thing

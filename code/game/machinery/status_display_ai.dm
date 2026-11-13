@@ -2,11 +2,11 @@
 	var/overlay
 	var/ckey
 
-/datum/ai_emotion/New(var/over, var/key)
+/datum/ai_emotion/New(over, key)
 	overlay = over
 	ckey = key
 
-var/list/ai_status_emotions = list(
+GLOBAL_LIST_INIT(ai_status_emotions, list(
 	"Very Happy" 				= new /datum/ai_emotion("ai_veryhappy"),
 	"Happy" 					= new /datum/ai_emotion("ai_happy"),
 	"Neutral" 					= new /datum/ai_emotion("ai_neutral"),
@@ -28,12 +28,12 @@ var/list/ai_status_emotions = list(
 	"Heart" 					= new /datum/ai_emotion("ai_heart"),
 	"Tribunal" 					= new /datum/ai_emotion("ai_tribunal", "serithi"),
 	"Tribunal Malfunctioning"	= new /datum/ai_emotion("ai_tribunal_malf", "serithi")
-	)
+	))
 
-/proc/get_ai_emotions(var/ckey)
-	var/list/emotions = new
-	for(var/emotion_name in ai_status_emotions)
-		var/datum/ai_emotion/emotion = ai_status_emotions[emotion_name]
+/proc/get_ai_emotions(ckey)
+	var/list/emotions = list()
+	for(var/emotion_name in GLOB.ai_status_emotions)
+		var/datum/ai_emotion/emotion = GLOB.ai_status_emotions[emotion_name]
 		if(!emotion.ckey || emotion.ckey == ckey)
 			emotions += emotion_name
 
@@ -41,8 +41,10 @@ var/list/ai_status_emotions = list(
 
 /proc/set_ai_status_displays(mob/user as mob)
 	var/list/ai_emotions = get_ai_emotions(user.ckey)
-	var/emote = input("Please, select a status!", "AI Status", null, null) in ai_emotions
-	for (var/obj/machinery/M in machines) //change status
+	var/emote = tgui_input_list(user, "Please, select a status:", "AI Status", ai_emotions)
+	if(!emote)
+		return
+	for (var/obj/machinery/M in GLOB.machines) //change status
 		if(istype(M, /obj/machinery/ai_status_display))
 			var/obj/machinery/ai_status_display/AISD = M
 			AISD.emotion = emote
@@ -61,9 +63,10 @@ var/list/ai_status_emotions = list(
 	icon_state = "frame"
 	layer = ABOVE_WINDOW_LAYER
 	name = "AI display"
-	anchored = 1
-	density = 0
-	circuit =  /obj/item/weapon/circuitboard/ai_status_display
+	anchored = TRUE
+	density = FALSE
+	circuit =  /obj/item/circuitboard/ai_status_display
+	flags = WALL_ITEM
 
 	var/mode = 0	// 0 = Blank
 					// 1 = AI emoticon
@@ -80,9 +83,11 @@ var/list/ai_status_emotions = list(
 		attack_hand(user)
 	return
 
-/obj/machinery/ai_status_display/attack_ai/(mob/user as mob)
+/obj/machinery/ai_status_display/attack_ai(mob/user as mob)
 	var/list/ai_emotions = get_ai_emotions(user.ckey)
-	var/emote = input("Please, select a status!", "AI Status", null, null) in ai_emotions
+	var/emote = tgui_input_list(user, "Please, select a status:", "AI Status", ai_emotions)
+	if(!emote)
+		return
 	emotion = emote
 
 /obj/machinery/ai_status_display/process()
@@ -90,11 +95,11 @@ var/list/ai_status_emotions = list(
 
 /obj/machinery/ai_status_display/proc/update()
 	if(mode==0) //Blank
-		overlays.Cut()
+		cut_overlays()
 		return
 
 	if(mode==1)	// AI emoticon
-		var/datum/ai_emotion/ai_emotion = ai_status_emotions[emotion]
+		var/datum/ai_emotion/ai_emotion = GLOB.ai_status_emotions[emotion]
 		set_picture(ai_emotion.overlay)
 		return
 
@@ -102,16 +107,14 @@ var/list/ai_status_emotions = list(
 		set_picture("ai_bsod")
 		return
 
-/obj/machinery/ai_status_display/proc/set_picture(var/state)
+/obj/machinery/ai_status_display/proc/set_picture(state)
 	picture_state = state
-	if(overlays.len)
-		overlays.Cut()
-	overlays += image('icons/obj/status_display.dmi', icon_state=picture_state)
+	cut_overlays()
+	add_overlay(picture_state)
 
 /obj/machinery/ai_status_display/power_change()
 	..()
 	if(stat & NOPOWER)
-		if(overlays.len)
-			overlays.Cut()
+		cut_overlays()
 	else
 		update()

@@ -15,15 +15,14 @@
 // Having the turbines be way over their rated limit makes grid checks more likely.
 /datum/event2/meta/grid_check/proc/get_overpower()
 	var/highest_overpower = 0
-	for(var/T in GLOB.all_turbines)
-		var/obj/machinery/power/generator/turbine = T
+	for(var/obj/machinery/power/generator/turbine as anything in GLOB.all_turbines)
 		var/overpower = max((turbine.effective_gen / turbine.max_power) - 1, 0)
 		if(overpower > highest_overpower)
 			highest_overpower = overpower
 	return highest_overpower
 
 /datum/event2/meta/grid_check/get_weight()
-	var/population_factor = metric.count_people_in_department(DEPARTMENT_ENGINEERING) * 10
+	var/population_factor = GLOB.metric.count_people_in_department(DEPARTMENT_ENGINEERING) * 10
 	var/overpower_factor = 50 * get_overpower() // Will be 0 if not overloaded at all, and 50 if turbines are outputting twice as much as rated.
 	return (20 + population_factor + overpower_factor) / (times_ran + 1)
 
@@ -35,8 +34,7 @@
 /datum/event2/event/grid_check/set_up()
 	// Find the turbine being pushed the most.
 	var/obj/machinery/power/generator/most_stressed_turbine = null
-	for(var/T in GLOB.all_turbines)
-		var/obj/machinery/power/generator/turbine = T
+	for(var/obj/machinery/power/generator/turbine as anything in GLOB.all_turbines)
 		if(!most_stressed_turbine)
 			most_stressed_turbine = turbine
 		else if(turbine.effective_gen > most_stressed_turbine.effective_gen)

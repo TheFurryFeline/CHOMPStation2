@@ -1,10 +1,14 @@
-var/list/spawntypes = list()
+GLOBAL_LIST_INIT(spawntypes, populate_spawn_points())
 
 /proc/populate_spawn_points()
-	spawntypes = list()
-	for(var/type in typesof(/datum/spawnpoint)-/datum/spawnpoint)
-		var/datum/spawnpoint/S = new type()
-		spawntypes[S.display_name] = S
+	var/list/spawns = list()
+	for(var/type in subtypesof(/datum/spawnpoint))
+		var/datum/spawnpoint/spawn_point = new type()
+		spawns[spawn_point.display_name] = spawn_point
+	return spawns
+
+/proc/get_spawn_points()
+	return GLOB.spawntypes
 
 /datum/spawnpoint
 	var/msg          //Message to display on the arrivals computer.
@@ -13,26 +17,27 @@ var/list/spawntypes = list()
 	var/list/restrict_job = null
 	var/list/disallow_job = null
 	var/announce_channel = "Common"
+	var/allow_offmap_spawn = FALSE // add option to allow offmap spawns to a spawnpoint without entirely restricting that spawnpoint
 	var/allowed_mob_types = JOB_SILICON|JOB_CARBON
 
-	proc/check_job_spawning(job)
-		if(restrict_job && !(job in restrict_job))
-			return 0
+/datum/spawnpoint/proc/check_job_spawning(job)
+	if(restrict_job && !(job in restrict_job))
+		return 0
 
-		if(disallow_job && (job in disallow_job))
-			return 0
+	if(disallow_job && (job in disallow_job))
+		return 0
 
-		var/datum/job/J = SSjob.get_job(job)
-		if(!J) // Couldn't find, admin shenanigans? Allow it
-			return 1
-
-		if(J.offmap_spawn && !(job in restrict_job))
-			return 0
-
-		if(!(J.mob_type & allowed_mob_types))
-			return 0
-		
+	var/datum/job/J = SSjob.get_job(job)
+	if(!J) // Couldn't find, admin shenanigans? Allow it
 		return 1
+
+	if(J.offmap_spawn && !allow_offmap_spawn && !(job in restrict_job)) // add option to allow offmap spawns to a spawnpoint without entirely restricting that spawnpoint
+		return 0
+
+	if(!(J.mob_type & allowed_mob_types))
+		return 0
+
+	return 1
 
 /datum/spawnpoint/proc/get_spawn_position()
 	return get_turf(pick(turfs))
@@ -40,10 +45,11 @@ var/list/spawntypes = list()
 /datum/spawnpoint/arrivals
 	display_name = "Arrivals Shuttle"
 	msg = "will arrive to the station shortly by shuttle"
+	disallow_job = list(JOB_OUTSIDER) //CHOMPEdit add
 
 /datum/spawnpoint/arrivals/New()
 	..()
-	turfs = latejoin
+	turfs = GLOB.latejoin
 
 /datum/spawnpoint/gateway
 	display_name = "Gateway"
@@ -51,7 +57,7 @@ var/list/spawntypes = list()
 
 /datum/spawnpoint/gateway/New()
 	..()
-	turfs = latejoin_gateway
+	turfs = GLOB.latejoin_gateway
 /* VOREStation Edit
 /datum/spawnpoint/elevator
 	display_name = "Elevator"
@@ -65,16 +71,62 @@ var/list/spawntypes = list()
 	display_name = "Cryogenic Storage"
 	msg = "has completed cryogenic revival"
 	allowed_mob_types = JOB_CARBON
+	disallow_job = list(JOB_OUTSIDER) //CHOMPEdit add
 
 /datum/spawnpoint/cryo/New()
 	..()
-	turfs = latejoin_cryo
+	turfs = GLOB.latejoin_cryo
 
 /datum/spawnpoint/cyborg
 	display_name = "Cyborg Storage"
 	msg = "has been activated from storage"
 	allowed_mob_types = JOB_SILICON
+	disallow_job = list(JOB_OUTSIDER) //CHOMPEdit add
 
 /datum/spawnpoint/cyborg/New()
 	..()
-	turfs = latejoin_cyborg
+	turfs = GLOB.latejoin_cyborg
+
+/obj/effect/landmark/arrivals
+	name = "JoinLateShuttle"
+	delete_me = TRUE
+
+/obj/effect/landmark/arrivals/Initialize(mapload)
+	GLOB.latejoin += loc
+	. = ..()
+
+/obj/effect/landmark/tram
+	name = "JoinLateTram"
+	delete_me = TRUE
+
+/obj/effect/landmark/tram/Initialize(mapload)
+	GLOB.latejoin_tram += loc // There's no tram but you know whatever man!
+	. = ..()
+
+/datum/spawnpoint/tram
+	display_name = "Tram Station"
+	msg = "will arrive to the station shortly by shuttle"
+	disallow_job = list(JOB_OUTSIDER) //CHOMPEdit add
+
+/datum/spawnpoint/tram/New()
+	..()
+	turfs = GLOB.latejoin_tram
+
+/datum/spawnpoint/vore
+	display_name = "Vorespawn - Prey"
+	msg = "has arrived on the station"
+	allow_offmap_spawn = TRUE
+
+/datum/spawnpoint/vore/pred
+	display_name = "Vorespawn - Pred"
+	msg = "has arrived on the station"
+
+// CHOMPEnable Start
+/datum/spawnpoint/vore/itemtf
+	display_name = "Item TF spawn"
+	msg = "has arrived on the station"
+// CHOMPEnable End
+
+/datum/spawnpoint/vore/New()
+	..()
+	turfs = GLOB.latejoin

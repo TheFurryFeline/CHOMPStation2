@@ -17,11 +17,12 @@
 	if((. = ..()))
 		mode = 1
 
-/datum/nifsoft/medichines_org/deactivate()
+/datum/nifsoft/medichines_org/deactivate(force = FALSE)
 	if((. = ..()))
 		a_drain = initial(a_drain)
 		mode = initial(mode)
-		nif.human.Stasis(0)
+		if(nif.human)				// What if we deactivate because human is gone?
+			nif.human.Stasis(0)
 
 /datum/nifsoft/medichines_org/life()
 	if((. = ..()))
@@ -49,7 +50,7 @@
 			mode = 3
 			if(!isbelly(H.loc)) //Not notified in case of vore, for gameplay purposes.
 				var/turf/T = get_turf(H)
-				var/obj/item/device/radio/headset/a = new /obj/item/device/radio/headset/heads/captain(null)
+				var/obj/item/radio/headset/a = new /obj/item/radio/headset/heads/captain(null)
 				a.autosay("[H.real_name] has been put in emergency stasis, located at ([T.x],[T.y],[T.z])!", "[H.real_name]'s NIF", "Medical")
 				qdel(a)
 
@@ -89,20 +90,21 @@
 	var/mode = 0
 	health_flags = (NIF_H_SYNTHREPAIR)
 
+
 	//These self-activate on their own, these aren't user-settable to on/off.
 /datum/nifsoft/medichines_syn/activate()
 	if((. = ..()))
 		mode = 1
 
-/datum/nifsoft/medichines_syn/deactivate()
+/datum/nifsoft/medichines_syn/deactivate(force = FALSE)
 	if((. = ..()))
 		mode = 0
 
 /datum/nifsoft/medichines_syn/life()
 	if((. = ..()))
-		var/mob/living/carbon/human/H = nif.human // Chomp Edit
-		var/HP_percent = H.health/H.getMaxHealth() // Chomp Edit
 		//We're good!
+		var/mob/living/carbon/human/S = nif.human
+		var/HP_percent = S.health/S.getMaxHealth()
 		if(!nif.human.bad_external_organs.len)
 			if(mode || active)
 				nif.notify("User Status: NORMAL. Medichines deactivating.")
@@ -115,10 +117,8 @@
 //Needs fixing			W << 'sound/voice/nifmedsynth_injured.ogg' //CHOMP Add
 			activate()
 
-		for(var/eo in nif.human.bad_external_organs)
-			var/obj/item/organ/external/EO = eo
-			for(var/w in EO.wounds)
-				var/datum/wound/W = w
+		for(var/obj/item/organ/external/EO as anything in nif.human.bad_external_organs)
+			for(var/datum/wound/W as anything in EO.wounds)
 				if(W.damage <= 30) // Chomp Edit // The current limb break threshold.
 					W.heal_damage(0.1)
 					EO.update_damages()
@@ -132,14 +132,25 @@
 				// Chomp Edit Start //
 				else if(mode == 2 && HP_percent < -0.4)
 					nif.notify("User Status: CRITICAL. Notifying medical!",TRUE)
-					H << 'sound/voice/nifmed_critical.ogg' //CHOMP Add
+					S << 'sound/voice/nifmed_critical.ogg' //CHOMP Add
 					mode = 0
-					if(!isbelly(H.loc)) //Not notified in case of vore, for gameplay purposes.
-						var/turf/T = get_turf(H)
-						var/obj/item/device/radio/headset/a = new /obj/item/device/radio/headset/heads/captain(null)
-						a.autosay("[H.real_name] is in critical condition, located at ([T.x],[T.y],[T.z])!", "[H.real_name]'s NIF", "Medical")
+					if(!isbelly(S.loc)) //Not notified in case of vore, for gameplay purposes.
+						var/turf/T = get_turf(S)
+						var/obj/item/radio/headset/a = new /obj/item/radio/headset/heads/captain(null)
+						a.autosay("[S.real_name] is in critical condition, located at ([T.x],[T.y],[T.z])!", "[S.real_name]'s NIF", "Medical")
 						qdel(a)
 				// Chomp Edit End //
+
+		/* //Chomp Comment out, using our solution instead of their backport and edit of our solution.
+		if(mode == 2 && HP_percent < -0.4) //lets inform someone who might be able to help us that we got toasted and roasted
+			nif.notify("User Status: CRITICAL. Notifying medical!",TRUE)
+			mode = 3 //this does nothing except stop it from repeating over and over and over and over and over and over and over
+			if(!isbelly(S.loc)) //Not notified in case of vore, for gameplay purposes.
+				var/turf/T = get_turf(S)
+				var/obj/item/radio/headset/a = new /obj/item/radio/headset/heads/captain(null)
+				a.autosay("[S.real_name] is in a critical condition, located at ([T.x],[T.y],[T.z])!", "[S.real_name]'s NIF", "Medical")
+				qdel(a)
+		*/ //Chomp comment out END
 
 		return TRUE
 
@@ -163,7 +174,7 @@
 	if((. = ..()))
 		nif.notify("Now taking air from reserves.")
 
-/datum/nifsoft/spare_breath/deactivate()
+/datum/nifsoft/spare_breath/deactivate(force = FALSE)
 	if((. = ..()))
 		nif.notify("Now taking air from environment and refilling reserves.")
 
@@ -194,7 +205,7 @@
 /datum/nifsoft/spare_breath/proc/resp_breath()
 	if(!active) return null
 	var/datum/gas_mixture/breath = new(BREATH_VOLUME)
-	breath.adjust_gas("oxygen", BREATH_MOLES)
+	breath.adjust_gas(GAS_O2, BREATH_MOLES)
 	breath.temperature = T20C
 	return breath
 
@@ -214,7 +225,7 @@
 		deactivate()
 		return TRUE
 
-/datum/nifsoft/mindbackup/deactivate()
+/datum/nifsoft/mindbackup/deactivate(force = FALSE)
 	if((. = ..()))
 		return TRUE
 

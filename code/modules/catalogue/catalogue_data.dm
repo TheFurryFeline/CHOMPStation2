@@ -103,8 +103,8 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 						. += item
 
 /datum/category_item/catalogue/proc/display_in_chatlog(mob/user)
-	to_chat(user, "<br>")
-	to_chat(user, span("notice", "<b>[uppertext(name)]</b>"))
+	to_chat(user, span_infoplain("<br>"))
+	to_chat(user, span_boldnotice("[uppertext(name)]"))
 
 	// Some entries get very long so lets not totally flood the chatlog.
 	var/desc_length_limit = 750
@@ -113,9 +113,9 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 		displayed_desc = copytext(displayed_desc, 1, desc_length_limit + 1)
 		displayed_desc += "... (View databanks for full data)"
 
-	to_chat(user, span("notice", "<i>[displayed_desc]</i>"))
-	to_chat(user, span("notice", "Cataloguers : <b>[english_list(cataloguers)]</b>."))
-	to_chat(user, span("notice", "Contributes <b>[value]</b> points to personal exploration fund."))
+	to_chat(user, span_notice(span_italics("[displayed_desc]")))
+	to_chat(user, span_notice("Cataloguers : <b>[english_list(cataloguers)]</b>."))
+	to_chat(user, span_notice("Contributes <b>[value]</b> points to personal exploration fund."))
 
 /*
 		// Truncates text to limit if necessary.
@@ -139,7 +139,7 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	<br><br>\
 	Humanity is the primary driving force for rapid space expansion, owing to their strong, expansionist central \
 	government and opportunistic Trans-Stellar Corporations. The prejudices of the 21st century have mostly \
-	given way to bitter divides on the most important issue of the times� technological expansionism, \
+	given way to bitter divides on the most important issue of the times- technological expansionism, \
 	with the major human factions squabbling over their approach to technology in the face of a \
 	looming singularity.\
 	<br><br>\
@@ -170,7 +170,7 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	desc = "The Unathi are a species of large reptilian humanoids hailing from Moghes, in the \
 	Uueoa-Esa binary star system. Most Unathi live in a semi-rigid clan system, and clan \
 	enclaves dot the surface of their homeworld. Proud and long-lived, Unathi of all \
-	walks of life display a tendency towards perfectionism, and mastery of one�s craft \
+	walks of life display a tendency towards perfectionism, and mastery of one's craft \
 	is greatly respected among them. Despite the aggressive nature of their contact, \
 	Unathi seem willing, if not eager, to reconcile with humanity, though mutual \
 	distrust runs rampant among individuals of both groups."
@@ -181,7 +181,7 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	desc = "Tajaran are a race of humanoid mammalian aliens from Meralar, the fourth planet \
 	of the Rarkajar star system. Thickly furred and protected from cold, they thrive on \
 	their subartic planet, where the only terran temperate areas spread across the \
-	equator and �tropical belt.�\
+	equator and \"tropical belt.\"\
 	<br><br>\
 	With their own share of bloody wars and great technological advances, the Tajaran are a \
 	proud kind. They fiercely believe they belong among the stars and consider themselves \
@@ -209,15 +209,16 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 
 /datum/category_item/catalogue/fauna/teshari
 	name = "Sapients - Teshari"
-	desc = "The Teshari are reptilian pack predators from the Skrell homeworld. \
+	desc = "The Teshari are nomadic pack predators from the Skrell homeworld. \
 	While they evolved alongside the Skrell, their interactions with them tended \
 	to be confused and violent, and until peaceful contact was made they largely \
-	stayed in their territories on and around the poles, in tundral terrain far \
-	too desolate and cold to be of interest to the Skrell. In more enlightened \
-	times, the Teshari are a minority culture on many Skrell worlds, maintaining \
-	their own settlements and cultures, but often finding themselves standing \
-	on the shoulders of their more technologically advanced neighbors when it \
-	comes to meeting and exploring the rest of the galaxy."
+	stayed in their territories on and around the poles, in tundral and alpine terrain \
+	far too desolate and cold to be of interest to the Skrell. In more enlightened \
+	times, the Teshari are a society of their own, holding territory on their home \
+	world as well as several colonies on others. They often found themselves \
+	standing on the shoulders of their more technologically advanced neighbours \
+	when it came to meeting and exploring the rest of the galaxy, but their \
+	independence has since grown."
 	value = CATALOGUER_REWARD_TRIVIAL
 
 /datum/category_item/catalogue/fauna/zaddat
@@ -273,11 +274,11 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	desc = "A Positronic being, often an Android, Gynoid, or Robot, is an individual with a positronic brain, \
 	manufactured and fostered amongst organic life Positronic brains enjoy the same legal status as a humans, \
 	although discrimination is still common, are considered sapient on all accounts, and can be considered \
-	the �synthetic species�. Half-developed and half-discovered in the 2280�s by a black lab studying alien \
+	the \"synthetic species\". Half-developed and half-discovered in the 2280's by a black lab studying alien \
 	artifacts, the first positronic brain was an inch-wide cube of palladium-iridium alloy, nano-etched with \
 	billions upon billions of conduits and connections. Upon activation, hard-booted by way of an emitter \
 	laser, the brain issued a single sentence before the neural pathways collapsed and it became an inert \
-	lump of platinum: �What is my purpose?�."
+	lump of platinum: \"What is my purpose?\"."
 	value = CATALOGUER_REWARD_TRIVIAL
 
 /datum/category_item/catalogue/technology/cyborgs
@@ -289,7 +290,6 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	for those who are still have more organic parts than just their brains, but for example have a \
 	full set of prosthetic limbs."
 	value = CATALOGUER_REWARD_TRIVIAL
-
 
 /datum/category_item/catalogue/information
 
@@ -352,9 +352,9 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	name = "TSC - Major Bill's Transportation"
 	datum_to_copy = /datum/lore/organization/tsc/mbt
 
-/datum/category_item/catalogue/information/organization/solgov //YW EDIT
-	name = "Government - Solar Confederate Government" //YW EDIT
-	datum_to_copy = /datum/lore/organization/gov/solgov //YW EDIT
+/datum/category_item/catalogue/information/organization/solgov //VS EDIT 1
+	name = "Government - Commonwealth of Sol-Procyon" //VS EDIT 2
+	datum_to_copy = /datum/lore/organization/gov/commonwealth //VS EDIT 3
 
 /* //VOREStation Removal
 /datum/category_item/catalogue/information/organization/virgov
@@ -423,7 +423,7 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 	<br><br>\
 	It should be noted that the findings in this group appear to conflict heavily with what is \
 	known about the Singularitarians, giving some credence towards these objects belonging to a \
-	seperate precursor. As such, the findings have been partitioned inside this scanner to this \
+	separate precursor. As such, the findings have been partitioned inside this scanner to this \
 	group, labeled Precursor Group Alpha."
 	value = CATALOGUER_REWARD_TRIVIAL
 	unlocked_by_any = list(/datum/category_item/catalogue/anomalous/precursor_a)
@@ -435,5 +435,3 @@ GLOBAL_DATUM_INIT(catalogue_data, /datum/category_collection/catalogue, new)
 
 
 /datum/category_item/catalogue/material
-
-

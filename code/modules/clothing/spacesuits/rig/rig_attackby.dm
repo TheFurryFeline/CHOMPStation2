@@ -1,4 +1,4 @@
-/obj/item/weapon/rig/attackby(obj/item/W as obj, mob/living/user as mob)
+/obj/item/rig/attackby(obj/item/W, mob/living/user)
 	if(!istype(user))
 		return 0
 
@@ -7,30 +7,30 @@
 			return
 
 	// Pass repair items on to the chestpiece.
-	if(chest && (istype(W,/obj/item/stack/material) || istype(W, /obj/item/weapon/weldingtool)))
+	if(chest && (istype(W,/obj/item/stack/material) || W.has_tool_quality(TOOL_WELDER)))
 		return chest.attackby(W,user)
 
 	// Lock or unlock the access panel.
 	if(W.GetID())
 		if(subverted)
 			locked = 0
-			to_chat(user, "<span class='danger'>It looks like the locking system has been shorted out.</span>")
+			to_chat(user, span_danger("It looks like the locking system has been shorted out."))
 			return
 
-		if((!req_access || !req_access.len) && (!req_one_access || !req_one_access.len))
+		if(!LAZYLEN(req_access) && !LAZYLEN(req_one_access))
 			locked = 0
-			to_chat(user, "<span class='danger'>\The [src] doesn't seem to have a locking mechanism.</span>")
+			to_chat(user, span_danger("\The [src] doesn't seem to have a locking mechanism."))
 			return
 
 		if(security_check_enabled && !src.allowed(user))
-			to_chat(user, "<span class='danger'>Access denied.</span>")
+			to_chat(user, span_danger("Access denied."))
 			return
 
 		locked = !locked
 		to_chat(user, "You [locked ? "lock" : "unlock"] \the [src] access panel.")
 		return
 
-	else if(W.is_crowbar())
+	else if(W.has_tool_quality(TOOL_CROWBAR))
 		if(!open && locked)
 			to_chat(user, "The access panel is locked shut.")
 			return
@@ -41,14 +41,14 @@
 
 	if(open)
 		// Hacking.
-		if(W.is_wirecutter() || istype(W, /obj/item/device/multitool))
+		if(W.has_tool_quality(TOOL_WIRECUTTER) || istype(W, /obj/item/multitool))
 			if(open)
 				wires.Interact(user)
 			else
 				to_chat(user, "You can't reach the wiring.")
 			return
 		// Air tank.
-		if(istype(W,/obj/item/weapon/tank)) //Todo, some kind of check for suits without integrated air supplies.
+		if(istype(W,/obj/item/tank)) //Todo, some kind of check for suits without integrated air supplies.
 
 			if(air_supply)
 				to_chat(user, "\The [src] already has a tank installed.")
@@ -64,10 +64,10 @@
 
 		// Check if this is a hardsuit upgrade or a modification.
 		else if(istype(W,/obj/item/rig_module))
-			if(istype(src.loc,/mob/living/carbon/human))
+			if(ishuman(src.loc))
 				var/mob/living/carbon/human/H = src.loc
 				if(H.back == src || H.belt == src)
-					to_chat(user, "<span class='danger'>You can't install a hardsuit module while the suit is being worn.</span>")
+					to_chat(user, span_danger("You can't install a hardsuit module while the suit is being worn."))
 					return 1
 
 			if(!installed_modules)
@@ -80,7 +80,7 @@
 
 			var/obj/item/rig_module/mod = W
 			to_chat(user, "You begin installing \the [mod] into \the [src].")
-			if(!do_after(user,40))
+			if(!do_after(user, 4 SECONDS, target = src))
 				return
 			if(!user || !W)
 				return
@@ -93,7 +93,7 @@
 			update_icon()
 			return 1
 
-		else if(!cell && istype(W,/obj/item/weapon/cell))
+		else if(!cell && istype(W,/obj/item/cell))
 
 			if(!user.unEquip(W))
 				return
@@ -102,7 +102,7 @@
 			src.cell = W
 			return
 
-		else if(W.is_wrench())
+		else if(W.has_tool_quality(TOOL_WRENCH))
 
 			if(!air_supply)
 				to_chat(user, "There is no tank to remove.")
@@ -116,17 +116,17 @@
 			air_supply = null
 			return
 
-		else if(W.is_screwdriver())
+		else if(W.has_tool_quality(TOOL_SCREWDRIVER))
 
 			var/list/current_mounts = list()
 			if(cell) current_mounts   += "cell"
 			if(installed_modules && installed_modules.len) current_mounts += "system module"
 
-			var/to_remove = input("Which would you like to modify?") as null|anything in current_mounts
+			var/to_remove = tgui_input_list(user, "Which would you like to modify?", "Removal Choice", current_mounts)
 			if(!to_remove)
 				return
 
-			if(istype(src.loc,/mob/living/carbon/human) && to_remove != "cell")
+			if(ishuman(src.loc) && to_remove != "cell")
 				var/mob/living/carbon/human/H = src.loc
 				if(H.back == src || H.belt == src)
 					to_chat(user, "You can't remove an installed device while the hardsuit is being worn.")
@@ -136,7 +136,7 @@
 
 				if("cell")
 
-					if(cell && !unremovable_cell) //CHOMP Edit - addition for living protean hardsuit
+					if(cell)
 						to_chat(user, "You detach \the [cell] from \the [src]'s battery mount.")
 						for(var/obj/item/rig_module/module in installed_modules)
 							module.deactivate()
@@ -160,7 +160,7 @@
 						to_chat(user, "There are no installed modules to remove.")
 						return
 
-					var/removal_choice = input("Which module would you like to remove?") as null|anything in possible_removals
+					var/removal_choice = tgui_input_list(user, "Which module would you like to remove?", "Removal Choice", possible_removals)
 					if(!removal_choice)
 						return
 
@@ -181,18 +181,18 @@
 	..()
 
 
-/obj/item/weapon/rig/attack_hand(var/mob/user)
+/obj/item/rig/attack_hand(mob/user)
 
 	if(electrified != 0)
 		if(shock(user)) //Handles removing charge from the cell, as well. No need to do that here.
 			return
 	..()
 
-/obj/item/weapon/rig/emag_act(var/remaining_charges, var/mob/user)
+/obj/item/rig/emag_act(remaining_charges, mob/user)
 	if(!subverted)
-		req_access.Cut()
-		req_one_access.Cut()
+		LAZYCLEARLIST(req_access)
+		LAZYCLEARLIST(req_one_access)
 		locked = 0
 		subverted = 1
-		to_chat(user, "<span class='danger'>You short out the access protocol for the suit.</span>")
+		to_chat(user, span_danger("You short out the access protocol for the suit."))
 		return 1

@@ -1,0 +1,2620 @@
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"aa" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/structure/table/woodentable,
+/obj/random/projectile/scrapped_gun,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ab" = (
+/obj/structure/bed,
+/obj/item/bedsheet,
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ac" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/stolenpackage,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ad" = (
+/obj/machinery/door/airlock,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ae" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 10
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"af" = (
+/obj/effect/floor_decal/corner/blue/border,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ag" = (
+/obj/effect/floor_decal/corner/blue/border,
+/obj/machinery/light,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ah" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ai" = (
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"aj" = (
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ak" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 4
+	},
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"al" = (
+/mob/living/simple_mob/mechanical/mecha/eclipse/bomb_mauler,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"am" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/structure/table/standard,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"an" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ao" = (
+/obj/random/mob/merc/all,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"aN" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"aQ" = (
+/obj/machinery/porta_turret/poi{
+	faction = "syndicate"
+	},
+/turf/simulated/floor/plating{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"bg" = (
+/obj/random/landmine,
+/turf/template_noop,
+/area/template_noop)
+"bk" = (
+/obj/structure/table/rack/shelf,
+/obj/random/toolbox,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"bl" = (
+/obj/random/landmine,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"bz" = (
+/obj/machinery/light{
+	dir = 4
+	},
+/obj/structure/table/standard,
+/obj/random/material/precious,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"bS" = (
+/obj/structure/table/woodentable,
+/obj/item/oar,
+/obj/item/oar,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"cd" = (
+/obj/structure/cliff/automatic{
+	dir = 8
+	},
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"cj" = (
+/obj/machinery/light,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"db" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/storage/toolbox/lunchbox/syndicate/filled,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"dh" = (
+/obj/structure/cliff/automatic{
+	dir = 4
+	},
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"dI" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 9
+	},
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"fq" = (
+/obj/item/mine/phoron,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"fw" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/jellyfishcore,
+/obj/item/reagent_containers/food/snacks/monkfishfillet,
+/obj/item/reagent_containers/food/snacks/monkfishfillet,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"fL" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"fP" = (
+/obj/vehicle/boat/dragon,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"fR" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"fS" = (
+/obj/machinery/light,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"go" = (
+/turf/template_noop,
+/area/template_noop)
+"hZ" = (
+/obj/structure/table/reinforced,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"iG" = (
+/obj/structure/table/bench/padded,
+/mob/living/simple_mob/humanoid/merc/ranged/deagle,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/machinery/light,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"iL" = (
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/random/pottedplant,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"jb" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"jf" = (
+/obj/effect/floor_decal/borderfloor{
+	dir = 10
+	},
+/obj/machinery/light,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"kF" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/radio,
+/obj/item/storage/mre/random,
+/obj/item/binoculars,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"kN" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"kW" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/structure/table/rack/shelf,
+/obj/item/tank/oxygen/welded,
+/obj/item/tank/oxygen/welded,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ml" = (
+/obj/structure/table/standard,
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/random/material/precious,
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"mY" = (
+/obj/structure/bed/chair,
+/mob/living/simple_mob/humanoid/merc/ranged/sniper,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"nZ" = (
+/obj/effect/floor_decal/borderfloor{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"op" = (
+/turf/simulated/wall,
+/area/submap/DugOutMercs)
+"oq" = (
+/obj/structure/ledge/ledge_stairs,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"oC" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 9
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/structure/table/rack/shelf,
+/obj/item/tank/oxygen/welded,
+/obj/item/tank/oxygen/welded,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"oN" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"oU" = (
+/obj/machinery/door/airlock/engineering{
+	locked = 1
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"pg" = (
+/obj/machinery/door/airlock/external/bolted,
+/turf/simulated/floor/tiled,
+/area/submap/DugOutMercs)
+"po" = (
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"qN" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"qR" = (
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"rl" = (
+/obj/structure/table/reinforced,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/random/cash,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"rn" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 6
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"rV" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/obj/structure/cliff/automatic{
+	dir = 6
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"sc" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"so" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/material/fishing_net,
+/obj/item/material/fishing_net,
+/obj/item/material/fishing_net,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"sO" = (
+/obj/machinery/power/smes/buildable/point_of_interest,
+/obj/structure/cable/cyan{
+	icon_state = "0-8"
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"sZ" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/oar,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"tT" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 5
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/structure/table/rack/shelf,
+/obj/item/tank/oxygen/welded,
+/obj/item/tank/oxygen/welded,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"uk" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/structure/table/woodentable,
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"ul" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/material/fishing_rod/modern/built,
+/obj/item/material/fishing_rod/modern/built,
+/obj/item/material/fishing_rod/modern/built,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"uv" = (
+/turf/simulated/wall/r_wall,
+/area/submap/DugOutMercs)
+"uF" = (
+/obj/structure/barricade,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"vR" = (
+/obj/structure/cliff/automatic/ramp{
+	dir = 9
+	},
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"xe" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 5
+	},
+/obj/structure/table/rack/shelf,
+/obj/item/tank/oxygen/welded,
+/obj/item/tank/oxygen/welded,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/suit/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/obj/item/clothing/head/helmet/space/syndicate/black/blue,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"yc" = (
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/structure/closet/crate/secure/lootsafe/numberlock,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"yr" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 8
+	},
+/obj/structure/table/standard,
+/obj/random/material/precious,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"yG" = (
+/obj/effect/floor_decal/borderfloor,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"zG" = (
+/obj/structure/cable/cyan{
+	icon_state = "0-4"
+	},
+/obj/machinery/power/apc{
+	dir = 1;
+	name = "PAPC";
+	pixel_x = 0;
+	pixel_y = 24
+	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"Ag" = (
+/obj/structure/ledge/ledge_stairs,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Bq" = (
+/obj/structure/table/reinforced,
+/obj/random/cigarettes,
+/obj/item/flame/lighter/random,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"BY" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"Cl" = (
+/obj/structure/ledge/ledge_stairs,
+/obj/structure/ledge/ledge_stairs,
+/obj/structure/barricade,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Cp" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"CA" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 6
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Da" = (
+/obj/machinery/door/airlock,
+/turf/simulated/floor/tiled,
+/area/submap/DugOutMercs)
+"De" = (
+/obj/random/landmine,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"DB" = (
+/obj/structure/cliff/automatic/corner,
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"DJ" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/obj/structure/cliff/automatic{
+	dir = 10
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"DR" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/material/fishing_rod/modern/built,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"DV" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron,
+/obj/item/stack/material/phoron,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"Ed" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/material/fishing_net,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"Eh" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Eo" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Ex" = (
+/obj/structure/table/rack/shelf,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/random/pottedplant,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"EY" = (
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"FQ" = (
+/obj/machinery/power/terminal{
+	dir = 1;
+	icon_state = "term"
+	},
+/obj/structure/cable{
+	icon_state = "0-2"
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"FZ" = (
+/obj/structure/cable,
+/obj/machinery/power/port_gen/pacman,
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"Gv" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron,
+/obj/item/stack/material/phoron,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"GL" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/structure/table/woodentable,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Ha" = (
+/obj/item/frame/noticeboard,
+/turf/simulated/wall/r_wall,
+/area/submap/DugOutMercs)
+"Hb" = (
+/obj/random/landmine,
+/obj/random/landmine,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"Hk" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 9
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"HX" = (
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/carpmeat/sif/murkfish,
+/obj/item/reagent_containers/food/snacks/carpmeat/sif/murkfish,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"Ia" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"IM" = (
+/obj/effect/floor_decal/borderfloor{
+	dir = 9
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"IQ" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/structure/table/standard,
+/obj/random/material/precious,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Jz" = (
+/obj/structure/bed,
+/obj/item/bedsheet,
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"JC" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/obj/structure/railing/grey,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"JJ" = (
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"KA" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 1
+	},
+/obj/structure/table/standard,
+/obj/random/material/refined,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Lg" = (
+/obj/machinery/light,
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Ng" = (
+/obj/structure/cliff/automatic,
+/obj/structure/railing/grey{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Nl" = (
+/obj/machinery/light,
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"Nr" = (
+/obj/machinery/light,
+/obj/effect/floor_decal/borderfloor,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"NJ" = (
+/obj/structure/table/marble,
+/obj/item/stack/material/phoron{
+	amount = 10
+	},
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"OP" = (
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"OU" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"Pe" = (
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"PO" = (
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/random/mob/merc/all,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Qf" = (
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"QM" = (
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"Rz" = (
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"RS" = (
+/obj/structure/railing/grey,
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"Sj" = (
+/obj/structure/table/rack/shelf,
+/obj/structure/plushie/drone,
+/obj/effect/floor_decal/corner/red/diagonal,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Sn" = (
+/obj/structure/table/woodentable,
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/random/cash,
+/obj/machinery/light,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Tf" = (
+/obj/structure/grille,
+/turf/simulated/floor/water/deep,
+/area/submap/DugOutMercs)
+"Tw" = (
+/obj/structure/railing/grey{
+	dir = 8
+	},
+/obj/structure/railing/grey,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/water,
+/area/submap/DugOutMercs)
+"TO" = (
+/obj/machinery/light,
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"TQ" = (
+/obj/structure/cliff/automatic/corner{
+	dir = 10
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"Uo" = (
+/obj/effect/floor_decal/corner/blue/border{
+	dir = 8
+	},
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"UA" = (
+/obj/structure/railing/grey,
+/turf/template_noop,
+/area/submap/DugOutMercs)
+"Vn" = (
+/obj/structure/cliff/automatic/ramp,
+/obj/structure/railing/grey{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/dirt,
+/area/submap/DugOutMercs)
+"VQ" = (
+/obj/structure/table/sifwooden_reinforced,
+/obj/item/radio,
+/obj/item/storage/mre/random,
+/obj/item/binoculars,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"VX" = (
+/mob/living/simple_mob/mechanical/viscerator/mercenary,
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/submap/DugOutMercs)
+"VZ" = (
+/obj/structure/railing/grey,
+/obj/vehicle/boat/dragon,
+/turf/simulated/floor/outdoors/rocks,
+/area/submap/DugOutMercs)
+"Wa" = (
+/obj/structure/table/standard,
+/obj/random/material,
+/obj/random/material,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Wx" = (
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/effect/floor_decal/borderfloor{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"WF" = (
+/obj/machinery/light{
+	dir = 1
+	},
+/obj/effect/floor_decal/corner/lightgrey/diagonal,
+/obj/structure/table/woodentable,
+/obj/item/reagent_containers/food/snacks/carpmeat/fish/sharkmeat,
+/obj/item/reagent_containers/food/snacks/carpmeat/fish/sharkmeat,
+/turf/simulated/floor/tiled/hydro/turfpack/sif,
+/area/submap/DugOutMercs)
+"Yg" = (
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"YD" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"YF" = (
+/obj/structure/bed/chair{
+	dir = 1
+	},
+/mob/living/simple_mob/humanoid/merc/ranged/sniper,
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+"YK" = (
+/obj/structure/table/woodentable,
+/obj/effect/floor_decal/corner/paleblue/diagonal,
+/obj/random/cash,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"YW" = (
+/obj/structure/table/rack/shelf,
+/obj/effect/floor_decal/corner/red/diagonal,
+/obj/random/pottedplant,
+/turf/simulated/floor/tiled/turfpack/sif,
+/area/submap/DugOutMercs)
+"Zg" = (
+/mob/living/simple_mob/humanoid/merc/ranged/sniper,
+/obj/structure/bed/chair{
+	dir = 1
+	},
+/turf/simulated/floor/wood{
+	nitrogen = 93.7835;
+	oxygen = 20.7263;
+	temperature = 243.15
+	},
+/area/submap/DugOutMercs)
+
+(1,1,1) = {"
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+bg
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+"}
+(2,1,1) = {"
+go
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+De
+Qf
+Hb
+Qf
+bl
+Rz
+bl
+Rz
+Qf
+De
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+CA
+dh
+dh
+DB
+go
+"}
+(3,1,1) = {"
+go
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Rz
+Rz
+Rz
+OP
+OP
+OP
+OP
+Rz
+Rz
+Qf
+Qf
+Qf
+De
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Vn
+rV
+Rz
+Rz
+Ng
+go
+"}
+(4,1,1) = {"
+go
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Rz
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+Rz
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+oq
+Ag
+Cl
+mY
+kF
+Ng
+go
+"}
+(5,1,1) = {"
+go
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Rz
+Rz
+OP
+OP
+OP
+OP
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+vR
+DJ
+Rz
+Rz
+Ng
+go
+"}
+(6,1,1) = {"
+go
+Qf
+Qf
+De
+Qf
+Qf
+Rz
+OP
+OP
+OP
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+aQ
+Qf
+Qf
+TQ
+cd
+cd
+Hk
+go
+"}
+(7,1,1) = {"
+go
+Qf
+Hb
+Qf
+Qf
+bl
+OP
+OP
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+RS
+Rz
+sc
+qN
+sc
+sc
+uv
+IM
+jf
+uv
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+go
+"}
+(8,1,1) = {"
+go
+Qf
+Qf
+Qf
+Rz
+OP
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+QM
+Rz
+sc
+sc
+sc
+uv
+nZ
+yG
+Da
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+go
+"}
+(9,1,1) = {"
+go
+Qf
+De
+Rz
+OP
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+JJ
+OP
+fP
+OP
+JJ
+JC
+Rz
+sc
+sc
+sc
+uv
+Wx
+yG
+uv
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+go
+"}
+(10,1,1) = {"
+bg
+Qf
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+RS
+bS
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+sc
+Nl
+uv
+nZ
+yG
+uv
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+bg
+"}
+(11,1,1) = {"
+go
+Qf
+Qf
+bl
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+RS
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+sc
+sc
+uv
+nZ
+Nr
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+aQ
+go
+"}
+(12,1,1) = {"
+go
+De
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+RS
+Yg
+Yg
+Yg
+Yg
+ao
+Yg
+Yg
+Yg
+sc
+sc
+Da
+nZ
+yG
+uv
+Jz
+GL
+ab
+YK
+Jz
+uv
+Qf
+go
+"}
+(13,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+RS
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+Yg
+sc
+sc
+uv
+Wx
+yG
+uv
+Eh
+Eh
+Eh
+Eh
+Eh
+uv
+Qf
+go
+"}
+(14,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+fR
+fR
+fR
+fR
+fR
+Tw
+Rz
+sc
+sc
+sc
+uv
+nZ
+yG
+Da
+Eh
+Eh
+Eh
+Eh
+Lg
+uv
+Qf
+go
+"}
+(15,1,1) = {"
+go
+De
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+uv
+Rz
+sc
+sc
+sc
+Nl
+uv
+nZ
+Nr
+uv
+Jz
+Eh
+Eh
+Eh
+Jz
+uv
+De
+go
+"}
+(16,1,1) = {"
+go
+Qf
+De
+Rz
+OP
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+Rz
+Qf
+uv
+WF
+sc
+sc
+sc
+so
+uv
+nZ
+yG
+uv
+ac
+PO
+Eh
+PO
+aa
+uv
+Qf
+bg
+"}
+(17,1,1) = {"
+bg
+Qf
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+Rz
+Rz
+Rz
+Rz
+Rz
+Rz
+Qf
+Qf
+Qf
+Ha
+fw
+sc
+sc
+sc
+db
+uv
+nZ
+yG
+uv
+Jz
+Eh
+Eh
+Eh
+Jz
+uv
+aQ
+go
+"}
+(18,1,1) = {"
+go
+Qf
+bl
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+Rz
+kN
+kN
+kN
+Qf
+Qf
+Qf
+Qf
+Qf
+aQ
+uv
+HX
+sc
+sc
+sc
+ul
+uv
+Wx
+yG
+uv
+uk
+Eh
+Eh
+Eh
+Sn
+uv
+Qf
+go
+"}
+(19,1,1) = {"
+bg
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+VZ
+VQ
+DR
+Ed
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+ad
+ad
+uv
+Jz
+Eh
+Eh
+Eh
+Jz
+uv
+De
+go
+"}
+(20,1,1) = {"
+go
+Qf
+De
+Rz
+OP
+OP
+po
+po
+OP
+OP
+OP
+Rz
+UA
+sZ
+Zg
+cj
+uv
+NJ
+DV
+Gv
+VX
+VX
+uv
+dI
+ah
+ah
+Uo
+yr
+ah
+ah
+ae
+uv
+aa
+Eh
+fL
+Eh
+YK
+uv
+Qf
+go
+"}
+(21,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+OP
+po
+po
+OP
+OP
+Rz
+Qf
+Qf
+uF
+Yg
+Yg
+oU
+VX
+VX
+VX
+VX
+VX
+uv
+KA
+ai
+ai
+ai
+Wa
+ai
+ai
+af
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+Qf
+go
+"}
+(22,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+Rz
+Qf
+Qf
+uF
+Yg
+Yg
+uv
+zG
+VX
+VX
+VX
+TO
+uv
+ml
+ai
+ai
+ai
+qR
+ai
+ai
+ag
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+Qf
+go
+"}
+(23,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+Rz
+Qf
+UA
+sZ
+YF
+cj
+uv
+sO
+FQ
+FZ
+VX
+VX
+uv
+am
+ai
+ai
+ai
+ai
+ai
+ai
+af
+uv
+uv
+uv
+yc
+uv
+uv
+uv
+aQ
+bg
+"}
+(24,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+Rz
+Ia
+VQ
+DR
+Ed
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+am
+ai
+al
+ai
+ai
+ai
+ai
+af
+uv
+YW
+Pe
+Pe
+Pe
+Pe
+uv
+Qf
+go
+"}
+(25,1,1) = {"
+go
+Qf
+De
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+Eo
+BY
+BY
+Qf
+Qf
+Qf
+Qf
+Qf
+aQ
+uv
+an
+ai
+ai
+ai
+qR
+ai
+ai
+af
+uv
+bk
+Pe
+Pe
+Bq
+Pe
+uv
+Qf
+go
+"}
+(26,1,1) = {"
+go
+De
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+Rz
+Rz
+Rz
+Qf
+Qf
+Qf
+Qf
+Qf
+uv
+IQ
+ai
+ai
+ai
+bz
+ai
+ai
+af
+pg
+Pe
+Pe
+Pe
+hZ
+iG
+uv
+De
+go
+"}
+(27,1,1) = {"
+bg
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+Rz
+Rz
+Rz
+Qf
+Qf
+uv
+an
+ai
+ai
+fS
+op
+aj
+ai
+af
+uv
+Ex
+Pe
+Pe
+rl
+Pe
+uv
+Qf
+bg
+"}
+(28,1,1) = {"
+go
+Qf
+bl
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+Rz
+uv
+kW
+ai
+ai
+ai
+YD
+ai
+ai
+ag
+uv
+Sj
+Pe
+Pe
+iL
+Pe
+uv
+Qf
+go
+"}
+(29,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+uv
+tT
+ai
+ai
+ai
+ai
+ai
+ai
+af
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+aQ
+go
+"}
+(30,1,1) = {"
+go
+De
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+po
+po
+Tf
+OU
+OU
+oN
+ai
+ai
+ai
+ai
+af
+uv
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+go
+"}
+(31,1,1) = {"
+go
+Qf
+Rz
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+Tf
+po
+po
+aN
+ai
+ai
+ai
+ai
+af
+uv
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+bg
+"}
+(32,1,1) = {"
+go
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+Tf
+Cp
+po
+EY
+ai
+ai
+ai
+ai
+ag
+uv
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+go
+"}
+(33,1,1) = {"
+go
+Qf
+bl
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+uv
+oC
+ai
+ai
+ai
+ai
+ai
+ai
+af
+Da
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+go
+"}
+(34,1,1) = {"
+go
+De
+Qf
+Rz
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+uv
+xe
+jb
+ak
+jb
+jb
+ak
+jb
+rn
+uv
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+bg
+"}
+(35,1,1) = {"
+go
+Qf
+Qf
+bl
+OP
+OP
+po
+po
+po
+po
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+uv
+aQ
+Qf
+Qf
+CA
+dh
+dh
+DB
+go
+"}
+(36,1,1) = {"
+go
+De
+Qf
+Qf
+Rz
+OP
+OP
+OP
+po
+po
+po
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+Rz
+De
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+aQ
+Qf
+Qf
+Qf
+Qf
+Qf
+Vn
+rV
+Rz
+Rz
+Ng
+go
+"}
+(37,1,1) = {"
+go
+Qf
+Qf
+De
+Qf
+Rz
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+OP
+bl
+Rz
+OP
+OP
+Rz
+Rz
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+oq
+Ag
+Cl
+mY
+kF
+Ng
+go
+"}
+(38,1,1) = {"
+go
+Qf
+Qf
+Qf
+Qf
+Qf
+Rz
+OP
+OP
+OP
+OP
+OP
+OP
+bl
+Qf
+Qf
+Rz
+bl
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+Qf
+Qf
+fq
+Qf
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+vR
+DJ
+Rz
+Rz
+Ng
+go
+"}
+(39,1,1) = {"
+go
+De
+Qf
+Qf
+De
+Qf
+De
+Rz
+Rz
+bl
+Rz
+Rz
+Rz
+De
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+De
+Qf
+Qf
+Qf
+De
+Qf
+De
+Qf
+Qf
+Qf
+Qf
+TQ
+cd
+cd
+Hk
+go
+"}
+(40,1,1) = {"
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+bg
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+go
+bg
+go
+go
+go
+go
+go
+"}

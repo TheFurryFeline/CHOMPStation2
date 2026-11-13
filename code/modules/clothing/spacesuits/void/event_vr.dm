@@ -55,6 +55,15 @@
 /obj/item/clothing/suit/space/void/refurb/pilot/talon
 	name = "talon pilot voidsuit"
 
+/obj/item/clothing/head/helmet/space/void/refurb/mining/talon
+	name = "talon miner voidsuit helmet"
+	desc = "A refurbished early contact era voidsuit helmet of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. The visor has a bad habit of fogging up and collecting condensation, but it beats sucking hard vacuum. \"ITV TALON\" has been stamped onto the sides of the helmet."
+	camera_networks = list(NETWORK_TALON_HELMETS)
+
+/obj/item/clothing/suit/space/void/refurb/mining/talon
+	name = "talon miner voidsuit"
+	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer spacers swear by these old things, even if new powered hardsuits have more features and better armor. \"ITV TALON\" is stamped across the left side of the breastplate in faded faux-gold."
+
 /obj/item/clothing/head/helmet/space/void/refurb/research/talon
 	name = "talon scientific voidsuit helmet"
 	camera_networks = list(NETWORK_TALON_HELMETS)
@@ -74,3 +83,134 @@
 /obj/item/clothing/suit/space/void/refurb/mercenary/talon
 	name = "talon mercenary's voidsuit"
 	desc = "A refurbished early contact era voidsuit of human design. These things aren't especially good against modern weapons but they're sturdy, incredibly easy to come by, and there are lots of spare parts for repairs. Many old-timer mercs swear by these old things, even if new powered hardsuits have more features and better armor. The red markings indicate this as the mercenary variant. \"ITV TALON\" has been stamped onto each pauldron and the right side of the breastplate."
+
+// HEV Suits
+/obj/item/clothing/suit/space/void/hev
+	name = "hazardous environment suit"
+	desc = "Has a strange smell to it, but you feel like it might be an old friend."
+	icon_state = "hev_orange"
+
+/obj/item/clothing/suit/space/void/hev/violet
+	icon_state = "hev_violet"
+	desc = "Has a strange smell to it, but you feel like it might be an old friend. This one has 'Dr. Coomer' engraved on the collar."
+
+/obj/item/clothing/head/helmet/space/void/hev
+	name = "hazardous environment helmet"
+	desc = "Has a strange smell to it, but you feel like it might be an old friend."
+	icon_state = "hev_orange"
+
+/obj/item/clothing/head/helmet/space/void/hev/violet
+	icon_state = "hev_violet"
+	desc = "Has a strange smell to it, but you feel like it might be an old friend. This one has 'Dr. Coomer' engraved on the collar."
+
+// Makeshift void suit
+/obj/item/clothing/suit/space/void/makeshift
+	name = "makeshift voidsuit"
+	desc = "This is not something you should use if you have other options, but it's better than nothing!"
+	icon_state = "makeshift_void"
+
+	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 100, "rad" = 0)
+
+/obj/item/clothing/head/helmet/space/void/makeshift
+	name = "makeshift voidsuit helmet"
+	desc = "This is not something you should use if you have other options, but it's better than nothing!"
+	icon_state = "makeshift_void"
+
+	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 100, "rad" = 0)
+
+// 'Custodian' armor
+/obj/item/clothing/suit/space/void/custodian
+	name = "custodian suit"
+	desc = "Vacuum-capable armor for a Custodian to do their duty."
+	icon_state = "custodian"
+
+	armor = list("melee" = 70, "bullet" = 70, "laser" = 70, "energy" = 50, "bomb" = 40, "bio" = 0, "rad" = 20)
+
+/obj/item/clothing/head/helmet/space/void/custodian
+	name = "custodian helmet"
+	desc = "Vacuum-capable helmet for a Custodian to do their duty."
+	icon_state = "custodian"
+
+	armor = list("melee" = 70, "bullet" = 70, "laser" = 70, "energy" = 50, "bomb" = 40, "bio" = 0, "rad" = 20)
+
+// 'Moebius' armor
+/obj/item/clothing/suit/space/void/aether
+	name = "\improper Aether voidsuit"
+	desc = "This suit seems rather high-end for a standard voidsuit. The air in it has a hint of 'new car smell', courtesy of Aether Atmospherics."
+	icon_state = "moebiussuit"
+
+	armor = list("melee" = 30, "bullet" = 30, "laser" = 30, "energy" = 20, "bomb" = 20, "bio" = 100, "rad" = 20)
+
+/obj/item/clothing/head/helmet/space/void/aether
+	name = "\improper Aether voidsuit helmet"
+	desc = "Aether Atmospherics thought that giving this helmet selectable colored lighting would improve market penetration. Very comfortable, regardless."
+	icon_state = "moebiushelm_White"
+
+	armor = list("melee" = 30, "bullet" = 30, "laser" = 30, "energy" = 20, "bomb" = 20, "bio" = 100, "rad" = 20)
+
+/obj/item/clothing/head/helmet/space/void/aether/verb/select_color()
+	set name = "Helmet Color"
+	set desc = "Change the color of the helmet"
+	set category = "Object"
+
+	var/choice = tgui_input_list(usr, "Select a new color:", "[src] Color", list("White", "Blue", "Purple", "Yellow", "Red", "Green"))
+	if(!choice)
+		return
+	icon_state = "moebiushelm_[choice]"
+	update_clothing_icon()
+	to_chat(usr, span_notice("[src] color changed to: [choice]"))
+
+// Excelsior suit
+/obj/item/clothing/suit/space/void/excelsior
+	name = "\improper Excelsior voidsuit"
+	desc = "A space suit from a particular spaceship: Excelsior."
+	icon_state = "excelsior"
+
+/obj/item/clothing/head/helmet/space/void/excelsior
+	name = "\improper Excelsior voidsuit helmet"
+	desc = "A space helmet from a particular spaceship: Excelsior."
+	icon_state = "excelsior"
+
+/obj/item/clothing/suit/space/void/altevian_heartbreaker
+	name = "\improper heartbreaker voidsuit"
+	desc = "The altevians' newest iteration of their armored suits. This one is tailored for zero-g environments, and while it can still be worn in an area with gravity, it'll put a strain on even the most athletic of individuals."
+
+	icon = 'icons/inventory/suit/item_altevian.dmi'
+	default_worn_icon = 'icons/inventory/suit/mob_altevian.dmi'
+	icon_state = "rig-heartbreaker"
+
+	armor = list(melee = 70, bullet = 70, laser = 70, energy = 30, bomb = 80, bio = 100, rad = 40)
+
+	species_restricted = list(SPECIES_ALTEVIAN)
+	no_cycle = TRUE
+	slowdown = 2.5
+
+/obj/item/clothing/head/helmet/space/void/altevian_heartbreaker
+	name = "\improper heartbreaker helmet"
+	desc = "The altevians' newest iteration of their armored suits. This one is tailored for zero-g environments, and while it can still be worn in an area with gravity, it'll put a strain on even the most athletic of individuals."
+
+	icon = 'icons/inventory/head/item_altevian.dmi'
+	default_worn_icon = 'icons/inventory/head/mob_altevian.dmi'
+	icon_state = "rig0-heartbreaker"
+
+	armor = list(melee = 70, bullet = 70, laser = 70, energy = 30, bomb = 80, bio = 100, rad = 40)
+
+	species_restricted = list(SPECIES_ALTEVIAN)
+	no_cycle = TRUE
+
+/obj/item/clothing/suit/space/void/salvagecorp_shipbreaker
+	name = "\improper CSC industrial voidsuit"
+	desc = "A heavy-duty Kirillov-Y771 voidsuit intended for use in hazardous shipbreaking, salvage, and industrial operations, manufactured (or more likely refurbished) by the Coyote Salvage Corporation. It's slow and awkward if used outside of microgravity, but it offers good protection for what is technically a civilian-legal voidsuit."
+	icon_state = "breaker_suit"
+
+	armor = list("melee" = 50, "bullet" = 15, "laser" = 15, "energy" = 25, "bomb" = 45, "bio" = 100, "rad" = 80)
+	slowdown = 1.5
+	breach_threshold = 14
+	allowed = list(POCKET_GENERIC, POCKET_EMERGENCY, POCKET_SUIT_REGULATORS, POCKET_ENGINEERING)
+
+/obj/item/clothing/head/helmet/space/void/salvagecorp_shipbreaker
+	name = "\improper CSC industrial voidsuit helmet"
+	desc = "A dome/bubble style helmet for use with the Kirillov-Y771 voidsuit. It offers surprisingly good protection and visibility, though wearers are still advised to avoid face-on collisions. Sadly, this one doesn't seem to have the (in)famous 0PTIK3WL cross-spectrum imaging visor installed..."
+	icon_state = "breaker_helmet"
+
+	armor = list("melee" = 50, "bullet" = 15, "laser" = 15, "energy" = 25, "bomb" = 45, "bio" = 100, "rad" = 80)

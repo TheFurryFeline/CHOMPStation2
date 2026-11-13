@@ -1,5 +1,3 @@
-#define DOCK_ATTEMPT_TIMEOUT 200	//how long in ticks we wait before assuming the docking controller is broken or blown up.
-
 /datum/shuttle/autodock/ferry
 	var/location = FERRY_LOCATION_STATION	//0 = at area_station, 1 = at area_offsite
 	var/direction = FERRY_GOING_TO_STATION	//0 = going to station, 1 = going to offsite.
@@ -11,7 +9,7 @@
 
 	category = /datum/shuttle/autodock/ferry
 
-/datum/shuttle/autodock/ferry/New(var/_name)
+/datum/shuttle/autodock/ferry/New(_name)
 	if(landmark_station)
 		landmark_station = SSshuttles.get_landmark(landmark_station)
 	if(landmark_offsite)
@@ -31,11 +29,11 @@
 		return landmark_station
 	return landmark_offsite
 
-/datum/shuttle/autodock/ferry/short_jump(var/destination)
+/datum/shuttle/autodock/ferry/short_jump(destination)
 	direction = !location // Heading away from where we currently are
 	. = ..()
 
-/datum/shuttle/autodock/ferry/long_jump(var/destination, var/obj/effect/shuttle_landmark/interim, var/travel_time)
+/datum/shuttle/autodock/ferry/long_jump(destination, obj/effect/shuttle_landmark/interim, travel_time)
 	direction = !location // Heading away from where we currently are
 	. = ..()
 
@@ -50,7 +48,7 @@
 	next_location = get_location_waypoint(!location)
 
 // Ferry shuttles should generally always be able to dock.  So read the docking codes off of the target.
-/datum/shuttle/autodock/ferry/update_docking_target(var/obj/effect/shuttle_landmark/location)
+/datum/shuttle/autodock/ferry/update_docking_target(obj/effect/shuttle_landmark/location)
 	..()
 	if(active_docking_controller && active_docking_controller.docking_codes)
 		set_docking_codes(active_docking_controller.docking_codes)

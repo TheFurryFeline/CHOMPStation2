@@ -35,7 +35,7 @@
 /datum/nifsoft/painkillers/life()
 	if((. = ..()))
 		var/mob/living/carbon/human/H = nif.human
-		H.bloodstr.add_reagent("numbenzyme",0.5)
+		H.bloodstr.add_reagent(REAGENT_ID_NUMBENZYME,0.5)
 
 /datum/nifsoft/hardclaws
 	name = "Bloodletters"
@@ -49,15 +49,15 @@
 	combat_flags = (NIF_C_HARDCLAWS)
 
 // The unarmed attack to go with the hardclaws
-var/global/datum/unarmed_attack/hardclaws/unarmed_hardclaws = new()
+GLOBAL_DATUM_INIT(unarmed_hardclaws, /datum/unarmed_attack/hardclaws, new)
 /datum/unarmed_attack/hardclaws
 	attack_verb = list("claws")
 	attack_noun = list("talons")
 	damage = 15
 	attack_sound = "punch"
 	miss_sound = 'sound/weapons/punchmiss.ogg'
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	sparring_variant_type = /datum/unarmed_attack/hardclaws
 
 /datum/nifsoft/hidelaser
@@ -85,7 +85,7 @@ var/global/datum/unarmed_attack/hardclaws/unarmed_hardclaws = new()
 
 		var/mob/living/carbon/human/H = nif.human
 		H.adjustHalLoss(30)
-		var/obj/item/weapon/gun/energy/gun/martin/dazzle/dgun = new(get_turf(H))
+		var/obj/item/gun/energy/gun/compact/dazzle/dgun = new(get_turf(H))
 		H.put_in_hands(dgun)
 		nif.notify("Weapon deployed!",TRUE)
 		used = TRUE
@@ -93,10 +93,6 @@ var/global/datum/unarmed_attack/hardclaws/unarmed_hardclaws = new()
 			uninstall()
 
 //The gun to go with this implant
-/obj/item/weapon/gun/energy/gun/martin/dazzle
+/obj/item/gun/energy/gun/compact/dazzle
 	name = "Microlaser"
 	desc = "A tiny nanofabricated laser."
-
-	icon = 'icons/obj/gun_vr.dmi'
-	icon_state = "PDW"
-	item_state = "gun"

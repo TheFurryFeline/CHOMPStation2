@@ -12,15 +12,15 @@
 	to counter the Unathi war machine. One of many solutions created was the Durand, which was made to be heavy and \
 	well-armored, and be capable of powering the various weapons that could be mounted onto it. Presently, the \
 	Durand now generally serves as corporate asset protection hardware, due to modern militaries moving on to newer, \
-	more advanced war machines."
+	more advanced war machines." // CHOMPEdit
 	value = CATALOGUER_REWARD_HARD
 
 /mob/living/simple_mob/mechanical/mecha/combat/durand
 	name = "durand"
-	desc = "An aging combat exosuit utilized by many corporations. It was originally developed to fight in the First Contact War."
+	desc = "An aging combat exosuit utilized by many corporations. It was originally developed to fight in the First Contact War." // CHOMPEdit
 	catalogue_data = list(/datum/category_item/catalogue/technology/durand)
 	icon_state = "durand"
-	movement_cooldown = 10
+	movement_cooldown = 3
 	wreckage = /obj/structure/loot_pile/mecha/durand
 
 	maxHealth = 400
@@ -48,11 +48,11 @@
 	defense_mode = new_mode
 	deflect_chance = defense_mode ? defense_deflect : initial(deflect_chance)
 	projectile_accuracy = defense_mode ? -10 : initial(projectile_accuracy)
-	to_chat(src, span("notice", "You [defense_mode ? "en" : "dis"]able defense mode."))
+	to_chat(src, span_notice("You [defense_mode ? "en" : "dis"]able defense mode."))
 
 /mob/living/simple_mob/mechanical/mecha/combat/durand/SelfMove(turf/n, direct)
 	if(defense_mode)
-		to_chat(src, span("warning", "You are in defense mode, you cannot move."))
+		to_chat(src, span_warning("You are in defense mode, you cannot move."))
 		return FALSE
 	return ..()
 
@@ -60,18 +60,18 @@
 /mob/living/simple_mob/mechanical/mecha/combat/durand/verb/toggle_defense_mode()
 	set name = "Toggle Defense Mode"
 	set desc = "Toggles a special mode which makes you immobile and much more resilient."
-	set category = "Abilities"
+	set category = "Abilities.Durand"
 
 	set_defense_mode(!defense_mode)
 
 // Variant that starts in defense mode, perhaps for PoIs.
-/mob/living/simple_mob/mechanical/mecha/combat/durand/defensive/Initialize()
+/mob/living/simple_mob/mechanical/mecha/combat/durand/defensive/Initialize(mapload)
 	set_defense_mode(TRUE)
 	return ..()
 
 /mob/living/simple_mob/mechanical/mecha/combat/durand/defensive/mercenary
-	desc = "An aging combat exosuit utilized by many corporations. It was originally developed to fight in the First Contact War.\
-	This one has been retrofitted into a turret."
+	desc = "An aging combat exosuit utilized by many corporations. It was originally developed to fight in the First Contact  War.\
+	This one has been retrofitted into a turret." // CHOMPEdit
 
 	projectiletype = /obj/item/projectile/beam/heavylaser/fakeemitter
 

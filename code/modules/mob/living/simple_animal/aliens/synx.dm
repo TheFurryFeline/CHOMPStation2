@@ -8,7 +8,7 @@
 	desc = "A cold blooded, genderless, parasitic eel from the more distant and stranger areas of the cosmos. Plain, white, perpetually grinning and possessing a hunger as enthusiastic and endless as humanity's sense of exploration."
 	tt_desc = "synxus pergulus"
 
-	 //Synx species belongs to ChimeraSynx , Base sprites made by: SpitefulCrow
+	//Synx species belongs to ChimeraSynx , Base sprites made by: SpitefulCrow
 	icon = 'icons/mob/synx.dmi'//giving synxes their own DMI file!
 	icon_state = "synx_living"
 	icon_living = "synx_living"
@@ -107,10 +107,8 @@
 	ai_holder_type = /datum/ai_holder/simple_mob/retaliate
 
 
-/mob/living/simple_mob/animal/synx/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	//B.human_prey_swallow_time = 6 SECONDS //doesnt work
 	//B.nonhuman_prey_swallow_time = 3 SECONDS //doesnt work
@@ -138,10 +136,9 @@
 	)
 	B.mode_flags = DM_FLAG_NUMBING	//Prey are more docile when it doesn't hurt.
 
-/mob/living/simple_mob/animal/synx/ai/pet/asteri/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/* //OC-insert mob removals. Commenting out instead of full removal as there's some good detail here.
+/mob/living/simple_mob/animal/synx/ai/pet/asteri/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.desc    = "The synx eagerly swallows you, taking you from its gullet into its long, serpentine stomach. The internals around you greedily press into your from all sides, keeping you coated in a slick coat of numbing fluids..."
 	B.digest_burn = 2
@@ -163,17 +160,18 @@
 	"The constant fatal massage pulls you under, your conciousness fading away as you're drawn into a numb, permanent sleep. The body you leave behind is put to good use as a few extra pounds on the synx's frame, its now-wider hips making it just a little harder to squeeze through the vents it's so fond of.",
 	"The synx's body gleefully takes what's left of your life, Asteri's usually-repressed sadism overwhelmed with a sinister satisfaction in snuffing you out as your liquefied remains gush into a bit more heft on the parasite's emaciated frame.",
 	)
+*/
 
-/mob/living/simple_mob/animal/synx/New() //this is really cool. Should be able to ventcrawl canonicaly, contort, and make random speech.
+/mob/living/simple_mob/animal/synx/Initialize(mapload) //this is really cool. Should be able to ventcrawl canonicaly, contort, and make random speech.
 //some things should be here that arent tho.
-	..()
-	verbs |= /mob/living/proc/ventcrawl
-	verbs |= /mob/living/simple_mob/animal/synx/proc/distend_stomach //to do later: sprites of stomach outside the body.
-	verbs |= /mob/living/simple_mob/proc/contort
-	verbs |= /mob/living/simple_mob/animal/synx/proc/sonar_ping
-	verbs |= /mob/living/proc/shred_limb
-	verbs |= /mob/living/simple_mob/animal/synx/proc/disguise
-	verbs |= /mob/living/simple_mob/animal/synx/proc/randomspeech
+	. = ..()
+	add_verb(src,/mob/living/proc/ventcrawl) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/proc/distend_stomach) //CHOMPEdit TGPanel //to do later: sprites of stomach outside the body.
+	add_verb(src,/mob/living/simple_mob/proc/contort) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/proc/sonar_ping) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/proc/shred_limb) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/proc/disguise) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/proc/randomspeech) //CHOMPEdit TGPanel
 	realname = name
 	voices += "Garbled voice"
 	voices += "Unidentifiable Voice"
@@ -185,7 +183,7 @@
 ////////////////////////////////////////////////////////////////////////////////////// //keeping most of these the same except the stuff that apply to the standard synx. -lo
 /*
 /datum/seed/hardlightseed/
-	name = "Type NULL Hardlight Generator"
+	name = PLANT_NULLHARDLIGHT
 	seed_name = "Biomechanical Hardlight generator seed"
 	display_name = "Biomechanical Hardlight stem"
 	mutants = null
@@ -225,7 +223,7 @@
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE * 4 //But takes a lot to OD
 
-/datum/reagent/inaprovaline/synxchem/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien != IS_DIONA)
 		if(prob(8))
 			M.custom_pain("You [pick("feel numb!","feel dizzy and heavy.","feel strange!")]",60)
@@ -245,7 +243,7 @@
 	color = "#00FFFF"
 	overdose = REAGENTS_OVERDOSE * 20 //it's all fake. But having nanomachines move through you is not good at a certain amount.
 
-/datum/reagent/inaprovaline/synxchem/holo/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/holo/affect_blood(mob/living/carbon/M, alien, removed)
 	if(alien != IS_DIONA)
 		if(prob(5))
 			M.custom_pain("You feel no pain!",60)
@@ -267,7 +265,7 @@
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE * 200
 
-/datum/reagent/inaprovaline/synxchem/clown/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/clown/affect_blood(mob/living/carbon/M, alien, removed)
 	M.adjustToxLoss(0.01)
 	playsound(M.loc, 'sound/items/bikehorn.ogg', 50, 1)
 	M.adjustBruteLoss(-2)//healing brute
@@ -275,10 +273,10 @@
 		M.custom_pain("I have no horn but i must honk!",60)
 	if(prob(2))
 		var/location = get_turf(M)
-		new /obj/item/weapon/bikehorn(location)
+		new /obj/item/bikehorn(location)
 		M.custom_pain("You suddenly cough up a bikehorn!",60)
 
-  /*why is this in here twice? -Lo
+/*why is this in here twice? -Lo
 	/datum/reagent/inaprovaline/synxchem/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
 		if(alien != IS_DIONA)
 		if(prob(5))
@@ -295,7 +293,7 @@
 		//Since Halloss is not "real" damage this should not cause death
 */
 
-/datum/reagent/inaprovaline/synxchem/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/overdose(mob/living/carbon/M, alien, removed)
 	..()
 	if(alien != IS_DIONA)
 		M.make_dizzy(10)
@@ -305,10 +303,10 @@
 			M.AdjustParalysis(1)
 
 
-/datum/reagent/inaprovaline/synxchem/holo/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/holo/overdose(mob/living/carbon/M, alien, removed)
 	return
 
-/datum/reagent/inaprovaline/synxchem/clown/overdose(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/inaprovaline/synxchem/clown/overdose(mob/living/carbon/M, alien, removed)
 	return
 
 
@@ -318,7 +316,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // nevermind. I added any roleplay flavor weird fur mechanics to happen when you touch or attack the synx.
 
-/mob/living/simple_mob/animal/synx/apply_melee_effects(var/atom/A) //Re-adding this for AI synx
+/mob/living/simple_mob/animal/synx/apply_melee_effects(atom/A) //Re-adding this for AI synx
 	if(stomach_distended) //Hacky burn damage code
 		if(isliving(A)) //Only affect living mobs, should include silicons. This could be expanded to deal special effects to acid-vulnerable objects.
 			var/mob/living/L = A
@@ -329,7 +327,7 @@
 				L.adjustFireLoss(damage_done)
 				return
 			else
-				to_chat(src,"<span class='notice'>Your stomach bounces off of the victim's armor!</span>")
+				to_chat(src,span_notice("Your stomach bounces off of the victim's armor!"))
 				return
 		return //If stomach is distended, return here to perform no forcefeeding or poison injecton.
 
@@ -348,12 +346,12 @@
 			var/target_zone = pick(BP_TORSO,BP_TORSO,BP_TORSO,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_HEAD)
 			if(L.can_inject(src, null, target_zone))
 				if(prob(poison_chance))
-					to_chat(L, "<span class='warning'>You feel a strange substance on you.</span>")
+					to_chat(L, span_warning("You feel a strange substance on you."))
 					L.reagents.add_reagent(poison_type, poison_per_bite)
 
 
 
-/mob/living/simple_mob/animal/synx/hear_say(message,verb,language,fakename,isItalics,var/mob/living/speaker)
+/mob/living/simple_mob/animal/synx/hear_say(message,verb,language,fakename,isItalics,mob/living/speaker)
 	. = ..()
 	if(!message || !speaker)    return
 	if (speaker == src) return
@@ -383,9 +381,9 @@
 	if(voices && prob(speak_chance/2))
 		randomspeech()
 
-/mob/living/simple_mob/animal/synx/perform_the_nom() //Synx can only eat people if their organs are on the inside.
+/mob/living/simple_mob/animal/synx/perform_the_nom(mob/living/user, mob/living/prey, mob/living/pred, obj/belly/belly, delay) //Synx can only eat people if their organs are on the inside.
 	if(stomach_distended)
-		to_chat(src,"<span class='notice'>You can't eat people without your stomach inside of you!</span>")
+		to_chat(src,span_notice("You can't eat people without your stomach inside of you!"))
 		return
 	else
 		..()
@@ -397,7 +395,7 @@
 /mob/living/simple_mob/proc/contort()
 	set name = "contort"
 	set desc = "Allows to hide beneath tables or certain items. Toggled on or off."
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 
 	if(stat == DEAD || paralysis || weakened || stunned || restrained())
 		return
@@ -405,32 +403,32 @@
 	if(status_flags & HIDING)
 		status_flags &= ~HIDING
 		reset_plane_and_layer()
-		to_chat(src,"<span class='notice'>You have stopped hiding.</span>")
+		to_chat(src,span_notice("You have stopped hiding."))
 		movement_cooldown = 3
 	else
 		status_flags |= HIDING
 		layer = HIDING_LAYER //Just above cables with their 2.44
 		plane = OBJ_PLANE
-		to_chat(src,"<span class='notice'>You are now hiding.</span>")
+		to_chat(src,span_notice("You are now hiding."))
 		movement_cooldown = 6
 
 /mob/living/simple_mob/animal/synx/proc/disguise()
 	set name = "Toggle Form"
 	set desc = "Switch between amorphous and humanoid forms."
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 
 	if(stat == DEAD || paralysis || weakened || stunned || restrained())
 		return
 
 	// If transform isn't true
 	if(stomach_distended)
-		to_chat(src,"<span class='warning'>You can't disguise with your stomach outside of your body!</span>")
+		to_chat(src,span_warning("You can't disguise with your stomach outside of your body!"))
 		return
 	if(!transformed)
-		to_chat(src,"<span class='warning'>You changed back into your disguise.</span>")
+		to_chat(src,span_warning("You changed back into your disguise."))
 		icon_living = transformed_state //Switch state to transformed state
 	else // If transformed is true.
-		to_chat(src,"<span class='warning'>Now they see your true form.</span>")
+		to_chat(src,span_warning("Now they see your true form."))
 		icon_living = initial(icon_living) //Switch state to what it was originally defined.
 
 
@@ -440,11 +438,11 @@
 /mob/living/simple_mob/animal/synx/proc/randomspeech()
 	set name = "speak"
 	set desc = "Take a sentence you heard and speak it."
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 	if(speak && voices)
 		handle_mimic()
 	else
-		usr << "<span class='warning'>YOU NEED TO HEAR THINGS FIRST, try using Ventcrawl to eevesdrop on nerds.</span>"
+		usr << span_warning("YOU NEED TO HEAR THINGS FIRST, try using Ventcrawl to eevesdrop on nerds.")
 
 /mob/living/simple_mob/animal/synx/proc/handle_mimic()
 	name = pick(voices)
@@ -461,20 +459,20 @@
 /mob/living/simple_mob/animal/synx/proc/sonar_ping()
 	set name = "Listen In"
 	set desc = "Allows you to listen in to movement and noises around you."
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 
 	if(incapacitated())
-		to_chat(src, "<span class='warning'>You need to recover before you can use this ability.</span>")
+		to_chat(src, span_warning("You need to recover before you can use this ability."))
 		return
 	if(world.time < next_sonar_ping)
-		to_chat(src, "<span class='warning'>You need another moment to focus.</span>")
+		to_chat(src, span_warning("You need another moment to focus."))
 		return
 	if(is_deaf() || is_below_sound_pressure(get_turf(src)))
-		to_chat(src, "<span class='warning'>You are for all intents and purposes currently deaf!</span>")
+		to_chat(src, span_warning("You are for all intents and purposes currently deaf!"))
 		return
 	next_sonar_ping += 10 SECONDS
 	var/heard_something = FALSE
-	to_chat(src, "<span class='notice'>You take a moment to listen in to your environment...</span>")
+	to_chat(src, span_notice("You take a moment to listen in to your environment..."))
 	for(var/mob/living/L in range(client.view, src))
 		var/turf/T = get_turf(L)
 		if(!T || L == src || L.stat == DEAD || is_below_sound_pressure(T))
@@ -501,7 +499,7 @@
 		feedback += "</span>"
 		to_chat(src,jointext(feedback,null))
 	if(!heard_something)
-		to_chat(src, "<span class='notice'>You hear no movement but your own.</span>")
+		to_chat(src, span_notice("You hear no movement but your own."))
 
 
 
@@ -510,11 +508,11 @@
 /mob/living/simple_mob/animal/synx/proc/distend_stomach()
 	set name = "Distend Stomach"
 	set desc = "Allows you to throw up your stomach, giving your attacks burn damage at the cost of your stomach contents going everywhere. Yuck."
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 
 	if(!stomach_distended) //true if stomach distended is null, 0, or ""
 		stomach_distended = !stomach_distended //switch statement
-		to_chat (src, "<span class='notice'>You disgorge your stomach, spilling its contents!</span>")
+		to_chat (src, span_notice("You disgorge your stomach, spilling its contents!"))
 		melee_damage_lower = 1 //Hopefully this will make all brute damage not apply while stomach is distended. I don't see a better way to do this.
 		melee_damage_upper = 1
 		icon_living = stomach_distended_state
@@ -532,7 +530,7 @@
 
 	if(stomach_distended) //If our stomach has been vomitted
 		stomach_distended = !stomach_distended
-		to_chat (src, "<span class='notice'>You swallow your insides!</span>")
+		to_chat (src, span_notice("You swallow your insides!"))
 		melee_damage_lower = SYNX_LOWER_DAMAGE //This is why I'm using a define
 		melee_damage_upper = SYNX_UPPER_DAMAGE
 		icon_living = initial(icon_living)
@@ -554,19 +552,15 @@
 	glow_toggle = 1
 	player_msg = "You aren't supposed to be in this. Wrong mob."
 
-/mob/living/simple_mob/animal/synx/ai/pet/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/ai/pet/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.vore_verb = "swallow"
 	B.digest_burn = 1
 	B.digest_brute = 0
 
-/mob/living/simple_mob/animal/synx/ai/pet/holo/init_vore()
-	if(!voremob_loaded)
-		return
-	.=..()
+/mob/living/simple_mob/animal/synx/ai/pet/holo/load_default_bellies()
+	. = ..()
 	var/obj/belly/B = vore_selected
 	B.vore_verb = "swallow"
 	B.digest_burn = 5
@@ -579,7 +573,7 @@
 /*/mob/living/simple_mob/animal/synx/proc/honk()
 	set name = "HONK"
 	set desc = "TAAA RAINBOW"
-	set category = "Abilities"
+	set category = "Abilities.Synx" //CHOMPEdit
 	icon_state = "synx_pet_rainbow"
 	icon_living = "synx_pet_rainbow"
 	playsound(src.loc, 'sound/items/bikehorn.ogg', 50, 1)
@@ -590,13 +584,13 @@
 //HOLOSEEDSPAWNCODE
 /mob/living/simple_mob/animal/synx/ai/pet/holo/death()
 	..()
-	visible_message("<span class='notice'>\The [src] fades away!</span>")
+	visible_message(span_notice("\The [src] fades away!"))
 	var/location = get_turf(src)
 	new /obj/item/seeds/hardlightseed/typesx(location)
 	qdel(src)
 
 /mob/living/simple_mob/animal/synx/ai/pet/holo/gib()
-	visible_message("<span class='notice'>\The [src] fades away!</span>")
+	visible_message(span_notice("\The [src] fades away!"))
 	var/location = get_turf(src)
 	new /obj/item/seeds/hardlightseed/typesx(location)
 	qdel(src)
@@ -649,30 +643,30 @@
 
 /mob/living/simple_mob/animal/synx/ai/pet/greed/synth
 /*
-▓███▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓███▓
- ▓▓   ▓▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓   ▓▓▓█
-▓      ▓▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓      ▓▓▓▓
-▓      █▓▓▓     █▓▓     █▓▓     █▓▓     █▓▓      █▓▓▓
-▓      █▓▓▓▓█  █▓▓ ▓█  █▓▓ ▓█  █▓▓█▓█  █▓▓▓      █▓▓▓
-▓      █▓▓▓  ▓█▓    █▓█▓█   █▓█▓█   ▓▓█   ▓█     █▓▓▓
-▓█     █▓▓▓          ▓▓▓     ▓▓▓          ▓▓     █▓▓▓
-▓▓     █▓▓            ▓       ▓            ▓     █▓▓▓
- ▓     █▓▓                                 ▓█    █▓▓
-  ▓    ▓▓▓                                 ▓▓   █▓▓
-   █\   ▓▓      ▓▓                   ▓█      ▓  █▓▓
-   ▓█\   ▓█    ▓█▓                   ▓▓▓    █▓ █▓▓
-    ▓▓▓█  ▓   ▓▓▓▓                   ▓ ▓▓   ▓ █▓▓
-        ▓█▓  ▓▓█▓▓                   ▓  ▓▓  ▓▓▓
-            ▓▓ █▓▓█                 █▓  █▓▓
-           ▓▓   ▓▓▓                 ▓▓   █▓▓
-           ▓    ▓▓▓                 ▓    █▓▓
-         ▓▓    █▓▓█               █▓    █▓▓▓
-         ▓     █▓▓▓  ▓▓█     █▓█  ▓▓    █▓▓▓
-         ▓     █▓▓▓▓▓  ▓▓█ ▓▓  ▓▓█▓     █▓▓▓
-         ▓     █▓▓▓     ▓▓▓     ▓▓▓     █▓▓▓
-         ▓     █▓▓▓     ▓▓▓     ▓▓▓     █▓▓▓
-           ▓█▓██▓▓▓█▓█▓█▓▓▓█▓█▓█▓▓▓█▓█▓██▓▓▓
-*/
+ * ▓███▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓███▓
+ *  ▓▓   ▓▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓  ▓▓█ ▓▓   ▓▓▓█
+ * ▓      ▓▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓     ▓▓▓      ▓▓▓▓
+ * ▓      █▓▓▓     █▓▓     █▓▓     █▓▓     █▓▓      █▓▓▓
+ * ▓      █▓▓▓▓█  █▓▓ ▓█  █▓▓ ▓█  █▓▓█▓█  █▓▓▓      █▓▓▓
+ * ▓      █▓▓▓  ▓█▓    █▓█▓█   █▓█▓█   ▓▓█   ▓█     █▓▓▓
+ * ▓█     █▓▓▓          ▓▓▓     ▓▓▓          ▓▓     █▓▓▓
+ * ▓▓     █▓▓            ▓       ▓            ▓     █▓▓▓
+ *  ▓     █▓▓                                 ▓█    █▓▓
+ *   ▓    ▓▓▓                                 ▓▓   █▓▓
+ *    █\   ▓▓      ▓▓                   ▓█      ▓  █▓▓
+ *    ▓█\   ▓█    ▓█▓                   ▓▓▓    █▓ █▓▓
+ *     ▓▓▓█  ▓   ▓▓▓▓                   ▓ ▓▓   ▓ █▓▓
+ *         ▓█▓  ▓▓█▓▓                   ▓  ▓▓  ▓▓▓
+ *             ▓▓ █▓▓█                 █▓  █▓▓
+ *            ▓▓   ▓▓▓                 ▓▓   █▓▓
+ *            ▓    ▓▓▓                 ▓    █▓▓
+ *          ▓▓    █▓▓█               █▓    █▓▓▓
+ *          ▓     █▓▓▓  ▓▓█     █▓█  ▓▓    █▓▓▓
+ *          ▓     █▓▓▓▓▓  ▓▓█ ▓▓  ▓▓█▓     █▓▓▓
+ *          ▓     █▓▓▓     ▓▓▓     ▓▓▓     █▓▓▓
+ *          ▓     █▓▓▓     ▓▓▓     ▓▓▓     █▓▓▓
+ *            ▓█▓██▓▓▓█▓█▓█▓▓▓█▓█▓█▓▓▓█▓█▓██▓▓▓
+ */
 	icon_state = "synx_C_living"
 	icon_living = "synx_C_living"
 	icon_dead = "synx_C_dead"
@@ -692,16 +686,16 @@
 			"bio" = 100,
 			"rad" = 100)
 	////////////////////////////MED INJECTOR
-	poison_type = "oxycodone" //OD effects, eye_blurry | Confuse + for slimes | stuttering
+	poison_type = REAGENT_ID_OXYCODONE //OD effects, eye_blurry | Confuse + for slimes | stuttering
 	poison_chance = 77 //high but not guranteed.
 	poison_per_bite = 9 //OD for oxyc is 20
 	//////////////////////////////////////////////FACTION
 	faction = "SYN"
 
 
-	New()
-		..()
-		name = "SYN-KinC-([rand(100,999)])"
+/mob/living/simple_mob/animal/synx/ai/pet/greed/synth/Initialize(mapload)
+	. = ..()
+	name = "SYN-KinC-([rand(100,999)])"
 
 /mob/living/simple_mob/animal/synx/ai/pet/greed/synth/goodboy
 	//hostile = 0
@@ -718,25 +712,6 @@
 	speak = list( )
 	//Vore Section
 	vore_capacity = 2
-
-/mob/living/simple_mob/animal/synx/ai/pet/asteri
-	name = "Asteri"
-	desc = "A cold blooded, genderless, parasitic eel from the more distant and stranger areas of the cosmos. Bleak white, perpetually grinning and possessing a hunger as enthusiastic and endless as humanity's sense of exploration.. This one has distinctive markings over its face forming the shape of a star, and its back holds a sizeable scar leading up to a small implanted device just above its waist, the name 'Asteri' scribed across the metal."
-	//icon= //icon= would just set what DMI we are using, we already have our special one set.
-	icon_state = "synx_asteri_living"
-	icon_living = "synx_asteri_living"
-	icon_dead = "synx_asteri_dead"
-	speak = list("Who is there?")//preset unique words Asteri remembers, to be defined more
-	player_msg = "SCREAMING NOISES."
-	health = 100//Slightly lower health due to being damaged permanently.
-	speak_chance = 5
-	//Vore Section
-	//vore_icons = SA_ICON_LIVING
-	vore_capacity = 2
-	vore_digest_chance = 50
-	vore_pounce_chance = 40
-	vore_bump_chance = 2
-	vore_escape_chance = 5
 
 /mob/living/simple_mob/animal/synx/ai/pet/clown
 	//hostile = 1
@@ -771,25 +746,26 @@
 /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/rename()
 	set name = "rename"
 	set desc = "Renames the synx"
-	set category = "DEBUG"
+	set category = "Debug.Synx" //CHOMPEdit
 	name = input(usr, "What would you like to change name to?", "Renaming", null)
 
 /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/redesc()
 	set name = "redesc"
 	set desc = "Redescribes the synx"
-	set category = "DEBUG"
+	set category = "Debug.Synx" //CHOMPEdit
 	desc = input(usr, "What would you like to change desc to?", "Redescribing", null)
 
 /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/resprite()
 	set name = "resprite"
 	set desc = "Resprite the synx"
-	set category = "DEBUG"
+	set category = "Debug.Synx" //CHOMPEdit
 	icon_state = input(usr, "What would you like to change icon_state to?", "Respriting", null)
 
-/mob/living/simple_mob/animal/synx/ai/pet/debug/New()
-	verbs |= /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/rename
-	verbs |= /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/resprite
-	verbs |= /mob/living/simple_mob/animal/synx/ai/pet/debug/proc/redesc
+/mob/living/simple_mob/animal/synx/ai/pet/debug/Initialize(mapload)
+	. = ..()
+	add_verb(src,/mob/living/simple_mob/animal/synx/ai/pet/debug/proc/rename) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/ai/pet/debug/proc/resprite) //CHOMPEdit TGPanel
+	add_verb(src,/mob/living/simple_mob/animal/synx/ai/pet/debug/proc/redesc) //CHOMPEdit TGPanel
 
 ////////////////////////////////////////
 ////////////////SYNX SPAWNER////////////
@@ -799,7 +775,6 @@
 
 /obj/random/mob/synx/item_to_spawn()
 	return pick(prob(66);/mob/living/simple_mob/animal/synx/ai/pet/greed,
-		//prob(50);/mob/living/simple_mob/animal/synx/pet/asteri,//He's crew so let's remove this
 		prob(33);/mob/living/simple_mob/animal/synx/ai/pet/holo,
 		prob(50);/mob/living/simple_mob/animal/synx/ai,) //normal eel boyo.
 

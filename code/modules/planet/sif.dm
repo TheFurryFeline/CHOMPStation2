@@ -1,7 +1,4 @@
-var/datum/planet/sif/planet_sif = null
-
-/datum/planet/sif
-	name = "Sif"
+GLOBAL_DATUM(planet_sif, /datum/planet/sif)
 
 /datum/planet/sif
 	name = "Sif"
@@ -17,7 +14,7 @@ var/datum/planet/sif/planet_sif = null
 
 /datum/planet/sif/New()
 	..()
-	planet_sif = src
+	GLOB.planet_sif = src
 	weather_holder = new /datum/weather_holder/sif(src) // Cold weather is also nice.
 
 // This code is horrible.
@@ -39,30 +36,30 @@ var/datum/planet/sif/planet_sif = null
 
 	switch(sun_position)
 		if(0 to 0.40) // Night
-			low_brightness = 0.2
-			low_color = "#000066"
+			low_brightness = 0.15
+			low_color = "#19195c"
 
-			high_brightness = 0.5
+			high_brightness = 0.3
 			high_color = "#66004D"
 			min = 0
 
 		if(0.40 to 0.50) // Twilight
-			low_brightness = 0.6
+			low_brightness = 0.3
 			low_color = "#66004D"
 
-			high_brightness = 0.8
+			high_brightness = 0.65
 			high_color = "#CC3300"
 			min = 0.40
 
-		if(0.50 to 0.70) // Sunrise/set
-			low_brightness = 0.8
+		if(0.50 to 0.60) // Sunrise/set
+			low_brightness = 0.65
 			low_color = "#CC3300"
 
 			high_brightness = 0.9
 			high_color = "#FF9933"
 			min = 0.50
 
-		if(0.70 to 1.00) // Noon
+		if(0.60 to 1.00) // Noon
 			low_brightness = 0.9
 			low_color = "#DDDDDD"
 
@@ -98,7 +95,7 @@ var/datum/planet/sif/planet_sif = null
 		new_color = rgb(new_r, new_g, new_b)
 
 	spawn(1)
-		update_sun_deferred(2, new_brightness, new_color)
+		update_sun_deferred(new_brightness, new_color)
 
 // We're gonna pretend there are 32 hours in a Sif day instead of 32.64 for the purposes of not losing sanity.  We lose 38m 24s but the alternative is a path to madness.
 /datum/time/sif
@@ -106,8 +103,8 @@ var/datum/planet/sif/planet_sif = null
 
 // Returns the time datum of Sif.
 /proc/get_sif_time()
-	if(planet_sif)
-		return planet_sif.current_time
+	if(GLOB.planet_sif)
+		return GLOB.planet_sif.current_time
 
 //Weather definitions
 /datum/weather_holder/sif
@@ -121,15 +118,22 @@ var/datum/planet/sif/planet_sif = null
 		WEATHER_RAIN		= new /datum/weather/sif/rain(),
 		WEATHER_STORM		= new /datum/weather/sif/storm(),
 		WEATHER_HAIL		= new /datum/weather/sif/hail(),
+		WEATHER_FOG			= new /datum/weather/sif/fog(),
 		WEATHER_BLOOD_MOON	= new /datum/weather/sif/blood_moon(),
 		WEATHER_EMBERFALL	= new /datum/weather/sif/emberfall(),
 		WEATHER_ASH_STORM	= new /datum/weather/sif/ash_storm(),
-		WEATHER_FALLOUT		= new /datum/weather/sif/fallout()
+		WEATHER_FALLOUT		= new /datum/weather/sif/fallout(),
+		WEATHER_FALLOUT_TEMP	= new /datum/weather/sif/fallout/temp(), //CHOMPedit begin
+		WEATHER_CONFETTI		= new /datum/weather/sif/confetti(),
+		WEATHER_DOWNPOURWARNING = new /datum/weather/sif/downpourwarning(),
+		WEATHER_DOWNPOUR = new /datum/weather/sif/downpour(),
+		WEATHER_DOWNPOURFATAL = new /datum/weather/sif/downpourfatal() //CHOMPedit end
 		)
 	roundstart_weather_chances = list(
 		WEATHER_CLEAR		= 30,
 		WEATHER_OVERCAST	= 30,
 		WEATHER_LIGHT_SNOW	= 20,
+		WEATHER_FOG			= 20,
 		WEATHER_SNOW		= 5,
 		WEATHER_BLIZZARD	= 5,
 		WEATHER_RAIN		= 5,
@@ -145,8 +149,9 @@ var/datum/planet/sif/planet_sif = null
 /datum/weather/sif/clear
 	name = "clear"
 	transition_chances = list(
-		WEATHER_CLEAR = 60,
-		WEATHER_OVERCAST = 40
+		WEATHER_CLEAR = 55,
+		WEATHER_OVERCAST = 35,
+		WEATHER_FOG = 10
 		)
 	transition_messages = list(
 		"The sky clears up.",
@@ -166,6 +171,7 @@ var/datum/planet/sif/planet_sif = null
 		WEATHER_CLEAR = 25,
 		WEATHER_OVERCAST = 50,
 		WEATHER_LIGHT_SNOW = 10,
+		WEATHER_FOG = 30,
 		WEATHER_SNOW = 5,
 		WEATHER_RAIN = 5,
 		WEATHER_HAIL = 5
@@ -187,9 +193,10 @@ var/datum/planet/sif/planet_sif = null
 	temp_low = 	258.15	// -15c
 	light_modifier = 0.7
 	transition_chances = list(
-		WEATHER_OVERCAST = 20,
-		WEATHER_LIGHT_SNOW = 50,
-		WEATHER_SNOW = 25,
+		WEATHER_OVERCAST = 10,
+		WEATHER_LIGHT_SNOW = 40,
+		WEATHER_FOG = 30,
+		WEATHER_SNOW = 15,
 		WEATHER_HAIL = 5
 		)
 	observed_message = "It is snowing lightly."
@@ -230,7 +237,7 @@ var/datum/planet/sif/planet_sif = null
 	..()
 	for(var/turf/simulated/floor/outdoors/snow/S as anything in SSplanets.new_outdoor_turfs) //This didn't make any sense before SSplanets, either
 		if(S.z in holder.our_planet.expected_z_levels)
-			for(var/dir_checked in cardinal)
+			for(var/dir_checked in GLOB.cardinal)
 				var/turf/simulated/floor/T = get_step(S, dir_checked)
 				if(istype(T))
 					if(istype(T, /turf/simulated/floor/outdoors) && prob(33))
@@ -265,7 +272,7 @@ var/datum/planet/sif/planet_sif = null
 	..()
 	for(var/turf/simulated/floor/outdoors/snow/S as anything in SSplanets.new_outdoor_turfs) //This didn't make any sense before SSplanets, either
 		if(S.z in holder.our_planet.expected_z_levels)
-			for(var/dir_checked in cardinal)
+			for(var/dir_checked in GLOB.cardinal)
 				var/turf/simulated/floor/T = get_step(S, dir_checked)
 				if(istype(T))
 					if(istype(T, /turf/simulated/floor/outdoors) && prob(50))
@@ -278,12 +285,13 @@ var/datum/planet/sif/planet_sif = null
 	wind_high = 2
 	wind_low = 1
 	light_modifier = 0.5
-	effect_message = "<span class='warning'>Rain falls on you.</span>"
+	effect_message = span_warning("Rain falls on you.")
 
 	transition_chances = list(
-		WEATHER_OVERCAST = 25,
-		WEATHER_LIGHT_SNOW = 10,
-		WEATHER_RAIN = 50,
+		WEATHER_OVERCAST = 20,
+		WEATHER_LIGHT_SNOW = 5,
+		WEATHER_FOG = 20,
+		WEATHER_RAIN = 40,
 		WEATHER_STORM = 10,
 		WEATHER_HAIL = 5
 		)
@@ -293,28 +301,27 @@ var/datum/planet/sif/planet_sif = null
 	)
 	outdoor_sounds_type = /datum/looping_sound/weather/rain
 	indoor_sounds_type = /datum/looping_sound/weather/rain/indoors
+	effect_flags = HAS_PLANET_EFFECT | EFFECT_ONLY_LIVING
 
-/datum/weather/sif/rain/process_effects()
-	..()
-	for(var/mob/living/L as anything in living_mob_list)
-		if(L.z in holder.our_planet.expected_z_levels)
-			var/turf/T = get_turf(L)
-			if(!T.outdoors)
-				continue // They're indoors, so no need to rain on them.
+/datum/weather/sif/rain/planet_effect(mob/living/L)
+	if(L.z in holder.our_planet.expected_z_levels)
+		var/turf/T = get_turf(L)
+		if(!T.is_outdoors())
+			return // They're indoors, so no need to rain on them.
 
-			// If they have an open umbrella, it'll guard from rain
-			var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
-			if(!istype(U) || !U.open)
-				U = L.get_inactive_hand()
+		// If they have an open umbrella, it'll guard from rain
+		var/obj/item/melee/umbrella/U = L.get_active_hand()
+		if(!istype(U) || !U.open)
+			U = L.get_inactive_hand()
 
-			if(istype(U) && U.open)
-				if(show_message)
-					to_chat(L, "<span class='notice'>Rain patters softly onto your umbrella.</span>")
-				continue
-
-			L.water_act(1)
+		if(istype(U) && U.open)
 			if(show_message)
-				to_chat(L, effect_message)
+				to_chat(L, span_notice("Rain patters softly onto your umbrella."))
+			return
+
+		L.water_act(1)
+		if(show_message)
+			to_chat(L, effect_message)
 
 /datum/weather/sif/storm
 	name = "storm"
@@ -325,7 +332,7 @@ var/datum/planet/sif/planet_sif = null
 	wind_low = 2
 	light_modifier = 0.3
 	flight_failure_modifier = 10
-	effect_message = "<span class='warning'>Rain falls on you, drenching you in water.</span>"
+	effect_message = span_warning("Rain falls on you, drenching you in water.")
 
 	var/next_lightning_strike = 0 // world.time when lightning will strike.
 	var/min_lightning_cooldown = 5 SECONDS
@@ -336,40 +343,42 @@ var/datum/planet/sif/planet_sif = null
 		"Loud thunder is heard in the distance.",
 		"A bright flash heralds the approach of a storm."
 	)
-	outdoor_sounds_type = /datum/looping_sound/weather/rain/heavy
-	indoor_sounds_type = /datum/looping_sound/weather/rain/heavy/indoors
-
+	outdoor_sounds_type = /datum/looping_sound/weather/storm
+	indoor_sounds_type = /datum/looping_sound/weather/storm/indoors
+	// CHOMPEdit - change weather sounds to proper storm sounds
 
 	transition_chances = list(
 		WEATHER_RAIN = 45,
 		WEATHER_STORM = 40,
 		WEATHER_HAIL = 10,
-		WEATHER_OVERCAST = 5
+		WEATHER_FOG = 3,
+		WEATHER_OVERCAST = 2
 		)
+	effect_flags = HAS_PLANET_EFFECT | EFFECT_ONLY_LIVING
+
+/datum/weather/sif/storm/planet_effect(mob/living/L)
+	if(L.z in holder.our_planet.expected_z_levels)
+		var/turf/T = get_turf(L)
+		if(!T.is_outdoors())
+			return // They're indoors, so no need to rain on them.
+
+		// If they have an open umbrella, it'll guard from rain
+		var/obj/item/melee/umbrella/U = L.get_active_hand()
+		if(!istype(U) || !U.open)
+			U = L.get_inactive_hand()
+
+		if(istype(U) && U.open)
+			if(show_message)
+				to_chat(L, span_notice("Rain showers loudly onto your umbrella!"))
+			return
+
+
+		L.water_act(2)
+		if(show_message)
+			to_chat(L, effect_message)
 
 /datum/weather/sif/storm/process_effects()
 	..()
-	for(var/mob/living/L as anything in living_mob_list)
-		if(L.z in holder.our_planet.expected_z_levels)
-			var/turf/T = get_turf(L)
-			if(!T.outdoors)
-				continue // They're indoors, so no need to rain on them.
-
-			// If they have an open umbrella, it'll guard from rain
-			var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
-			if(!istype(U) || !U.open)
-				U = L.get_inactive_hand()
-
-			if(istype(U) && U.open)
-				if(show_message)
-					to_chat(L, "<span class='notice'>Rain showers loudly onto your umbrella!</span>")
-				continue
-
-
-			L.water_act(2)
-			if(show_message)
-				to_chat(L, effect_message)
-
 	handle_lightning()
 
 // This gets called to do lightning periodically.
@@ -390,7 +399,7 @@ var/datum/planet/sif/planet_sif = null
 	flight_failure_modifier = 15
 	timer_low_bound = 2
 	timer_high_bound = 5
-	effect_message = "<span class='warning'>The hail smacks into you!</span>"
+	effect_message = span_warning("The hail smacks into you!")
 
 	transition_chances = list(
 		WEATHER_RAIN = 45,
@@ -404,42 +413,61 @@ var/datum/planet/sif/planet_sif = null
 		"It begins to hail.",
 		"An intense chill is felt, and chunks of ice start to fall from the sky, towards you."
 	)
+	effect_flags = HAS_PLANET_EFFECT | EFFECT_ONLY_HUMANS
 
-/datum/weather/sif/hail/process_effects()
-	..()
-	for(var/mob/living/carbon/H as anything in human_mob_list)
-		if(H.z in holder.our_planet.expected_z_levels)
-			var/turf/T = get_turf(H)
-			if(!T.outdoors)
-				continue // They're indoors, so no need to pelt them with ice.
+/datum/weather/sif/hail/planet_effect(mob/living/carbon/H)
+	if(H.z in holder.our_planet.expected_z_levels)
+		var/turf/T = get_turf(H)
+		if(!T.is_outdoors())
+			return // They're indoors, so no need to pelt them with ice.
 
-			// If they have an open umbrella, it'll guard from hail
-			var/obj/item/weapon/melee/umbrella/U = H.get_active_hand()
-			if(!istype(U) || !U.open)
-				U = H.get_inactive_hand()
+		// If they have an open umbrella, it'll guard from hail
+		var/obj/item/melee/umbrella/U = H.get_active_hand()
+		if(!istype(U) || !U.open)
+			U = H.get_inactive_hand()
 
-			if(istype(U) && U.open)
-				if(show_message)
-					to_chat(H, "<span class='notice'>Hail patters onto your umbrella.</span>")
-				continue
-
-			var/target_zone = pick(BP_ALL)
-			var/amount_blocked = H.run_armor_check(target_zone, "melee")
-			var/amount_soaked = H.get_armor_soak(target_zone, "melee")
-
-			var/damage = rand(1,3)
-
-			if(amount_blocked >= 30)
-				continue // No need to apply damage. Hardhats are 30. They should probably protect you from hail on your head.
-				//Voidsuits are likewise 40, and riot, 80. Clothes are all less than 30.
-
-			if(amount_soaked >= damage)
-				continue // No need to apply damage.
-
-			H.apply_damage(damage, BRUTE, target_zone, amount_blocked, amount_soaked, used_weapon = "hail")
+		if(istype(U) && U.open)
 			if(show_message)
-				to_chat(H, effect_message)
+				to_chat(H, span_notice("Hail patters onto your umbrella."))
+			return
 
+		var/target_zone = pick(BP_ALL)
+		var/amount_blocked = H.run_armor_check(target_zone, "melee")
+
+		var/damage = rand(1,3)
+
+		if(amount_blocked >= 30)
+			return // No need to apply damage. Hardhats are 30. They should probably protect you from hail on your head.
+			//Voidsuits are likewise 40, and riot, 80. Clothes are all less than 30.
+
+		H.apply_damage(damage, BRUTE, target_zone, amount_blocked, used_weapon = "hail")
+		if(show_message)
+			to_chat(H, effect_message)
+
+/datum/weather/sif/fog
+	name = "fog"
+	icon_state = "fog"
+	wind_high = 1
+	wind_low = 0
+	light_modifier = 0.7
+
+	temp_high = T0C		// 0c
+	temp_low = 263.15	// -10c
+
+	transition_chances = list(
+		WEATHER_FOG = 70,
+		WEATHER_OVERCAST = 15,
+		WEATHER_LIGHT_SNOW = 10,
+		WEATHER_RAIN = 5
+		)
+	observed_message = "A fogbank has rolled over the region."
+	transition_messages = list(
+		"Fog rolls in.",
+		"Visibility falls as the air becomes dense.",
+		"The clouds drift lower, as if to smother the forests."
+	)
+	outdoor_sounds_type = /datum/looping_sound/weather/wind
+	indoor_sounds_type = /datum/looping_sound/weather/wind/indoors
 
 // These never happen naturally, and are for adminbuse.
 
@@ -450,7 +478,7 @@ var/datum/planet/sif/planet_sif = null
 	light_color = "#FF0000"
 	flight_failure_modifier = 25
 	transition_chances = list(
-		WEATHER_BLOODMOON = 100
+		WEATHER_BLOOD_MOON = 100
 		)
 	observed_message = "Everything is red. Something really wrong is going on."
 	transition_messages = list(
@@ -499,17 +527,15 @@ var/datum/planet/sif/planet_sif = null
 	// Lets recycle.
 	outdoor_sounds_type = /datum/looping_sound/weather/outside_blizzard
 	indoor_sounds_type = /datum/looping_sound/weather/inside_blizzard
+	effect_flags = HAS_PLANET_EFFECT | EFFECT_ONLY_LIVING
 
-/datum/weather/sif/ash_storm/process_effects()
-	..()
-	for(var/thing in living_mob_list)
-		var/mob/living/L = thing
-		if(L.z in holder.our_planet.expected_z_levels)
-			var/turf/T = get_turf(L)
-			if(!T.outdoors)
-				continue // They're indoors, so no need to burn them with ash.
+/datum/weather/sif/ash_storm/planet_effect(mob/living/L)
+	if(L.z in holder.our_planet.expected_z_levels)
+		var/turf/T = get_turf(L)
+		if(!T.is_outdoors())
+			return // They're indoors, so no need to burn them with ash.
 
-			L.inflict_heat_damage(rand(1, 3))
+		L.inflict_heat_damage(rand(1, 3))
 
 
 // Totally radical.
@@ -526,6 +552,7 @@ var/datum/planet/sif/planet_sif = null
 	transition_messages = list(
 		"Radioactive soot and ash start to float down around you, contaminating whatever they touch."
 	)
+	imminent_transition_message = "Sky and clouds are growing sickly green... Radiation storm is approaching, get to cover!"
 	outdoor_sounds_type = /datum/looping_sound/weather/wind
 	indoor_sounds_type = /datum/looping_sound/weather/wind/indoors
 
@@ -536,18 +563,22 @@ var/datum/planet/sif/planet_sif = null
 	// How much radiation is bursted onto a random tile near a mob.
 	var/fallout_rad_low = RAD_LEVEL_HIGH
 	var/fallout_rad_high = RAD_LEVEL_VERY_HIGH
+	effect_flags = HAS_PLANET_EFFECT | EFFECT_ONLY_LIVING
 
-/datum/weather/sif/fallout/process_effects()
-	..()
-	for(var/thing in living_mob_list)
-		var/mob/living/L = thing
-		if(L.z in holder.our_planet.expected_z_levels)
-			irradiate_nearby_turf(L)
-			var/turf/T = get_turf(L)
-			if(!T.outdoors)
-				continue // They're indoors, so no need to irradiate them with fallout.
+/datum/weather/sif/fallout/planet_effect(mob/living/L)
+	if(L.z in holder.our_planet.expected_z_levels)
+		irradiate_nearby_turf(L)
+		var/turf/T = get_turf(L)
+		if(!T.is_outdoors())
+			return // They're indoors, so no need to irradiate them with fallout.
 
-			L.rad_act(rand(direct_rad_low, direct_rad_high))
+		radiation_pulse(
+			L,
+			max_range = 1,
+			threshold = RAD_VERY_LIGHT_INSULATION,
+			chance = rand(fallout_rad_low, fallout_rad_high),
+			strength = rand(fallout_rad_low, fallout_rad_high)
+		)
 
 // This makes random tiles near people radioactive for awhile.
 // Tiles far away from people are left alone, for performance.
@@ -558,5 +589,12 @@ var/datum/planet/sif/planet_sif = null
 	var/turf/T = pick(turfs) // We get one try per tick.
 	if(!istype(T))
 		return
-	if(T.outdoors)
-		SSradiation.radiate(T, rand(fallout_rad_low, fallout_rad_high))
+	if(T.is_outdoors())
+		radiation_pulse(
+			T,
+			max_range = 7,
+			threshold = RAD_MEDIUM_INSULATION,
+			chance = URANIUM_IRRADIATION_CHANCE,
+			minimum_exposure_time = URANIUM_RADIATION_MINIMUM_EXPOSURE_TIME,
+			strength = rand(fallout_rad_low, fallout_rad_high)
+		)

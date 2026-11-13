@@ -1,4 +1,4 @@
-#define SOLAR_MAX_DIST 40
+//# define SOLAR_MAX_DIST 40		//VOREStation Removal
 #define SOLAR_AUTO_START_NO     0 // Will never start itself.
 #define SOLAR_AUTO_START_YES    1 // Will always start itself.
 #define SOLAR_AUTO_START_CONFIG 2 // Will start itself if config allows it (default is no).
@@ -8,11 +8,12 @@ GLOBAL_LIST_EMPTY(solars_list)
 
 /obj/machinery/power/solar
 	name = "solar panel"
-	desc = "A solar electrical generator."
+	desc = "A device that converts sunlight into electricity through witchcraft known as photovoltaic. This array comes with a small motor, so it can rotate and track the sun, provided a controller tells it how."
 	icon = 'icons/obj/power.dmi'
 	icon_state = "sp_base"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
+	unacidable = TRUE
 	use_power = USE_POWER_OFF
 	idle_power_usage = 0
 	active_power_usage = 0
@@ -25,6 +26,7 @@ GLOBAL_LIST_EMPTY(solars_list)
 	var/turn_angle = 0
 	var/obj/machinery/power/solar_control/control = null
 	var/glass_type = /obj/item/stack/material/glass
+	var/SOLAR_MAX_DIST = 60 //ChompEDIT - ours are >40 away
 
 /obj/machinery/power/solar/drain_power()
 	return -1
@@ -35,13 +37,15 @@ GLOBAL_LIST_EMPTY(solars_list)
 		health *= 2
 	update_icon()
 	connect_to_network()
+	AddElement(/datum/element/climbable)
 
 /obj/machinery/power/solar/Destroy()
 	unset_control() //remove from control computer
-	..()
+	. = ..()
 
 //set the control of the panel to a given computer if closer than SOLAR_MAX_DIST
-/obj/machinery/power/solar/proc/set_control(var/obj/machinery/power/solar_control/SC)
+/obj/machinery/power/solar/proc/set_control(obj/machinery/power/solar_control/SC)
+	ASSERT(!control)
 	if(SC && (get_dist(src, SC) > SOLAR_MAX_DIST))
 		return 0
 	control = SC
@@ -50,27 +54,28 @@ GLOBAL_LIST_EMPTY(solars_list)
 //set the control of the panel to null and removes it from the control list of the previous control computer if needed
 /obj/machinery/power/solar/proc/unset_control()
 	if(control)
-		control.connected_panels.Remove(src)
+		control.remove_panel(src)
 	control = null
 
-/obj/machinery/power/solar/attackby(obj/item/weapon/W, mob/user)
+/obj/machinery/power/solar/attackby(obj/item/W, mob/user)
 
-	if(W.is_crowbar())
+	if(W.has_tool_quality(TOOL_CROWBAR))
 		playsound(src, 'sound/machines/click.ogg', 50, 1)
-		user.visible_message("<span class='notice'>[user] begins to take the glass off the solar panel.</span>")
-		if(do_after(user, 50))
+		user.visible_message(span_notice("[user] begins to take the glass off the solar panel."))
+		if(do_after(user, 2 SECONDS * W.toolspeed, target = src))
 			var/obj/item/solar_assembly/S = new(loc)
 			S.anchored = TRUE
-			var/obj/item/stack/glass = new glass_type(loc)
-			glass.amount = 2
+			new glass_type(loc, 2)
 			playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
-			user.visible_message("<span class='notice'>[user] takes the glass off the solar panel.</span>")
+			user.visible_message(span_notice("[user] takes the glass off the solar panel."))
 			qdel(src)
 		return
-	else if (W)
-		src.add_fingerprint(user)
-		src.health -= W.force
-		src.healthcheck()
+	else if(W && user.a_intent == I_HURT)
+		user.visible_message(span_warning("[user] strikes the solar panel with [W]."))
+		user.setClickCooldown(user.get_attack_speed(W))
+		add_fingerprint(user)
+		health -= W.force
+		healthcheck()
 	..()
 
 
@@ -79,8 +84,8 @@ GLOBAL_LIST_EMPTY(solars_list)
 		if(!(stat & BROKEN))
 			broken()
 		else
-			new /obj/item/weapon/material/shard(src.loc)
-			new /obj/item/weapon/material/shard(src.loc)
+			new /obj/item/material/shard(src.loc)
+			new /obj/item/material/shard(src.loc)
 			qdel(src)
 			return
 	return
@@ -88,15 +93,15 @@ GLOBAL_LIST_EMPTY(solars_list)
 
 /obj/machinery/power/solar/update_icon()
 	..()
-	overlays.Cut()
+	cut_overlays()
 	if(stat & BROKEN)
-		overlays += image('icons/obj/power.dmi', icon_state = "solar_panel-b", layer = FLY_LAYER)
+		add_overlay("solar_panel-b")
 	else
-		overlays += image('icons/obj/power.dmi', icon_state = "solar_panel", layer = FLY_LAYER)
+		add_overlay("solar_panel")
 		src.set_dir(angle2dir(adir))
 	return
 
-//calculates the fraction of the SSsun.sunlight that the panel recieves
+//calculates the fraction of the sun that the panel recieves
 /obj/machinery/power/solar/proc/update_solar_exposure()
 	if(!SSsun.sun)
 		return
@@ -104,36 +109,32 @@ GLOBAL_LIST_EMPTY(solars_list)
 		sunfrac = 0
 		return
 
-	//find the smaller angle between the direction the panel is facing and the direction of the SSsun.sun (the sign is not important here)
-	var/p_angle = min(abs(adir - SSsun.sun.angle), 360 - abs(adir - SSsun.sun.angle))
-
-	if(p_angle > 90)			// if facing more than 90deg from SSsun.sun, zero output
+	//find the smaller angle between the direction the panel is facing and the direction of the sun (the sign is not important here)
+	var/source_angle = SSsolars.get_solar_angle(get_turf(src))
+	var/p_angle = min(abs(adir - source_angle), 360 - abs(adir - source_angle))
+	if(p_angle > 90) // if facing more than 90deg from sun, zero output
 		sunfrac = 0
 		return
 
 	sunfrac = cos(p_angle) ** 2
 	//isn't the power recieved from the incoming light proportionnal to cos(p_angle) (Lambert's cosine law) rather than cos(p_angle)^2 ?
 
-/obj/machinery/power/solar/process()//TODO: remove/add this from machines to save on processing as needed ~Carn PRIORITY
+/obj/machinery/power/solar/proc/get_power_supplied()
 	if(stat & BROKEN)
-		return
-	if(!SSsun.sun || !control) //if there's no SSsun.sun or the panel is not linked to a solar control computer, no need to proceed
-		return
-
-	if(powernet)
-		if(powernet == control.powernet)//check if the panel is still connected to the computer
-			if(obscured) //get no light from the SSsun.sun, so don't generate power
-				return
-			var/sgen = GLOB.solar_gen_rate * sunfrac
-			add_avail(sgen)
-			control.gen += sgen
-		else //if we're no longer on the same powernet, remove from control computer
-			unset_control()
+		return 0
+	if(!SSsun.sun || !control)
+		return 0  //if there's no sun or the panel is not linked to a solar control computer, no need to proceed
+	if(!powernet || powernet != control.powernet)
+		return 0 // We aren't connected to the controller
+	if(obscured)
+		return 0 //get no light from the sun, so don't generate power
+	return GLOB.solar_gen_rate * sunfrac
 
 /obj/machinery/power/solar/proc/broken()
 	stat |= BROKEN
 	unset_control()
 	update_icon()
+	SEND_SIGNAL(src, COMSIG_CLIMBABLE_SHAKE_CLIMBERS, null)
 	return
 
 
@@ -141,13 +142,13 @@ GLOBAL_LIST_EMPTY(solars_list)
 	switch(severity)
 		if(1.0)
 			if(prob(15))
-				new /obj/item/weapon/material/shard( src.loc )
+				new /obj/item/material/shard( src.loc )
 			qdel(src)
 			return
 
 		if(2.0)
 			if (prob(25))
-				new /obj/item/weapon/material/shard( src.loc )
+				new /obj/item/material/shard( src.loc )
 				qdel(src)
 				return
 
@@ -159,37 +160,57 @@ GLOBAL_LIST_EMPTY(solars_list)
 				broken()
 	return
 
-
-/obj/machinery/power/solar/fake/New(var/turf/loc, var/glass_type)
-	..(loc, glass_type, 0)
-
-/obj/machinery/power/solar/fake/process()
-	. = PROCESS_KILL
-	return
-
-//trace towards SSsun.sun to see if we're in shadow
+//trace towards sun to see if we're in shadow
 /obj/machinery/power/solar/proc/occlusion()
+	var/turf/our_t = get_turf(src)
+	var/datum/planet/our_planet
+	if(!our_t || our_t.z > length(SSplanets.z_to_planet) || !SSplanets.z_to_planet[our_t.z])
+		// If we are NOT on a planet, we check toward the edge of the map, otherwise we're going to assume the sun is above us on a planet
+		var/ax = x		// start at the solar panel
+		var/ay = y
+		var/turf/T = null
 
-	var/ax = x		// start at the solar panel
-	var/ay = y
-	var/turf/T = null
+		for(var/i = 1 to 20)		// 20 steps is enough
+			ax += SSsun.sun.dx	// do step
+			ay += SSsun.sun.dy
 
-	for(var/i = 1 to 20)		// 20 steps is enough
-		ax += SSsun.sun.dx	// do step
-		ay += SSsun.sun.dy
+			T = locate( round(ax,0.5),round(ay,0.5),z)
 
-		T = locate( round(ax,0.5),round(ay,0.5),z)
+			if(!T || T.x == 1 || T.x==world.maxx || T.y==1 || T.y==world.maxy)		// not obscured if we reach the edge
+				break
 
-		if(!T || T.x == 1 || T.x==world.maxx || T.y==1 || T.y==world.maxy)		// not obscured if we reach the edge
-			break
-
-		if(T.opacity)			// if we hit a solid turf, panel is obscured
-			obscured = 1
-			return
+			if(T.opacity)			// if we hit a solid turf, panel is obscured
+				obscured = 1
+				return
+	else
+		// If we are on a planet, get it for later so we can change the intensity of the light we recieve
+		our_planet = SSplanets.z_to_planet[our_t.z]
 
 	obscured = 0		// if hit the edge or stepped 20 times, not obscured
 	update_solar_exposure()
 
+	// Use the actual brightness of time and weather if we are on a planet, check if we're not blocked above by seeing what our outdoors status is
+	if(our_planet)
+		sunfrac *= our_t.is_outdoors() ? our_planet.sun["brightness"] : 0
+
+/// Updates the power generation of a solar panel.
+/obj/machinery/power/solar/proc/update_power_generation(obj/machinery/power/solar_control/SC)
+	adir = SC.cdir //instantly rotates the panel
+	occlusion()//and
+	update_icon() //update it
+	var/sgen = get_power_supplied()
+	var/list/panel_list = SC.get_connected_panels()
+	panel_list[src] = sgen
+	return sgen
+
+/// Looks nice but doesn't generate power.
+/obj/machinery/power/solar/fake
+
+/obj/machinery/power/solar/fake/get_power_supplied()
+	return 0
+
+/obj/machinery/power/solar/fake/update_power_generation()
+	return 0
 
 //
 // Solar Assembly - For construction of solar arrays.
@@ -202,56 +223,56 @@ GLOBAL_LIST_EMPTY(solars_list)
 	icon_state = "sp_base"
 	item_state = "camera"
 	w_class = ITEMSIZE_LARGE // Pretty big!
-	anchored = 0
+	anchored = FALSE
 	var/tracker = 0
 
-/obj/item/solar_assembly/attack_hand(var/mob/user)
+/obj/item/solar_assembly/attack_hand(mob/user)
 	if(!anchored || !isturf(loc)) // You can't pick it up
 		..()
 
-/obj/item/solar_assembly/attackby(var/obj/item/weapon/W, var/mob/user)
+/obj/item/solar_assembly/attackby(obj/item/W, mob/user)
 	if (!isturf(loc))
 		return 0
 	if(!anchored)
-		if(W.is_wrench())
-			anchored = 1
-			user.visible_message("<span class='notice'>[user] wrenches the solar assembly into place.</span>")
+		if(W.has_tool_quality(TOOL_WRENCH))
+			anchored = TRUE
+			user.visible_message(span_notice("[user] wrenches the solar assembly into place."))
 			playsound(src, W.usesound, 75, 1)
 			return 1
 	else
-		if(W.is_wrench())
-			anchored = 0
-			user.visible_message("<span class='notice'>[user] unwrenches the solar assembly from it's place.</span>")
+		if(W.has_tool_quality(TOOL_WRENCH))
+			anchored = FALSE
+			user.visible_message(span_notice("[user] unwrenches the solar assembly from it's place."))
 			playsound(src, W.usesound, 75, 1)
 			return 1
 
-		if(istype(W, /obj/item/stack/material) && (W.get_material_name() == "glass" || W.get_material_name() == "rglass"))
+		if(istype(W, /obj/item/stack/material) && (W.get_material_name() == MAT_GLASS || W.get_material_name() == MAT_RGLASS))
 			var/obj/item/stack/material/S = W
 			if(S.use(2))
 				playsound(src, 'sound/machines/click.ogg', 50, 1)
-				user.visible_message("<span class='notice'>[user] places the glass on the solar assembly.</span>")
+				user.visible_message(span_notice("[user] places the glass on the solar assembly."))
 				if(tracker)
 					new /obj/machinery/power/tracker(get_turf(src), W.type)
 				else
 					new /obj/machinery/power/solar(get_turf(src), W.type)
 				qdel(src)
 			else
-				to_chat(user, "<span class='warning'>You need two sheets of glass to put them into a solar panel.</span>")
+				to_chat(user, span_warning("You need two sheets of glass to put them into a solar panel."))
 				return
 			return 1
 
 	if(!tracker)
-		if(istype(W, /obj/item/weapon/tracker_electronics))
+		if(istype(W, /obj/item/tracker_electronics))
 			tracker = 1
 			user.drop_item()
 			qdel(W)
-			user.visible_message("<span class='notice'>[user] inserts the electronics into the solar assembly.</span>")
+			user.visible_message(span_notice("[user] inserts the electronics into the solar assembly."))
 			return 1
 	else
-		if(W.is_crowbar())
-			new /obj/item/weapon/tracker_electronics(src.loc)
+		if(W.has_tool_quality(TOOL_CROWBAR))
+			new /obj/item/tracker_electronics(src.loc)
 			tracker = 0
-			user.visible_message("<span class='notice'>[user] takes out the electronics from the solar assembly.</span>")
+			user.visible_message(span_notice("[user] takes out the electronics from the solar assembly."))
 			return 1
 	..()
 
@@ -264,20 +285,20 @@ GLOBAL_LIST_EMPTY(solars_list)
 	desc = "A controller for solar panel arrays."
 	icon = 'icons/obj/computer.dmi'
 	icon_state = "solar"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 250
 	var/id = 0
 	var/cdir = 0
 	var/targetdir = 0		// target angle in manual tracking (since it updates every game minute)
-	var/gen = 0
-	var/lastgen = 0
 	var/track = 0			// 0= off  1=timed  2=auto (tracker)
 	var/trackrate = 600		// 300-900 seconds
-	var/nexttime = 0		// time for a panel to rotate of 1� in manual tracking
+	var/nexttime = 0		// time for a panel to rotate of 1° in manual tracking
 	var/obj/machinery/power/tracker/connected_tracker = null
-	var/list/connected_panels = list()
+	var/needs_panel_check	// Powernet has been updated, need to check if panels are still connected.
+	var/connected_power		// Sum of power supplied by connected panels.
+	VAR_PRIVATE/list/connected_panels = list()
 	var/auto_start = SOLAR_AUTO_START_NO
 
 // Used for mapping in solar arrays which automatically start itself.
@@ -291,7 +312,7 @@ GLOBAL_LIST_EMPTY(solars_list)
 /obj/machinery/power/solar_control/config_start
 	auto_start = SOLAR_AUTO_START_CONFIG
 
-/obj/machinery/power/solar_control/Initialize()
+/obj/machinery/power/solar_control/Initialize(mapload)
 	. = ..()
 	connect_to_network()
 	set_panels(cdir)
@@ -305,31 +326,41 @@ GLOBAL_LIST_EMPTY(solars_list)
 
 /obj/machinery/power/solar_control/proc/auto_start(forced = FALSE)
 	// Automatically sets the solars, if allowed.
-	if(forced || auto_start == SOLAR_AUTO_START_YES || (auto_start == SOLAR_AUTO_START_CONFIG && config.autostart_solars) )
+	if(forced || auto_start == SOLAR_AUTO_START_YES || (auto_start == SOLAR_AUTO_START_CONFIG && CONFIG_GET(flag/autostart_solars)) )
 		track = 2 // Auto tracking mode.
 		search_for_connected()
 		if(connected_tracker)
-			connected_tracker.set_angle(SSsun.sun.angle)
+			connected_tracker.set_angle(SSsolars.get_solar_angle(get_turf(src)))
 		set_panels(cdir)
 
-// This would use LateInitialize(), however the powernet does not appear to exist during that time.
-/hook/roundstart/proc/auto_start_solars()
-	for(var/a in GLOB.solars_list)
-		var/obj/machinery/power/solar_control/SC = a
-		SC.auto_start()
-	return TRUE
+/obj/machinery/power/solar_control/proc/add_panel(obj/machinery/power/solar/P)
+	var/sgen = P.get_power_supplied()
+	connected_power -= connected_panels[P] // Just in case it was already in there
+	connected_panels[P] = sgen
+	connected_power += sgen
+
+/obj/machinery/power/solar_control/proc/remove_panel(obj/machinery/power/solar/P)
+	connected_power -= connected_panels[P]
+	connected_panels.Remove(P)
+	SSsolars.panel_run[REF(src)] -= P // clear hardref in subsystem
+
+/obj/machinery/power/solar_control/proc/get_connected_panels()
+	RETURN_TYPE(/list)
+	return connected_panels
 
 /obj/machinery/power/solar_control/drain_power()
 	return -1
 
 /obj/machinery/power/solar_control/disconnect_from_network()
-	..()
+	. = ..()
 	GLOB.solars_list.Remove(src)
+	needs_panel_check = TRUE
 
 /obj/machinery/power/solar_control/connect_to_network()
 	var/to_return = ..()
 	if(powernet) //if connected and not already in solar_list...
 		GLOB.solars_list |= src //... add it
+		needs_panel_check = TRUE
 	return to_return
 
 //search for unconnected panels and trackers in the computer powernet and connect them
@@ -338,9 +369,8 @@ GLOBAL_LIST_EMPTY(solars_list)
 		for(var/obj/machinery/power/M in powernet.nodes)
 			if(istype(M, /obj/machinery/power/solar))
 				var/obj/machinery/power/solar/S = M
-				if(!S.control) //i.e unconnected
-					S.set_control(src)
-					connected_panels |= S
+				if(!S.control && S.set_control(src)) //i.e unconnected
+					add_panel(S)
 			else if(istype(M, /obj/machinery/power/tracker))
 				if(!connected_tracker) //if there's already a tracker connected to the computer don't add another
 					var/obj/machinery/power/tracker/T = M
@@ -348,7 +378,7 @@ GLOBAL_LIST_EMPTY(solars_list)
 						connected_tracker = T
 						T.set_control(src)
 
-//called by the SSsun.sun controller, update the facing angle (either manually or via tracking) and rotates the panels accordingly
+//called by the sun controller, update the facing angle (either manually or via tracking) and rotates the panels accordingly
 /obj/machinery/power/solar_control/proc/update()
 	if(stat & (NOPOWER | BROKEN))
 		return
@@ -359,24 +389,21 @@ GLOBAL_LIST_EMPTY(solars_list)
 				cdir = targetdir //...the current direction is the targetted one (and rotates panels to it)
 		if(2) // auto-tracking
 			if(connected_tracker)
-				connected_tracker.set_angle(SSsun.sun.angle)
-
-	set_panels(cdir)
-	updateDialog()
+				connected_tracker.set_angle(SSsolars.get_solar_angle(get_turf(src)))
 
 /obj/machinery/power/solar_control/update_icon()
 	if(stat & BROKEN)
 		icon_state = "broken"
-		overlays.Cut()
+		cut_overlays()
 		return
 	if(stat & NOPOWER)
 		icon_state = "c_unpowered"
-		overlays.Cut()
+		cut_overlays()
 		return
 	icon_state = "solar"
-	overlays.Cut()
+	cut_overlays()
 	if(cdir > -1)
-		overlays += image('icons/obj/computer.dmi', "solcon-o", FLY_LAYER, angle2dir(cdir))
+		add_overlay(image('icons/obj/computer.dmi', "solcon-o", FLY_LAYER, angle2dir(cdir)))
 	return
 
 /obj/machinery/power/solar_control/attack_hand(mob/user)
@@ -393,10 +420,10 @@ GLOBAL_LIST_EMPTY(solars_list)
 /obj/machinery/power/solar_control/tgui_data()
 	var/data = list()
 
-	data["generated"] = round(lastgen)
+	data["generated"] = round(connected_power)
 	data["generated_ratio"] = data["generated"] / round(max(connected_panels.len, 1) * GLOB.solar_gen_rate)
 
-	data["sun_angle"] = SSsun.sun.angle
+	data["sun_angle"] = SSsolars.get_solar_angle(get_turf(src))
 	data["array_angle"] = cdir
 	data["rotation_rate"] = trackrate
 	data["max_rotation_rate"] = 7200
@@ -408,40 +435,37 @@ GLOBAL_LIST_EMPTY(solars_list)
 	return data
 
 /obj/machinery/power/solar_control/attackby(obj/item/I, user as mob)
-	if(I.is_screwdriver())
+	if(I.has_tool_quality(TOOL_SCREWDRIVER))
 		playsound(src, I.usesound, 50, 1)
-		if(do_after(user, 20))
+		if(do_after(user, 2 SECONDS, target = src))
 			if (src.stat & BROKEN)
-				to_chat(user, "<font color='blue'>The broken glass falls out.</font>")
+				to_chat(user, span_blue("The broken glass falls out."))
 				var/obj/structure/frame/A = new /obj/structure/frame/computer( src.loc )
-				new /obj/item/weapon/material/shard( src.loc )
-				var/obj/item/weapon/circuitboard/solar_control/M = new /obj/item/weapon/circuitboard/solar_control( A )
+				new /obj/item/material/shard( src.loc )
+				var/obj/item/circuitboard/solar_control/M = new /obj/item/circuitboard/solar_control( A )
 				for (var/obj/C in src)
 					C.loc = src.loc
 				A.circuit = M
 				A.state = 3
 				A.icon_state = "computer_3"
-				A.anchored = 1
+				A.anchored = TRUE
 				qdel(src)
 			else
-				to_chat(user, "<font color='blue'>You disconnect the monitor.</font>")
+				to_chat(user, span_blue("You disconnect the monitor."))
 				var/obj/structure/frame/A = new /obj/structure/frame/computer( src.loc )
-				var/obj/item/weapon/circuitboard/solar_control/M = new /obj/item/weapon/circuitboard/solar_control( A )
+				var/obj/item/circuitboard/solar_control/M = new /obj/item/circuitboard/solar_control( A )
 				for (var/obj/C in src)
 					C.loc = src.loc
 				A.circuit = M
 				A.state = 4
 				A.icon_state = "computer_4"
-				A.anchored = 1
+				A.anchored = TRUE
 				qdel(src)
 	else
 		src.attack_hand(user)
 	return
 
 /obj/machinery/power/solar_control/process()
-	lastgen = gen
-	gen = 0
-
 	if(stat & (NOPOWER | BROKEN))
 		return
 
@@ -450,11 +474,16 @@ GLOBAL_LIST_EMPTY(solars_list)
 			connected_tracker.unset_control()
 
 	if(track==1 && trackrate) //manual tracking and set a rotation speed
-		if(nexttime <= world.time) //every time we need to increase/decrease the angle by 1�...
+		if(nexttime <= world.time) //every time we need to increase/decrease the angle by 1°...
 			targetdir = (targetdir + trackrate/abs(trackrate) + 360) % 360 	//... do it
-			nexttime += 36000/abs(trackrate) //reset the counter for the next 1�
+			nexttime += 36000/abs(trackrate) //reset the counter for the next 1°
 
-	updateDialog()
+	if(needs_panel_check)
+		for(var/obj/machinery/power/solar/S in connected_panels)
+			if (S.powernet != powernet)
+				S.unset_control()
+	if(powernet)
+		add_avail(connected_power)
 
 /obj/machinery/power/solar_control/tgui_act(action, params)
 	if(..())
@@ -487,7 +516,7 @@ GLOBAL_LIST_EMPTY(solars_list)
 			track = mode
 			if(track == 2)
 				if(connected_tracker)
-					connected_tracker.set_angle(SSsun.sun.angle)
+					connected_tracker.set_angle(SSsolars.get_solar_angle(get_turf(src)))
 					set_panels(cdir)
 			else if(track == 1) //begin manual tracking
 				targetdir = cdir
@@ -500,19 +529,17 @@ GLOBAL_LIST_EMPTY(solars_list)
 			search_for_connected()
 			return TRUE
 
-//rotates the panel to the passed angle
-/obj/machinery/power/solar_control/proc/set_panels(var/cdir)
+/// rotates all connected panels to the passed angle, very expensive as it does them all at once in a single frame. This is what SSsolars does, but much more rude about it.
+/obj/machinery/power/solar_control/proc/set_panels(cdir)
+	var/sum = 0
 	for(var/obj/machinery/power/solar/S in connected_panels)
-		S.adir = cdir //instantly rotates the panel
-		S.occlusion()//and
-		S.update_icon() //update it
-
+		sum += S.update_power_generation(src)
+	connected_power = sum
 	update_icon()
-
 
 /obj/machinery/power/solar_control/power_change()
-	..()
-	update_icon()
+	if((. = ..()))
+		update_icon()
 
 
 /obj/machinery/power/solar_control/proc/broken()
@@ -538,6 +565,10 @@ GLOBAL_LIST_EMPTY(solars_list)
 // MISC
 //
 
-/obj/item/weapon/paper/solar
+/obj/item/paper/solar
 	name = "paper- 'Going green! Setup your own solar array instructions.'"
-	info = "<h1>Welcome</h1><p>At greencorps we love the environment, and space. With this package you are able to help mother nature and produce energy without any usage of fossil fuel or phoron! Singularity energy is dangerous while solar energy is safe, which is why it's better. Now here is how you setup your own solar array.</p><p>You can make a solar panel by wrenching the solar assembly onto a cable node. Adding a glass panel, reinforced or regular glass will do, will finish the construction of your solar panel. It is that easy!</p><p>Now after setting up 19 more of these solar panels you will want to create a solar tracker to keep track of our mother nature's gift, the SSsun.sun. These are the same steps as before except you insert the tracker equipment circuit into the assembly before performing the final step of adding the glass. You now have a tracker! Now the last step is to add a computer to calculate the SSsun.sun's movements and to send commands to the solar panels to change direction with the SSsun.sun. Setting up the solar computer is the same as setting up any computer, so you should have no trouble in doing that. You do need to put a wire node under the computer, and the wire needs to be connected to the tracker.</p><p>Congratulations, you should have a working solar array. If you are having trouble, here are some tips. Make sure all solar equipment are on a cable node, even the computer. You can always deconstruct your creations if you make a mistake.</p><p>That's all to it, be safe, be green!</p>"
+	info = "<h1>Welcome</h1><p>At greencorps we love the environment, and space. With this package you are able to help mother nature and produce energy without any usage of fossil fuel or phoron! Singularity energy is dangerous while solar energy is safe, which is why it's better. Now here is how you setup your own solar array.</p><p>You can make a solar panel by wrenching the solar assembly onto a cable node. Adding a glass panel, reinforced or regular glass will do, will finish the construction of your solar panel. It is that easy!</p><p>Now after setting up 19 more of these solar panels you will want to create a solar tracker to keep track of our mother nature's gift, the sun. These are the same steps as before except you insert the tracker equipment circuit into the assembly before performing the final step of adding the glass. You now have a tracker! Now the last step is to add a computer to calculate the sun's movements and to send commands to the solar panels to change direction with the sun. Setting up the solar computer is the same as setting up any computer, so you should have no trouble in doing that. You do need to put a wire node under the computer, and the wire needs to be connected to the tracker.</p><p>Congratulations, you should have a working solar array. If you are having trouble, here are some tips. Make sure all solar equipment are on a cable node, even the computer. You can always deconstruct your creations if you make a mistake.</p><p>That's all to it, be safe, be green!</p>"
+
+#undef SOLAR_AUTO_START_NO
+#undef SOLAR_AUTO_START_YES
+#undef SOLAR_AUTO_START_CONFIG

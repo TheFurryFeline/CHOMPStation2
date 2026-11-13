@@ -1,13 +1,18 @@
+/// Verified to work with the Artifact Harvester
 /datum/artifact_effect/forcefield
-	name = "force field"
+	name = "Forcefield"
 	var/list/created_field = list()
-	effect_type = EFFECT_PARTICLE
+	effect_type = EFFECT_FORCEFIELD
+
+	effect_state = "shield-old"
+	effect_color = "#00b7ff"
 
 /datum/artifact_effect/forcefield/New()
 	..()
 	trigger = TRIGGER_TOUCH
 
 /datum/artifact_effect/forcefield/ToggleActivate()
+	var/atom/holder = get_master_holder()
 	..()
 	if(created_field.len)
 		for(var/obj/effect/energy_field/F in created_field)
@@ -19,9 +24,9 @@
 			var/obj/effect/energy_field/E = new (locate(T.x,T.y,T.z))
 			created_field.Add(E)
 			E.strength = 1
-			E.density = 1
-			E.anchored = 1
-			E.invisibility = 0
+			E.density = TRUE
+			E.anchored = TRUE
+			E.invisibility = INVISIBILITY_NONE
 		spawn(10)
 			UpdateMove()
 	return 1
@@ -35,15 +40,16 @@
 			E.adjust_strength(0.25, 0)
 
 /datum/artifact_effect/forcefield/UpdateMove()
+	var/atom/holder = get_master_holder()
 	if(created_field.len && holder)
 		var/turf/T = get_turf(holder)
 		while(created_field.len < 16)
 			//for now, just instantly respawn the fields when they get destroyed
 			var/obj/effect/energy_field/E = new (locate(T.x,T.y,T))
 			created_field.Add(E)
-			E.anchored = 1
-			E.density = 1
-			E.invisibility = 0
+			E.anchored = TRUE
+			E.density = TRUE
+			E.invisibility = INVISIBILITY_NONE
 
 		var/obj/effect/energy_field/E = created_field[1]
 		E.loc = locate(T.x + 2,T.y + 2,T.z)

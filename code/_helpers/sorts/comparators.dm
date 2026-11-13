@@ -13,7 +13,10 @@
 
 // Sorts subsystems by init_order
 /proc/cmp_subsystem_init(datum/controller/subsystem/a, datum/controller/subsystem/b)
-	return initial(b.init_order) - initial(a.init_order)	//uses initial() so it can be used on types
+	return a.init_order - b.init_order
+
+/proc/cmp_subsystem_init_stage(datum/controller/subsystem/a, datum/controller/subsystem/b)
+	return initial(a.init_stage) - initial(b.init_stage)
 
 // Sorts subsystems by priority
 /proc/cmp_subsystem_priority(datum/controller/subsystem/a, datum/controller/subsystem/b)
@@ -33,7 +36,7 @@
 		. = B.qdels - A.qdels
 
 // Sorts jobs by department, and then by flag within department
-/proc/cmp_job_datums(var/datum/job/a, var/datum/job/b)
+/proc/cmp_job_datums(datum/job/a, datum/job/b)
 	. = 0
 	if( LAZYLEN(a.departments) && LAZYLEN(b.departments) )
 		var/list/common_departments = a.departments & b.departments // Makes a list that contains only departments that were in both.
@@ -46,7 +49,7 @@
 	if(. == 0) //Already in same sorting order, sort by name
 		. = sorttext(b.title, a.title)
 
-/proc/cmp_department_datums(var/datum/department/a, var/datum/department/b)
+/proc/cmp_department_datums(datum/department/a, datum/department/b)
 	. = b.sorting_order - a.sorting_order // First, sort by the sorting order vars.
 	if(. == 0) // If they have the same var, then sort by name.
 		. = sorttext(b.name, a.name)
@@ -57,15 +60,9 @@
 	if (!.)
 		. = B[STAT_ENTRY_COUNT] - A[STAT_ENTRY_COUNT]
 
-// Compares complexity of recipes for use in cooking, etc. This is for telling which recipe to make, not for showing things to the player.
-/proc/cmp_recipe_complexity_dsc(datum/recipe/A, datum/recipe/B)
-	var/a_score = LAZYLEN(A.items) + LAZYLEN(A.reagents) + LAZYLEN(A.fruit)
-	var/b_score = LAZYLEN(B.items) + LAZYLEN(B.reagents) + LAZYLEN(B.fruit)
-	return b_score - a_score
-
 /proc/cmp_typepaths_asc(A, B)
-	return sorttext("[B]","[A]") 
-	
+	return sorttext("[B]","[A]")
+
 /**
  * Sorts crafting recipe requirements before the crafting recipe is inserted into GLOB.crafting_recipes
  *
@@ -84,3 +81,50 @@
 
 /proc/cmp_text_asc(a,b)
 	return sorttext(b,a)
+
+///Tracks are sorted by genre then by title inside that.
+/proc/cmp_media_track_asc(datum/track/A, datum/track/B)
+	var/genre_sort = sorttext(B.genre || "Uncategorized", A.genre || "Uncategorized")
+	return genre_sort || sorttext(B.title, A.title)
+
+///Filters have a numerical priority.
+/proc/cmp_filter_data_priority(list/A, list/B)
+	return A["priority"] - B["priority"]
+
+///Traits have sort they have defined on them to categorize themselves into groups. After that, alphabetical.
+/proc/cmp_trait_datums_name(datum/trait/A, datum/trait/B)
+	return A.sort == B.sort ? sorttext("[B.name]","[A.name]") : A.sort - B.sort
+
+///Species have sort_hint they self-generate to hint themselves into groups. After that, alphabetical.
+/proc/cmp_species(datum/species/A, datum/species/B)
+	return A.sort_hint == B.sort_hint ? sorttext("[B.name]","[A.name]") : A.sort_hint - B.sort_hint
+
+/proc/cmp_stored_item_name(datum/stored_item/A, datum/stored_item/B)
+	return sorttext(B.item_name, A.item_name)
+
+/proc/cmp_embed_text_asc(a,b)
+	if(isdatum(a))
+		a = REF(a)
+	if(isdatum(b))
+		b = REF(b)
+	return sorttext("[b]", "[a]")
+
+/proc/cmp_embed_text_dsc(a,b)
+	if(isdatum(a))
+		a = REF(a)
+	if(isdatum(b))
+		b = REF(b)
+	return sorttext("[a]", "[b]")
+
+
+/proc/cmp_name_asc(atom/a, atom/b)
+	return sorttext(b.name, a.name)
+
+/proc/cmp_name_dsc(atom/a, atom/b)
+	return sorttext(a.name, b.name)
+
+/proc/cmp_advdisease_resistance_asc(datum/disease/advance/A, datum/disease/advance/B)
+	return A.resistance - B.resistance
+
+/proc/cmp_advdisease_symptomid_asc(datum/symptom/A, datum/symptom/B)
+	return sorttext(B.id, A.id)

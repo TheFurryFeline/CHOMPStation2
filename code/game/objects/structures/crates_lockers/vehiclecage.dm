@@ -3,7 +3,7 @@
 	desc = "A large metal lattice that seems to exist solely to annoy consumers."
 	icon = 'icons/obj/storage.dmi'
 	icon_state = "vehicle_cage"
-	density = 1
+	density = TRUE
 	var/obj/vehicle/my_vehicle
 	var/my_vehicle_type
 	var/paint_color = "#666666"
@@ -11,9 +11,9 @@
 /obj/structure/vehiclecage/examine(mob/user)
 	. = ..()
 	if(my_vehicle)
-		. += "<span class='notice'>It seems to contain \the [my_vehicle].</span>"
+		. += span_notice("It seems to contain \the [my_vehicle].")
 
-/obj/structure/vehiclecage/Initialize()
+/obj/structure/vehiclecage/Initialize(mapload)
 	. = ..()
 	if(my_vehicle_type)
 		my_vehicle = new my_vehicle_type(src)
@@ -24,40 +24,40 @@
 	update_icon()
 
 /obj/structure/vehiclecage/attack_hand(mob/user as mob)
-	to_chat(user, "<span class='notice'>You need a wrench to take this apart!</span>")
+	to_chat(user, span_notice("You need a wrench to take this apart!"))
 	return
 
-/obj/structure/vehiclecage/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/structure/vehiclecage/attackby(obj/item/W as obj, mob/user as mob)
 	var/turf/T = get_turf(src)
 	if(!T)
-		to_chat(user, "<span class='notice'>You can't open this here!</span>")
-	if(W.is_wrench() && do_after(user, 60 * W.toolspeed, src))
+		to_chat(user, span_notice("You can't open this here!"))
+	if(W.has_tool_quality(TOOL_WRENCH) && do_after(user, 6 SECONDS * W.toolspeed, target = src))
 		playsound(src, W.usesound, 50, 1)
 		disassemble(W, user)
-		user.visible_message("<span class='notice'>[user] begins loosening \the [src]'s bolts.</span>")
-	if(W.is_wirecutter() && do_after(user, 70 * W.toolspeed, src))
+		user.visible_message(span_notice("[user] begins loosening \the [src]'s bolts."))
+	if(W.has_tool_quality(TOOL_WIRECUTTER) && do_after(user, 7 SECONDS * W.toolspeed, target = src))
 		playsound(src, W.usesound, 50, 1)
 		disassemble(W, user)
-		user.visible_message("<span class='notice'>[user] begins cutting \the [src]'s bolts.</span>")
+		user.visible_message(span_notice("[user] begins cutting \the [src]'s bolts."))
 	else
 		return attack_hand(user)
 
 /obj/structure/vehiclecage/update_icon()
 	..()
-	overlays.Cut()
+	cut_overlays()
 	underlays.Cut()
 
 	var/image/framepaint = new(icon = 'icons/obj/storage.dmi', icon_state = "[initial(icon_state)]_a", layer = MOB_LAYER + 1.1)
 	framepaint.plane = MOB_PLANE
 	framepaint.color = paint_color
-	overlays += framepaint
+	add_overlay(framepaint)
 
 	for(var/obj/vehicle/V in src.contents)
 		var/image/showcase = new(V)
 		showcase.layer = src.layer - 0.1
 		underlays += showcase
 
-/obj/structure/vehiclecage/MouseDrop_T(var/atom/movable/C, mob/user as mob)
+/obj/structure/vehiclecage/MouseDrop_T(atom/movable/C, mob/user as mob)
 	if(user && (user.buckled || user.stat || user.restrained() || !Adjacent(user) || !user.Adjacent(C)))
 		return
 
@@ -70,11 +70,11 @@
 	if(!my_vehicle)
 		load_vehicle(V, user)
 
-/obj/structure/vehiclecage/proc/load_vehicle(var/obj/vehicle/V, mob/user as mob)
+/obj/structure/vehiclecage/proc/load_vehicle(obj/vehicle/V, mob/user as mob)
 	if(user)
-		user.visible_message("<span class='notice'>[user] loads \the [V] into \the [src].</span>", \
-							 "<span class='notice'>You load \the [V] into \the [src].</span>", \
-							 "<span class='notice'>You hear creaking metal.</span>")
+		user.visible_message(span_notice("[user] loads \the [V] into \the [src]."), \
+								span_notice("You load \the [V] into \the [src]."), \
+								span_notice("You hear creaking metal."))
 
 	V.forceMove(src)
 
@@ -82,7 +82,7 @@
 
 	update_icon()
 
-/obj/structure/vehiclecage/proc/disassemble(obj/item/weapon/W as obj, mob/user as mob)
+/obj/structure/vehiclecage/proc/disassemble(obj/item/W as obj, mob/user as mob)
 	var/turf/T = get_turf(src)
 	new /obj/item/stack/material/steel(src.loc, 5)
 
@@ -91,9 +91,9 @@
 			AM.forceMove(T)
 
 	my_vehicle = null
-	user.visible_message("<span class='notice'>[user] release \the [src].</span>", \
-						 "<span class='notice'>You finally release \the [src].</span>", \
-						 "<span class='notice'>You hear creaking metal.</span>")
+	user.visible_message(span_notice("[user] release \the [src]."), \
+							span_notice("You finally release \the [src]."), \
+							span_notice("You hear creaking metal."))
 	qdel(src)
 
 /obj/structure/vehiclecage/spacebike
